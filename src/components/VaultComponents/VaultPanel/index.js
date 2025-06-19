@@ -10,7 +10,7 @@ const { tokens } = require('../../../data')
 
 const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...props }) => {
   const { hoverColor } = useThemeContext()
-  const { pools, fetchUserPoolStats, userStats, vaultLoading, setVaultLoading } = usePools()
+  const { pools, userStats, vaultLoading, setVaultLoading } = usePools()
   const { account, logout, chainId } = useWallet()
 
   const vaultPool = find(pools, pool => pool.collateralAddress === tokens[tokenSymbol].vaultAddress)
@@ -25,15 +25,9 @@ const VaultPanel = ({ token, loaded, tokenSymbol, tokenNum, vaultsCount, ...prop
 
   useEffect(() => {
     if (account && vaultPool && !isEmpty(userStats) && vaultLoading) {
-      const loadUserPoolsStats = async () => {
-        const poolsToLoad = [vaultPool]
-
-        await fetchUserPoolStats(poolsToLoad, account, userStats)
-        setVaultLoading(false)
-      }
-      loadUserPoolsStats()
+      setVaultLoading(false)
     }
-  }, [account, vaultPool, userStats, vaultLoading])
+  }, [account, vaultPool, userStats, vaultLoading, setVaultLoading])
 
   return (
     <>

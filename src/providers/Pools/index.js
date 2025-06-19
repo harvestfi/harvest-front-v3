@@ -346,7 +346,6 @@ const PoolsProvider = _ref => {
               poolAddresses,
               readerInstance,
             )
-            // const stats = {}
             await forEach(chLoadedPools, async (pool, index) => {
               let lpTokenBalance
               const isSpecialVault = pool.id == 'profit-sharing-farm'
@@ -374,6 +373,8 @@ const PoolsProvider = _ref => {
               stats[pool.id] = {
                 lpTokenBalance,
                 totalStaked: balances[1][index],
+                totalRewardsEarned: balances[2] && balances[2][index] ? balances[2][index] : '0',
+                lpTokenApprovedBalance: '0',
               }
             })
           }
@@ -389,6 +390,8 @@ const PoolsProvider = _ref => {
               stats[vaultId] = {
                 lpTokenBalance: vaultBalance,
                 totalStaked: 0,
+                totalRewardsEarned: '0',
+                lpTokenApprovedBalance: '0',
               }
             }
           }
@@ -405,86 +408,142 @@ const PoolsProvider = _ref => {
     immediate: true,
   })
 
-  const fetchUserPoolStats = useCallback(async function (
-    selectedPools,
-    selectedAccount,
-    currentStats,
-  ) {
-    if (currentStats === void 0) {
-      currentStats = []
-    }
+  const fetchUserPoolStats = useCallback(
+    async function (selectedPools, selectedAccount, currentStats) {
+      if (currentStats === void 0) {
+        currentStats = []
+      }
 
-    const stats = {}
+      const stats = {}
 
-    if (loadedUserPoolsWeb3Provider.current) {
-      setLoadingUserPoolStats(true)
-      await Promise.all(
-        selectedPools.map(async pool => {
-          if (pool) {
-            const web3Client = await getWeb3(pool.chain, false)
-            const contractInstance = await newContractInstance(
-              null,
-              pool.contractAddress,
-              poolContractData.abi,
-              web3Client,
-            )
-            const autoStakeContractInstance = await newContractInstance(
-              null,
-              pool.autoStakePoolAddress,
-              poolContractData.abi,
-              web3Client,
-            )
-            // const lpSymbol = Object.keys(tokens).filter(
-            //   symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address || tokens[symbol].vaultAddress === pool.lpTokenData.address,
-            // )
-            // if(lpSymbol.length !== 0) {
-            const tokenInstance = await newContractInstance(
-              null,
-              pool.lpTokenData.address,
-              poolContractData.abi,
-              web3Client,
-            )
+      if (loadedUserPoolsWeb3Provider.current) {
+        setLoadingUserPoolStats(true)
 
-            const fetchedStats = await getUserStats(
+        const poolsByChain = {}
+        selectedPools.forEach(pool => {
+          if (!pool) return
+
+          const chainId = pool.chain
+          if (!poolsByChain[chainId]) {
+            poolsByChain[chainId] = []
+          }
+          poolsByChain[chainId].push(pool)
+        })
+
+        for (const chainId in poolsByChain) {
+          const chainPools = poolsByChain[chainId]
+          const readerType = getReader(chainId, contracts)
+
+          if (readerType && chainPools.length > 1) {
+            const poolAddresses = []
+            const vaultAddresses = []
+
+            chainPools.forEach(pool => {
+              poolAddresses.push(pool.contractAddress)
+              vaultAddresses.push(pool.lpTokenData.address)
+            })
+
+            const readerInstance = readerType.instance
+            const readerMethods = readerType.methods
+
+            try {
+              const balances = await readerMethods.getAllInformation(
+                selectedAccount,
+                vaultAddresses,
+                poolAddresses,
+                readerInstance,
+              )
+
+              chainPools.forEach((pool, index) => {
+                if (!pool) return
+
+                stats[pool.id] = {
+                  lpTokenBalance: balances[0][index] || '0',
+                  totalStaked: balances[1][index] || '0',
+                  totalRewardsEarned: balances[2] && balances[2][index] ? balances[2][index] : '0',
+                  lpTokenApprovedBalance: '0',
+                }
+              })
+            } catch (error) {
+              console.error('Error in batch fetching pool stats:', error)
+              await Promise.all(
+                chainPools.map(async pool => {
+                  await processSinglePool(pool, selectedAccount, stats)
+                }),
+              )
+            }
+          } else {
+            await Promise.all(
+              chainPools.map(async pool => {
+                await processSinglePool(pool, selectedAccount, stats)
+              }),
+            )
+          }
+        }
+
+        setUserStats(currStats => ({ ...currStats, ...stats }))
+        setLoadingUserPoolStats(false)
+      }
+
+      return stats
+
+      async function processSinglePool(pool, selectedAccount, stats) {
+        if (!pool) return
+
+        const web3Client = await getWeb3(pool.chain, false)
+        const contractInstance = await newContractInstance(
+          null,
+          pool.contractAddress,
+          poolContractData.abi,
+          web3Client,
+        )
+        const autoStakeContractInstance = await newContractInstance(
+          null,
+          pool.autoStakePoolAddress,
+          poolContractData.abi,
+          web3Client,
+        )
+        const tokenInstance = await newContractInstance(
+          null,
+          pool.lpTokenData.address,
+          poolContractData.abi,
+          web3Client,
+        )
+
+        const fetchedStats = await getUserStats(
+          contractInstance,
+          tokenInstance,
+          pool.contractAddress,
+          pool.autoStakePoolAddress,
+          selectedAccount,
+          autoStakeContractInstance,
+        )
+
+        if (!isEqual(fetchedStats, currentStats[pool.id])) {
+          stats[pool.id] = fetchedStats
+        } else {
+          await pollUpdatedUserStats(
+            getUserStats(
               contractInstance,
               tokenInstance,
               pool.contractAddress,
               pool.autoStakePoolAddress,
               selectedAccount,
               autoStakeContractInstance,
-            )
-
-            if (!isEqual(fetchedStats, currentStats[pool.id])) {
-              stats[pool.id] = fetchedStats
-            } else {
-              await pollUpdatedUserStats(
-                getUserStats(
-                  contractInstance,
-                  tokenInstance,
-                  pool.contractAddress,
-                  pool.autoStakePoolAddress,
-                  selectedAccount,
-                  autoStakeContractInstance,
-                ),
-                currentStats,
-                () => {
-                  console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
-                },
-                updatedStats => {
-                  stats[pool.id] = updatedStats
-                },
-              )
-            }
-          }
-          // }
-        }),
-      )
-      setUserStats(currStats => ({ ...currStats, ...stats }))
-      setLoadingUserPoolStats(false)
-    }
-
-    return stats
-  }, [])
+            ),
+            currentStats,
+            () => {
+              console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
+            },
+            updatedStats => {
+              stats[pool.id] = updatedStats
+            },
+          )
+        }
+      }
+    },
+    [contracts, getReader],
+  )
   return React.createElement(
     PoolsContext.Provider,
     {

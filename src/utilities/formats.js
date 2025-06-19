@@ -1,12 +1,12 @@
 import axios from 'axios'
-import axiosRetry from 'axios-retry'
+import axiosRetry, { exponentialDelay } from 'axios-retry'
 import BigNumber from 'bignumber.js'
 import { isNaN, isEmpty } from 'lodash'
 import { DECIMAL_PRECISION, KEY_CODES, MAX_APY_DISPLAY } from '../constants'
 
 axiosRetry(axios, {
   retries: 1,
-  retryDelay: axiosRetry.exponentialDelay,
+  retryDelay: exponentialDelay,
   retryCondition: error =>
     error.code !== 'ECONNABORTED' && (!error.response || error.response.status >= 303),
 })
