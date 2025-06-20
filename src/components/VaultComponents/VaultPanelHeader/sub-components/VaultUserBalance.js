@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import BigNumber from 'bignumber.js'
 import { get } from 'lodash'
 import {
@@ -37,6 +37,13 @@ const VaultUserBalance = ({
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
+  const isMountedRef = useRef(true)
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false
+    }
+  }, [])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -72,8 +79,13 @@ const VaultUserBalance = ({
           vaultBalance,
         )
 
-        setUserVaultBalance(AssetBalance)
-      } else {
+        if (isMountedRef.current) {
+          setUserVaultBalance(AssetBalance)
+        }
+        return
+      }
+
+      if (isMountedRef.current) {
         setUserVaultBalance(
           getUserVaultBalance(tokenSymbol, farmingBalances, totalStaked, iFARMBalance),
         )

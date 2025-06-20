@@ -294,7 +294,7 @@ const AutopilotPanel = ({
                   pattern="[0-9]*"
                   placeholder="0"
                 />
-                <input type="hidden" value={Number(inputAmount)} />
+                <input type="hidden" value={Number(inputAmount) || 0} />
                 <TokenUSDAmount fontColor3={fontColor3}>
                   {inputUSDAmount === '' ? (
                     <TokenInfo>
