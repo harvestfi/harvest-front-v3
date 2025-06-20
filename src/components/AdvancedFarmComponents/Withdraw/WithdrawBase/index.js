@@ -428,7 +428,7 @@ const WithdrawBase = ({
                 pattern="[0-9]*"
                 placeholder="0"
               />
-              <input type="hidden" value={Number(unstakeInputValue)} />
+              <input type="hidden" value={Number(unstakeInputValue) || 0} />
               <TokenUSDAmount fontColor3={fontColor3}>
                 {unstakeInputValue === '0' || unstakeInputValue === '' ? (
                   `${currencySym}0`
