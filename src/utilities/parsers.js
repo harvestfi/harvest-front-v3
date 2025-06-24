@@ -9,7 +9,11 @@ import Zksync from '../assets/images/chains/zksync.svg'
 import Ethereum from '../assets/images/chains/ethereum.svg'
 import Polygon from '../assets/images/chains/polygon.svg'
 import { fromWei } from '../services/web3'
-import { getAllRewardEntities, getUserBalanceVaults, initBalanceAndDetailData } from './apiCalls'
+import {
+  getAllRewardEntities,
+  getUserBalanceVaults,
+  initMultipleBalanceAndDetailData,
+} from './apiCalls'
 
 export const getTotalApy = (vaultPool, token) => {
   const vaultData = vaultPool
@@ -502,11 +506,11 @@ export const generateColor = (vaultList, key) => {
   return color
 }
 
-export async function fetchAndParseVaultData({ account, groupOfVaults, setSafeFlag }) {
+export async function fetchAndParseVaultData({ account, groupOfVaults, isPortfolio = false }) {
   let combinedEnrichedData = [],
     cumulativeLifetimeYield = 0
 
-  const { userBalanceVaults } = await getUserBalanceVaults(account)
+  const { userBalanceVaults } = await getUserBalanceVaults(account, isPortfolio)
 
   const stakedVaults = Object.keys(groupOfVaults).filter(key => {
     const vault = groupOfVaults[key]
@@ -516,43 +520,84 @@ export async function fetchAndParseVaultData({ account, groupOfVaults, setSafeFl
 
   const vaultNetChanges = []
 
-  const promises = stakedVaults.map(async symbol => {
+  const vaultsByChainAndType = stakedVaults.reduce((acc, symbol) => {
     const token = groupOfVaults[symbol]
+    if (!token) return acc
 
-    if (token) {
-      const tokenName = token.tokenNames.join(' - ')
-      const tokenPlatform = token.platform.join(', ')
-      const tokenChain = token.chain
-      const tokenSym = symbol
+    const chainId = token.chain
+    const isIPORVault = token.isIPORVault ?? false
 
-      const iporVFlag = token.isIPORVault ?? false
-      const paramAddress = token.vaultAddress || token.tokenAddress
+    const groupKey = `${chainId}-${isIPORVault ? 'ipor' : 'regular'}`
 
-      const { sumNetChangeUsd, enrichedData, vaultHFlag } = await initBalanceAndDetailData(
-        paramAddress,
-        token.chain,
-        account,
-        token.decimals,
-        iporVFlag,
-        token.vaultDecimals,
-      )
-
-      setSafeFlag(vaultHFlag)
-
-      vaultNetChanges.push({ id: symbol, sumNetChangeUsd })
-
-      const enrichedDataWithSymbol = enrichedData.map(data => ({
-        ...data,
-        tokenSymbol: tokenSym,
-        name: tokenName,
-        platform: tokenPlatform,
-        chain: tokenChain,
-      }))
-      combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
+    if (!acc[groupKey]) {
+      acc[groupKey] = {
+        chainId,
+        isIPORVault,
+        vaults: [],
+        vaultData: {}, // Map of address to vault data
+      }
     }
+
+    const vaultAddress = (token.vaultAddress || token.tokenAddress).toLowerCase()
+
+    acc[groupKey].vaultData[vaultAddress] = {
+      address: vaultAddress,
+      tokenDecimals: parseInt(token.decimals) || 18,
+      vaultDecimals: parseInt(token.vaultDecimals) || 8,
+    }
+
+    acc[groupKey].vaults.push({
+      symbol,
+      address: vaultAddress,
+      tokenDecimals: token.decimals,
+      vaultDecimals: token.vaultDecimals,
+      tokenNames: token.tokenNames,
+      platform: token.platform,
+    })
+
+    return acc
+  }, {})
+
+  const groupPromises = Object.values(vaultsByChainAndType).map(async group => {
+    const { chainId, isIPORVault, vaults, vaultData } = group
+    const addresses = vaults.map(vault => vault.address)
+    const result = await initMultipleBalanceAndDetailData(
+      addresses,
+      chainId,
+      account,
+      isIPORVault,
+      vaultData,
+    )
+
+    vaults.forEach(vault => {
+      const vaultId = vault.address.toLowerCase()
+      const vaultResult = result.processedResults[vaultId]
+
+      if (vaultResult) {
+        vaultNetChanges.push({
+          id: vault.symbol,
+          sumNetChangeUsd: vaultResult.sumNetChangeUsd || 0,
+        })
+
+        if (vaultResult.enrichedData && vaultResult.enrichedData.length > 0) {
+          const enrichedDataWithSymbol = vaultResult.enrichedData.map(data => ({
+            ...data,
+            tokenSymbol: vault.symbol,
+            name: vault.tokenNames.join(' - '),
+            platform: vault.platform.join(', '),
+            chain: chainId,
+            isIPORVault,
+            tokenDecimals: vault.tokenDecimals,
+            vaultDecimals: vault.vaultDecimals,
+          }))
+
+          combinedEnrichedData = combinedEnrichedData.concat(enrichedDataWithSymbol)
+        }
+      }
+    })
   })
 
-  await Promise.all(promises)
+  await Promise.all(groupPromises)
 
   const { rewardsAPIData } = await getAllRewardEntities(account)
 

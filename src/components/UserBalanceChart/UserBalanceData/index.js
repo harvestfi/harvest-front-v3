@@ -13,8 +13,7 @@ import {
   getPriceFeeds,
   getSequenceId,
   getUserBalanceHistories,
-  getIPORUserBalanceHistories,
-  getIPORVaultHistories,
+  getVaultHistories,
 } from '../../../utilities/apiCalls'
 import { handleToggle } from '../../../utilities/parsers'
 import {
@@ -127,11 +126,11 @@ const UserBalanceData = ({ token, totalValue, underlyingPrice, lpTokenBalance, c
           let priceFeedData, priceFeedFlag
 
           const data = token.isIPORVault
-            ? await getIPORUserBalanceHistories(address.toLowerCase(), token.chain, account)
+            ? await getUserBalanceHistories(address.toLowerCase(), token.chain, account, true)
             : await getUserBalanceHistories(address, chainId, account)
 
-          const balanceData = token.isIPORVault ? data.balanceIPORData : data.balanceData
-          const balanceFlag = token.isIPORVault ? data.balanceIPORFlag : data.balanceFlag
+          const balanceData = data.balanceData
+          const balanceFlag = data.balanceFlag
           if (token.isIPORVault) {
             balanceData.map(obj => {
               obj.value = new BigNumber(obj.value)
@@ -155,9 +154,9 @@ const UserBalanceData = ({ token, totalValue, underlyingPrice, lpTokenBalance, c
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
           } else if (balanceFlag && token.isIPORVault) {
-            const result = await getIPORVaultHistories(token.chain, address.toLowerCase())
-            priceFeedFlag = result.vaultHIPORFlag
-            priceFeedData = result.vaultHIPORData
+            const result = await getVaultHistories(address.toLowerCase(), token.chain, true)
+            priceFeedFlag = result.vaultHFlag
+            priceFeedData = result.vaultHData
           }
 
           if (priceFeedFlag && !token.isIPORVault) {

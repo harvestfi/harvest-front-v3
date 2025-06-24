@@ -125,7 +125,6 @@ const Portfolio = () => {
   const [oneDayYield, setOneDayYield] = useState(0)
   const [showAddress, setShowAddress] = useState(true)
   const [onceRun, setOnceRun] = useState(false)
-  const [safeFlag, setSafeFlag] = useState(true)
   const [, setNoHarvestsData] = useState(false)
   const [, setNoRewardsData] = useState(false)
   const [totalLifetimeYield, setTotalLifetimeYield] = useState(0)
@@ -482,7 +481,7 @@ const Portfolio = () => {
         } = await fetchAndParseVaultData({
           account,
           groupOfVaults,
-          setSafeFlag,
+          isPortfolio: true,
         })
 
         if (stakedVaults.length === 0) {
@@ -505,7 +504,7 @@ const Portfolio = () => {
       setVaultNetChangeList([])
       setTotalHistoryData([])
     }
-  }, [account, userStats, safeFlag])
+  }, [account, userStats])
 
   const sortCol = field => {
     if (field === 'lifetimeYield') {

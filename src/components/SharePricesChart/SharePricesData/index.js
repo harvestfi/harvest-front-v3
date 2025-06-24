@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import ApexChart from '../ApexChart'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { fromWei } from '../../../services/web3'
-import { getMultipleVaultHistories, getIPORVaultHistories } from '../../../utilities/apiCalls'
+import { getMultipleVaultHistories, getVaultHistories } from '../../../utilities/apiCalls'
 import { ChartDiv, Container, Header, Total, TokenSymbol, TooltipInfo, FlexDiv } from './style'
 
 /* eslint-disable camelcase */
@@ -152,9 +152,10 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
               })
             }
 
-            const { vaultHIPORFlag, vaultHIPORData } = await getIPORVaultHistories(
+            const { vaultHFlag: vaultHIPORFlag, vaultHData: vaultHIPORData } = await getVaultHistories(
               token.chain,
               token.vaultAddress.toLowerCase(),
+              true,
             )
             sharePricesData[token.id] = {}
             if (vaultHIPORFlag) {

@@ -32,7 +32,6 @@ const Activity = () => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const [onceRun, setOnceRun] = useState(false)
-  const [safeFlag, setSafeFlag] = useState(true)
   const [noHarvestsData, setNoHarvestsData] = useState(false)
   const [noRewardsData, setNoRewardsData] = useState(false)
   const [activeHarvests, setActiveHarvests] = useState(true)
@@ -68,7 +67,7 @@ const Activity = () => {
           await fetchAndParseVaultData({
             account,
             groupOfVaults,
-            setSafeFlag,
+            isPortfolio: false,
           })
 
         if (stakedVaults.length === 0) {
@@ -87,7 +86,7 @@ const Activity = () => {
     } else {
       setTotalHistoryData([])
     }
-  }, [account, userStats, safeFlag])
+  }, [account, userStats])
 
   return (
     <Container $bgcolor={bgColorNew} $fontcolor={fontColor}>

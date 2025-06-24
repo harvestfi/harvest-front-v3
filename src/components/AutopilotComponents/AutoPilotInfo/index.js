@@ -5,7 +5,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { useRate } from '../../../providers/Rate'
 import { fromWei, getExplorerLink } from '../../../services/web3'
 import { useContracts } from '../../../providers/Contracts'
-import { getIPORVaultHistories, getIPORLastHarvestInfo } from '../../../utilities/apiCalls'
+import { getVaultHistories, getIPORLastHarvestInfo } from '../../../utilities/apiCalls'
 import { abbreaviteNumber, formatFrequency, formatNumber } from '../../../utilities/formats'
 import {
   PanelHeader,
@@ -99,9 +99,10 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
         vaultData.chain,
       )
       setLastHarvest(lHarvestDate)
-      const { vaultHIPORData, vaultHIPORFlag } = await getIPORVaultHistories(
-        vaultData.chain,
+      const { vaultHData: vaultHIPORData, vaultHFlag: vaultHIPORFlag } = await getVaultHistories(
         vaultData.vaultAddress.toLowerCase(),
+        vaultData.chain,
+        true,
       )
 
       const vaultContract = contracts.iporVaults[vaultData.id]

@@ -9,8 +9,7 @@ import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
 import { formatDate, numberWithCommas, showTokenBalance } from '../../../utilities/formats'
 import {
-  getIPORUserBalanceHistories,
-  getIPORVaultHistories,
+  getVaultHistories,
   getPriceFeeds,
   getSequenceId,
   getUserBalanceHistories,
@@ -129,11 +128,11 @@ const PerformanceChart = ({
           let priceFeedData, priceFeedFlag
 
           const data = token.isIPORVault
-            ? await getIPORUserBalanceHistories(address.toLowerCase(), token.chain, account)
+            ? await getUserBalanceHistories(address.toLowerCase(), token.chain, account, true)
             : await getUserBalanceHistories(address, chainId, account)
 
-          const balanceData = token.isIPORVault ? data.balanceIPORData : data.balanceData
-          const balanceFlag = token.isIPORVault ? data.balanceIPORFlag : data.balanceFlag
+          const balanceData = data.balanceData
+          const balanceFlag = data.balanceFlag
 
           if (token.isIPORVault) {
             balanceData.map(obj => {
@@ -158,9 +157,9 @@ const PerformanceChart = ({
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
           } else if (balanceFlag && token.isIPORVault) {
-            const result = await getIPORVaultHistories(token.chain, address.toLowerCase())
-            priceFeedFlag = result.vaultHIPORFlag
-            priceFeedData = result.vaultHIPORData
+            const result = await getVaultHistories(address.toLowerCase(), token.chain, true)
+            priceFeedFlag = result.vaultHFlag
+            priceFeedData = result.vaultHData
           }
 
           if (priceFeedFlag && !token.isIPORVault) {

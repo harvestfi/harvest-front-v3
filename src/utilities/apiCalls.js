@@ -13,6 +13,9 @@ import { fromWei } from '../services/web3'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 
+const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
+
 const executeGraphCall = async (url, query, variables, retries = 10, delayMs = 5000) => {
   let retry = 0,
     response
@@ -51,8 +54,6 @@ export const getLastHarvestInfo = async (address, chainId) => {
   const nowDate = Math.floor(new Date().getTime() / 1000)
 
   address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
   const query = `
     query getLastHarvestInfo($vault: String!) {
@@ -192,8 +193,6 @@ export const getSequenceId = async (address, chainId) => {
     vaultsFlag = true
 
   address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   const vaultAddress = address === ifarm ? farm : address
 
   const query = `
@@ -256,39 +255,176 @@ export const getIPORSequenceId = async (vault, chainId) => {
   return { vaultTVLCount }
 }
 
-const getVaultHistories = async (address, chainId) => {
-  let vaultHData = [],
-    vaultHFlag = true
+export const getVaultHistories = async (address, chainId, isIPOR = false) => {
+  let vaultHistoryData = [],
+    vaultHistoryFlag = true,
+    query,
+    variables
 
   address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
-  const query = `
-    query getVaultHistories($vault: String!) {
-      vaultHistories(
-        first: 1000,
-        where: {
-          vault: $vault,
-        },
-        orderBy: timestamp,
-        orderDirection: desc
-      ) {
-        priceUnderlying, sharePrice, timestamp
+  if (isIPOR) {
+    query = `
+      query getVaultHistories($vault: String!) {
+        plasmaVaultHistories(
+          where: {
+            plasmaVault: $vault,
+          },
+          first: 1000,
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          tvl, apy, priceUnderlying, sharePrice, timestamp
+        }
       }
-    }
-  `
-  const variables = address === farm ? { vault: ifarm } : { vault: address }
-  const url = GRAPH_URLS[chainId]
-
-  const data = await executeGraphCall(url, query, variables)
-  vaultHData = data?.vaultHistories
-
-  if (!vaultHData || vaultHData.length === 0) {
-    vaultHFlag = false
+    `
+    variables = { vault: address }
+  } else {
+    query = `
+      query getVaultHistories($vault: String!) {
+        vaultHistories(
+          first: 1000,
+          where: {
+            vault: $vault,
+          },
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          priceUnderlying, sharePrice, timestamp
+        }
+      }
+    `
+    variables = address === farm ? { vault: ifarm } : { vault: address }
   }
 
-  return { vaultHData, vaultHFlag }
+  const url = GRAPH_URLS[chainId]
+
+  try {
+    const data = await executeGraphCall(url, query, variables)
+
+    if (isIPOR) {
+      vaultHistoryData = data?.plasmaVaultHistories || []
+    } else {
+      vaultHistoryData = data?.vaultHistories || []
+    }
+  } catch (e) {
+    console.error('Error fetching vault histories:', e)
+    return { vaultHData: [], vaultHFlag: false, error: e }
+  }
+
+  if (!vaultHistoryData || vaultHistoryData.length === 0) {
+    vaultHistoryFlag = false
+    return { vaultHData: [], vaultHFlag: false }
+  }
+
+  vaultHistoryData = vaultHistoryData.map(item => ({
+    ...item,
+    vaultId: address,
+  }))
+
+  return {
+    vaultHData: vaultHistoryData,
+    vaultHFlag: vaultHistoryFlag,
+  }
+}
+
+export const getMultiVaultHistories = async (addresses, chainId, isIPOR = false) => {
+  let vaultHistoryData = [],
+    vaultHistoryFlag = true,
+    query,
+    variables
+
+  const processedAddresses = addresses.map(address => {
+    const lowerAddress = address.toLowerCase()
+    return lowerAddress === farm ? ifarm : lowerAddress
+  })
+
+  if (isIPOR) {
+    query = `
+      query getMultipleVaultHistories($vaults: [String!]) {
+        plasmaVaultHistories(
+          where: {
+            plasmaVault_in: $vaults,
+          },
+          first: 1000,
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          tvl, apy, priceUnderlying, sharePrice, timestamp, plasmaVault{id}
+        }
+      }
+    `
+  } else {
+    query = `
+      query getMultipleVaultHistories($vaults: [String!]) {
+        vaultHistories(
+          first: 1000,
+          where: {
+            vault_in: $vaults,
+          },
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          priceUnderlying, sharePrice, timestamp, vault{id}
+        }
+      }
+    `
+  }
+  variables = { vaults: processedAddresses }
+
+  const url = GRAPH_URLS[chainId]
+
+  try {
+    const data = await executeGraphCall(url, query, variables)
+
+    if (isIPOR) {
+      vaultHistoryData = data?.plasmaVaultHistories || []
+    } else {
+      vaultHistoryData = data?.vaultHistories || []
+    }
+  } catch (e) {
+    console.error('Error fetching vault histories:', e)
+    return {
+      vaultHFlag: false,
+      error: e,
+      groupedHistories: {},
+    }
+  }
+
+  if (!vaultHistoryData || vaultHistoryData.length === 0) {
+    vaultHistoryFlag = false
+    return {
+      vaultHFlag: false,
+      groupedHistories: {},
+    }
+  }
+
+  vaultHistoryData = vaultHistoryData.map(item => {
+    const vaultId = isIPOR ? item.plasmaVault?.id : item.vault?.id
+    return {
+      ...item,
+      vaultId,
+    }
+  })
+
+  const groupedHistories = vaultHistoryData.reduce((result, item) => {
+    const vaultId = item.vaultId
+
+    if (!vaultId) return result
+
+    if (!result[vaultId]) {
+      result[vaultId] = []
+    }
+
+    result[vaultId].push(item)
+
+    return result
+  }, {})
+
+  return {
+    vaultHFlag: vaultHistoryFlag,
+    groupedHistories,
+  }
 }
 
 export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
@@ -299,8 +435,6 @@ export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
     finishTime = Math.floor(new Date().getTime() / 1000)
 
   vaults = vaults.map(address => address.toLowerCase())
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   vaults = vaults.map(address => (address === farm ? ifarm : address))
 
   const query = `
@@ -369,8 +503,6 @@ export const getDataQuery = async (
   const nowTime = Math.floor(new Date().getTime() / 1000)
   const timestampQuery = asQuery ? timestamp : nowTime
   address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
   const query = `
     query getData($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
@@ -443,8 +575,6 @@ export const getRewardEntities = async (account, address, chainId) => {
     rewardsFlag = true
 
   address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   const vaultAddress = address === farm ? ifarm : address
 
   if (account) {
@@ -641,151 +771,176 @@ export const getIPORDataQuery = async (
   return chartData
 }
 
-export const getUserBalanceVaults = async account => {
-  const userBalanceVaults = []
-  let userBalanceFlag = true
-  if (account) {
-    account = account.toLowerCase()
-  }
-
-  const query1 = `
-    query getUserVaults($account: String!) {
-      userBalances(
-        where: {
-          userAddress: $account,
-        }
-      ) {
-        vault{ id }
-      }
-    }
-  `
-
-  const query2 = `
-    query getUserVaults($account: String!) {
-      userBalances(
-        where: {
-          userAddress: $account,
-        }
-      ) {
-        vault{ id }
-      }
-      plasmaUserBalances(
-        where: {
-          userAddress: $account,
-        }
-      ) {
-        plasmaVault{id}
-      }
-    }
-  `
-
-  const variables = { account }
-  const urls = [
-    GRAPH_URLS[CHAIN_IDS.ETH_MAINNET],
-    GRAPH_URLS[CHAIN_IDS.POLYGON_MAINNET],
-    GRAPH_URLS[CHAIN_IDS.BASE],
-    GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE],
-    GRAPH_URLS[CHAIN_IDS.ZKSYNC],
-  ]
-
-  try {
-    const results = await Promise.all(
-      urls.map(url =>
-        url === GRAPH_URLS[CHAIN_IDS.BASE] ||
-        url === GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE] ||
-        url === GRAPH_URLS[CHAIN_IDS.ETH_MAINNET]
-          ? executeGraphCall(url, query2, variables)
-          : executeGraphCall(url, query1, variables),
-      ),
-    )
-    results.forEach(userBalanceVaultData => {
-      const balances = userBalanceVaultData.userBalances.concat(
-        userBalanceVaultData.plasmaUserBalances ? userBalanceVaultData.plasmaUserBalances : [],
-      )
-      balances.forEach(balance => {
-        userBalanceVaults.push(balance.vault?.id || balance.plasmaVault?.id)
-      })
-    })
-  } catch (err) {
-    console.error('Fetch data about user balance vaults failed: ', err)
-    userBalanceFlag = false
-  }
-  return { userBalanceVaults, userBalanceFlag }
-}
-
-export const getUserBalanceHistories = async (address, chainId, account) => {
+export const getUserBalanceHistories = async (address, chainId, account, isIPOR = false) => {
   let balanceData = [],
-    balanceFlag = true
+    balanceFlag = true,
+    query,
+    variables
 
-  address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   if (account) {
     account = account.toLowerCase()
   }
+  address = address.toLowerCase()
 
-  const query = `
-    query getUserBalanceHistories($vault: String!, $account: String!) {
-      userBalanceHistories(
-        first: 1000,
-        where: {
-          vault: $vault,
-          userAddress: $account,
-        },
-        orderBy: timestamp,
-        orderDirection: desc,
-      ) {
-        value, timestamp
+  if (isIPOR) {
+    query = `
+      query getUserBalanceHistories($vault: String!, $account: String!) {
+        plasmaUserBalanceHistories(
+          first: 1000,
+          where: {
+            plasmaVault: $vault,
+            userAddress: $account,
+          },
+          orderBy: timestamp,
+          orderDirection: desc,
+        ) {
+          value, timestamp, plasmaVault{id}
+        }
       }
-    }
-  `
-  const variables = address === farm ? { vault: ifarm, account } : { vault: address, account }
+    `
+  } else {
+    query = `
+      query getUserBalanceHistories($vault: String!, $account: String!) {
+        userBalanceHistories(
+          first: 1000,
+          where: {
+            vault: $vault,
+            userAddress: $account,
+          },
+          orderBy: timestamp,
+          orderDirection: desc,
+        ) {
+          value, timestamp, vault{id}
+        }
+      }
+    `
+  }
+
+  variables = address === farm ? { vault: ifarm, account } : { vault: address, account }
   const url = GRAPH_URLS[chainId]
 
-  const data = await executeGraphCall(url, query, variables)
-  balanceData = data?.userBalanceHistories
+  try {
+    const data = await executeGraphCall(url, query, variables)
+
+    if (isIPOR) {
+      balanceData = data?.plasmaUserBalanceHistories || []
+    } else {
+      balanceData = data?.userBalanceHistories || []
+    }
+  } catch (e) {
+    console.error('Error fetching user balance histories:', e)
+    return { balanceData: [], balanceFlag: false, error: e }
+  }
 
   if (!balanceData || balanceData.length === 0) {
     balanceFlag = false
   }
+
+  balanceData = balanceData.map(item => ({
+    ...item,
+    vaultId: isIPOR ? item.plasmaVault?.id : item.vault?.id,
+  }))
+
   return { balanceData, balanceFlag }
 }
 
-export const getIPORUserBalanceHistories = async (vaultAdr, chainId, account) => {
-  let balanceIPORData = {},
-    balanceIPORFlag = true
+export const getMultipleUserBalanceHistories = async (
+  addresses,
+  chainId,
+  account,
+  isIPOR = false,
+) => {
+  let balanceData = [],
+    balanceFlag = true,
+    query,
+    variables
 
   if (account) {
     account = account.toLowerCase()
   }
 
-  const query = `
-    query getUserBalanceHistories($account: String!, $vaultAdr: String!) {
-      plasmaUserBalanceHistories(
-        first: 1000,
-        where: {
-          plasmaVault: $vaultAdr,
-          userAddress: $account,
-        },
-        orderBy: timestamp,
-        orderDirection: desc,
-      ) {
-        value, timestamp
+  // Process addresses to lowercase and replace farm with ifarm
+  const processedAddresses = addresses.map(address => {
+    const lowerAddress = address.toLowerCase()
+    return lowerAddress === farm ? ifarm : lowerAddress
+  })
+
+  if (isIPOR) {
+    query = `
+      query getMultipleUserBalanceHistories($vaults: [String!]!, $account: String!) {
+        plasmaUserBalanceHistories(
+          first: 1000,
+          where: {
+            plasmaVault_in: $vaults,
+            userAddress: $account,
+          },
+          orderBy: timestamp,
+          orderDirection: desc,
+        ) {
+          value, timestamp, plasmaVault{id}
+        }
       }
-    }
-  `
-  const url = GRAPH_URLS[chainId]
-  try {
-    const data = await executeGraphCall(url, query, { account, vaultAdr })
-    balanceIPORData = data?.plasmaUserBalanceHistories
-  } catch (e) {
-    return e
+    `
+  } else {
+    query = `
+      query getMultipleUserBalanceHistories($vaults: [String!]!, $account: String!) {
+        userBalanceHistories(
+          first: 1000,
+          where: {
+            vault_in: $vaults,
+            userAddress: $account,
+          },
+          orderBy: timestamp,
+          orderDirection: desc,
+        ) {
+          value, timestamp, vault{id}
+        }
+      }
+    `
   }
 
-  if (!balanceIPORData || balanceIPORData.length === 0) {
-    balanceIPORFlag = false
+  variables = { vaults: processedAddresses, account }
+  const url = GRAPH_URLS[chainId]
+
+  try {
+    const data = await executeGraphCall(url, query, variables)
+
+    if (isIPOR) {
+      balanceData = data?.plasmaUserBalanceHistories || []
+    } else {
+      balanceData = data?.userBalanceHistories || []
+    }
+  } catch (e) {
+    console.error('Error fetching user balance histories:', e)
+    return { balanceFlag: false, error: e, groupedBalances: {} }
   }
-  return { balanceIPORData, balanceIPORFlag }
+
+  if (!balanceData || balanceData.length === 0) {
+    balanceFlag = false
+    return { balanceFlag: false, groupedBalances: {} }
+  }
+
+  const groupedBalances = balanceData.reduce((result, item) => {
+    const vaultId = isIPOR ? item.plasmaVault?.id : item.vault?.id
+
+    if (!vaultId) return result
+
+    if (!result[vaultId]) {
+      result[vaultId] = []
+    }
+
+    result[vaultId].push({
+      ...item,
+      vaultId, // Add vaultId directly to the item for easier access
+    })
+
+    return result
+  }, {})
+
+  return {
+    balanceFlag,
+    groupedBalances,
+  }
 }
 
 export const getIPORLastHarvestInfo = async (vaultAdr, chainId) => {
@@ -839,37 +994,6 @@ export const getIPORLastHarvestInfo = async (vaultAdr, chainId) => {
   return result
 }
 
-export const getIPORVaultHistories = async (chainId, vaultAdr) => {
-  let vaultHIPORData = {},
-    vaultHIPORFlag = true
-
-  const query = `
-    query  getVaultHistories($vaultAdr: String!){
-      plasmaVaultHistories(
-        where: {
-          plasmaVault: $vaultAdr,
-        },
-        first: 1000,
-        orderBy: timestamp,
-        orderDirection: desc
-      ) {
-        tvl, apy, priceUnderlying, sharePrice, timestamp
-      }
-    }
-  `
-  const variables = { vaultAdr }
-  const url = GRAPH_URLS[chainId]
-
-  const data = await executeGraphCall(url, query, variables)
-  vaultHIPORData = data?.plasmaVaultHistories
-
-  if (!vaultHIPORData || vaultHIPORData.length === 0) {
-    vaultHIPORFlag = false
-  }
-
-  return { vaultHIPORData, vaultHIPORFlag }
-}
-
 export const getPriceFeeds = async (
   address,
   chainId,
@@ -899,8 +1023,6 @@ export const getPriceFeeds = async (
   }
 
   address = address.toLowerCase()
-  const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
-  const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
   const nowTime = Math.floor(new Date().getTime() / 1000)
   const timestampQuery = timestamp && asQuery ? timestamp : nowTime
 
@@ -970,300 +1092,71 @@ const removeZeroValueObjects = data => {
   return data
 }
 
-export const initBalanceAndDetailData = async (
-  address,
-  chainId,
-  account,
+const processBalanceAndVaultData = (
+  balanceData,
+  vaultData,
   tokenDecimals,
-  isIPORVault = false,
   vaultDecimals = 8,
+  isIPORVault = false,
 ) => {
   const timestamps = []
   const uniqueVaultHData = []
   const updatedBalanceData = []
   const mergedData = []
-  let bFlag = false,
-    vHFlag = false,
-    enrichedData = [],
+  let enrichedData = [],
     sumNetChange = 0,
     sumNetChangeUsd = 0,
     sumLatestNetChange = 0,
     sumLatestNetChangeUsd = 0
 
-  if (!isIPORVault) {
-    const { balanceData, balanceFlag } = await getUserBalanceHistories(address, chainId, account)
-    const { vaultHData, vaultHFlag } = await getVaultHistories(address, chainId)
-    bFlag = balanceFlag
-    vHFlag = vaultHFlag
-
-    if (vaultHFlag) {
-      vaultHData.forEach(obj => {
-        if (!timestamps.includes(obj.timestamp)) {
-          timestamps.push(obj.timestamp)
-          const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
-          const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
-          uniqueVaultHData.push(modifiedObj)
-        }
-      })
-    }
-
-    if (balanceFlag && vaultHFlag) {
-      let uniqueData = [],
-        uniqueFixedData = [],
-        lastUserEvent = false,
-        lastUserEventUsd = false,
-        lastKnownSharePrice = null,
-        lastKnownPriceUnderlying = null
-
-      const bl = balanceData.length,
-        ul = uniqueVaultHData.length
-      if (balanceData[0].timestamp > uniqueVaultHData[0].timestamp) {
-        let i = 0,
-          z = 0,
-          addFlag = false
-
-        while (balanceData[i]?.timestamp > uniqueVaultHData[0].timestamp) {
-          balanceData[i].priceUnderlying = uniqueVaultHData[0].priceUnderlying
-          balanceData[i].sharePrice = uniqueVaultHData[0].sharePrice
-          mergedData.push(balanceData[i])
-          i += 1
-        }
-        while (i < bl) {
-          if (z < ul) {
-            while (uniqueVaultHData[z].timestamp >= balanceData[i].timestamp) {
-              uniqueVaultHData[z].value = balanceData[i].value
-              mergedData.push(uniqueVaultHData[z])
-              z += 1
-              if (!addFlag && uniqueVaultHData[z].timestamp === balanceData[i].timestamp) {
-                addFlag = true
-              }
-            }
-          }
-          if (!addFlag) {
-            balanceData[i].priceUnderlying = uniqueVaultHData[z === ul ? z - 1 : z].priceUnderlying
-            balanceData[i].sharePrice = uniqueVaultHData[z === ul ? z - 1 : z].sharePrice
-            mergedData.push(balanceData[i])
-          }
-          addFlag = false
-          i += 1
-        }
-        while (z < ul) {
-          uniqueVaultHData[z].value = 0
-          mergedData.push(uniqueVaultHData[z])
-          z += 1
-        }
-        while (i < bl) {
-          balanceData[i].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
-          balanceData[i].sharePrice = uniqueVaultHData[ul - 1].sharePrice
-          mergedData.push(balanceData[i])
-          i += 1
-        }
-      } else {
-        let i = 0,
-          z = 0,
-          addFlag = false
-        while (i < ul && uniqueVaultHData[i].timestamp > balanceData[0].timestamp) {
-          uniqueVaultHData[i].value = balanceData[0].value
-          mergedData.push(uniqueVaultHData[i])
-          i += 1
-        }
-        while (z < bl) {
-          if (i < ul) {
-            while (uniqueVaultHData[i].timestamp >= balanceData[z].timestamp) {
-              uniqueVaultHData[i].value = balanceData[z].value
-              mergedData.push(uniqueVaultHData[i])
-              i += 1
-              if (i >= ul) {
-                break
-              }
-              if (!addFlag && uniqueVaultHData[i].timestamp === balanceData[z].timestamp) {
-                addFlag = true
-              }
-            }
-          }
-          if (!addFlag) {
-            balanceData[z].priceUnderlying = uniqueVaultHData[i === ul ? i - 1 : i].priceUnderlying
-            balanceData[z].sharePrice = uniqueVaultHData[i === ul ? i - 1 : i].sharePrice
-            mergedData.push(balanceData[z])
-          }
-          addFlag = false
-          z += 1
-        }
-        while (i < ul) {
-          uniqueVaultHData[i].value = 0
-          mergedData.push(uniqueVaultHData[i])
-          i += 1
-        }
-        while (z < bl) {
-          balanceData[z].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
-          balanceData[z].sharePrice = uniqueVaultHData[ul - 1].sharePrice
-          mergedData.push(balanceData[z])
-          z += 1
-        }
-      }
-
-      const filteredData = removeZeroValueObjects(mergedData)
-
-      // Create a map to keep track of unique combinations of 'value' and 'sharePrice'
-      const map = new Map()
-      filteredData.forEach(item => {
-        const key = `${item.value}_${item.sharePrice}`
-        map.set(key, item)
-      })
-
-      // Convert the map back to an array
-      uniqueData = Array.from(map.values())
-      uniqueData.sort((a, b) => b.timestamp - a.timestamp)
-
-      uniqueFixedData = uniqueData.map(item => {
-        if (item.sharePrice === '0') {
-          item.sharePrice = lastKnownSharePrice !== null ? lastKnownSharePrice : item.sharePrice
-        } else {
-          lastKnownSharePrice = item.sharePrice
-        }
-
-        if (item.priceUnderlying === '0') {
-          item.priceUnderlying =
-            lastKnownPriceUnderlying !== null ? lastKnownPriceUnderlying : item.priceUnderlying
-        } else {
-          lastKnownPriceUnderlying = item.priceUnderlying
-        }
-
-        return item
-      })
-
-      enrichedData = uniqueFixedData
-        .map((item, index, array) => {
-          const nextItem = array[index + 1]
-          let event, balance, balanceUsd, netChange, netChangeUsd
-
-          if (Number(item.value) === 0) {
-            if (nextItem && Number(nextItem.value) === 0) {
-              return false
-            }
-            balance = '0'
-            balanceUsd = '0'
-          } else {
-            balance = Number(item.value) * Number(item.sharePrice)
-            balanceUsd = balance * Number(item.priceUnderlying)
-          }
-
-          if (nextItem) {
-            if (Number(item.value) === Number(nextItem.value)) {
-              event = 'Harvest'
-            } else if (Number(item.value) > Number(nextItem.value)) {
-              event = 'Convert'
-            } else {
-              event = 'Revert'
-            }
-
-            const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
-            netChange = balance - nextBalance
-            netChangeUsd = Number(netChange) * Number(item.priceUnderlying)
-          } else {
-            event = 'Convert'
-            netChange = balance
-            netChangeUsd = netChange * Number(item.priceUnderlying)
-          }
-
-          return {
-            ...item,
-            event,
-            balance,
-            balanceUsd,
-            netChange,
-            netChangeUsd,
-          }
-        })
-        .filter(Boolean)
-
-      sumNetChange = enrichedData.reduce((sumValue, item) => {
-        if (item.event === 'Harvest') {
-          return sumValue + item.netChange
-        }
-        return sumValue
-      }, 0)
-      sumNetChangeUsd = enrichedData.reduce((sumUsdValue, item) => {
-        if (item.event === 'Harvest') {
-          return sumUsdValue + item.netChangeUsd
-        }
-        return sumUsdValue
-      }, 0)
-
-      enrichedData.forEach(item => {
-        if (!lastUserEvent) {
-          if (item.event === 'Harvest') {
-            sumLatestNetChange += item.netChange
-          } else if (item.event === 'Convert' || item.event === 'Revert') {
-            lastUserEvent = true
-          }
-        }
-      })
-      enrichedData.forEach(item => {
-        if (!lastUserEventUsd) {
-          if (item.event === 'Harvest') {
-            sumLatestNetChangeUsd += item.netChangeUsd
-          } else if (item.event === 'Convert' || item.event === 'Revert') {
-            lastUserEventUsd = true
-          }
-        }
-      })
-    }
-  } else {
-    const { balanceIPORData: balanceData, balanceIPORFlag: balanceFlag } =
-      await getIPORUserBalanceHistories(address.toLowerCase(), chainId, account)
-    const { vaultHIPORData: vaultHData, vaultHIPORFlag: vaultHFlag } = await getIPORVaultHistories(
-      chainId,
-      address.toLowerCase(),
-    )
-    bFlag = balanceFlag
-    vHFlag = vaultHFlag
-
-    if (vaultHFlag) {
-      vaultHData.forEach(obj => {
-        if (!timestamps.includes(obj.timestamp)) {
-          timestamps.push(obj.timestamp)
-          const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
-          const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
-          uniqueVaultHData.push(modifiedObj)
-        }
-      })
-    }
-
-    if (balanceFlag) {
-      balanceData.forEach(obj => {
+  if (vaultData && vaultData.length > 0) {
+    vaultData.forEach(obj => {
+      if (!timestamps.includes(obj.timestamp)) {
         timestamps.push(obj.timestamp)
-        const valueDecimals = fromWei(obj.value, vaultDecimals, vaultDecimals)
-        const modifiedObj = { ...obj, value: valueDecimals }
-        updatedBalanceData.push(modifiedObj)
-      })
+        const sharePriceDecimals = fromWei(obj.sharePrice, tokenDecimals, tokenDecimals)
+        const modifiedObj = { ...obj, sharePrice: sharePriceDecimals }
+        uniqueVaultHData.push(modifiedObj)
+      }
+    })
+  }
+
+  if (isIPORVault && balanceData && balanceData.length > 0) {
+    balanceData.forEach(obj => {
+      timestamps.push(obj.timestamp)
+      const valueDecimals = fromWei(obj.value, vaultDecimals, vaultDecimals)
+      const modifiedObj = { ...obj, value: valueDecimals }
+      updatedBalanceData.push(modifiedObj)
+    })
+  }
+
+  if (balanceData && balanceData.length > 0 && uniqueVaultHData.length > 0) {
+    let uniqueData = [],
+      uniqueFixedData = [],
+      lastUserEvent = false,
+      lastUserEventUsd = false,
+      lastKnownSharePrice = null,
+      lastKnownPriceUnderlying = null
+
+    const processedBalanceData = isIPORVault ? updatedBalanceData : balanceData
+
+    if (isIPORVault) {
+      processedBalanceData.sort((a, b) => b.timestamp - a.timestamp)
+      uniqueVaultHData.sort((a, b) => b.timestamp - a.timestamp)
     }
 
-    if (balanceFlag && vaultHFlag) {
-      let uniqueData = [],
-        uniqueFixedData = [],
-        lastUserEvent = false,
-        lastUserEventUsd = false,
-        lastKnownSharePrice = null,
-        lastKnownPriceUnderlying = null,
-        i = 0,
+    const bl = processedBalanceData.length
+    const ul = uniqueVaultHData.length
+
+    if (isIPORVault) {
+      let i = 0,
         z = 0
-
-      const bl = updatedBalanceData.length,
-        ul = uniqueVaultHData.length
-
-      // Ensure both datasets are sorted by descending timestamps
-      updatedBalanceData.sort((a, b) => b.timestamp - a.timestamp)
-      uniqueVaultHData.sort((a, b) => b.timestamp - a.timestamp)
-
-      // Merge datasets
       while (i < bl || z < ul) {
         if (
           i < bl &&
-          (z >= ul || updatedBalanceData[i].timestamp > uniqueVaultHData[z]?.timestamp)
+          (z >= ul || processedBalanceData[i].timestamp > (uniqueVaultHData[z]?.timestamp || 0))
         ) {
           // Balance entry without a matching Vault entry
-          const balanceEntry = { ...updatedBalanceData[i] }
+          const balanceEntry = { ...processedBalanceData[i] }
           balanceEntry.priceUnderlying =
             uniqueVaultHData[z - 1]?.priceUnderlying || lastKnownPriceUnderlying
           balanceEntry.sharePrice = uniqueVaultHData[z - 1]?.sharePrice || lastKnownSharePrice
@@ -1274,136 +1167,365 @@ export const initBalanceAndDetailData = async (
         } else {
           // Vault entry, possibly matching a Balance entry
           const vaultEntry = { ...uniqueVaultHData[z] }
-          vaultEntry.value = updatedBalanceData[i]?.value || 0
+          vaultEntry.value = processedBalanceData[i]?.value || 0
           mergedData.push(vaultEntry)
           z += 1
         }
       }
+    } else {
+      if (processedBalanceData[0].timestamp > uniqueVaultHData[0].timestamp) {
+        let i = 0,
+          z = 0,
+          addFlag = false
 
-      // Filter out zero-value objects
-      const filteredData = removeZeroValueObjects(mergedData)
-
-      // Create unique data by combining similar entries
-      const map = new Map()
-      filteredData.forEach(item => {
-        const key = `${item.value}_${item.sharePrice}`
-        map.set(key, item)
-      })
-
-      uniqueData = Array.from(map.values())
-      uniqueData.sort((a, b) => b.timestamp - a.timestamp)
-
-      // Fix missing sharePrice and priceUnderlying values
-      uniqueFixedData = uniqueData.map(item => {
-        if (item.sharePrice === '0') {
-          item.sharePrice = lastKnownSharePrice !== null ? lastKnownSharePrice : item.sharePrice
-        } else {
-          lastKnownSharePrice = item.sharePrice
+        while (processedBalanceData[i]?.timestamp > uniqueVaultHData[0].timestamp) {
+          processedBalanceData[i].priceUnderlying = uniqueVaultHData[0].priceUnderlying
+          processedBalanceData[i].sharePrice = uniqueVaultHData[0].sharePrice
+          mergedData.push(processedBalanceData[i])
+          i += 1
         }
 
-        if (item.priceUnderlying === '0') {
-          item.priceUnderlying =
-            lastKnownPriceUnderlying !== null ? lastKnownPriceUnderlying : item.priceUnderlying
-        } else {
-          lastKnownPriceUnderlying = item.priceUnderlying
-        }
-
-        return item
-      })
-
-      // Enrich data
-      enrichedData = uniqueFixedData
-        .map((item, index, array) => {
-          const nextItem = array[index + 1]
-          let event, balance, balanceUsd, netChange, netChangeUsd
-
-          if (Number(item.value) === 0) {
-            if (nextItem && Number(nextItem.value) === 0) {
-              return false
+        while (i < bl) {
+          if (z < ul) {
+            while (z < ul && uniqueVaultHData[z].timestamp >= processedBalanceData[i].timestamp) {
+              uniqueVaultHData[z].value = processedBalanceData[i].value
+              mergedData.push(uniqueVaultHData[z])
+              z += 1
+              if (
+                z < ul &&
+                !addFlag &&
+                uniqueVaultHData[z]?.timestamp === processedBalanceData[i].timestamp
+              ) {
+                addFlag = true
+              }
             }
-            balance = '0'
-            balanceUsd = '0'
-          } else {
-            balance = Number(item.value) * Number(item.sharePrice)
-            balanceUsd = balance * Number(item.priceUnderlying)
           }
 
-          if (nextItem) {
-            if (Number(item.value) === Number(nextItem.value)) {
-              event = 'Harvest'
-            } else if (Number(item.value) > Number(nextItem.value)) {
-              event = 'Convert'
-            } else {
-              event = 'Revert'
+          if (!addFlag) {
+            processedBalanceData[i].priceUnderlying =
+              uniqueVaultHData[z === ul ? z - 1 : z]?.priceUnderlying ||
+              uniqueVaultHData[ul - 1].priceUnderlying
+            processedBalanceData[i].sharePrice =
+              uniqueVaultHData[z === ul ? z - 1 : z]?.sharePrice ||
+              uniqueVaultHData[ul - 1].sharePrice
+            mergedData.push(processedBalanceData[i])
+          }
+
+          addFlag = false
+          i += 1
+        }
+
+        while (z < ul) {
+          uniqueVaultHData[z].value = 0
+          mergedData.push(uniqueVaultHData[z])
+          z += 1
+        }
+
+        while (i < bl) {
+          processedBalanceData[i].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
+          processedBalanceData[i].sharePrice = uniqueVaultHData[ul - 1].sharePrice
+          mergedData.push(processedBalanceData[i])
+          i += 1
+        }
+      } else {
+        let i = 0,
+          z = 0,
+          addFlag = false
+
+        while (i < ul && uniqueVaultHData[i].timestamp > processedBalanceData[0].timestamp) {
+          uniqueVaultHData[i].value = processedBalanceData[0].value
+          mergedData.push(uniqueVaultHData[i])
+          i += 1
+        }
+
+        while (z < bl) {
+          if (i < ul) {
+            while (i < ul && uniqueVaultHData[i].timestamp >= processedBalanceData[z].timestamp) {
+              uniqueVaultHData[i].value = processedBalanceData[z].value
+              mergedData.push(uniqueVaultHData[i])
+              i += 1
+              if (i >= ul) {
+                break
+              }
+              if (
+                !addFlag &&
+                uniqueVaultHData[i]?.timestamp === processedBalanceData[z].timestamp
+              ) {
+                addFlag = true
+              }
             }
-
-            const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
-            netChange = balance - nextBalance
-            netChangeUsd = Number(netChange) * Number(item.priceUnderlying)
-          } else {
-            event = 'Convert'
-            netChange = balance
-            netChangeUsd = netChange * Number(item.priceUnderlying)
           }
 
-          return {
-            ...item,
-            event,
-            balance,
-            balanceUsd,
-            netChange,
-            netChangeUsd,
+          if (!addFlag) {
+            processedBalanceData[z].priceUnderlying =
+              uniqueVaultHData[i === ul ? i - 1 : i]?.priceUnderlying ||
+              uniqueVaultHData[ul - 1].priceUnderlying
+            processedBalanceData[z].sharePrice =
+              uniqueVaultHData[i === ul ? i - 1 : i]?.sharePrice ||
+              uniqueVaultHData[ul - 1].sharePrice
+            mergedData.push(processedBalanceData[z])
           }
-        })
-        .filter(Boolean)
 
-      // Calculate summary metrics
-      sumNetChange = enrichedData.reduce((sumValue, item) => {
-        if (item.event === 'Harvest') {
-          return sumValue + item.netChange
+          addFlag = false
+          z += 1
         }
-        return sumValue
-      }, 0)
 
-      sumNetChangeUsd = enrichedData.reduce((sumUsdValue, item) => {
-        if (item.event === 'Harvest') {
-          return sumUsdValue + item.netChangeUsd
+        while (i < ul) {
+          uniqueVaultHData[i].value = 0
+          mergedData.push(uniqueVaultHData[i])
+          i += 1
         }
-        return sumUsdValue
-      }, 0)
 
-      // Calculate latest net change values
-      enrichedData.forEach(item => {
-        if (!lastUserEvent) {
-          if (item.event === 'Harvest') {
-            sumLatestNetChange += item.netChange
-          } else if (item.event === 'Convert' || item.event === 'Revert') {
-            lastUserEvent = true
-          }
+        while (z < bl) {
+          processedBalanceData[z].priceUnderlying = uniqueVaultHData[ul - 1].priceUnderlying
+          processedBalanceData[z].sharePrice = uniqueVaultHData[ul - 1].sharePrice
+          mergedData.push(processedBalanceData[z])
+          z += 1
         }
-      })
-
-      enrichedData.forEach(item => {
-        if (!lastUserEventUsd) {
-          if (item.event === 'Harvest') {
-            sumLatestNetChangeUsd += item.netChangeUsd
-          } else if (item.event === 'Convert' || item.event === 'Revert') {
-            lastUserEventUsd = true
-          }
-        }
-      })
+      }
     }
+
+    const filteredData = removeZeroValueObjects(mergedData)
+
+    const map = new Map()
+    filteredData.forEach(item => {
+      const key = `${item.value}_${item.sharePrice}`
+      map.set(key, item)
+    })
+
+    uniqueData = Array.from(map.values())
+    uniqueData.sort((a, b) => b.timestamp - a.timestamp)
+
+    uniqueFixedData = uniqueData.map(item => {
+      if (item.sharePrice === '0') {
+        item.sharePrice = lastKnownSharePrice !== null ? lastKnownSharePrice : item.sharePrice
+      } else {
+        lastKnownSharePrice = item.sharePrice
+      }
+
+      if (item.priceUnderlying === '0') {
+        item.priceUnderlying =
+          lastKnownPriceUnderlying !== null ? lastKnownPriceUnderlying : item.priceUnderlying
+      } else {
+        lastKnownPriceUnderlying = item.priceUnderlying
+      }
+
+      return item
+    })
+
+    enrichedData = uniqueFixedData
+      .map((item, index, array) => {
+        const nextItem = array[index + 1]
+        let event, balance, balanceUsd, netChange, netChangeUsd
+
+        if (Number(item.value) === 0) {
+          if (nextItem && Number(nextItem.value) === 0) {
+            return false
+          }
+          balance = '0'
+          balanceUsd = '0'
+        } else {
+          balance = Number(item.value) * Number(item.sharePrice)
+          balanceUsd = balance * Number(item.priceUnderlying)
+        }
+
+        if (nextItem) {
+          if (Number(item.value) === Number(nextItem.value)) {
+            event = 'Harvest'
+          } else if (Number(item.value) > Number(nextItem.value)) {
+            event = 'Convert'
+          } else {
+            event = 'Revert'
+          }
+
+          const nextBalance = Number(nextItem.value) * Number(nextItem.sharePrice)
+          netChange = balance - nextBalance
+          netChangeUsd = Number(netChange) * Number(item.priceUnderlying)
+        } else {
+          event = 'Convert'
+          netChange = balance
+          netChangeUsd = netChange * Number(item.priceUnderlying)
+        }
+
+        return {
+          ...item,
+          event,
+          balance,
+          balanceUsd,
+          netChange,
+          netChangeUsd,
+        }
+      })
+      .filter(Boolean)
+
+    sumNetChange = enrichedData.reduce((sumValue, item) => {
+      if (item.event === 'Harvest') {
+        return sumValue + item.netChange
+      }
+      return sumValue
+    }, 0)
+
+    sumNetChangeUsd = enrichedData.reduce((sumUsdValue, item) => {
+      if (item.event === 'Harvest') {
+        return sumUsdValue + item.netChangeUsd
+      }
+      return sumUsdValue
+    }, 0)
+
+    // Calculate latest net change values
+    enrichedData.forEach(item => {
+      if (!lastUserEvent) {
+        if (item.event === 'Harvest') {
+          sumLatestNetChange += item.netChange
+        } else if (item.event === 'Convert' || item.event === 'Revert') {
+          lastUserEvent = true
+        }
+      }
+    })
+
+    enrichedData.forEach(item => {
+      if (!lastUserEventUsd) {
+        if (item.event === 'Harvest') {
+          sumLatestNetChangeUsd += item.netChangeUsd
+        } else if (item.event === 'Convert' || item.event === 'Revert') {
+          lastUserEventUsd = true
+        }
+      }
+    })
   }
 
   return {
-    bFlag,
-    vHFlag,
     sumNetChange,
     sumNetChangeUsd,
     sumLatestNetChange,
     sumLatestNetChangeUsd,
     enrichedData,
     uniqueVaultHData,
+  }
+}
+
+export const initBalanceAndDetailData = async (
+  address,
+  chainId,
+  account,
+  tokenDecimals,
+  isIPORVault = false,
+  vaultDecimals = 8,
+) => {
+  let bFlag = false,
+    vHFlag = false,
+    balanceData,
+    vaultData
+  address = address.toLowerCase()
+
+  const balanceResult = await getUserBalanceHistories(address, chainId, account, isIPORVault)
+  const vaultResult = await getVaultHistories(address, chainId, isIPORVault)
+
+  balanceData = balanceResult.balanceData
+  vaultData = vaultResult.vaultHData
+  bFlag = balanceResult.balanceFlag
+  vHFlag = vaultResult.vaultHFlag
+
+  const result = processBalanceAndVaultData(
+    balanceData,
+    vaultData,
+    tokenDecimals,
+    vaultDecimals,
+    isIPORVault,
+  )
+
+  return {
+    bFlag,
+    vHFlag,
+    ...result,
+  }
+}
+
+export const initMultipleBalanceAndDetailData = async (
+  addresses,
+  chainId,
+  account,
+  isIPORVault = false,
+  vaultDataMap = null,
+) => {
+  const balanceResult = await getMultipleUserBalanceHistories(
+    addresses,
+    chainId,
+    account,
+    isIPORVault,
+  )
+  const vaultResult = await getMultiVaultHistories(addresses, chainId, isIPORVault)
+
+  const balancesData = balanceResult.groupedBalances
+  const vaultsData = vaultResult.groupedHistories
+  const bFlag = balanceResult.balanceFlag
+  const vHFlag = vaultResult.vaultHFlag
+
+  // Initialize result objects
+  const processedResults = {}
+  let totalSumNetChange = 0,
+    totalSumNetChangeUsd = 0,
+    totalSumLatestNetChange = 0,
+    totalSumLatestNetChangeUsd = 0,
+    allEnrichedData = []
+
+  const vaultIds = new Set([...Object.keys(balancesData), ...Object.keys(vaultsData)])
+
+  for (const vaultId of vaultIds) {
+    const balanceData = balancesData[vaultId] || []
+    const vaultHistoryData = vaultsData[vaultId] || []
+
+    if (balanceData.length === 0 || vaultHistoryData.length === 0) {
+      continue
+    }
+
+    const defaultTokenDecimals = 18
+    const defaultVaultDecimals = 8
+
+    let vaultTokenDecimals = defaultTokenDecimals,
+      vaultVaultDecimals = defaultVaultDecimals
+
+    if (vaultDataMap && vaultId in vaultDataMap && vaultDataMap[vaultId]) {
+      vaultTokenDecimals = vaultDataMap[vaultId].tokenDecimals || defaultTokenDecimals
+      vaultVaultDecimals = vaultDataMap[vaultId].vaultDecimals || defaultVaultDecimals
+    }
+
+    const result = processBalanceAndVaultData(
+      balanceData,
+      vaultHistoryData,
+      vaultTokenDecimals,
+      vaultVaultDecimals,
+      isIPORVault,
+    )
+
+    processedResults[vaultId] = result
+
+    totalSumNetChange += result.sumNetChange || 0
+    totalSumNetChangeUsd += result.sumNetChangeUsd || 0
+    totalSumLatestNetChange += result.sumLatestNetChange || 0
+    totalSumLatestNetChangeUsd += result.sumLatestNetChangeUsd || 0
+
+    if (result.enrichedData && result.enrichedData.length > 0) {
+      const vaultEnrichedData = result.enrichedData.map(item => ({
+        ...item,
+        vaultId,
+      }))
+      allEnrichedData = allEnrichedData.concat(vaultEnrichedData)
+    }
+  }
+
+  allEnrichedData.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
+
+  return {
+    bFlag,
+    vHFlag,
+    sumNetChange: totalSumNetChange,
+    sumNetChangeUsd: totalSumNetChangeUsd,
+    sumLatestNetChange: totalSumLatestNetChange,
+    sumLatestNetChangeUsd: totalSumLatestNetChangeUsd,
+    enrichedData: allEnrichedData,
+    processedResults, // Individual results for each vault
+    vaultIds: Array.from(vaultIds), // List of processed vault IDs
   }
 }
 
@@ -1472,4 +1594,85 @@ export const getPlasmaVaultHistory = async (address, chainId) => {
   )
   const data = response.data.history
   return data
+}
+
+export const getUserBalanceVaults = async (account, isPortfolio = false) => {
+  const userBalanceVaults = []
+  let userBalanceFlag = true
+  if (account) {
+    account = account.toLowerCase()
+  }
+
+  const query1 = `
+    query getUserVaults($account: String!) {
+      userBalances(
+        where: {
+          userAddress: $account,
+        }
+      ) {
+        vault{ id }
+        value
+      }
+    }
+  `
+
+  const query2 = `
+    query getUserVaults($account: String!) {
+      userBalances(
+        where: {
+          userAddress: $account,
+        }
+      ) {
+        vault{ id }
+        value
+      }
+      plasmaUserBalances(
+        where: {
+          userAddress: $account,
+        }
+      ) {
+        plasmaVault{id}
+        value
+      }
+    }
+  `
+
+  const variables = { account }
+  const urls = [
+    GRAPH_URLS[CHAIN_IDS.ETH_MAINNET],
+    GRAPH_URLS[CHAIN_IDS.POLYGON_MAINNET],
+    GRAPH_URLS[CHAIN_IDS.BASE],
+    GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE],
+    GRAPH_URLS[CHAIN_IDS.ZKSYNC],
+  ]
+
+  try {
+    const results = await Promise.all(
+      urls.map(url =>
+        url === GRAPH_URLS[CHAIN_IDS.BASE] ||
+        url === GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE] ||
+        url === GRAPH_URLS[CHAIN_IDS.ETH_MAINNET]
+          ? executeGraphCall(url, query2, variables)
+          : executeGraphCall(url, query1, variables),
+      ),
+    )
+    results.forEach(userBalanceVaultData => {
+      const balances = userBalanceVaultData.userBalances.concat(
+        userBalanceVaultData.plasmaUserBalances ? userBalanceVaultData.plasmaUserBalances : [],
+      )
+      balances.forEach(balance => {
+        if (isPortfolio) {
+          if (parseFloat(balance.value) > 0) {
+            userBalanceVaults.push(balance.vault?.id || balance.plasmaVault?.id)
+          }
+        } else {
+          userBalanceVaults.push(balance.vault?.id || balance.plasmaVault?.id)
+        }
+      })
+    })
+  } catch (err) {
+    console.error('Fetch data about user balance vaults failed: ', err)
+    userBalanceFlag = false
+  }
+  return { userBalanceVaults, userBalanceFlag }
 }
