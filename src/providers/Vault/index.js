@@ -16,14 +16,14 @@ import useEffectWithPrevious from 'use-effect-with-previous'
 import { VAULTS_API_ENDPOINT } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import {
-  getWeb3,
+  getViem,
   hasValidUpdatedBalance,
   newContractInstance,
   pollUpdatedBalance,
   // ledgerWeb3,
-} from '../../services/web3'
-import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
-import vaultContractData from '../../services/web3/contracts/vault/contract.json'
+} from '../../services/viem'
+import univ3ContractData from '../../services/viem/contracts/uniswap-v3/contract.json'
+import vaultContractData from '../../services/viem/contracts/vault/contract.json'
 import {
   abbreaviteNumber,
   isSpecialApp,
@@ -43,7 +43,7 @@ importedVaults.IFARM.id = 'IFARM' // Ensure IFARM vault has the correct i
 
 const VaultsProvider = _ref => {
   const { children } = _ref
-  const { account, chainId, web3, selChain, logout } = useWallet()
+  const { account, chainId, viem, selChain, logout } = useWallet()
   const { pools, userStats } = usePools()
   const [loadingVaults, setLoadingVaults] = useState(true)
   const [loadingFarmingBalances, setLoadingFarmingBalances] = useState(false)
@@ -56,7 +56,7 @@ const VaultsProvider = _ref => {
       ),
     [selChain, vaultsData, chainId],
   )
-  const loadedUserVaultsWeb3Provider = useRef(false)
+  const loadedUserVaultsViemProvider = useRef(false)
   const setFormattedVaults = useCallback(
     async (apiData, apiFailed) => {
       const formattedVaults = {}
@@ -73,7 +73,7 @@ const VaultsProvider = _ref => {
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
         try {
-          let web3Client = await getWeb3(vaultChain, account),
+          let viemClient = await getViem(vaultChain, account),
             estimatedApy = null,
             estimatedApyBreakdown = [],
             usdPrice = null,
@@ -92,10 +92,10 @@ const VaultsProvider = _ref => {
             uniswapV3ManagedData = null,
             dataFetched = false
           if (!isSpecialApp) {
-            web3Client = web3
+            viemClient = viem
           }
           if (vaultChain !== chainId) {
-            web3Client = await getWeb3(vaultChain, false)
+            viemClient = await getViem(vaultChain, false)
           }
           const tokenPool = pools.find(
             pool => pool.collateralAddress === importedVaults[vaultSymbol].vaultAddress,
@@ -106,7 +106,7 @@ const VaultsProvider = _ref => {
             null,
             importedVaults[vaultSymbol].vaultAddress,
             hasMultipleAssets ? univ3ContractData.abi : vaultContractData.abi,
-            web3Client,
+            viemClient,
           )
 
           if (apiData && apiData[vaultSymbol]) {
@@ -184,12 +184,12 @@ const VaultsProvider = _ref => {
       })
 
       if (account) {
-        loadedUserVaultsWeb3Provider.current = true
+        loadedUserVaultsViemProvider.current = true
       }
 
       setVaults(formattedVaults)
     },
-    [pools, account, chainId, web3],
+    [pools, account, chainId, viem],
   )
   const getFarmingBalances = useCallback(
     async function (selectedVaults, selectedBalances, updatedUserStats) {
@@ -199,7 +199,7 @@ const VaultsProvider = _ref => {
 
       const fetchedBalances = {}
 
-      if (loadedUserVaultsWeb3Provider.current) {
+      if (loadedUserVaultsViemProvider.current) {
         setLoadingFarmingBalances(true)
         const curStats = updatedUserStats || userStats
         if (curStats.length !== 0) {
@@ -287,7 +287,7 @@ const VaultsProvider = _ref => {
     _ref2 => {
       const [prevAccount] = _ref2
 
-      if (account !== prevAccount && account && !loadedUserVaultsWeb3Provider.current) {
+      if (account !== prevAccount && account && !loadedUserVaultsViemProvider.current) {
         setFormattedVaults(vaultsData)
       }
     },
@@ -304,7 +304,7 @@ const VaultsProvider = _ref => {
         symbols: Object.keys(loadedVaults),
         farmingBalances,
         getFarmingBalances,
-        loadedUserVaultsWeb3Provider: loadedUserVaultsWeb3Provider.current,
+        loadedUserVaultsViemProvider: loadedUserVaultsViemProvider.current,
       },
     },
     children,

@@ -3,7 +3,7 @@ import { useMediaQuery } from 'react-responsive'
 import ReactHtmlParser from 'react-html-parser'
 import { HalfInfo, NewLabel, DescInfo, FlexDiv, InfoLabel } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { getExplorerLink } from '../../../services/web3'
+import { getExplorerLink } from '../../../services/viem'
 
 const SourceOfYield = params => {
   const {

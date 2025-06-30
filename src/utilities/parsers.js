@@ -8,7 +8,7 @@ import Base from '../assets/images/chains/base.svg'
 import Zksync from '../assets/images/chains/zksync.svg'
 import Ethereum from '../assets/images/chains/ethereum.svg'
 import Polygon from '../assets/images/chains/polygon.svg'
-import { fromWei } from '../services/web3'
+import { fromWei } from '../services/viem'
 import {
   getAllRewardEntities,
   getUserBalanceVaults,

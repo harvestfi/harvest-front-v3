@@ -8,7 +8,7 @@ import { CiSettings } from 'react-icons/ci'
 import { useNavigate } from 'react-router-dom'
 import { Spinner } from 'react-bootstrap'
 import { useWallet } from '../../../providers/Wallet'
-import { toWei, fromWei, getWeb3, checkNativeToken } from '../../../services/web3'
+import { toWei, fromWei, getViem, checkNativeToken } from '../../../services/viem'
 import { isSpecialApp, showTokenBalance } from '../../../utilities/formats'
 import { FTokenInfo, IconCard, ImgBtn } from '../PositionModal/style'
 import { usePortals } from '../../../providers/Portals'
@@ -83,7 +83,7 @@ const MigrateStart = ({
   const [slippageBtnLabel, setSlippageBtnLabel] = useState('Save')
   const [showNote, setShowNote] = useState(false)
 
-  const { account, chainId, web3 } = useWallet()
+  const { account, chainId, viem } = useWallet()
   const { getPortalsEstimate, getPortalsToken, getPortals, getPortalsApproval, portalsApprove } =
     usePortals()
   const { userStats, fetchUserPoolStats } = usePools()
@@ -333,7 +333,7 @@ const MigrateStart = ({
   ])
 
   const onDeposit = async () => {
-    const mainWeb = await getWeb3(chainId, account, web3)
+    const mainViem = await getViem(chainId, account, viem)
 
     const portalData = await getPortals({
       chainId,
@@ -344,11 +344,11 @@ const MigrateStart = ({
       slippage: slippagePercentage,
     })
 
-    await mainWeb.eth.sendTransaction({
-      from: portalData.tx.from,
-      data: portalData.tx.data,
+    await mainViem.sendTransaction({
+      account,
       to: portalData.tx.to,
-      value: portalData.tx.value,
+      data: portalData.tx.data,
+      value: portalData.tx.value ? BigInt(portalData.tx.value) : undefined,
     })
 
     const receiveString = portalData
@@ -375,11 +375,12 @@ const MigrateStart = ({
 
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, pickedToken.address, amnt.toString())
-    const mainWeb = await getWeb3(chainId, account, web3)
-    await mainWeb.eth.sendTransaction({
-      from: account,
-      data: approve.data,
+    const mainViem = await getViem(chainId, account, viem)
+    await mainViem.sendTransaction({
+      account,
       to: approve.to,
+      data: approve.data,
+      value: approve.value ? BigInt(approve.value) : undefined,
     })
   }
 

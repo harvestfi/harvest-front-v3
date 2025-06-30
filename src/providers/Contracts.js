@@ -1,38 +1,38 @@
 import React, { createContext, useContext, useState, useEffect } from 'react'
 import promiseObject from 'promise-all-object'
-import importedContracts from '../services/web3/contracts'
+import importedContracts from '../services/viem/contracts'
 import {
   newContractInstance,
   newIPORContractInstance,
-  maticWeb3,
-  arbitrumWeb3,
-  baseWeb3,
-  zksyncWeb3,
-  infuraWeb3,
-} from '../services/web3'
+  maticVIem,
+  arbitrumViem,
+  baseViem,
+  zksyncViem,
+  infuraViem,
+} from '../services/viem'
 import { CHAIN_IDS } from '../data/constants'
 
 const ContractsContext = createContext()
 const useContracts = () => useContext(ContractsContext)
 
-const getWeb3 = chainId => {
+const getViem = chainId => {
   if (chainId === CHAIN_IDS.POLYGON_MAINNET) {
-    return maticWeb3
+    return maticVIem
   }
 
   if (chainId === CHAIN_IDS.ARBITRUM_ONE) {
-    return arbitrumWeb3
+    return arbitrumViem
   }
 
   if (chainId === CHAIN_IDS.BASE) {
-    return baseWeb3
+    return baseViem
   }
 
   if (chainId === CHAIN_IDS.ZKSYNC) {
-    return zksyncWeb3
+    return zksyncViem
   }
 
-  return infuraWeb3
+  return infuraViem
 }
 
 const ContractsProvider = _ref => {
@@ -50,7 +50,7 @@ const ContractsProvider = _ref => {
                 contract,
                 null,
                 null,
-                getWeb3(importedContracts[contract].chain),
+                getViem(importedContracts[contract].chain),
               ),
               methods: importedContracts[contract].methods,
               address: importedContracts[contract].contract.address,
@@ -63,7 +63,7 @@ const ContractsProvider = _ref => {
                 instance: newIPORContractInstance(
                   importedContracts.iporVaults[iporContract].contract.address,
                   importedContracts.iporVaults[iporContract].contract.abi,
-                  getWeb3(importedContracts.iporVaults[iporContract].chain),
+                  getViem(importedContracts.iporVaults[iporContract].chain),
                 ),
                 methods: importedContracts.iporVaults[iporContract].methods,
                 address: importedContracts.iporVaults[iporContract].contract.address,

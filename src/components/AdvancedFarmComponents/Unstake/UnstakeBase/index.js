@@ -10,7 +10,7 @@ import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
 import { useWallet } from '../../../../providers/Wallet'
 import { isSpecialApp } from '../../../../utilities/formats'
-import { fromWei, toWei } from '../../../../services/web3'
+import { fromWei, toWei } from '../../../../services/viem'
 import Button from '../../../Button'
 import {
   BalanceInfo,

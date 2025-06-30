@@ -8,7 +8,7 @@ import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import {
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,

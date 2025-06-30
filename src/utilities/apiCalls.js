@@ -9,7 +9,7 @@ import {
   LEADERBOARD_API_ENDPOINT,
   IPOR_API_URL,
 } from '../constants'
-import { fromWei } from '../services/web3'
+import { fromWei } from '../services/viem'
 
 const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 

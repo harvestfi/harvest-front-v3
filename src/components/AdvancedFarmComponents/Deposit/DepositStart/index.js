@@ -26,7 +26,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { fromWei, toWei, getWeb3 } from '../../../../services/web3'
+import { fromWei, toWei, getViem } from '../../../../services/viem'
 import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,
@@ -80,7 +80,7 @@ const DepositStart = ({
     borderColor,
     btnHoverColor,
   } = useThemeContext()
-  const { account, web3, approvedBalances, getWalletBalances } = useWallet()
+  const { account, viem, approvedBalances, getWalletBalances } = useWallet()
   const navigate = useNavigate()
   const { fetchUserPoolStats, userStats } = usePools()
   const { getPortalsApproval, portalsApprove, getPortals } = usePortals()
@@ -152,7 +152,7 @@ const DepositStart = ({
   }
 
   const onDeposit = async () => {
-    const mainWeb = await getWeb3(chainId, account, web3)
+    const mainViem = await getViem(chainId, account, viem)
 
     const portalData = await getPortals({
       chainId,
@@ -163,11 +163,11 @@ const DepositStart = ({
       slippage: slippagePercentage,
     })
 
-    await mainWeb.eth.sendTransaction({
-      from: portalData.tx.from,
-      data: portalData.tx.data,
+    await mainViem.sendTransaction({
+      account,
       to: portalData.tx.to,
-      value: portalData.tx.value,
+      data: portalData.tx.data,
+      value: portalData.tx.value ? BigInt(portalData.tx.value) : undefined,
     })
 
     const receiveString = portalData
@@ -198,11 +198,12 @@ const DepositStart = ({
 
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, pickedToken.address, amnt.toString())
-    const mainWeb = await getWeb3(chainId, account, web3)
-    await mainWeb.eth.sendTransaction({
-      from: account,
-      data: approve.data,
+    const mainViem = await getViem(chainId, account, viem)
+    await mainViem.sendTransaction({
+      account,
       to: approve.to,
+      data: approve.data,
+      value: approve.value ? BigInt(approve.value) : undefined,
     })
   }
 
@@ -314,6 +315,8 @@ const DepositStart = ({
           setButtonName('Pending Confirmation in Wallet')
           setStartSpinner(true)
           await onDeposit()
+          await getWalletBalances([tokenSym], false, true)
+          await fetchUserPoolStats([vaultPool], account, userStats)
         } catch (err) {
           setDepositFailed(true)
           setStartSpinner(false)
@@ -326,6 +329,7 @@ const DepositStart = ({
       // End Approve and Deposit successfully
       if (isSuccess) {
         await getWalletBalances([tokenSym], false, true)
+        await fetchUserPoolStats([vaultPool], account, userStats)
         setStartSpinner(false)
         setDepositFailed(false)
         setProgressStep(4)

@@ -35,7 +35,7 @@ import {
   getTimeSlots,
 } from '../../../utilities/parsers'
 import { ChartWrapper, LoadingDiv, NoData } from './style'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import { useRate } from '../../../providers/Rate'
 
 function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {

@@ -18,7 +18,7 @@ import { useActions } from '../../../providers/Actions'
 import { isSpecialApp } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useContracts } from '../../../providers/Contracts'
-import { toWei } from '../../../services/web3'
+import { toWei } from '../../../services/viem'
 import Button from '../../Button'
 import {
   FTokenInfo,
@@ -58,7 +58,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
 
   const [startSpinner, setStartSpinner] = useState(false)
 
-  const unsubscribeAmount = toWei(inputAmount, token.decimals)
+  const unsubscribeAmount = toWei(inputAmount, token.vaultDecimals)
 
   const onClickUnsubscrbie = async () => {
     if (progressStep === 0) {
@@ -68,9 +68,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
       let bSuccessUnsubscribe = false
       try {
         const vaultContract = contracts.iporVaults[token.id]
-        let shareAmt = new BigNumber(
-          await vaultContract.methods.convertToShares(vaultContract.instance, unsubscribeAmount),
-        )
+        let shareAmt = new BigNumber(unsubscribeAmount)
         const vaultBalanceWei = new BigNumber(
           await vaultContract.methods.getBalanceOf(vaultContract.instance, account),
         )
@@ -192,9 +190,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
               </NewLabel>
               <NewLabel $display="flex" $flexflow="column" $weight="600" $align="right">
                 <>{inputAmount !== '' ? inputAmount : <AnimatedDots />}</>
-                <span>
-                  {token.tokenNames.length > 0 ? `${token?.tokenNames[0]}` : <AnimatedDots />}
-                </span>
+                <span>{token?.vaultSymbol ? `${token?.vaultSymbol}` : <AnimatedDots />}</span>
               </NewLabel>
             </NewLabel>
           </NewLabel>

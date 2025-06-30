@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { fromWei } from '../../../../services/web3'
+import { fromWei } from '../../../../services/viem'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import {

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { find, get, isUndefined } from 'lodash'
+import { get, isUndefined } from 'lodash'
 // import { forEach } from 'promised-loops'
 import React, { createContext, useCallback, useContext } from 'react'
 import { toast } from 'react-toastify'
@@ -10,34 +10,23 @@ import {
   UNIV3_SLIPPAGE_TOLERANCE,
   UNIV3_TOLERANCE,
 } from '../constants'
-import {
-  formatWeb3PluginErrorMessage,
-  newContractInstance,
-  maxUint256,
-  getWeb3,
-} from '../services/web3'
-import amplifierMethods from '../services/web3/contracts/amplifier/methods'
-import boostStakingMethods from '../services/web3/contracts/boost-staking/methods'
-import poolContractData from '../services/web3/contracts/pool/contract.json'
-import poolMethods from '../services/web3/contracts/pool/methods'
-import iporVaultData from '../services/web3/contracts/ipor-vault/contract.json'
-import iporVaultMethods from '../services/web3/contracts/ipor-vault/methods'
-import tokenContractData from '../services/web3/contracts/token/contract.json'
-import tokenMethods from '../services/web3/contracts/token/methods'
-import uniStatusViewerContractData from '../services/web3/contracts/unistatus-viewer/contract.json'
-import uniStatusViewerContractMethods from '../services/web3/contracts/unistatus-viewer/methods'
-import univ3Methods from '../services/web3/contracts/uniswap-v3/methods'
-import vaultMethods from '../services/web3/contracts/vault/methods'
+import { formatViemPluginErrorMessage, newContractInstance, getViem } from '../services/viem'
+import poolMethods from '../services/viem/contracts/pool/methods'
+import iporVaultData from '../services/viem/contracts/ipor-vault/contract.json'
+import iporVaultMethods from '../services/viem/contracts/ipor-vault/methods'
+import tokenMethods from '../services/viem/contracts/token/methods'
+import univ3Methods from '../services/viem/contracts/uniswap-v3/methods'
+import vaultMethods from '../services/viem/contracts/vault/methods'
 import { CustomException } from '../utilities/formats'
 import { useWallet } from './Wallet'
 
-const { tokens, pools } = require('../data')
+const { tokens } = require('../data')
 
 const ActionsContext = createContext()
 const useActions = () => useContext(ActionsContext)
 
 const ActionsProvider = ({ children }) => {
-  const { web3 } = useWallet
+  const { viem } = useWallet
   const handleApproval = useCallback(
     async (
       account,
@@ -49,11 +38,12 @@ const ActionsProvider = ({ children }) => {
       onSuccessApproval = () => {},
       onFailureApproval = () => {},
     ) => {
-      const address = vaultAddress || tokens[tokenSymbol].vaultAddress
+      const address = vaultAddress || tokens[tokenSymbol]?.vaultAddress
       try {
         if (poolData) {
+          const poolAddress = poolData.autoStakePoolAddress || poolData.contractAddress
           await tokenMethods.approve(
-            poolData.autoStakePoolAddress || poolData.contractAddress,
+            poolAddress,
             account,
             amountToApprove,
             poolData.lpTokenData.localInstance,
@@ -61,252 +51,24 @@ const ActionsProvider = ({ children }) => {
         } else {
           const contract =
             contracts[tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol]
-          const web3Instance = await getWeb3(false, account, web3)
-          contract.instance.setProvider(web3Instance)
-          await contract.methods.approve(address, account, amountToApprove, contract.instance)
+          const viemClient = await getViem(false, account, viem)
+          if (contract.instance && typeof contract.instance.setProvider === 'function') {
+            contract.instance.setProvider(viemClient)
+          }
+          await tokenMethods.approve(address, account, amountToApprove, contract.instance)
         }
 
         await onSuccessApproval()
 
-        // toast.success(
-        //   `${get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(
-        //     ', ',
-        //   )} approval completed`,
-        // )
-
         return false
       } catch (err) {
-        const errorMessage = formatWeb3PluginErrorMessage(err)
+        const errorMessage = formatViemPluginErrorMessage(err)
         toast.error(errorMessage)
         onFailureApproval()
         return true
       }
     },
-    [web3],
-  )
-
-  const handleOldApproval = useCallback(
-    async (
-      account,
-      contracts,
-      tokenSymbol,
-      vaultAddress,
-      poolData,
-      setPendingAction,
-      onSuccessApproval = () => {},
-      onFailureApproval = () => {},
-    ) => {
-      const address = vaultAddress || tokens[tokenSymbol].vaultAddress
-      try {
-        if (poolData) {
-          await tokenMethods.approve(
-            poolData.autoStakePoolAddress || poolData.contractAddress,
-            account,
-            maxUint256(),
-            poolData.lpTokenData.localInstance,
-          )
-        } else {
-          const contract =
-            contracts[tokenSymbol === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : tokenSymbol]
-          const web3Instance = await getWeb3(false, account, web3)
-          contract.instance.setProvider(web3Instance)
-          await contract.methods.approve(address, account, maxUint256(), contract.instance)
-        }
-
-        await onSuccessApproval()
-
-        toast.success(
-          `${get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(
-            ', ',
-          )} approval completed`,
-        )
-
-        return false
-      } catch (err) {
-        setPendingAction(null)
-        const errorMessage = formatWeb3PluginErrorMessage(err)
-        toast.error(errorMessage)
-        onFailureApproval()
-        return true
-      }
-    },
-    [web3],
-  )
-
-  const handleMigrate = useCallback(
-    async (
-      setPendingAction,
-      migrationInfo,
-      lpAmount,
-      vaultData,
-      fAssetSymbol,
-      account,
-      onSuccess = () => {},
-      autoStake,
-      zap,
-    ) => {
-      const { lpTokenAddress, lpTokenName } = migrationInfo
-
-      const tokenInstance = await newContractInstance(null, lpTokenAddress, tokenContractData.abi)
-
-      const currApprovedBalance = await tokenMethods.getApprovedAmount(
-        account,
-        vaultData.vaultAddress,
-        tokenInstance,
-      )
-
-      let approved = true
-      if (new BigNumber(currApprovedBalance).lt(lpAmount)) {
-        setPendingAction(ACTIONS.APPROVE_MIGRATE)
-
-        try {
-          await tokenMethods.approve(vaultData.vaultAddress, account, maxUint256(), tokenInstance)
-
-          toast.success(`${lpTokenName} approval completed`)
-
-          approved = true
-        } catch (err) {
-          setPendingAction(null)
-          const errorMessage = formatWeb3PluginErrorMessage(err)
-          toast.error(errorMessage)
-          approved = false
-        }
-      }
-
-      if (approved) {
-        try {
-          setPendingAction(ACTIONS.MIGRATE)
-          const viewerContractInstance = await newContractInstance(
-            null,
-            uniStatusViewerContractData.address,
-            uniStatusViewerContractData.abi,
-          )
-
-          const quote = await uniStatusViewerContractMethods.quoteV2Migration(
-            vaultData.tokenAddress[0],
-            vaultData.tokenAddress[1],
-            lpAmount,
-            viewerContractInstance,
-          )
-          const sqrtRatioX96 = await univ3Methods.getSqrtPriceX96(vaultData.instance)
-
-          if (vaultData.zapFrontrunProtection) {
-            let actualAmount0, actualAmount1
-
-            try {
-              const { 0: simulationAmount0, 1: simulationAmount1 } =
-                await univ3Methods.migrateToNftFromV2(
-                  lpAmount,
-                  new BigNumber(quote[0]).times(0.95).toFixed(0),
-                  new BigNumber(quote[1]).times(0.95).toFixed(0),
-                  zap,
-                  sqrtRatioX96,
-                  UNIV3_TOLERANCE,
-                  undefined,
-                  undefined,
-                  account,
-                  vaultData.instance,
-                  true,
-                )
-              actualAmount0 = simulationAmount0
-              actualAmount1 = simulationAmount1
-            } catch (err) {
-              console.error(err)
-              throw new CustomException(
-                `Could not simulate the transaction. Try specifying different amounts.`,
-                'MIGRATE_TO_NFT_SIMULATION',
-              )
-            }
-
-            await univ3Methods.migrateToNftFromV2(
-              lpAmount,
-              new BigNumber(quote[0]).times(UNIV3_SLIPPAGE_TOLERANCE).toFixed(0),
-              new BigNumber(quote[1]).times(UNIV3_SLIPPAGE_TOLERANCE).toFixed(0),
-              zap,
-              sqrtRatioX96,
-              UNIV3_TOLERANCE,
-              !isUndefined(actualAmount0)
-                ? new BigNumber(actualAmount0).times(UNIV3_SLIPPAGE_TOLERANCE).toFixed(0)
-                : undefined,
-              !isUndefined(actualAmount1)
-                ? new BigNumber(actualAmount1).times(UNIV3_SLIPPAGE_TOLERANCE).toFixed(0)
-                : undefined,
-              account,
-              vaultData.instance,
-            )
-          } else {
-            await univ3Methods.migrateToNftFromV2Legacy(
-              lpAmount,
-              new BigNumber(quote[0]).times(UNIV3_SLIPPAGE_TOLERANCE).toFixed(0),
-              new BigNumber(quote[1]).times(UNIV3_SLIPPAGE_TOLERANCE).toFixed(0),
-              zap,
-              true,
-              sqrtRatioX96,
-              UNIV3_TOLERANCE,
-              account,
-              vaultData.instance,
-            )
-          }
-
-          toast.success(`${lpTokenName} migration completed`)
-          await onSuccess()
-
-          if (autoStake) {
-            const stakingPool = find(
-              pools,
-              pool => pool.collateralAddress === vaultData.vaultAddress,
-            )
-
-            const stakingTokenInstance = await newContractInstance(
-              null,
-              vaultData.vaultAddress,
-              tokenContractData.abi,
-            )
-
-            const stakingTokenApprovedBalance = await tokenMethods.getApprovedAmount(
-              account,
-              stakingPool.contractAddress,
-              stakingTokenInstance,
-            )
-
-            const stakingTokenBalance = await tokenMethods.getBalance(account, stakingTokenInstance)
-
-            if (new BigNumber(stakingTokenApprovedBalance).lt(stakingTokenBalance)) {
-              setPendingAction(ACTIONS.APPROVE_MIGRATE)
-
-              await tokenMethods.approve(
-                stakingPool.contractAddress,
-                account,
-                maxUint256(),
-                stakingTokenInstance,
-              )
-
-              toast.success(`${fAssetSymbol} approval completed`)
-            }
-
-            const poolInstance = await newContractInstance(
-              null,
-              stakingPool.contractAddress,
-              poolContractData.abi,
-            )
-            setPendingAction(ACTIONS.STAKE_MIGRATE)
-
-            await poolMethods.stake(stakingTokenBalance, account, poolInstance)
-
-            await onSuccess()
-
-            setPendingAction(null)
-            toast.success(`${fAssetSymbol} approval completed`)
-          }
-        } catch (err) {
-          const errorMessage = formatWeb3PluginErrorMessage(err)
-          toast.error(errorMessage)
-        }
-
-        setPendingAction(null)
-      }
-    },
-    [],
+    [viem],
   )
 
   const handleDeposit = useCallback(
@@ -322,7 +84,6 @@ const ActionsProvider = ({ children }) => {
     ) => {
       const hasDeniedRequest = false
       let updatedLpTokenBalance, updatedLpTokenApprovedBalance
-
       if (!hasDeniedRequest) {
         try {
           if (multipleAssets) {
@@ -412,7 +173,7 @@ const ActionsProvider = ({ children }) => {
         } catch (err) {
           // setPendingAction(null)
 
-          const errorMessage = formatWeb3PluginErrorMessage(err, get(err, 'message'))
+          const errorMessage = formatViemPluginErrorMessage(err, get(err, 'message'))
           toast.error(errorMessage)
           await onFailureDeposit()
           return false
@@ -465,7 +226,7 @@ const ActionsProvider = ({ children }) => {
           }
         } catch (err) {
           setPendingAction(null)
-          const errorMessage = formatWeb3PluginErrorMessage(err)
+          const errorMessage = formatViemPluginErrorMessage(err)
           toast.error(errorMessage)
           onFailureStake()
         }
@@ -503,7 +264,7 @@ const ActionsProvider = ({ children }) => {
           }
         } catch (err) {
           setPendingAction(null)
-          const errorMessage = formatWeb3PluginErrorMessage(err)
+          const errorMessage = formatViemPluginErrorMessage(err)
           toast.error(errorMessage)
           onFailureStake()
         }
@@ -521,13 +282,13 @@ const ActionsProvider = ({ children }) => {
       onFailureDeposit = () => {},
     ) => {
       const tokenDisplayName = token.tokenNames[0]
-      const web3Instance = await getWeb3(false, account, web3)
+      const viemClient = await getViem(token.chain, account, viem)
 
       const iporVaultInstance = await newContractInstance(
         null,
         token.vaultAddress,
         iporVaultData.abi,
-        web3Instance,
+        viemClient,
       )
       try {
         await iporVaultMethods.deposit(amount, account, iporVaultInstance)
@@ -535,25 +296,25 @@ const ActionsProvider = ({ children }) => {
         await onSuccessDeposit()
         return true
       } catch (err) {
-        const errorMessage = formatWeb3PluginErrorMessage(err)
+        const errorMessage = formatViemPluginErrorMessage(err)
         toast.error(errorMessage)
         onFailureDeposit()
         return false
       }
     },
-    [web3],
+    [viem],
   )
 
   const handleIPORWithdraw = useCallback(
     async (account, token, amount, onSuccess = () => {}) => {
       const tokenDisplayName = token.tokenNames[0]
-      const web3Instance = await getWeb3(false, account, web3)
+      const viemClient = await getViem(false, account, viem)
 
       const iporVaultInstance = await newContractInstance(
         null,
         token.vaultAddress,
         iporVaultData.abi,
-        web3Instance,
+        viemClient,
       )
 
       try {
@@ -562,72 +323,12 @@ const ActionsProvider = ({ children }) => {
         await onSuccess()
         return true
       } catch (err) {
-        const errorMessage = formatWeb3PluginErrorMessage(err)
+        const errorMessage = formatViemPluginErrorMessage(err)
         toast.error(errorMessage)
         return false
       }
     },
-    [web3],
-  )
-
-  const handleOldStake = useCallback(
-    async (
-      token,
-      account,
-      tokenSymbol,
-      lpTokenBalance,
-      lpTokenApprovedBalance,
-      poolData,
-      contracts,
-      setPendingAction,
-      multipleAssets,
-      onSuccessStake = () => {},
-      onSuccessApproval = () => {},
-      onFailureStake = () => {},
-      action = ACTIONS.STAKE,
-    ) => {
-      const poolInstance = poolData.autoStakeContractLocalInstance || poolData.contractLocalInstance
-      const tokenDisplayName = get(tokens, `[${tokenSymbol}].tokenNames`, tokenSymbol).join(', ')
-
-      let hasDeniedRequest = false
-
-      if (poolData && lpTokenBalance > 0) {
-        try {
-          const hasEnoughApprovedAmount = new BigNumber(lpTokenBalance).isLessThanOrEqualTo(
-            new BigNumber(lpTokenApprovedBalance),
-          )
-
-          if (!hasEnoughApprovedAmount) {
-            if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
-              setPendingAction(ACTIONS.APPROVE_STAKE)
-              hasDeniedRequest = await handleOldApproval(
-                account,
-                contracts,
-                tokenSymbol,
-                multipleAssets ? token.vaultAddress : null,
-                poolData,
-                setPendingAction,
-                onSuccessApproval,
-              )
-            }
-          }
-
-          if (!hasDeniedRequest) {
-            setPendingAction(action)
-            await poolMethods.stake(lpTokenBalance, account, poolInstance)
-            setPendingAction(null)
-            toast.success(`${tokenDisplayName} stake completed`)
-            await onSuccessStake()
-          }
-        } catch (err) {
-          setPendingAction(null)
-          const errorMessage = formatWeb3PluginErrorMessage(err)
-          toast.error(errorMessage)
-          onFailureStake()
-        }
-      }
-    },
-    [handleOldApproval],
+    [viem],
   )
 
   const handleClaim = useCallback(
@@ -648,7 +349,7 @@ const ActionsProvider = ({ children }) => {
           await onSuccess()
         } catch (err) {
           setPendingAction(null)
-          const errorMessage = formatWeb3PluginErrorMessage(err)
+          const errorMessage = formatViemPluginErrorMessage(err)
           toast.error(errorMessage)
         }
       }
@@ -684,7 +385,7 @@ const ActionsProvider = ({ children }) => {
           await onSuccess()
         } catch (err) {
           setPendingAction(null)
-          const errorMessage = formatWeb3PluginErrorMessage(err)
+          const errorMessage = formatViemPluginErrorMessage(err)
           toast.error(errorMessage)
         }
       }
@@ -774,119 +475,10 @@ const ActionsProvider = ({ children }) => {
         return true
       } catch (err) {
         // setPendingAction(null)
-        const errorMessage = formatWeb3PluginErrorMessage(err)
+        const errorMessage = formatViemPluginErrorMessage(err)
         toast.error(errorMessage)
         await onFailure()
         return false
-      }
-    },
-    [],
-  )
-
-  const handleBoostStake = useCallback(
-    async (
-      token,
-      account,
-      amountToExecute,
-      setPendingAction,
-      contracts,
-      onSuccessStake = () => {},
-      action = ACTIONS.STAKE,
-    ) => {
-      let hasDeniedRequest = false
-
-      try {
-        const currApprovedBalance = await tokenMethods.getApprovedAmount(
-          account,
-          token.proxyAddress,
-          contracts.tokenInstance,
-        )
-
-        const hasEnoughApprovedAmount = new BigNumber(amountToExecute).isLessThanOrEqualTo(
-          new BigNumber(currApprovedBalance),
-        )
-
-        if (!hasEnoughApprovedAmount) {
-          if (!hasEnoughApprovedAmount && !hasDeniedRequest) {
-            setPendingAction(ACTIONS.APPROVE_STAKE)
-            hasDeniedRequest = await handleOldApproval(
-              account,
-              {
-                [token.symbol]: {
-                  instance: contracts.tokenInstance,
-                  methods: tokenMethods,
-                },
-              },
-              token.symbol,
-              token.proxyAddress,
-              null,
-              setPendingAction,
-            )
-          }
-        }
-
-        if (!hasDeniedRequest) {
-          setPendingAction(action)
-
-          await boostStakingMethods.stake(amountToExecute, account, contracts.boostStakingInstance)
-          setPendingAction(null)
-          toast.success(`${token.displayName} stake completed`)
-          await onSuccessStake()
-        }
-      } catch (err) {
-        setPendingAction(null)
-        const errorMessage = formatWeb3PluginErrorMessage(err)
-        toast.error(errorMessage)
-      }
-    },
-    [handleOldApproval],
-  )
-
-  const handleBoostUnstake = useCallback(
-    async (
-      token,
-      account,
-      amountToExecute,
-      setPendingAction,
-      contracts,
-      onSuccessUnstake = () => {},
-      action = ACTIONS.EXIT,
-    ) => {
-      try {
-        setPendingAction(action)
-        await boostStakingMethods.unstake(amountToExecute, account, contracts.boostStakingInstance)
-        setPendingAction(null)
-        toast.success(`${token.tokenNames.join(', ')} unstake completed`)
-        await onSuccessUnstake()
-      } catch (err) {
-        setPendingAction(null)
-        const errorMessage = formatWeb3PluginErrorMessage(err)
-        toast.error(errorMessage)
-      }
-    },
-    [],
-  )
-
-  const handleBoostReedem = useCallback(
-    async (
-      token,
-      account,
-      amountToExecute,
-      setPendingAction,
-      contracts,
-      onSuccessRedeem = () => {},
-      action = ACTIONS.REDEEM,
-    ) => {
-      try {
-        setPendingAction(action)
-        await amplifierMethods.withdraw(amountToExecute, account, contracts.amplifierInstance)
-        setPendingAction(null)
-        toast.success(`${token.amplifierTokenDisplayName} redeem completed`)
-        await onSuccessRedeem()
-      } catch (err) {
-        setPendingAction(null)
-        const errorMessage = formatWeb3PluginErrorMessage(err)
-        toast.error(errorMessage)
       }
     },
     [],
@@ -896,20 +488,14 @@ const ActionsProvider = ({ children }) => {
     <ActionsContext.Provider
       value={{
         handleApproval,
-        handleOldApproval,
         handleDeposit,
         handleIPORDeposit,
         handleIPORWithdraw,
         handleStakeApproval,
         handleStakeTransaction,
-        handleOldStake,
-        handleBoostStake,
-        handleBoostUnstake,
-        handleBoostReedem,
         handleClaim,
         handleExit,
         handleWithdraw,
-        handleMigrate,
       }}
     >
       {children}

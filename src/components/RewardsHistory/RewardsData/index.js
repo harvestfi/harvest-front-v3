@@ -11,7 +11,7 @@ import ActionRow from '../ActionRow'
 import { getRewardEntities } from '../../../utilities/apiCalls'
 import AdvancedImg from '../../../assets/images/logos/sidebar/advanced.svg'
 import { ROUTES } from '../../../constants'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import {
   TransactionDetails,
   HistoryPagination,

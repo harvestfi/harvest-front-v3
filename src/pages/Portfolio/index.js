@@ -29,7 +29,7 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useRate } from '../../providers/Rate'
-import { fromWei } from '../../services/web3'
+import { fromWei } from '../../services/viem'
 import {
   isSpecialApp,
   formatAddress,

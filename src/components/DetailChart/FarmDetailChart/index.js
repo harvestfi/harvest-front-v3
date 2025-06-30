@@ -17,7 +17,7 @@ import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../../ChartRangeSelect'
 import { useRate } from '../../../providers/Rate'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import { calculateApy, handleToggle } from '../../../utilities/parsers'
 import {
   ButtonGroup,

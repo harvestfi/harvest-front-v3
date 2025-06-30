@@ -12,7 +12,7 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { USD_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
-import { fromWei, toWei } from '../../../../services/web3'
+import { fromWei, toWei } from '../../../../services/viem'
 import { formatNumberWido, isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
@@ -84,7 +84,7 @@ const WithdrawBase = ({
   const [withdrawName, setWithdrawName] = useState('Preview & Revert')
   const [showWarning, setShowWarning] = useState(false)
 
-  const { account, web3, connected, chainId } = useWallet()
+  const { account, viem, connected, connectAction, chainId } = useWallet()
   const { getPortalsEstimate, getPortalsToken } = usePortals()
 
   const { rates } = useRate()
@@ -258,7 +258,7 @@ const WithdrawBase = ({
     withdrawStart,
     balanceList,
     token,
-    web3,
+    viem,
     chainId,
     fromToken,
     curChain,
@@ -615,6 +615,10 @@ const WithdrawBase = ({
             $btnactivecolor={btnActiveColor}
             $size="md"
             onClick={async () => {
+              if (!connected) {
+                connectAction()
+                return
+              }
               if (curChain !== tokenChain) {
                 const chainHex = `0x${Number(tokenChain).toString(16)}`
                 await setChain({ chainId: chainHex })

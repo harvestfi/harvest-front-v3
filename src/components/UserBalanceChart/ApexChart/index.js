@@ -94,6 +94,7 @@ const ApexChart = ({
   setSelectedState,
   isExpanded,
   isInactive,
+  showRewardsTab = false,
 }) => {
   const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
@@ -236,7 +237,7 @@ const ApexChart = ({
       const dl1 = data1.length
       if (!connected) {
         setIsDataReady('false')
-      } else if (lpTokenBalance === 0 && !token.isIPORVault) {
+      } else if (lpTokenBalance === 0 && !token.isIPORVault && showRewardsTab) {
         setIsDataReady('loading')
       } else if (lpTokenBalance === '0' && totalValue !== 0 && dl === 0) {
         setIsDataReady('loading')
@@ -244,7 +245,7 @@ const ApexChart = ({
         setIsDataReady('false')
       } else if (lpTokenBalance === 0 && dl !== 0 && dl1 !== 0 && token.isIPORVault) {
         setIsDataReady('true')
-      } else if (totalValue !== '0' && dl === 0) {
+      } else if (totalValue !== '0' && totalValue !== 0 && dl === 0) {
         setIsDataReady('loading')
       } else if (dl !== 0 && dl1 !== 0) {
         setIsDataReady('true')

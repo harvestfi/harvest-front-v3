@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import ApexChart from '../ApexChart'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import { getMultipleVaultHistories, getVaultHistories } from '../../../utilities/apiCalls'
 import { ChartDiv, Container, Header, Total, TokenSymbol, TooltipInfo, FlexDiv } from './style'
 
@@ -152,11 +152,8 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
               })
             }
 
-            const { vaultHFlag: vaultHIPORFlag, vaultHData: vaultHIPORData } = await getVaultHistories(
-              token.chain,
-              token.vaultAddress.toLowerCase(),
-              true,
-            )
+            const { vaultHFlag: vaultHIPORFlag, vaultHData: vaultHIPORData } =
+              await getVaultHistories(token.chain, token.vaultAddress.toLowerCase(), true)
             sharePricesData[token.id] = {}
             if (vaultHIPORFlag) {
               vaultHIPORData.forEach((obj, index) => {

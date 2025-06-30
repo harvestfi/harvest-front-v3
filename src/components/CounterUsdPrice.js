@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { get, toArray } from 'lodash'
 import React, { useState, useEffect } from 'react'
 import { USD_BALANCES_DECIMALS } from '../constants'
-import { fromWei } from '../services/web3'
+import { fromWei } from '../services/viem'
 import { formatNumber } from '../utilities/formats'
 import { useRate } from '../providers/Rate'
 

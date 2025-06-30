@@ -19,7 +19,7 @@ import { usePools } from '../../../../providers/Pools'
 import { useActions } from '../../../../providers/Actions'
 import { useContracts } from '../../../../providers/Contracts'
 import { isSpecialApp } from '../../../../utilities/formats'
-import { toWei } from '../../../../services/web3'
+import { toWei } from '../../../../services/viem'
 import Button from '../../../Button'
 import {
   FTokenInfo,

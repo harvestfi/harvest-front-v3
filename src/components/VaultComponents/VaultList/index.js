@@ -10,7 +10,7 @@ import sortAscIcon from '../../../assets/images/ui/asc.svg'
 import sortDescIcon from '../../../assets/images/ui/desc.svg'
 import sortIcon from '../../../assets/images/ui/sort.svg'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MAX_DECIMALS, chainList } from '../../../constants'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import { CHAIN_IDS } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -297,9 +297,9 @@ const SortingIcon = ({ sortType, sortField, selectedField, riskId }) => {
 const VaultList = () => {
   const { fontColor, filterColor, bgColorNew, borderColorBox, darkMode } = useThemeContext()
 
-  const { vaultsData, getFarmingBalances, loadedUserVaultsWeb3Provider } = useVaults()
+  const { vaultsData, getFarmingBalances, loadedUserVaultsViemProvider } = useVaults()
 
-  const { pools, totalPools, fetchUserPoolStats, userStats, loadedUserPoolsWeb3Provider } =
+  const { pools, totalPools, fetchUserPoolStats, userStats, loadedUserPoolsViemProvider } =
     usePools()
 
   const { account, chain, selChain, chainId } = useWallet()
@@ -430,8 +430,8 @@ const VaultList = () => {
     [
       chain,
       account,
-      loadedUserPoolsWeb3Provider,
-      loadedUserVaultsWeb3Provider,
+      loadedUserPoolsViemProvider,
+      loadedUserVaultsViemProvider,
       fetchUserPoolStats,
       userStats,
       onSelectAsset,
@@ -462,7 +462,7 @@ const VaultList = () => {
           hasSwitchedAccount ||
           firstFarmingBalancesLoad.current ||
           (userStats && !isEqual(userStats, prevUserStats))) &&
-        loadedUserVaultsWeb3Provider
+        loadedUserVaultsViemProvider
       ) {
         setLoaded(false)
         const loadUserFarmingBalances = async () => {

@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import { get, toArray } from 'lodash'
 import React from 'react'
 import CountUp from 'react-countup'
-import { fromWei } from '../services/web3'
+import { fromWei } from '../services/viem'
 
 const { tokens } = require('../data')
 const { POOL_TYPES } = require('../data/constants')

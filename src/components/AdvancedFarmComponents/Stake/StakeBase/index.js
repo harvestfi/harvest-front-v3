@@ -7,7 +7,7 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { useWallet } from '../../../../providers/Wallet'
 import { isSpecialApp } from '../../../../utilities/formats'
-import { fromWei, toWei } from '../../../../services/web3'
+import { fromWei, toWei } from '../../../../services/viem'
 import Button from '../../../Button'
 import {
   BalanceInfo,

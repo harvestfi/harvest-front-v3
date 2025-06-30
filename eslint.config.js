@@ -79,6 +79,6 @@ export default [
     },
   },
   {
-    ignores: ['src/assets/*', 'src/data/harvest-api-v3/*'],
+    ignores: ['src/assets/*', 'src/data/harvest-api-v3/*', 'build/*'],
   },
 ]

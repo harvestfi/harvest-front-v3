@@ -9,8 +9,8 @@ import useEffectWithPrevious from 'use-effect-with-previous'
 import { isAddress } from 'ethers'
 import { BiLeftArrowAlt, BiInfoCircle } from 'react-icons/bi'
 import { PiQuestion } from 'react-icons/pi'
-import tokenMethods from '../../services/web3/contracts/token/methods'
-import tokenContract from '../../services/web3/contracts/token/contract.json'
+import tokenMethods from '../../services/viem/contracts/token/methods'
+import tokenContract from '../../services/viem/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -59,7 +59,7 @@ import {
   chainList,
   historyTags,
 } from '../../constants'
-import { fromWei, newContractInstance, getWeb3 } from '../../services/web3'
+import { fromWei, newContractInstance, getViem } from '../../services/viem'
 import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
@@ -513,10 +513,11 @@ const AdvancedFarm = () => {
       Number(currencyRate) *
       (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily)
     const convertYearlyYieldYieldValue =
-      Number(minReceiveAmountString) *
-      Number(usdPrice) *
-      Number(currencyRate) *
-      (estimatedApy + totalRewardAPR + swapFeeAPRYearly)
+      (Number(minReceiveAmountString) *
+        Number(usdPrice) *
+        Number(currencyRate) *
+        (estimatedApy + totalRewardAPR + swapFeeAPRYearly)) /
+      100
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
     setConvertYearlyYieldUSD(convertYearlyYieldYieldValue.toString())
@@ -682,13 +683,13 @@ const AdvancedFarm = () => {
               supList.unshift(directInBalance)
               supList[0].default = true
             } else {
-              const web3Client = await getWeb3(tokenChain, null)
+              const viemClient = await getViem(tokenChain, null)
               const { getSymbol } = tokenMethods
               const lpInstance = await newContractInstance(
                 id,
                 tokenAddress,
                 tokenContract.abi,
-                web3Client,
+                viemClient,
               )
               const lpSymbol = await getSymbol(lpInstance)
               const logoUri =
@@ -1996,6 +1997,7 @@ const AdvancedFarm = () => {
                     underlyingPrice={underlyingPrice}
                     lpTokenBalance={lpTokenBalance}
                     chartData={chartData}
+                    showRewardsTab={showRewardsTab}
                   />
                 )
               ) : activeMainTag === 1 ? (

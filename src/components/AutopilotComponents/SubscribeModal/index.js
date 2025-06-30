@@ -20,7 +20,7 @@ import { useActions } from '../../../providers/Actions'
 import { useContracts } from '../../../providers/Contracts'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { isSpecialApp } from '../../../utilities/formats'
-import { toWei } from '../../../services/web3'
+import { toWei } from '../../../services/viem'
 import Button from '../../Button'
 import {
   FTokenInfo,

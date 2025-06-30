@@ -39,7 +39,14 @@ const recommendLinks = [
   { name: 'LAST', type: 4, state: 'LAST' },
 ]
 
-const UserBalanceData = ({ token, totalValue, underlyingPrice, lpTokenBalance, chartData }) => {
+const UserBalanceData = ({
+  token,
+  totalValue,
+  underlyingPrice,
+  lpTokenBalance,
+  chartData,
+  showRewardsTab,
+}) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { darkMode, bgColorNew, borderColorBox, fontColor3 } = useThemeContext()
   const { account } = useWallet()
@@ -467,6 +474,7 @@ const UserBalanceData = ({ token, totalValue, underlyingPrice, lpTokenBalance, c
           setSelectedState={setSelectedState}
           isExpanded={isExpanded}
           isInactive={token.inactive}
+          showRewardsTab={showRewardsTab}
         />
       </ChartDiv>
       <ButtonGroup>

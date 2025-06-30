@@ -26,7 +26,7 @@ import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { getWeb3, fromWei } from '../../../../services/web3'
+import { getViem, fromWei } from '../../../../services/viem'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
 import { getMatchedVaultList } from '../../../../utilities/parsers'
@@ -86,7 +86,7 @@ const WithdrawStart = ({
     borderColor,
     btnHoverColor,
   } = useThemeContext()
-  const { account, web3, getWalletBalances } = useWallet()
+  const { account, viem, getWalletBalances } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
   const navigate = useNavigate()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
@@ -158,12 +158,13 @@ const WithdrawStart = ({
 
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, fromToken, amnt.toString())
-    const mainWeb = await getWeb3(chainId, account, web3)
+    const mainViem = await getViem(chainId, account, viem)
 
-    await mainWeb.eth.sendTransaction({
-      from: account,
-      data: approve.data,
+    await mainViem.sendTransaction({
+      account,
       to: approve.to,
+      data: approve.data,
+      value: approve.value ? BigInt(approve.value) : undefined,
     })
   }
 
@@ -221,6 +222,7 @@ const WithdrawStart = ({
               null,
               async () => {
                 await fetchUserPoolStats([vaultPool], account, userStats)
+                await getWalletBalances([tokenSym], false, true)
               },
               async () => {
                 setWithdrawFailed(true)
@@ -236,7 +238,7 @@ const WithdrawStart = ({
           setStartSpinner(true)
           const amount = unstakeBalance
           const toToken = pickedToken.address
-          const mainWeb = await getWeb3(chainId, account, web3)
+          const mainViem = await getViem(chainId, account, viem)
           const portalData = await getPortals({
             chainId,
             sender: account,
@@ -246,11 +248,11 @@ const WithdrawStart = ({
             slippage: slippagePercentage,
           })
 
-          await mainWeb.eth.sendTransaction({
-            from: portalData.tx.from,
-            data: portalData.tx.data,
+          await mainViem.sendTransaction({
+            account,
             to: portalData.tx.to,
-            value: portalData.tx.value,
+            data: portalData.tx.data,
+            value: portalData.tx.value ? BigInt(portalData.tx.value) : undefined,
           })
 
           const receiveString = portalData
@@ -265,6 +267,7 @@ const WithdrawStart = ({
           setRevertedAmountUsd(formatNumberWido(receiveUsdString))
 
           await fetchUserPoolStats([vaultPool], account, userStats)
+          await getWalletBalances([token.id], false, true)
         } catch (err) {
           setWithdrawFailed(true)
           setStartSpinner(false)
@@ -276,6 +279,8 @@ const WithdrawStart = ({
       }
       // End Approve and Withdraw successfully
       if (isSuccess) {
+        await fetchUserPoolStats([vaultPool], account, userStats)
+
         setStartSpinner(false)
         setWithdrawFailed(false)
         setProgressStep(4)
