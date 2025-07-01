@@ -208,10 +208,7 @@ const WithdrawStart = ({
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
         isSuccess = token.isIPORVault
-          ? await handleIPORWithdraw(account, token, unstakeBalance, async () => {
-              await getWalletBalances([token.id], false, true)
-              await fetchUserPoolStats([vaultPool], account, userStats)
-            })
+          ? await handleIPORWithdraw(account, token, unstakeBalance, async () => {})
           : await handleWithdraw(
               account,
               tokenSym,
@@ -220,10 +217,7 @@ const WithdrawStart = ({
               null,
               false,
               null,
-              async () => {
-                await fetchUserPoolStats([vaultPool], account, userStats)
-                await getWalletBalances([tokenSym], false, true)
-              },
+              async () => {},
               async () => {
                 setWithdrawFailed(true)
                 setStartSpinner(false)
@@ -265,9 +259,6 @@ const WithdrawStart = ({
           const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
           setRevertedAmount(receiveString)
           setRevertedAmountUsd(formatNumberWido(receiveUsdString))
-
-          await fetchUserPoolStats([vaultPool], account, userStats)
-          await getWalletBalances([token.id], false, true)
         } catch (err) {
           setWithdrawFailed(true)
           setStartSpinner(false)
@@ -279,7 +270,10 @@ const WithdrawStart = ({
       }
       // End Approve and Withdraw successfully
       if (isSuccess) {
-        await fetchUserPoolStats([vaultPool], account, userStats)
+        await getWalletBalances([tokenSym], false, true)
+        token.isIPORVault
+          ? await fetchUserPoolStats([token.id], account, userStats, true)
+          : await fetchUserPoolStats([vaultPool], account, userStats)
 
         setStartSpinner(false)
         setWithdrawFailed(false)

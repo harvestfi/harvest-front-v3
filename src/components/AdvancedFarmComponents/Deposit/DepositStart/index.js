@@ -192,8 +192,6 @@ const DepositStart = ({
       )
     }
     setReceiveAmount(receiveString)
-
-    await fetchUserPoolStats([vaultPool], account, userStats)
   }
 
   const approveZap = async amnt => {
@@ -229,8 +227,6 @@ const DepositStart = ({
               setStartSpinner(false)
               setReceiveAmount(minReceiveAmountString)
               setReceiveUsd(minReceiveUsdAmount)
-              await fetchUserPoolStats([vaultPool], account, userStats)
-              await getWalletBalances([tokenSym], false, true)
             },
             async () => {
               setStartSpinner(false)
@@ -280,10 +276,7 @@ const DepositStart = ({
               account,
               token,
               amount,
-              async () => {
-                await getWalletBalances([token.id], false, true)
-                await fetchUserPoolStats([vaultPool], account, userStats)
-              },
+              async () => {},
               () => {
                 setDepositFailed(true)
                 setStartSpinner(false)
@@ -298,10 +291,7 @@ const DepositStart = ({
               vaultsData[tokenSym],
               false,
               false,
-              async () => {
-                await getWalletBalances([tokenSym], false, true)
-                await fetchUserPoolStats([vaultPool], account, userStats)
-              },
+              async () => {},
               async () => {
                 setDepositFailed(true)
                 setStartSpinner(false)
@@ -315,8 +305,6 @@ const DepositStart = ({
           setButtonName('Pending Confirmation in Wallet')
           setStartSpinner(true)
           await onDeposit()
-          await getWalletBalances([tokenSym], false, true)
-          await fetchUserPoolStats([vaultPool], account, userStats)
         } catch (err) {
           setDepositFailed(true)
           setStartSpinner(false)
@@ -329,7 +317,9 @@ const DepositStart = ({
       // End Approve and Deposit successfully
       if (isSuccess) {
         await getWalletBalances([tokenSym], false, true)
-        await fetchUserPoolStats([vaultPool], account, userStats)
+        token.isIPORVault
+          ? await fetchUserPoolStats([tokenSym], account, userStats, true)
+          : await fetchUserPoolStats([vaultPool], account, userStats)
         setStartSpinner(false)
         setDepositFailed(false)
         setProgressStep(4)
