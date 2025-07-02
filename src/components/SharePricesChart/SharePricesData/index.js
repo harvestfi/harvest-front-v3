@@ -153,7 +153,7 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
             }
 
             const { vaultHFlag: vaultHIPORFlag, vaultHData: vaultHIPORData } =
-              await getVaultHistories(token.chain, token.vaultAddress.toLowerCase(), true)
+              await getVaultHistories(token.vaultAddress.toLowerCase(), token.chain, true)
             sharePricesData[token.id] = {}
             if (vaultHIPORFlag) {
               vaultHIPORData.forEach((obj, index) => {

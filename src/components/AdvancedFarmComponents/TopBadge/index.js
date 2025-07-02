@@ -19,7 +19,7 @@ const TopBadge = () => {
           <PiQuestion className="question" color={fontColor8} fontSize={16} />
           {visible && (
             <TooltipBox
-              darkMode={darkMode}
+              $darkMode={darkMode}
               onMouseEnter={() => setVisible(true)}
               onMouseLeave={() => setVisible(false)}
             >

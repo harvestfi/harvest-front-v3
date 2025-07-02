@@ -125,7 +125,7 @@ const WithdrawStart = ({
     }
   }, [rates])
 
-  const { getPortalsApproval, portalsApprove, getPortals, getPortalsSupport } = usePortals()
+  const { getPortalsApproval, portalsApprove, getPortals, getPortalsSupportBatch } = usePortals()
 
   let pickedDefaultToken
   if (pickedToken.symbol !== 'Select' && defaultToken) {
@@ -329,27 +329,37 @@ const WithdrawStart = ({
         activedList.sort((a, b) => b.vaultApy - a.vaultApy)
         const newArray = activedList.slice(0, 10)
 
-        for (const item of newArray) {
-          if (
+        const validItems = newArray.filter(
+          item =>
             item.vaultApy !== 0 &&
-            item.vault.vaultAddress.toLowerCase() !== '0x47e3daf382c4603450905fb68766db8308315407'
-          ) {
-            const mToken = item.vault
-            const tokenAddress = mToken.vaultAddress || mToken.tokenAddress
+            item.vault.vaultAddress.toLowerCase() !== '0x47e3daf382c4603450905fb68766db8308315407',
+        )
 
-            const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-            if (portalsToken) {
-              if (portalsToken.status === 200) {
-                if (portalsToken.data.totalItems !== 0) {
-                  filteredMatchList.push(item)
-                }
+        if (validItems.length > 0) {
+          const tokenAddresses = validItems.map(item => {
+            const mToken = item.vault
+            return mToken.vaultAddress || mToken.tokenAddress
+          })
+
+          try {
+            const supportResults = await getPortalsSupportBatch(chainId, tokenAddresses)
+
+            validItems.forEach((item, index) => {
+              const supportResult = supportResults[index]
+              if (
+                supportResult &&
+                supportResult.status === 200 &&
+                supportResult.data.totalItems !== 0
+              ) {
+                filteredMatchList.push(item)
               }
-            } else {
-              console.log('Error in fetching Portals supported')
-            }
+            })
+          } catch (error) {
+            console.log('Error in fetching Portals supported batch:', error)
           }
         }
       }
+
       if (filteredMatchList.length > 0) {
         setMatchVaultList(filteredMatchList)
       }

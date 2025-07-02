@@ -89,7 +89,7 @@ const DepositBase = ({
   } = useThemeContext()
 
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
-  const { getPortalsEstimate, getPortalsToken } = usePortals()
+  const { getPortalsEstimate, getPortalsTokensBatch } = usePortals()
 
   const [
     {
@@ -194,8 +194,13 @@ const DepositBase = ({
               fromTokenUsdPrice = pickedToken.usdPrice
               toTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
             } else {
-              const fromTokenDetail = await getPortalsToken(chainId, fromToken)
-              const toTokenDetail = await getPortalsToken(chainId, toToken)
+              const tokenDetails = await getPortalsTokensBatch(chainId, [fromToken, toToken])
+              const fromTokenDetail = tokenDetails.find(
+                token => token.address.toLowerCase() === fromToken.toLowerCase(),
+              )
+              const toTokenDetail = tokenDetails.find(
+                token => token.address.toLowerCase() === toToken.toLowerCase(),
+              )
               fromTokenUsdPrice = fromTokenDetail?.price
               toTokenUsdPrice = toTokenDetail?.price
             }

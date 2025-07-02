@@ -85,7 +85,7 @@ const WithdrawBase = ({
   const [showWarning, setShowWarning] = useState(false)
 
   const { account, viem, connected, connectAction, chainId } = useWallet()
-  const { getPortalsEstimate, getPortalsToken } = usePortals()
+  const { getPortalsEstimate, getPortalsTokensBatch } = usePortals()
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -168,8 +168,13 @@ const WithdrawBase = ({
               fromTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
               toTokenUsdPrice = pickedToken.usdPrice
             } else {
-              fromTokenDetail = await getPortalsToken(chainId, fromToken)
-              toTokenDetail = await getPortalsToken(chainId, toToken)
+              const tokenDetails = await getPortalsTokensBatch(chainId, [fromToken, toToken])
+              fromTokenDetail = tokenDetails.find(token => 
+                token.address.toLowerCase() === fromToken.toLowerCase()
+              )
+              toTokenDetail = tokenDetails.find(token => 
+                token.address.toLowerCase() === toToken.toLowerCase()
+              )
               fromTokenUsdPrice = fromTokenDetail?.price
               toTokenUsdPrice = toTokenDetail?.price
             }
@@ -266,7 +271,7 @@ const WithdrawBase = ({
     setRevertFromInfoUsdAmount,
     setRevertMinReceivedAmount,
     getPortalsEstimate,
-    getPortalsToken,
+    getPortalsTokensBatch,
     currencySym,
     currencyRate,
   ])

@@ -299,9 +299,15 @@ export const findClosestIndex = (data, target) => {
 export const getYAxisValues = (min, max, roundNum) => {
   const duration = Number(max - min)
   const ary = []
-  for (let i = min; i <= max; i += duration / 4) {
-    const val = round10(i, roundNum)
-    ary.push(val)
+  const step = duration / 4
+
+  for (let i = 0; i <= 4; i++) {
+    const value = min + i * step
+    const val = round10(value, roundNum)
+
+    if (!ary.includes(val)) {
+      ary.push(val)
+    }
   }
   return ary
 }

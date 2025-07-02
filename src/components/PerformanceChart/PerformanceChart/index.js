@@ -143,7 +143,7 @@ const PerformanceChart = ({
             })
           }
 
-          if (balanceFlag && !token.isIPORVault) {
+          if (balanceFlag && !token.isIPORVault && balanceData && balanceData.length > 0) {
             const firstTimeStamp = balanceData[balanceData.length - 1].timestamp
             const { vaultPriceFeedCount } = await getSequenceId(address, chainId)
             const result = await getPriceFeeds(
@@ -162,18 +162,28 @@ const PerformanceChart = ({
             priceFeedData = result.vaultHData
           }
 
-          if (priceFeedFlag && !token.isIPORVault) {
+          if (
+            priceFeedFlag &&
+            !token.isIPORVault &&
+            priceFeedData &&
+            Array.isArray(priceFeedData)
+          ) {
             priceFeedData.forEach(obj => {
-              if (!timestamps.includes(obj.timestamp)) {
+              if (obj && obj.timestamp && !timestamps.includes(obj.timestamp)) {
                 timestamps.push(obj.timestamp)
                 const modifiedObj = { ...obj, priceUnderlying: obj.price }
                 delete modifiedObj.price
                 uniqueData2.push(modifiedObj)
               }
             })
-          } else if (priceFeedFlag && token.isIPORVault) {
+          } else if (
+            priceFeedFlag &&
+            token.isIPORVault &&
+            priceFeedData &&
+            Array.isArray(priceFeedData)
+          ) {
             priceFeedData.forEach(obj => {
-              if (!timestamps.includes(obj.timestamp)) {
+              if (obj && obj.timestamp && !timestamps.includes(obj.timestamp)) {
                 timestamps.push(obj.timestamp)
                 const modifiedObj = {
                   timestamp: obj.timestamp,
@@ -187,23 +197,37 @@ const PerformanceChart = ({
             })
           }
 
-          if (balanceFlag) {
+          if (balanceFlag && balanceData && balanceData.length > 0) {
             const lastMatchingTimestamp = findLastMatchingTimestamp(balanceData)
             setLastFarmingTimeStamp(lastMatchingTimestamp)
           }
 
-          if (balanceFlag && priceFeedFlag) {
+          if (
+            balanceFlag &&
+            priceFeedFlag &&
+            balanceData &&
+            balanceData.length > 0 &&
+            uniqueData2.length > 0
+          ) {
             const nowDate = new Date(),
               currentTimeStamp = Math.floor(nowDate.getTime() / 1000),
               bl = balanceData.length,
               ul = uniqueData2.length
 
-            if (balanceData[0].timestamp > uniqueData2[0].timestamp) {
+            if (
+              balanceData[0] &&
+              uniqueData2[0] &&
+              balanceData[0].timestamp > uniqueData2[0].timestamp
+            ) {
               let i = 0,
                 z = 0,
                 addFlag = false
 
-              while (balanceData[i]?.timestamp > uniqueData2[0].timestamp) {
+              while (
+                balanceData[i] &&
+                uniqueData2[0] &&
+                balanceData[i].timestamp > uniqueData2[0].timestamp
+              ) {
                 balanceData[i].priceUnderlying = uniqueData2[0].priceUnderlying
                 balanceData[i].sharePrice = uniqueData2[0].sharePrice
                 mergedData.push(balanceData[i])
@@ -211,73 +235,106 @@ const PerformanceChart = ({
               }
               while (i < bl) {
                 if (z < ul) {
-                  while (uniqueData2[z].timestamp >= balanceData[i].timestamp) {
+                  while (
+                    uniqueData2[z] &&
+                    balanceData[i] &&
+                    uniqueData2[z].timestamp >= balanceData[i].timestamp
+                  ) {
                     uniqueData2[z].value = balanceData[i].value
                     mergedData.push(uniqueData2[z])
                     z += 1
-                    if (!addFlag && uniqueData2[z].timestamp === balanceData[i].timestamp) {
+                    if (
+                      !addFlag &&
+                      uniqueData2[z] &&
+                      balanceData[i] &&
+                      uniqueData2[z].timestamp === balanceData[i].timestamp
+                    ) {
                       addFlag = true
                     }
                   }
                 }
-                if (!addFlag) {
-                  balanceData[i].priceUnderlying = uniqueData2[z === ul ? z - 1 : z].priceUnderlying
-                  balanceData[i].sharePrice = uniqueData2[z === ul ? z - 1 : z].sharePrice
+                if (!addFlag && balanceData[i]) {
+                  const sourceIndex = z === ul ? z - 1 : z
+                  if (uniqueData2[sourceIndex]) {
+                    balanceData[i].priceUnderlying = uniqueData2[sourceIndex].priceUnderlying
+                    balanceData[i].sharePrice = uniqueData2[sourceIndex].sharePrice
+                  }
                   mergedData.push(balanceData[i])
                 }
                 addFlag = false
                 i += 1
               }
-              while (z < ul) {
+              while (z < ul && uniqueData2[z]) {
                 uniqueData2[z].value = 0
                 mergedData.push(uniqueData2[z])
                 z += 1
               }
-              while (i < bl) {
-                balanceData[i].priceUnderlying = uniqueData2[ul - 1].priceUnderlying
-                balanceData[i].sharePrice = uniqueData2[ul - 1].sharePrice
+              while (i < bl && balanceData[i]) {
+                if (uniqueData2[ul - 1]) {
+                  balanceData[i].priceUnderlying = uniqueData2[ul - 1].priceUnderlying
+                  balanceData[i].sharePrice = uniqueData2[ul - 1].sharePrice
+                }
                 mergedData.push(balanceData[i])
                 i += 1
               }
-            } else {
+            } else if (balanceData[0] && uniqueData2.length > 0) {
               let i = 0,
                 z = 0,
                 addFlag = false
-              while (i < ul && uniqueData2[i].timestamp > balanceData[0].timestamp) {
+              while (
+                i < ul &&
+                uniqueData2[i] &&
+                balanceData[0] &&
+                uniqueData2[i].timestamp > balanceData[0].timestamp
+              ) {
                 uniqueData2[i].value = balanceData[0].value
                 mergedData.push(uniqueData2[i])
                 i += 1
               }
               while (z < bl) {
                 if (i < ul) {
-                  while (uniqueData2[i].timestamp >= balanceData[z].timestamp) {
+                  while (
+                    uniqueData2[i] &&
+                    balanceData[z] &&
+                    uniqueData2[i].timestamp >= balanceData[z].timestamp
+                  ) {
                     uniqueData2[i].value = balanceData[z].value
                     mergedData.push(uniqueData2[i])
                     i += 1
                     if (i >= ul) {
                       break
                     }
-                    if (!addFlag && uniqueData2[i].timestamp === balanceData[z].timestamp) {
+                    if (
+                      !addFlag &&
+                      uniqueData2[i] &&
+                      balanceData[z] &&
+                      uniqueData2[i].timestamp === balanceData[z].timestamp
+                    ) {
                       addFlag = true
                     }
                   }
                 }
-                if (!addFlag) {
-                  balanceData[z].priceUnderlying = uniqueData2[i === ul ? i - 1 : i].priceUnderlying
-                  balanceData[z].sharePrice = uniqueData2[i === ul ? i - 1 : i].sharePrice
+                if (!addFlag && balanceData[z]) {
+                  const sourceIndex = i === ul ? i - 1 : i
+                  if (uniqueData2[sourceIndex]) {
+                    balanceData[z].priceUnderlying = uniqueData2[sourceIndex].priceUnderlying
+                    balanceData[z].sharePrice = uniqueData2[sourceIndex].sharePrice
+                  }
                   mergedData.push(balanceData[z])
                 }
                 addFlag = false
                 z += 1
               }
-              while (i < ul) {
+              while (i < ul && uniqueData2[i]) {
                 uniqueData2[i].value = 0
                 mergedData.push(uniqueData2[i])
                 i += 1
               }
-              while (z < bl) {
-                balanceData[z].priceUnderlying = uniqueData2[ul - 1].priceUnderlying
-                balanceData[z].sharePrice = uniqueData2[ul - 1].sharePrice
+              while (z < bl && balanceData[z]) {
+                if (uniqueData2[ul - 1]) {
+                  balanceData[z].priceUnderlying = uniqueData2[ul - 1].priceUnderlying
+                  balanceData[z].sharePrice = uniqueData2[ul - 1].sharePrice
+                }
                 mergedData.push(balanceData[z])
                 z += 1
               }
@@ -285,7 +342,7 @@ const PerformanceChart = ({
 
             const firstObject = {
               priceUnderlying: usdPriceRef.current,
-              sharePrice: mergedData[0].sharePrice,
+              sharePrice: mergedData.length > 0 ? mergedData[0].sharePrice : 1,
               timestamp: currentTimeStamp.toString(),
               value: totalValueRef.current,
             }

@@ -42,9 +42,9 @@ const TooltipBox = styled.div`
   top: 100%;
   left: 0;
   margin-top: 0px;
-  background-color: ${({ darkMode }) => (darkMode ? 'white' : '#101828')};
-  color: ${({ darkMode }) => (darkMode ? 'black' : 'white')};
-  border: 1px solid ${({ darkMode }) => (darkMode ? 'white' : 'black')};
+  background-color: ${({ $darkMode }) => ($darkMode ? 'white' : '#101828')};
+  color: ${({ $darkMode }) => ($darkMode ? 'black' : 'white')};
+  border: 1px solid ${({ $darkMode }) => ($darkMode ? 'white' : 'black')};
   padding: 10px;
   border-radius: 6px;
   font-size: 12px;
