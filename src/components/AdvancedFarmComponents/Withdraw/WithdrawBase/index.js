@@ -169,11 +169,11 @@ const WithdrawBase = ({
               toTokenUsdPrice = pickedToken.usdPrice
             } else {
               const tokenDetails = await getPortalsTokensBatch(chainId, [fromToken, toToken])
-              fromTokenDetail = tokenDetails.find(token => 
-                token.address.toLowerCase() === fromToken.toLowerCase()
+              fromTokenDetail = tokenDetails.find(
+                token => token.address.toLowerCase() === fromToken.toLowerCase(),
               )
-              toTokenDetail = tokenDetails.find(token => 
-                token.address.toLowerCase() === toToken.toLowerCase()
+              toTokenDetail = tokenDetails.find(
+                token => token.address.toLowerCase() === toToken.toLowerCase(),
               )
               fromTokenUsdPrice = fromTokenDetail?.price
               toTokenUsdPrice = toTokenDetail?.price

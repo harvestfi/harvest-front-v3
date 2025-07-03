@@ -71,8 +71,13 @@ const VaultModal = ({
   const [isEnd, setIsEnd] = useState(false)
   const isFetchingRef = useRef(false)
 
-  const { getPortalsSupport, getPortalsBalances, getPortalsBaseTokens, getPortalsToken } =
-    usePortals()
+  const {
+    getPortalsSupport,
+    getPortalsBalances,
+    getPortalsBaseTokens,
+    getPortalsToken,
+    getPortalsSupportBatch,
+  } = usePortals()
 
   const { tokens } = require('../../../data')
 
@@ -128,22 +133,41 @@ const VaultModal = ({
       if (activedList.length > 0) {
         const newArray = activedList.slice(0, 10)
 
-        for (const item of newArray) {
-          if (item.vaultApy !== 0) {
+        const tokensToCheck = newArray
+          .filter(item => item.vaultApy !== 0)
+          .map(item => {
             const mToken = item.vault
             const tokenAddress = mToken.vaultAddress || mToken.tokenAddress
             const chainId = mToken.chain || mToken.data.chain
-
-            const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-            if (portalsToken) {
-              if (portalsToken.status === 200) {
-                if (portalsToken.data.totalItems !== 0) {
-                  filteredMatchList.push(item)
-                }
-              }
-            } else {
-              console.log('Error in fetching Portals supported')
+            return {
+              address: tokenAddress,
+              chainId: chainId,
+              item: item,
             }
+          })
+
+        if (tokensToCheck.length > 0) {
+          try {
+            const tokensByChain = tokensToCheck.reduce((acc, token) => {
+              if (!acc[token.chainId]) {
+                acc[token.chainId] = []
+              }
+              acc[token.chainId].push(token)
+              return acc
+            }, {})
+
+            for (const [chainId, tokens] of Object.entries(tokensByChain)) {
+              const addresses = tokens.map(t => t.address)
+              const supportResults = await getPortalsSupportBatch(chainId, addresses)
+
+              supportResults.forEach((result, index) => {
+                if (result.status === 200 && result.data.totalItems !== 0) {
+                  filteredMatchList.push(tokens[index].item)
+                }
+              })
+            }
+          } catch (error) {
+            console.log('Error in fetching Portals supported batch:', error)
           }
         }
       }
@@ -164,20 +188,39 @@ const VaultModal = ({
       const filteredMatchList = []
       const nextArray = matchingList.slice(startPoint, startPoint + 10)
 
-      for (const item of nextArray) {
+      const tokensToCheck = nextArray.map(item => {
         const mToken = item.vault
         const tokenAddress = mToken.vaultAddress || mToken.tokenAddress
         const chainId = mToken.chain || mToken.data.chain
+        return {
+          address: tokenAddress,
+          chainId: chainId,
+          item: item,
+        }
+      })
 
-        const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-        if (portalsToken) {
-          if (portalsToken.status === 200) {
-            if (portalsToken.data.totalItems !== 0) {
-              filteredMatchList.push(item)
+      if (tokensToCheck.length > 0) {
+        try {
+          const tokensByChain = tokensToCheck.reduce((acc, token) => {
+            if (!acc[token.chainId]) {
+              acc[token.chainId] = []
             }
+            acc[token.chainId].push(token)
+            return acc
+          }, {})
+
+          for (const [chainId, tokens] of Object.entries(tokensByChain)) {
+            const addresses = tokens.map(t => t.address)
+            const supportResults = await getPortalsSupportBatch(chainId, addresses)
+
+            supportResults.forEach((result, index) => {
+              if (result.status === 200 && result.data.totalItems !== 0) {
+                filteredMatchList.push(tokens[index].item)
+              }
+            })
           }
-        } else {
-          console.log('Error in fetching Portals supported')
+        } catch (error) {
+          console.log('Error in fetching Portals supported batch:', error)
         }
       }
 
