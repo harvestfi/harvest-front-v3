@@ -108,13 +108,12 @@ const ApexChart = ({ chainName, token, loadComplete, aotData, dataKeys, iporHvau
     }
 
     init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDataReady, loadComplete])
 
   return (
     <>
       {isDataReady === 'true' ? (
-        <ChartWrapper bgColorChart={bgColorChart}>
+        <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
             <AreaChart
               data={dataPoints}
@@ -178,11 +177,11 @@ const ApexChart = ({ chainName, token, loadComplete, aotData, dataKeys, iporHvau
       ) : (
         <LoadingDiv>
           {isDataReady === 'loading' ? (
-            <LoaderWrapper height={onlyWidth > 1291 ? '346px' : '365px'}>
+            <LoaderWrapper $height={onlyWidth > 1291 ? '346px' : '365px'}>
               <ClipLoader size={30} margin={2} color={fontColor} />
             </LoaderWrapper>
           ) : (
-            <NoData color={fontColor}>Historical allocation data soon to be available.</NoData>
+            <NoData $fontcolor={fontColor}>Historical allocation data soon to be available.</NoData>
           )}
         </LoadingDiv>
       )}

@@ -1,31 +1,26 @@
 import { get } from 'lodash'
 import React from 'react'
-import ReactTooltip from 'react-tooltip'
-import { DISABLED_WITHDRAWS, FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../constants'
+import { Tooltip } from 'react-tooltip'
+import { DISABLED_WITHDRAWS } from '../constants'
 import { usePools } from '../providers/Pools'
 import { useVaults } from '../providers/Vault'
-import { useWallet } from '../providers/Wallet'
 import { hasAmountGreaterThanZero, hasRequirementsForInteraction } from '../utilities/formats'
 import ButtonSwitch from './ButtonSwitch'
 
 const VaultPanelModeSwitch = ({
   token,
   tokenSymbol,
-  fAssetPool,
+  vaultPool,
   withdrawMode,
   loaded,
   pendingAction,
   loadingBalances,
   setWithdrawMode,
 }) => {
-  const { balances } = useWallet()
   const { userStats } = usePools()
   const { vaultsData } = useVaults()
-  const iFARMBalance = get(balances, IFARM_TOKEN_SYMBOL, 0)
-  const lpTokenBalance = get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
-  const totalStaked = get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
-
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
+  const lpTokenBalance = get(userStats, `[${vaultPool.id}]['lpTokenBalance']`, 0)
+  const totalStaked = get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)
 
   let withdrawalTimestamp = 0,
     timeLimited = false
@@ -39,7 +34,7 @@ const VaultPanelModeSwitch = ({
 
   return (
     <>
-      <ReactTooltip
+      <Tooltip
         id={`${tokenSymbol}-withdraw-button`}
         backgroundColor="#fffce6"
         borderColor="black"
@@ -51,7 +46,7 @@ const VaultPanelModeSwitch = ({
         clickable
       >
         {token.disabledWithdrawTooltip}
-      </ReactTooltip>
+      </Tooltip>
       <div style={{ display: 'flex' }} data-tip data-for={`${tokenSymbol}-withdraw-button`}>
         <ButtonSwitch
           checked={withdrawMode}
@@ -77,13 +72,8 @@ const VaultPanelModeSwitch = ({
                   loadingBalances,
                 ) ||
                 DISABLED_WITHDRAWS.indexOf(tokenSymbol) !== -1 ||
-                (isSpecialVault
-                  ? tokenSymbol === FARM_TOKEN_SYMBOL
-                    ? !hasAmountGreaterThanZero(totalStaked) &&
-                      !hasAmountGreaterThanZero(iFARMBalance)
-                    : !hasAmountGreaterThanZero(totalStaked)
-                  : !hasAmountGreaterThanZero(totalStaked) &&
-                    !hasAmountGreaterThanZero(lpTokenBalance)),
+                (!hasAmountGreaterThanZero(totalStaked) &&
+                  !hasAmountGreaterThanZero(lpTokenBalance)),
             },
           }}
           setChecked={checked => {

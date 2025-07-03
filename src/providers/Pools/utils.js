@@ -3,14 +3,12 @@ import equal from 'fast-deep-equal/react'
 import { get } from 'lodash'
 import { forEach } from 'promised-loops'
 import { POLL_POOL_USER_DATA_INTERVAL_MS } from '../../constants'
-import { newContractInstance } from '../../services/web3'
-import poolMethods from '../../services/web3/contracts/pool/methods'
-import tokenContract from '../../services/web3/contracts/token/contract.json'
-import tokenMethods from '../../services/web3/contracts/token/methods'
+import { newContractInstance } from '../../services/viem'
+import poolMethods from '../../services/viem/contracts/pool/methods'
+import tokenContract from '../../services/viem/contracts/token/contract.json'
+import tokenMethods from '../../services/viem/contracts/token/methods'
 
-/* eslint-disable global-require */
 const { pools, tokens } = require('../../data')
-/* eslint-enable global-require */
 
 export const calculateTotalRewardsEarned = async (account, contractInstance) => {
   const { totalEarned: earned } = poolMethods
@@ -48,14 +46,14 @@ export const getTotalStaked = async (account, contractInstance) => {
   return '0'
 }
 
-export const getLpTokenData = async (poolInstance, web3Provider) => {
+export const getLpTokenData = async (poolInstance, viemProvider) => {
   const { lpToken } = poolMethods
 
   const { abi: tokenAbi } = tokenContract
   const { getDecimals, getSymbol } = tokenMethods
 
   const lpAddress = await lpToken(poolInstance)
-  const lpInstance = await newContractInstance(null, lpAddress, tokenAbi, web3Provider)
+  const lpInstance = await newContractInstance(null, lpAddress, tokenAbi, viemProvider)
 
   const lpDecimals = await getDecimals(lpInstance)
   const lpSymbol = await getSymbol(lpInstance)

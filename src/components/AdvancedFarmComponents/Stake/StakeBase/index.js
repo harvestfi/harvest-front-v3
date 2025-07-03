@@ -5,10 +5,9 @@ import { useMediaQuery } from 'react-responsive'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { isSpecialApp } from '../../../../utilities/formats'
-import { fromWei, toWei } from '../../../../services/web3'
+import { fromWei, toWei } from '../../../../services/viem'
 import Button from '../../../Button'
 import {
   BalanceInfo,
@@ -34,7 +33,7 @@ const StakeBase = ({
   switchMethod,
   tokenSymbol,
   lpTokenBalance,
-  fAssetPool,
+  vaultPool,
 }) => {
   const {
     darkMode,
@@ -66,8 +65,8 @@ const StakeBase = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
   const [btnName, setBtnName] = useState('Preview & Stake')
   const [showWarning, setShowWarning] = useState(false)
   const [warningContent, setWarningContent] = useState('')
@@ -91,7 +90,7 @@ const StakeBase = ({
       setShowWarning(true)
       return
     }
-    const stakeAmount = toWei(inputAmount, fAssetPool.lpTokenData.decimals)
+    const stakeAmount = toWei(inputAmount, vaultPool.lpTokenData.decimals)
     if (new BigNumber(stakeAmount.toString()).isGreaterThan(lpTokenBalance.toString())) {
       setWarningContent(`Insufficient f${tokenSymbol} balance`)
       setShowWarning(true)
@@ -116,31 +115,30 @@ const StakeBase = ({
   return (
     <BaseSection>
       <NewLabel
-        bg={darkMode ? '#373D51' : '#fff'}
-        size={isMobile ? '16px' : '16px'}
-        height={isMobile ? '24px' : '24px'}
-        weight="600"
-        color={fontColor1}
-        display="flex"
-        justifyContent="center"
-        padding={isMobile ? '4px 0px' : '4px 0px'}
-        marginBottom="13px"
-        border={`1.3px solid ${borderColorBox}`}
-        borderRadius="8px"
+        $bgcolor={darkMode ? '#373D51' : '#fff'}
+        $size={isMobile ? '16px' : '16px'}
+        $height={isMobile ? '24px' : '24px'}
+        $weight="600"
+        $fontcolor={fontColor1}
+        $display="flex"
+        $justifycontent="center"
+        $padding={isMobile ? '4px 0px' : '4px 0px'}
+        $marginbottom="13px"
+        $border={`1.3px solid ${borderColorBox}`}
+        $borderradius="8px"
       >
         {mainTags.map((tag, i) => (
           <SwitchTabTag
             key={i}
-            num={i}
             onClick={() => {
               if (i === 1) {
                 switchMethod()
               }
             }}
-            color={i === 0 ? fontColor4 : fontColor3}
-            borderColor={i === 0 ? activeColor : ''}
-            backColor={i === 0 ? activeColorNew : ''}
-            boxShadow={
+            $fontcolor={i === 0 ? fontColor4 : fontColor3}
+            $bordercolor={i === 0 ? activeColor : ''}
+            $backcolor={i === 0 ? activeColorNew : ''}
+            $boxshadow={
               i === 0
                 ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
                 : ''
@@ -151,25 +149,25 @@ const StakeBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <DepoTitle fontColor={fontColor}>Stake your fTokens to earn extra rewards.</DepoTitle>
+      <DepoTitle $fontcolor={fontColor}>Stake your fTokens to earn extra rewards.</DepoTitle>
       <AmountSection>
         <NewLabel
-          size={isMobile ? '14px' : '14px'}
-          height={isMobile ? '20px' : '20px'}
-          weight="500"
-          color={fontColor2}
-          marginBottom="6px"
+          $size={isMobile ? '14px' : '14px'}
+          $height={isMobile ? '20px' : '20px'}
+          $weight="500"
+          $fontcolor={fontColor2}
+          $marginbottom="6px"
         >
           Amount to Stake
         </NewLabel>
-        <AmountInputSection fontColor5={fontColor5}>
+        <AmountInputSection $fontcolor5={fontColor5}>
           <TokenAmount
             type="number"
             value={inputAmount}
             onChange={onInputBalance}
-            bgColor={bgColorNew}
-            fontColor2={fontColor2}
-            borderColor={borderColorBox}
+            $bgcolor={bgColorNew}
+            $fontcolor2={fontColor2}
+            $bordercolor={borderColorBox}
             inputMode="numeric"
             pattern="[0-9]*"
             placeholder="0"
@@ -184,8 +182,8 @@ const StakeBase = ({
                   new BigNumber(
                     fromWei(
                       lpTokenBalance,
-                      fAssetPool.lpTokenData.decimals,
-                      fAssetPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
                       false,
                     ),
                   ).toString(),
@@ -198,15 +196,15 @@ const StakeBase = ({
         </AmountInputSection>
       </AmountSection>
       <BalanceInfo
-        fontColor={fontColor}
+        $fontcolor={fontColor}
         onClick={() => {
           if (account) {
             setInputAmount(
               new BigNumber(
                 fromWei(
                   lpTokenBalance,
-                  fAssetPool.lpTokenData.decimals,
-                  fAssetPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
                   false,
                 ),
               ).toString(),
@@ -216,34 +214,30 @@ const StakeBase = ({
       >
         Balance Available:
         <span>
-          {!connected ? (
-            0
-          ) : lpTokenBalance ? (
-            new BigNumber(
-              fromWei(
-                lpTokenBalance,
-                fAssetPool.lpTokenData.decimals,
-                fAssetPool.lpTokenData.decimals,
-                false,
-              ),
-            ).toString()
-          ) : (
-            <AnimatedDots />
-          )}
+          {!connected
+            ? 0
+            : new BigNumber(
+                fromWei(
+                  lpTokenBalance,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString()}
         </span>
       </BalanceInfo>
       <InsufficientSection
-        isShow={showWarning ? 'true' : 'false'}
-        activeColor={activeColor}
-        bgColorMessage={bgColorMessage}
+        $isshow={showWarning ? 'true' : 'false'}
+        $activecolor={activeColor}
+        $bgcolormessage={bgColorMessage}
       >
-        <NewLabel display="flex" widthDiv="80%" items="start">
+        <NewLabel $display="flex" $widthdiv="80%" $items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
-            size={isMobile ? '14px' : '14px'}
-            height={isMobile ? '20px' : '20px'}
-            weight="600"
-            color={fontColor2}
+            $size={isMobile ? '14px' : '14px'}
+            $height={isMobile ? '20px' : '20px'}
+            $weight="600"
+            $fontcolor={fontColor2}
           >
             {warningContent}
           </NewLabel>
@@ -259,13 +253,13 @@ const StakeBase = ({
         </div>
       </InsufficientSection>
 
-      <NewLabel marginTop={isMobile ? '10px' : '10px'}>
+      <NewLabel $margintop={isMobile ? '10px' : '10px'}>
         <Button
-          color="wido-deposit"
-          width="100%"
-          btnColor={btnColor}
-          btnHoverColor={btnHoverColor}
-          btnActiveColor={btnActiveColor}
+          $fontcolor="wido-deposit"
+          $width="100%"
+          $btncolor={btnColor}
+          $btnhovercolor={btnHoverColor}
+          $btnactivecolor={btnActiveColor}
           onClick={async () => {
             if (!connected) {
               connectAction()

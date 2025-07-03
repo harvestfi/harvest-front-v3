@@ -1,6 +1,6 @@
 import React, { Fragment, useEffect, useState } from 'react'
 import { Dropdown, Offcanvas } from 'react-bootstrap'
-import { useHistory, useLocation, Link } from 'react-router-dom'
+import { useNavigate, useLocation, Link } from 'react-router-dom'
 import { SlArrowDown } from 'react-icons/sl'
 import { IoCloseCircleOutline } from 'react-icons/io5'
 import ConnectSuccessIcon from '../../assets/images/logos/sidebar/connect-success.svg'
@@ -23,12 +23,7 @@ import { CHAIN_IDS } from '../../data/constants'
 import { usePools } from '../../providers/Pools'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import {
-  getChainIcon,
-  totalHistoryDataKey,
-  totalNetProfitKey,
-  vaultProfitDataKey,
-} from '../../utilities/parsers'
+import { getChainIcon } from '../../utilities/parsers'
 import { formatAddress, isSpecialApp } from '../../utilities/formats'
 import Social from '../Social'
 import CopyIcon from '../../assets/images/logos/sidebar/copy.svg'
@@ -226,45 +221,34 @@ const sideLinksMobileBottom = [
   },
 ]
 
-const SideLink = ({
-  item,
-  subItem,
-  isDropdownLink,
-  fontColor1,
-  activeIconColor,
-  darkMode,
-  hoverColorSide,
-}) => {
+const SideLink = ({ item, isDropdownLink, fontColor1, darkMode, hoverColorSide }) => {
   const { pathname } = useLocation()
   const pageName =
     pathname === '/'
       ? 'all vaults'
       : pathname === ROUTES.PORTFOLIO
-      ? 'portfolio'
-      : pathname === ROUTES.TUTORIAL
-      ? 'tutorial'
-      : pathname === ROUTES.MIGRATE
-      ? 'migrate'
-      : pathname
+        ? 'portfolio'
+        : pathname === ROUTES.TUTORIAL
+          ? 'tutorial'
+          : pathname === ROUTES.MIGRATE
+            ? 'migrate'
+            : pathname
   return (
-    /* eslint-disable-next-line jsx-a11y/anchor-is-valid */
     <LinkWrap
-      fontColor1={fontColor1}
-      active={pageName.includes(item.name.toLowerCase().trim())}
-      subItem={subItem}
-      isDropdownLink={isDropdownLink}
-      activeIconColor={activeIconColor}
-      darkMode={darkMode}
-      enabled={item.enabled === false ? 'false' : 'true'}
-      hoverColorSide={hoverColorSide}
+      $fontcolor1={fontColor1}
+      $active={pageName.includes(item.name.toLowerCase().trim())}
+      $isdropdownlink={isDropdownLink}
+      $darkmode={darkMode}
+      $enabled={item.enabled === false ? 'false' : 'true'}
+      $hovercolorside={hoverColorSide}
     >
       <div className="item">
         <SideIcons
+          width="25px"
+          height="25px"
           className="sideIcon"
           src={item.imgPath}
           alt="Harvest"
-          width="25px"
-          height="25px"
         />
       </div>
       <div className="item-name">{item.name}</div>
@@ -273,17 +257,7 @@ const SideLink = ({
   )
 }
 
-const MobileMenu = ({
-  item,
-  subItem,
-  isDropdownLink,
-  fontColor,
-  filterColor,
-  activeIconColor,
-  darkMode,
-  isWallet,
-  isMobile,
-}) => {
+const MobileMenu = ({ item, isDropdownLink, fontColor, filterColor, darkMode, isWallet }) => {
   const { pathname } = useLocation()
   const pageName =
     pathname === '/' ? 'all vaults' : pathname === ROUTES.PORTFOLIO ? 'portfolio' : pathname
@@ -293,18 +267,14 @@ const MobileMenu = ({
     : filterColor
   return (
     <LinkMobile
-      fontColor={fontColor}
-      active={!isWallet && pageName.includes(item.name.toLowerCase())}
-      subItem={subItem}
-      isDropdownLink={isDropdownLink}
-      activeIconColor={activeIconColor}
-      darkMode={darkMode}
-      enabled={item.enabled === false ? 'false' : 'true'}
-      isMobile={isMobile}
-      farmsFilter={farmsFilter}
+      $fontcolor={fontColor}
+      $active={!isWallet && pageName.includes(item.name.toLowerCase())}
+      $isdropdownlink={isDropdownLink}
+      $enabled={item.enabled === false ? 'false' : 'true'}
+      $farmsfilter={farmsFilter}
     >
       <SideIcons className="sideIcon" src={item.imgPath} alt="Harvest" width="25px" height="25px" />
-      <LinkName color={active ? '#6ED459' : darkMode ? '#fff' : '#7A7A7A'} marginTop="2px">
+      <LinkName color={active ? '#6ED459' : darkMode ? '#fff' : '#7A7A7A'} $margintop="2px">
         {item.linkName}
       </LinkName>
       {item.new ? <NewTag>New</NewTag> : <></>}
@@ -326,7 +296,6 @@ const Sidebar = ({ width }) => {
     fontColor5,
     fontColor7,
     inputBorderColor,
-    hoverImgColor,
     toggleColor,
     borderColorBox,
     hoverColor,
@@ -334,7 +303,6 @@ const Sidebar = ({ width }) => {
     hoverColorSide,
     toggleBackColor,
     sidebarFontColor,
-    sidebarActiveIconColor,
   } = useThemeContext()
 
   const { account, connectAction, disconnectAction, chainId, connected, setSelChain } = useWallet()
@@ -349,8 +317,7 @@ const Sidebar = ({ width }) => {
     }
   }, [darkMode])
 
-  const { pathname } = useLocation()
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   // Show sidebar for mobile
   const [mobileShow, setMobileShow] = useState(false)
@@ -372,24 +339,15 @@ const Sidebar = ({ width }) => {
   const beforeAccount = localStorage.getItem('address')
 
   useEffect(() => {
-    if (!connected) {
-      localStorage.setItem(totalNetProfitKey, '0')
-      localStorage.setItem(vaultProfitDataKey, JSON.stringify([]))
-      localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
-    }
-
     if (beforeAccount === null && account !== null) {
       localStorage.setItem('address', account)
     }
 
     if (beforeAccount !== null && account !== null && beforeAccount !== account) {
       localStorage.setItem('address', account)
-      localStorage.setItem(totalNetProfitKey, '0')
-      localStorage.setItem(vaultProfitDataKey, JSON.stringify([]))
-      localStorage.setItem(totalHistoryDataKey, JSON.stringify([]))
       window.location.reload()
     }
-  }, [connected, account, beforeAccount])
+  }, [account, beforeAccount])
 
   const directAction = path => {
     if (path === ROUTES.PORTFOLIO || path === ROUTES.ANALYTIC) {
@@ -401,25 +359,24 @@ const Sidebar = ({ width }) => {
         CHAIN_IDS.ZKSYNC,
       ])
     }
-    push(path)
+    navigate(path)
   }
 
   return (
     <Container
-      width={width}
-      darkMode={darkMode}
-      backcolor={bgColorNew}
-      bordercolor={borderColorBox}
-      fontColor={fontColor}
+      $width={width}
+      $backcolor={bgColorNew}
+      $bordercolor={borderColorBox}
+      $fontcolor={fontColor}
     >
       <Desktop>
         <Layout>
           <MiddleActionsContainer>
-            <LinksContainer fontColor={fontColor2}>
+            <LinksContainer $fontcolor={fontColor2}>
               <Logo
                 className="logo"
                 onClick={() => {
-                  push('/')
+                  navigate('/')
                 }}
               >
                 <img src={darkMode ? logoNewDark : logoNew} width={36} height={36} alt="Harvest" />
@@ -432,11 +389,10 @@ const Sidebar = ({ width }) => {
                       onClick={() => {
                         connectAction()
                       }}
-                      minWidth="190px"
-                      inputBorderColor={inputBorderColor}
-                      bordercolor={fontColor}
-                      disabled={disableWallet}
-                      hoverColor={btnHoverColor}
+                      $inputbordercolor={inputBorderColor}
+                      $bordercolor={fontColor}
+                      $disabled={disableWallet}
+                      $hovercolor={btnHoverColor}
                     >
                       Connect
                     </ConnectButtonStyle>
@@ -454,12 +410,12 @@ const Sidebar = ({ width }) => {
                   <Dropdown>
                     <UserDropDown
                       id="dropdown-basic"
-                      backcolor={toggleBackColor}
-                      fontcolor2={fontColor2}
-                      hovercolor={hoverColor}
+                      $backcolor={toggleBackColor}
+                      $fontcolor2={fontColor2}
+                      $hovercolor={hoverColor}
                     >
                       <FlexDiv>
-                        <ConnectAvatar avatar>
+                        <ConnectAvatar $avatar="true">
                           <img src={connectAvatar} alt="" />
                         </ConnectAvatar>
                         <div className="detail-info">
@@ -476,14 +432,14 @@ const Sidebar = ({ width }) => {
                       </div>
                     </UserDropDown>
                     {!isSpecialApp ? (
-                      <UserDropDownMenu backcolor={bgColorNew} bordercolor={borderColorBox}>
+                      <UserDropDownMenu $backcolor={bgColorNew} $bordercolor={borderColorBox}>
                         <UserDropDownItem
                           onClick={() => {
                             disconnectAction()
                           }}
-                          fontcolor={fontColor}
-                          filtercolor={filterColor2}
-                          filtercolornew={filterColorNew}
+                          $fontcolor={fontColor}
+                          $filtercolor={filterColor2}
+                          $filtercolornew={filterColorNew}
                         >
                           <img src={OnOff} width="18px" height="18px" alt="" />
                           <div>Disconnect</div>
@@ -499,13 +455,12 @@ const Sidebar = ({ width }) => {
               {sideLinksTop.map(item => {
                 if (item.category === true) {
                   return (
-                    <CategoryRow key={item.name} color={fontColor7}>
+                    <CategoryRow key={item.name} $fontcolor={fontColor7}>
                       {item.name}
                     </CategoryRow>
                   )
                 }
                 const url = item.path
-                const isActive = pathname.includes(item.path)
                 const shouldOpenNewTab = item.newTab || item.enabled === false
 
                 return (
@@ -514,9 +469,7 @@ const Sidebar = ({ width }) => {
                       href={url}
                       target={shouldOpenNewTab ? '_blank' : '_self'}
                       rel="noopener noreferrer"
-                      active={isActive}
-                      activeColor={item.activeColor}
-                      hoverImgColor={hoverImgColor}
+                      $activecolor={item.activeColor}
                       onClick={e => {
                         if (shouldOpenNewTab || e.ctrlKey || e.button === 1) {
                           e.preventDefault()
@@ -526,13 +479,11 @@ const Sidebar = ({ width }) => {
                           directAction(url)
                         }
                       }}
-                      darkMode={darkMode}
                     >
                       <SideLink
                         item={item}
                         isDropdownLink={item.path === '#'}
                         fontColor1={fontColor1}
-                        activeIconColor={sidebarActiveIconColor}
                         darkMode={darkMode}
                         hoverColorSide={hoverColorSide}
                       />
@@ -549,13 +500,12 @@ const Sidebar = ({ width }) => {
             {sideLinksBottom.map(item => {
               if (item.category === true) {
                 return (
-                  <CategoryRow key={item.name} color={fontColor7}>
+                  <CategoryRow key={item.name} $fontcolor={fontColor7}>
                     {item.name}
                   </CategoryRow>
                 )
               }
               const url = item.path
-              const isActive = pathname.includes(item.path)
               const shouldOpenNewTab = item.newTab || item.enabled === false
 
               return (
@@ -564,8 +514,6 @@ const Sidebar = ({ width }) => {
                     href={url}
                     target={shouldOpenNewTab ? '_blank' : '_self'}
                     rel="noopener noreferrer"
-                    active={isActive}
-                    hoverImgColor={hoverImgColor}
                     onClick={e => {
                       if (shouldOpenNewTab || e.ctrlKey || e.button === 1) {
                         e.preventDefault()
@@ -581,7 +529,6 @@ const Sidebar = ({ width }) => {
                       isDropdownLink={item.path === '#'}
                       fontColor1={fontColor1}
                       activeFontColor={fontColor1}
-                      activeIconColor={sidebarActiveIconColor}
                       darkMode={darkMode}
                       hoverColorSide={hoverColorSide}
                     />
@@ -593,23 +540,23 @@ const Sidebar = ({ width }) => {
         </BottomPart>
       </Desktop>
       <Mobile>
-        <MobileView bordercolor={borderColorBox}>
+        <MobileView $bordercolor={borderColorBox}>
           {/* Full Menu */}
           <OffcanvasDiv
             show={mobileShow}
             onHide={handleMobileClose}
             placement="bottom"
-            fontcolor={fontColor}
-            filtercolor={filterColor}
+            $fontcolor={fontColor}
+            $filtercolor={filterColor}
           >
             <Offcanvas.Body>
               <MobileActionsContainer
                 className="full-menu-container"
-                bgColor={bgColorNew}
-                bordercolor={borderColorBox}
+                $bgcolor={bgColorNew}
+                $bordercolor={borderColorBox}
               >
                 <Logo
-                  color={fontColor5}
+                  $fontcolor={fontColor5}
                   className="logo"
                   onClick={() => {
                     handleMobileClose()
@@ -618,7 +565,7 @@ const Sidebar = ({ width }) => {
                   <MobileMoreTop>
                     {connected ? (
                       <>
-                        <MobileMoreHeader backcolor={hoverColorSide}>
+                        <MobileMoreHeader $backcolor={hoverColorSide}>
                           <img
                             className="chainStatus"
                             alt="Chain icon"
@@ -631,16 +578,16 @@ const Sidebar = ({ width }) => {
                             src={getChainIcon(chainId)}
                             style={{ width: 16, height: 16 }}
                           />
-                          <Address color={darkMode ? '#ffffff' : '#000000'}>
+                          <Address $fontcolor={darkMode ? '#ffffff' : '#000000'}>
                             {formatAddress(account)}
                           </Address>
                         </MobileMoreHeader>
                         <MobileWalletButton
-                          fontColor5={fontColor5}
-                          backcolor={bgColorNew}
-                          bordercolor={borderColorBox}
+                          $fontcolor5={fontColor5}
+                          $backcolor={bgColorNew}
+                          $bordercolor={borderColorBox}
                           onClick={handleCopyAddress}
-                          marginLeft="10px"
+                          $marginleft="10px"
                         >
                           <img
                             className="chainIcon"
@@ -650,15 +597,15 @@ const Sidebar = ({ width }) => {
                           />
                         </MobileWalletButton>
                         <MobileWalletButton
-                          fontColor5={fontColor5}
-                          backcolor={bgColorNew}
-                          bordercolor={borderColorBox}
-                          filterColor={filterColor2}
+                          $fontcolor5={fontColor5}
+                          $backcolor={bgColorNew}
+                          $bordercolor={borderColorBox}
+                          $filtercolor={filterColor2}
                           onClick={() => {
                             disconnectAction()
                             handleMobileWalletClose()
                           }}
-                          marginLeft="15px"
+                          $marginleft="15px"
                         >
                           <img
                             className="chainIcon disconnect"
@@ -674,11 +621,10 @@ const Sidebar = ({ width }) => {
                         onClick={() => {
                           connectAction()
                         }}
-                        minWidth="190px"
-                        inputBorderColor={inputBorderColor}
-                        bordercolor={fontColor}
-                        disabled={disableWallet}
-                        hoverColor={btnHoverColor}
+                        $inputbordercolor={inputBorderColor}
+                        $bordercolor={fontColor}
+                        $disabled={disableWallet}
+                        $hovercolor={btnHoverColor}
                       >
                         Connect
                       </ConnectButtonStyle>
@@ -687,15 +633,13 @@ const Sidebar = ({ width }) => {
                 </Logo>
                 {sideLinksMobileBottom.map(item =>
                   item.category === true ? (
-                    <CategoryRow key={item.name} color={fontColor7}>
+                    <CategoryRow key={item.name} $fontcolor={fontColor7}>
                       {item.name}
                     </CategoryRow>
                   ) : (
                     <Fragment key={item.name}>
                       <MobileLinkContainer
-                        active={pathname.includes(item.path)}
-                        activeColor={item.activeColor}
-                        hoverImgColor={hoverImgColor}
+                        $activecolor={item.activeColor}
                         onClick={() => {
                           if (item.newTab) {
                             window.open(item.path, '_blank')
@@ -710,20 +654,17 @@ const Sidebar = ({ width }) => {
                           isDropdownLink={item.path === '#'}
                           fontColor1={fontColor1}
                           activeFontColor={fontColor1}
-                          activeIconColor={sidebarActiveIconColor}
                           darkMode={darkMode}
                           hoverColorSide={hoverColorSide}
                         />
                       </MobileLinkContainer>
                       {item.subItems ? (
-                        <LinkContainer hideOnDesktop>
+                        <LinkContainer>
                           {item.subItems.map(subItem => (
                             <SideLink
                               key={subItem.name}
-                              item={subItem}
                               fontColor1={fontColor1}
                               activeFontColor={fontColor1}
-                              activeIconColor={sidebarActiveIconColor}
                               darkMode={darkMode}
                               hoverColorSide={hoverColorSide}
                             />
@@ -753,9 +694,6 @@ const Sidebar = ({ width }) => {
           {sideLinksMobile.map(item => (
             <Fragment key={item.name}>
               <MobileMenuContainer
-                active={pathname.includes(item.path)}
-                activeColor={item.activeColor}
-                hoverImgColor={hoverImgColor}
                 onClick={() => {
                   if (item.newTab) {
                     window.open(item.path, '_blank')
@@ -771,7 +709,6 @@ const Sidebar = ({ width }) => {
                   fontColor={sidebarFontColor}
                   filterColor={filterColorBottom}
                   activeFontColor={fontColor1}
-                  activeIconColor={sidebarActiveIconColor}
                   darkMode={darkMode}
                   isWallet={false}
                   isMobile
@@ -780,17 +717,17 @@ const Sidebar = ({ width }) => {
             </Fragment>
           ))}
 
-          <MobileMenuContainer display="flex" justifyContent="center" alignItems="center">
+          <MobileMenuContainer>
             <LinkMobile className="more" type="button" onClick={handleMobileShow}>
               <SideIcons
-                toggleColor={toggleColor}
-                filterColor={filterColorBottom}
                 width="25px"
                 height="25px"
+                $togglecolor={toggleColor}
+                $filterColor={filterColorBottom}
                 src={Toggle}
                 alt=""
               />
-              <LinkName marginTop="2px" color={darkMode ? '#fff' : '#7A7A7A'}>
+              <LinkName $margintop="2px" $fontcolor={darkMode ? '#fff' : '#7A7A7A'}>
                 More
               </LinkName>
             </LinkMobile>

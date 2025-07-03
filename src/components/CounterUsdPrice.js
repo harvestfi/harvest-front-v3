@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js'
 import { get, toArray } from 'lodash'
 import React, { useState, useEffect } from 'react'
-import { BEGINNERS_BALANCES_DECIMALS } from '../constants'
-import { fromWei } from '../services/web3'
+import { USD_BALANCES_DECIMALS } from '../constants'
+import { fromWei } from '../services/viem'
 import { formatNumber } from '../utilities/formats'
 import { useRate } from '../providers/Rate'
 
@@ -71,11 +71,11 @@ const CounterUsdPrice = ({
           {RewardUSDCase1 === 0
             ? `${currencySym}0.00`
             : RewardUSDCase1 < 0.01
-            ? `<${currencySym}0.01`
-            : `${currencySym}${formatNumber(
-                RewardUSDCase1 * Number(currencyRate),
-                BEGINNERS_BALANCES_DECIMALS,
-              )}`}
+              ? `<${currencySym}0.01`
+              : `${currencySym}${formatNumber(
+                  RewardUSDCase1 * Number(currencyRate),
+                  USD_BALANCES_DECIMALS,
+                )}`}
           )
         </>
       )
@@ -87,11 +87,11 @@ const CounterUsdPrice = ({
           {RewardUSDCase2 === 0
             ? `${currencySym}0.00`
             : RewardUSDCase2 < 0.01
-            ? `<${currencySym}0.01`
-            : `${currencySym}${formatNumber(
-                RewardUSDCase2 * Number(currencyRate),
-                BEGINNERS_BALANCES_DECIMALS,
-              )}`}
+              ? `<${currencySym}0.01`
+              : `${currencySym}${formatNumber(
+                  RewardUSDCase2 * Number(currencyRate),
+                  USD_BALANCES_DECIMALS,
+                )}`}
           )
         </>
       )
@@ -103,11 +103,11 @@ const CounterUsdPrice = ({
           {RewardUSDCase3 === 0
             ? `${currencySym}0.00`
             : RewardUSDCase3 < 0.01
-            ? `<${currencySym}0.01`
-            : `${currencySym}${formatNumber(
-                RewardUSDCase3 * Number(currencyRate),
-                BEGINNERS_BALANCES_DECIMALS,
-              )}`}
+              ? `<${currencySym}0.01`
+              : `${currencySym}${formatNumber(
+                  RewardUSDCase3 * Number(currencyRate),
+                  USD_BALANCES_DECIMALS,
+                )}`}
           )
         </>
       )

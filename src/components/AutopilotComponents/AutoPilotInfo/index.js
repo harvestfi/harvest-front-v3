@@ -3,9 +3,9 @@ import { IoIosCloseCircleOutline } from 'react-icons/io'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useRate } from '../../../providers/Rate'
-import { fromWei, getExplorerLink } from '../../../services/web3'
+import { fromWei, getExplorerLink } from '../../../services/viem'
 import { useContracts } from '../../../providers/Contracts'
-import { getIPORVaultHistories, getIPORLastHarvestInfo } from '../../../utilities/apiCalls'
+import { getVaultHistories, getIPORLastHarvestInfo } from '../../../utilities/apiCalls'
 import { abbreaviteNumber, formatFrequency, formatNumber } from '../../../utilities/formats'
 import {
   PanelHeader,
@@ -26,14 +26,8 @@ import Button from '../../Button'
 import AnimatedDots from '../../AnimatedDots'
 
 const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
-  const {
-    darkMode,
-    borderColorBox,
-    btnColor,
-    fontColor2,
-    fontColor3,
-    fontColor5,
-  } = useThemeContext()
+  const { darkMode, borderColorBox, btnColor, fontColor2, fontColor3, fontColor5 } =
+    useThemeContext()
   const { rates } = useRate()
 
   const [activeMainTag, setActiveMainTag] = useState(0)
@@ -105,9 +99,10 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
         vaultData.chain,
       )
       setLastHarvest(lHarvestDate)
-      const { vaultHIPORData, vaultHIPORFlag } = await getIPORVaultHistories(
-        vaultData.chain,
+      const { vaultHData: vaultHIPORData, vaultHFlag: vaultHIPORFlag } = await getVaultHistories(
         vaultData.vaultAddress.toLowerCase(),
+        vaultData.chain,
+        true,
       )
 
       const vaultContract = contracts.iporVaults[vaultData.id]
@@ -125,15 +120,10 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           day = 0,
           hour = 0,
           min = 0,
-          [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(4).fill(
-            '-',
-          ),
-          [
-            sevenDaysHarvest,
-            thirtyDaysHarvest,
-            oneEightyDaysHarvest,
-            threeSixtyFiveDaysHarvest,
-          ] = Array(4).fill('-'),
+          [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] =
+            Array(4).fill('-'),
+          [sevenDaysHarvest, thirtyDaysHarvest, oneEightyDaysHarvest, threeSixtyFiveDaysHarvest] =
+            Array(4).fill('-'),
           latestSharePriceValue = '-',
           lifetimeApyValue = 0
 
@@ -246,16 +236,16 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
 
   return (
     <>
-      <BasePanelBox borderColor={borderColorBox} borderRadius="15px">
+      <BasePanelBox $bordercolor={borderColorBox} $borderradius="15px">
         <PanelHeader>
           <PanelTitle>
             <NewLabel
-              size="13.4px"
-              height="20px"
-              weight="700"
-              marginTop="25px"
-              marginLeft="20px"
-              color={fontColor2}
+              $size="13.4px"
+              $height="20px"
+              $weight="700"
+              $margintop="25px"
+              $marginleft="20px"
+              $fontcolor={fontColor2}
             >
               {vaultData.tokenNames[0]} Autopilot Info
             </NewLabel>
@@ -271,41 +261,41 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           <PanelTags>
             {mainTags.map((tag, i) => (
               <MainTag
-                fontColor2={fontColor2}
-                backColor={btnColor}
+                $fontcolor2={fontColor2}
+                $backcolor={btnColor}
                 key={i}
-                active={activeMainTag === i ? 'true' : 'false'}
+                $active={activeMainTag === i ? 'true' : 'false'}
                 onClick={() => {
                   setActiveMainTag(i)
                 }}
               >
-                <NewLabel size="11px">{tag}</NewLabel>
+                <NewLabel $size="11px">{tag}</NewLabel>
               </MainTag>
             ))}
           </PanelTags>
         </PanelHeader>
         {activeMainTag === 0 && (
-          <GeneralDiv key={activeMainTag} darkMode={darkMode ? 'true' : 'false'}>
+          <GeneralDiv key={activeMainTag} $darkmode={darkMode ? 'true' : 'false'}>
             {autoPilotInfoData.map((item, index) => (
               <RowDiv key={index}>
-                <NewLabel color={fontColor3} size="12px" height="20px" weight="500">
+                <NewLabel $fontcolor={fontColor3} $size="12px" $height="20px" $weight="500">
                   {item.label}
                 </NewLabel>
-                <NewLabel color={fontColor5} size="12px" height="20px" weight="500">
+                <NewLabel $fontcolor={fontColor5} $size="12px" $height="20px" $weight="500">
                   {item.value}
                 </NewLabel>
               </RowDiv>
             ))}
             <RowDiv>
-              <NewLabel color={fontColor3} size="12px" height="20px" weight="500">
+              <NewLabel $fontcolor={fontColor3} $size="12px" $height="20px" $weight="500">
                 Vault Token
               </NewLabel>
               <u>
                 <NewLabel
-                  color={fontColor5}
-                  size="12px"
-                  height="20px"
-                  weight="500"
+                  $fontcolor={fontColor5}
+                  $size="12px"
+                  $height="20px"
+                  $weight="500"
                   cursor="pointer"
                   onClick={() => {
                     window.open(
@@ -319,15 +309,15 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
               </u>
             </RowDiv>
             <ColumnDiv>
-              <NewLabel color={fontColor3} size="12px" height="20px" weight="700">
+              <NewLabel $fontcolor={fontColor3} $size="12px" $height="20px" $weight="700">
                 Technology
               </NewLabel>
               <NewLabel
-                display="inline-block"
-                color={fontColor5}
-                size="12px"
-                height="20px"
-                weight="400"
+                $display="inline-block"
+                $fontcolor={fontColor5}
+                $size="12px"
+                $height="20px"
+                $weight="400"
               >
                 Autopilot is powered by&nbsp;
                 <a
@@ -344,7 +334,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           </GeneralDiv>
         )}
         {activeMainTag === 1 && (
-          <GeneralDiv key={activeMainTag} darkMode={darkMode ? 'true' : 'false'}>
+          <GeneralDiv key={activeMainTag} $darkmode={darkMode ? 'true' : 'false'}>
             {vaultData.allocPointData && vaultData.allocPointData.length > 0 ? (
               vaultData.allocPointData.map((data, index) => {
                 const chainName = getChainNamePortals(vaultData.chain)
@@ -366,11 +356,11 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                 return (
                   <RowDiv key={index}>
                     <NewLabel
-                      size="12px"
-                      height="20px"
-                      weight="500"
+                      $size="12px"
+                      $height="20px"
+                      $weight="500"
                       cursor="pointer"
-                      borderBottom="0.5px dotted white"
+                      $borderbottom="0.5px dotted white"
                       onClick={() => {
                         return allVaultsData[data.hVaultId]?.vaultAddress
                           ? window.open(
@@ -384,7 +374,7 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                     >
                       {vaultName}
                     </NewLabel>
-                    <NewLabel size="12px" height="20px" weight="500">
+                    <NewLabel $size="12px" $height="20px" $weight="500">
                       {Number(data.allocPoint).toFixed(2)}%
                     </NewLabel>
                   </RowDiv>
@@ -396,12 +386,12 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
           </GeneralDiv>
         )}
         {activeMainTag === 2 && (
-          <GeneralDiv key={activeMainTag} darkMode={darkMode ? 'true' : 'false'}>
+          <GeneralDiv key={activeMainTag} $darkmode={darkMode ? 'true' : 'false'}>
             <RowDiv>
-              <NewLabel size="12px" height="20px" weight="500">
+              <NewLabel $size="12px" $height="20px" $weight="500">
                 {showApyHistory ? 'APY' : 'Harvest Frequency'}
               </NewLabel>
-              <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
+              <SwitchMode $mode={showApyHistory ? 'apy' : 'harvest'}>
                 <div id="theme-switch">
                   <div className="switch-track">
                     <div className="switch-thumb" />
@@ -419,25 +409,25 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
               (item, index) =>
                 item.label !== '30d' && (
                   <RowDiv key={index}>
-                    <NewLabel size="12px" height="20px" weight="500">
+                    <NewLabel $size="12px" $height="20px" $weight="500">
                       {item.label}
                     </NewLabel>
-                    <NewLabel size="12px" height="20px" weight="500">
+                    <NewLabel $size="12px" $height="20px" $weight="500">
                       {item.value}
                     </NewLabel>
                   </RowDiv>
                 ),
             )}
             <RowDiv>
-              <NewLabel color={fontColor5} size="13.3px" height="20px" weight="700">
+              <NewLabel $fontcolor={fontColor5} $size="13.3px" $height="20px" $weight="700">
                 Curious about more data and insights?
               </NewLabel>
             </RowDiv>
-            <FlexDiv width="100%">
+            <FlexDiv $width="100%">
               <Button
-                width="80%"
-                margin="auto"
-                color="autopilot"
+                $width="80%"
+                $margin="auto"
+                $fontcolor="autopilot"
                 onClick={() => {
                   const chainName = getChainNamePortals(vaultData.chain)
                   return window.open(

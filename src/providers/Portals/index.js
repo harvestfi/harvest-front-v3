@@ -1,4 +1,4 @@
-import React, { createContext, useContext } from 'react'
+import React, { createContext, useContext, useRef } from 'react'
 import axios from 'axios'
 import { getChainNamePortals } from '../../utilities/parsers'
 import { PORTALS_FI_API_URL } from '../../constants'
@@ -71,10 +71,35 @@ const SUPPORTED_TOKEN_LIST = {
 
 const PortalsProvider = _ref => {
   const { children } = _ref
-  // const [portalsBaseTokens, setPortalsBaseTokens] = useState({})
+
+  const requestCache = useRef(new Map())
+  const CACHE_DURATION = 30000
+
+  const getCacheKey = (method, params) => {
+    return `${method}_${JSON.stringify(params)}`
+  }
+
+  const getCachedData = key => {
+    const cached = requestCache.current.get(key)
+    if (cached && Date.now() - cached.timestamp < CACHE_DURATION) {
+      return cached.data
+    }
+    return null
+  }
+
+  const setCachedData = (key, data) => {
+    requestCache.current.set(key, {
+      data,
+      timestamp: Date.now(),
+    })
+  }
 
   const getPortalsBalances = async (address, chainId) => {
     try {
+      const cacheKey = getCacheKey('getPortalsBalances', { address, chainId })
+      const cachedData = getCachedData(cacheKey)
+      if (cachedData) return cachedData
+
       const response = await axios.get(`${PORTALS_FI_API_URL}/v2/account`, {
         params: {
           owner: address,
@@ -84,7 +109,10 @@ const PortalsProvider = _ref => {
           Authorization: `Bearer ${authToken}`,
         },
       })
-      return response.data.balances
+
+      const data = response.data.balances
+      setCachedData(cacheKey, data)
+      return data
     } catch (error) {
       console.error('Error fetching balances:', error)
       return []
@@ -93,6 +121,10 @@ const PortalsProvider = _ref => {
 
   const getPortalsBaseTokens = async chainId => {
     try {
+      const cacheKey = getCacheKey('getPortalsBaseTokens', { chainId })
+      const cachedData = getCachedData(cacheKey)
+      if (cachedData) return cachedData
+
       const supportedTokens = SUPPORTED_TOKEN_LIST[parseInt(chainId, 10)]
       const addressesQueryString = Object.keys(supportedTokens)
         .map(symbol => {
@@ -112,7 +144,9 @@ const PortalsProvider = _ref => {
         },
       )
 
-      return response.data.tokens
+      const data = response.data.tokens
+      setCachedData(cacheKey, data)
+      return data
     } catch (error) {
       console.error('Error fetching base tokens:', error)
       return []
@@ -153,6 +187,39 @@ const PortalsProvider = _ref => {
       return response.data?.tokens[0]
     } catch (error) {
       console.error('Error fetching token:', error)
+      return []
+    }
+  }
+
+  const getPortalsTokensBatch = async (chainId, tokenAddresses) => {
+    try {
+      if (!tokenAddresses || tokenAddresses.length === 0) return []
+
+      const cacheKey = getCacheKey('getPortalsTokensBatch', {
+        chainId,
+        tokenAddresses: tokenAddresses.sort(),
+      })
+      const cachedData = getCachedData(cacheKey)
+      if (cachedData) return cachedData
+
+      const addressesQueryString = tokenAddresses
+        .map(address => `addresses=${getChainNamePortals(chainId)}:${address}`)
+        .join('&')
+
+      const response = await axios.get(`${PORTALS_FI_API_URL}/v2/tokens?${addressesQueryString}`, {
+        params: {
+          minLiquidity: 0,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+
+      const data = response.data?.tokens || []
+      setCachedData(cacheKey, data)
+      return data
+    } catch (error) {
+      console.error('Error fetching tokens batch:', error)
       return []
     }
   }
@@ -236,6 +303,48 @@ const PortalsProvider = _ref => {
     }
   }
 
+  const getPortalsSupportBatch = async (chainId, tokenAddresses) => {
+    try {
+      if (!tokenAddresses || tokenAddresses.length === 0) return []
+
+      const addressesQueryString = tokenAddresses
+        .map(address => `addresses=${getChainNamePortals(chainId)}:${address}`)
+        .join('&')
+
+      const response = await axios.get(`${PORTALS_FI_API_URL}/v2/tokens?${addressesQueryString}`, {
+        params: {
+          minLiquidity: 0,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
+      })
+
+      const supportResults = tokenAddresses.map(address => {
+        const tokenData = response.data?.tokens?.find(
+          token => token.address.toLowerCase() === address.toLowerCase(),
+        )
+        return {
+          address,
+          status: tokenData ? 200 : 404,
+          data: {
+            totalItems: tokenData ? 1 : 0,
+            tokens: tokenData ? [tokenData] : [],
+          },
+        }
+      })
+
+      return supportResults
+    } catch (error) {
+      console.error('Error fetching tokens support batch:', error)
+      return tokenAddresses.map(address => ({
+        address,
+        status: error.response?.status || 500,
+        data: { totalItems: 0, tokens: [] },
+      }))
+    }
+  }
+
   return React.createElement(
     PortalsContext.Provider,
     {
@@ -246,10 +355,12 @@ const PortalsProvider = _ref => {
         getPortalsBalances,
         getPortalsSupport,
         getPortalsToken,
+        getPortalsTokensBatch,
         getPortalsApproval,
         portalsApprove,
         getPortals,
         getPortalsEstimate,
+        getPortalsSupportBatch,
       },
     },
     children,
