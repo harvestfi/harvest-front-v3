@@ -14,7 +14,6 @@ import { forEach } from 'promised-loops'
 import { useInterval } from 'react-interval-hook'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import BigNumber from 'bignumber.js'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import {
@@ -344,6 +343,20 @@ const PoolsProvider = _ref => {
                 }
               }
             })
+
+            for (const vaultId of Object.keys(contracts.iporVaults)) {
+              if (contracts.iporVaults[vaultId].chain === ch) {
+                vaultAddresses.push(contracts.iporVaults[vaultId].address)
+                poolAddresses.push('0x0000000000000000000000000000000000000000') //For IPOR vaults, we don't have a pool address
+                chLoadedPools.push({
+                  id: vaultId,
+                  lpTokenData: {
+                    address: contracts.iporVaults[vaultId].address,
+                  },
+                })
+              }
+            }
+
             const readerInstance = readerType.instance
             const readerMethods = readerType.methods
             const balances = await readerMethods.getAllInformation(
@@ -383,21 +396,6 @@ const PoolsProvider = _ref => {
             })
           }
 
-          for (const vaultId of Object.keys(contracts.iporVaults)) {
-            const vaultContract = contracts.iporVaults[vaultId]
-            const vaultBalance = await vaultContract.methods.getBalanceOf(
-              vaultContract.instance,
-              account,
-            )
-
-            if (new BigNumber(vaultBalance).gt(0)) {
-              stats[vaultId] = {
-                lpTokenBalance: vaultBalance,
-                totalStaked: 0,
-              }
-            }
-          }
-
           setUserStats(currStats => ({ ...currStats, ...stats }))
         }
 
@@ -411,7 +409,7 @@ const PoolsProvider = _ref => {
   })
 
   const fetchUserPoolStats = useCallback(
-    async function (selectedPools, selectedAccount, currentStats, isIPORVault = false) {
+    async function (selectedPools, selectedAccount, currentStats) {
       if (currentStats === void 0) {
         currentStats = []
       }
@@ -420,70 +418,75 @@ const PoolsProvider = _ref => {
 
       if (loadedUserPoolsViemProvider.current) {
         setLoadingUserPoolStats(true)
-        if (isIPORVault) {
-          await processSinglePool(selectedPools[0], selectedAccount, stats, isIPORVault)
-        } else {
-          const poolsByChain = {}
-          selectedPools.forEach(pool => {
-            if (!pool) return
+        const poolsByChain = {}
+        selectedPools.forEach(pool => {
+          if (!pool) return
 
-            const chainId = pool.chain
-            if (!poolsByChain[chainId]) {
-              poolsByChain[chainId] = []
+          if (typeof pool === 'string') {
+            pool = {
+              id: pool,
+              lpTokenData: {
+                address: contracts.iporVaults[pool]?.address,
+              },
+              contractAddress: '0x0000000000000000000000000000000000000000', //For IPOR vaults, we don't have a pool address
+              chain: contracts.iporVaults[pool]?.chain,
             }
-            poolsByChain[chainId].push(pool)
-          })
+          }
+          const chainId = pool.chain
+          if (!poolsByChain[chainId]) {
+            poolsByChain[chainId] = []
+          }
+          poolsByChain[chainId].push(pool)
+        })
 
-          for (const chainId in poolsByChain) {
-            const chainPools = poolsByChain[chainId]
-            const readerType = getReader(chainId, contracts)
+        for (const chainId in poolsByChain) {
+          const chainPools = poolsByChain[chainId]
+          const readerType = getReader(chainId, contracts)
 
-            if (readerType && chainPools.length > 1) {
-              const poolAddresses = []
-              const vaultAddresses = []
+          if (readerType) {
+            const poolAddresses = []
+            const vaultAddresses = []
 
-              chainPools.forEach(pool => {
-                poolAddresses.push(pool.contractAddress)
-                vaultAddresses.push(pool.lpTokenData.address)
+            chainPools.forEach(pool => {
+              poolAddresses.push(pool.contractAddress)
+              vaultAddresses.push(pool.lpTokenData.address)
+            })
+
+            const readerInstance = readerType.instance
+            const readerMethods = readerType.methods
+
+            try {
+              const balances = await readerMethods.getAllInformation(
+                selectedAccount,
+                vaultAddresses,
+                poolAddresses,
+                readerInstance,
+              )
+
+              chainPools.forEach((pool, index) => {
+                if (!pool) return
+
+                stats[pool.id] = {
+                  lpTokenBalance: balances[0][index] || '0',
+                  totalStaked: balances[1][index] || '0',
+                  totalRewardsEarned: balances[2] && balances[2][index] ? balances[2][index] : '0',
+                  lpTokenApprovedBalance: '0',
+                }
               })
-
-              const readerInstance = readerType.instance
-              const readerMethods = readerType.methods
-
-              try {
-                const balances = await readerMethods.getAllInformation(
-                  selectedAccount,
-                  vaultAddresses,
-                  poolAddresses,
-                  readerInstance,
-                )
-
-                chainPools.forEach((pool, index) => {
-                  if (!pool) return
-
-                  stats[pool.id] = {
-                    lpTokenBalance: balances[0][index] || '0',
-                    totalStaked: balances[1][index] || '0',
-                    totalRewardsEarned:
-                      balances[2] && balances[2][index] ? balances[2][index] : '0',
-                    lpTokenApprovedBalance: '0',
-                  }
-                })
-              } catch (error) {
-                console.error('Error in batch fetching pool stats:', error)
-                await Promise.all(
-                  chainPools.map(async pool => {
-                    await processSinglePool(pool, selectedAccount, stats)
-                  }),
-                )
-              }
-            } else {
+            } catch (error) {
+              console.error('Error in batch fetching pool stats:', error)
               await Promise.all(
                 chainPools.map(async pool => {
                   await processSinglePool(pool, selectedAccount, stats)
                 }),
               )
             }
+          } else {
+            await Promise.all(
+              chainPools.map(async pool => {
+                await processSinglePool(pool, selectedAccount, stats)
+              }),
+            )
           }
         }
 
@@ -493,70 +496,58 @@ const PoolsProvider = _ref => {
 
       return stats
 
-      async function processSinglePool(pool, selectedAccount, stats, isIPORVault = false) {
+      async function processSinglePool(pool, selectedAccount, stats) {
         if (!pool) return
 
-        if (isIPORVault) {
-          const vaultContract = contracts.iporVaults[pool]
-          const vaultBalance = await vaultContract.methods.getBalanceOf(
-            vaultContract.instance,
-            selectedAccount,
-          )
-          stats[pool] = {
-            lpTokenBalance: vaultBalance,
-            totalStaked: 0,
-          }
+        const viemClient = await getViem(pool.chain, false)
+        const contractInstance = await newContractInstance(
+          null,
+          pool.contractAddress,
+          poolContractData.abi,
+          viemClient,
+        )
+        const autoStakeContractInstance = await newContractInstance(
+          null,
+          pool.autoStakePoolAddress,
+          poolContractData.abi,
+          viemClient,
+        )
+        const tokenInstance = await newContractInstance(
+          null,
+          pool.lpTokenData.address,
+          poolContractData.abi,
+          viemClient,
+        )
+
+        const fetchedStats = await getUserStats(
+          contractInstance,
+          tokenInstance,
+          pool.contractAddress,
+          pool.autoStakePoolAddress,
+          selectedAccount,
+          autoStakeContractInstance,
+        )
+
+        if (!isEqual(fetchedStats, currentStats[pool.id])) {
+          stats[pool.id] = fetchedStats
         } else {
-          const viemClient = await getViem(pool.chain, false)
-          const contractInstance = await newContractInstance(
-            null,
-            pool.contractAddress,
-            poolContractData.abi,
-            viemClient,
+          await pollUpdatedUserStats(
+            getUserStats(
+              contractInstance,
+              tokenInstance,
+              pool.contractAddress,
+              pool.autoStakePoolAddress,
+              selectedAccount,
+              autoStakeContractInstance,
+            ),
+            currentStats,
+            () => {
+              console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
+            },
+            updatedStats => {
+              stats[pool.id] = updatedStats
+            },
           )
-          const autoStakeContractInstance = await newContractInstance(
-            null,
-            pool.autoStakePoolAddress,
-            poolContractData.abi,
-            viemClient,
-          )
-          const tokenInstance = await newContractInstance(
-            null,
-            pool.lpTokenData.address,
-            poolContractData.abi,
-            viemClient,
-          )
-
-          const fetchedStats = await getUserStats(
-            contractInstance,
-            tokenInstance,
-            pool.contractAddress,
-            pool.autoStakePoolAddress,
-            selectedAccount,
-            autoStakeContractInstance,
-          )
-
-          if (!isEqual(fetchedStats, currentStats[pool.id])) {
-            stats[pool.id] = fetchedStats
-          } else {
-            await pollUpdatedUserStats(
-              getUserStats(
-                contractInstance,
-                tokenInstance,
-                pool.contractAddress,
-                pool.autoStakePoolAddress,
-                selectedAccount,
-                autoStakeContractInstance,
-              ),
-              currentStats,
-              () => {
-                console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
-              },
-              updatedStats => {
-                stats[pool.id] = updatedStats
-              },
-            )
-          }
         }
       }
     },

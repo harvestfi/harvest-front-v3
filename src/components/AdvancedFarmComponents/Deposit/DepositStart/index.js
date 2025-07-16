@@ -318,7 +318,7 @@ const DepositStart = ({
       if (isSuccess) {
         await getWalletBalances([tokenSym], false, true)
         token.isIPORVault
-          ? await fetchUserPoolStats([tokenSym], account, userStats, true)
+          ? await fetchUserPoolStats([tokenSym], account, userStats)
           : await fetchUserPoolStats([vaultPool], account, userStats)
         setStartSpinner(false)
         setDepositFailed(false)

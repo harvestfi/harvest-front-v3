@@ -272,7 +272,7 @@ const WithdrawStart = ({
       if (isSuccess) {
         await getWalletBalances([tokenSym], false, true)
         token.isIPORVault
-          ? await fetchUserPoolStats([token.id], account, userStats, true)
+          ? await fetchUserPoolStats([token.id], account, userStats)
           : await fetchUserPoolStats([vaultPool], account, userStats)
 
         setStartSpinner(false)

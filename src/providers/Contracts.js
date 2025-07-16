@@ -67,6 +67,7 @@ const ContractsProvider = _ref => {
                 ),
                 methods: importedContracts.iporVaults[iporContract].methods,
                 address: importedContracts.iporVaults[iporContract].contract.address,
+                chain: importedContracts.iporVaults[iporContract].chain,
               },
             })
           })
