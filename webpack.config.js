@@ -9,13 +9,10 @@ const loadEnv = require('./config/loadEnv')
 const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 const isDevMode = process.env.NODE_ENV === 'development'
-const publicDir = isDevMode ? 'public' : 'build'
 
 const fetchIconsFromAPI = () => {
-  console.log(`Copying icons from harvest-api-v3 repo into ./${publicDir}/icons...`)
-  fs.copy('./src/data/harvest-api-v3/data/icons', `./${publicDir}/icons`).catch(err =>
-    console.error(err),
-  )
+  console.log(`Copying icons from harvest-api-v3 repo into ./public/icons...`)
+  fs.copy('./src/data/harvest-api-v3/data/icons', `./public/icons`).catch(err => console.error(err))
 }
 
 const generateVaultsAndPoolsData = () => {
@@ -35,7 +32,7 @@ const generateVaultsAndPoolsData = () => {
     'rowTooltip',
     'disableVaultPanel',
   ])
-  saveFormattedData(formattedTokens, `./${publicDir}/data/tokens.json`)
+  saveFormattedData(formattedTokens, `./public/data/tokens.json`)
 
   console.log('Generating pools list...')
   const formattedPools = formatItems(pools, [
@@ -47,7 +44,7 @@ const generateVaultsAndPoolsData = () => {
     'rewardAPY',
     'rewardAPR',
   ])
-  saveFormattedData(formattedPools, `./${publicDir}/data/pools.json`)
+  saveFormattedData(formattedPools, `./public/data/pools.json`)
 }
 
 module.exports = {
