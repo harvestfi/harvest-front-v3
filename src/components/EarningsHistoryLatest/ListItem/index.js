@@ -29,7 +29,7 @@ const ListItem = ({
           ) : (
             <></>
           )}
-          <Content $weight={weight} $size={size} height={height} $fontcolor={color}>
+          <Content $weight={weight} $size={size} $height={height} $fontcolor={color}>
             {label}
           </Content>
         </Label>
@@ -37,7 +37,7 @@ const ListItem = ({
         ''
       )}
       {value ? (
-        <Content $weight={weight} $size={size} height={height} $fontcolor={color}>
+        <Content $weight={weight} $size={size} $height={height} $fontcolor={color}>
           {value}
         </Content>
       ) : (
