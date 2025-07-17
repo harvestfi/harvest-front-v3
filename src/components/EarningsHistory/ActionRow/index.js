@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import ListItem from '../ListItem'
 import { useRate } from '../../../providers/Rate'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -20,14 +20,8 @@ const ActionRow = ({ info, showTotalBalance }) => {
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
-  const {
-    darkMode,
-    switchMode,
-    bgColorNew,
-    borderColorBox,
-    hoverColorRow,
-    fontColor,
-  } = useThemeContext()
+  const { darkMode, switchMode, bgColorNew, borderColorBox, hoverColorRow, fontColor } =
+    useThemeContext()
 
   useEffect(() => {
     if (rates.rateData) {
@@ -39,48 +33,49 @@ const ActionRow = ({ info, showTotalBalance }) => {
   return (
     <DetailView
       className="yield-row"
-      borderColor={borderColorBox}
-      hoverColor={hoverColorRow}
-      mode={switchMode}
-      background={bgColorNew}
+      $bordercolor={borderColorBox}
+      $hovercolor={hoverColorRow}
+      $mode={switchMode}
+      $background={bgColorNew}
     >
-      <FlexDiv padding={isMobile ? '10px 15px' : '0'}>
-        <Content display="flex" width={isMobile ? '25%' : '20%'}>
+      <FlexDiv $padding={isMobile ? '10px 15px' : '0'}>
+        <Content $display="flex" $width={isMobile ? '25%' : '20%'}>
           <Badge
-            bgColor={
+            $bgcolor={
               info.event === 'Revert'
                 ? '#FEF3F2'
                 : info.event === 'Convert'
-                ? '#fdeccf'
-                : info.netChange >= 0
-                ? '#ecfdf3'
-                : '#FEF3F2'
+                  ? '#fdeccf'
+                  : info.netChange >= 0
+                    ? '#ecfdf3'
+                    : '#FEF3F2'
             }
-            color={
+            $fontcolor={
               info.event === 'Revert'
                 ? '#B42318'
                 : info.event === 'Convert'
-                ? '#FF9400'
-                : info.netChange >= 0
-                ? '#027a48'
-                : '#B42318'
+                  ? '#FF9400'
+                  : info.netChange >= 0
+                    ? '#027a48'
+                    : '#B42318'
             }
           >
             {info.event}
           </Badge>
           {info.event === 'Harvest' && info.netChange < 0 && (
             <IconWrapper>
-              <PiQuestion className="question" data-tip data-for="harvest-event-minus" />
-              <ReactTooltip
+              <PiQuestion className="question" data-tip id="harvest-event-minus" />
+              <Tooltip
                 id="harvest-event-minus"
+                anchorSelect="#harvest-event-minus"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
                 textColor={darkMode ? 'black' : 'white'}
               >
                 <NewLabel
-                  size={isMobile ? '12px' : '12px'}
-                  height={isMobile ? '18px' : '18px'}
-                  weight="500"
+                  $height={isMobile ? '18px' : '18px'}
+                  $size={isMobile ? '12px' : '12px'}
+                  $weight="500"
                 >
                   In certain strategies, a negative yield event might occur, resulting in a minor
                   reduction of the underlying.
@@ -88,14 +83,14 @@ const ActionRow = ({ info, showTotalBalance }) => {
                   <br />
                   If you have any questions, open a ticket in our Discord.
                 </NewLabel>
-              </ReactTooltip>
+              </Tooltip>
             </IconWrapper>
           )}
         </Content>
         <Content
-          width={isMobile ? '30%' : '20%'}
-          color={fontColor}
-          paddingRight={isMobile ? '8px' : '0px'}
+          $width={isMobile ? '30%' : '20%'}
+          $fontcolor={fontColor}
+          $paddingright={isMobile ? '8px' : '0px'}
         >
           {isMobile ? (
             <div
@@ -108,7 +103,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
         </Content>
         {!isMobile ? (
           <>
-            <Content width="30%">
+            <Content $width="30%">
               <ListItem
                 weight={500}
                 size={12}
@@ -129,7 +124,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 value={info.tokenSymbol}
               />
             </Content>
-            <Content display={isMobile ? 'none' : 'flex'} width="30%">
+            <Content $display={isMobile ? 'none' : 'flex'} $width="30%">
               <NetImg>
                 <img src={info.netChange >= 0 ? TrendUp : TrendDown} alt="trend" />
               </NetImg>
@@ -159,7 +154,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
             </Content>
           </>
         ) : showTotalBalance ? (
-          <Content width="45%">
+          <Content $width="45%">
             <ListItem
               weight={500}
               size={12}
@@ -190,7 +185,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
             />
           </Content>
         ) : (
-          <Content display="flex" width="45%" justifyContent="space-between">
+          <Content $display="flex" $width="45%" $justifycontent="space-between">
             <NetImg>
               <img src={info.netChange >= 0 ? TrendUp : TrendDown} alt="trend" />
             </NetImg>

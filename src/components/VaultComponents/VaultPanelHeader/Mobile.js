@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import ARBITRUM from '../../../assets/images/chains/arbitrum.svg'
 import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
@@ -9,12 +9,9 @@ import ZKSYNC from '../../../assets/images/chains/zksync.svg'
 import APYIcon from '../../../assets/images/logos/farm/sortAPY.svg'
 import TVLIcon from '../../../assets/images/logos/farm/sortBank.svg'
 import DailyIcon from '../../../assets/images/logos/farm/sortCurrency.svg'
-import LSD from '../../../assets/images/logos/lsd.svg'
-import DESCI from '../../../assets/images/logos/DeSci.svg'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import {
-  // BadgeIcon,
   FlexDiv,
   MobileVaultInfoContainer,
   MobileVaultValueContainer,
@@ -30,13 +27,8 @@ const MobilePanelHeader = ({
   token,
   tokenSymbol,
   vaultPool,
-  useIFARM,
-  isSpecialVault,
-  multipleAssets,
   loadedVault,
   loadingFarmingBalance,
-  lsdToken,
-  desciToken,
 }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
@@ -45,7 +37,7 @@ const MobilePanelHeader = ({
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)
 
-  const { push } = useHistory()
+  const navigate = useNavigate()
 
   useEffect(() => {
     const getBadge = () => {
@@ -63,24 +55,22 @@ const MobilePanelHeader = ({
   const { badgeIconBackColor, fontColor, borderColorBox, setPrevPage } = useThemeContext()
   return (
     <PanelContainer
-      fontColor={fontColor}
-      borderColor={borderColorBox}
+      $fontcolor={fontColor}
+      $bordercolor={borderColorBox}
       onClick={() => {
         const network = chainList[badgeId].name.toLowerCase()
-        const address = isSpecialVault
-          ? token.data.collateralAddress
-          : token.vaultAddress || token.tokenAddress
+        const address = token.vaultAddress || token.tokenAddress
         setPrevPage(window.location.href)
         const url = `${directDetailUrl}${network}/${address}${location.search}`
-        push(url)
+        navigate(url)
       }}
     >
       <FlexDiv
         className="token-symbols"
-        width="60%"
-        alignSelf="center"
-        marginRight="18px"
-        paddingBottom="5px"
+        $width="60%"
+        $alignself="center"
+        $marginright="18px"
+        $paddingbottom="5px"
       >
         <div>
           {logoUrl.map((el, i) => (
@@ -91,28 +81,17 @@ const MobilePanelHeader = ({
           <VaultName
             token={token}
             tokenSymbol={tokenSymbol}
-            useIFARM={useIFARM}
             BadgeAry={BadgeAry}
             badgeId={badgeId}
             badgeIconBackColor={badgeIconBackColor}
-            lsdToken={lsdToken}
-            LSD={LSD}
-            desciToken={desciToken}
-            DESCI={DESCI}
             isMobile={isMobile}
           />
         </TokenLogoContainer>
       </FlexDiv>
-      <FlexDiv width="30%">
+      <FlexDiv $width="30%">
         <MobileVaultInfoContainer>
           <MobileVaultValueContainer>
-            <VaultApy
-              token={token}
-              tokenSymbol={tokenSymbol}
-              vaultPool={vaultPool}
-              isSpecialVault={isSpecialVault}
-              mobile
-            />
+            <VaultApy token={token} tokenSymbol={tokenSymbol} vaultPool={vaultPool} mobile />
             <div className="title">
               <img src={APYIcon} alt="" />
             </div>
@@ -127,12 +106,8 @@ const MobilePanelHeader = ({
             <VaultUserBalance
               token={token}
               tokenSymbol={tokenSymbol}
-              multipleAssets={multipleAssets}
-              isSpecialVault={isSpecialVault}
               loadingFarmingBalance={loadingFarmingBalance}
-              vaultPool={vaultPool}
               loadedVault={loadedVault}
-              useIFARM={useIFARM}
             />
             <div className="title">
               <img src={DailyIcon} alt="" />

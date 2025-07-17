@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useCallback, useEffect } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { Dropdown } from 'react-bootstrap'
 import { IoCheckmark } from 'react-icons/io5'
 import { useThemeContext } from '../../providers/useThemeContext'
@@ -34,17 +34,11 @@ import {
 } from './style'
 import HolderRow from '../../components/LeaderboardComponents/HolderRow'
 import { useVaults } from '../../providers/Vault'
-import { FARM_TOKEN_SYMBOL, SPECIAL_VAULTS } from '../../constants'
-import { useStats } from '../../providers/Stats'
-import { usePools } from '../../providers/Pools'
-import { addresses } from '../../data'
 import Pagination from '../../components/LeaderboardComponents/Pagination'
 import { useWallet } from '../../providers/Wallet'
 
 const LeaderBoard = () => {
   const { vaultsData } = useVaults()
-  const { profitShareAPY } = useStats()
-  const { totalPools } = usePools()
   const {
     bgColorNew,
     fontColor,
@@ -90,28 +84,7 @@ const LeaderBoard = () => {
     getData()
   }, [])
 
-  const farmProfitSharingPool = totalPools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.iFARM,
-        rewardSymbol: 'iFarm',
-        tokenNames: ['FARM'],
-        platform: ['Harvest'],
-        decimals: 18,
-      },
-    }),
-    [farmProfitSharingPool, profitShareAPY],
-  )
-
-  const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const groupOfVaults = { ...vaultsData }
 
   if (leadersApiData) {
     correctedApiData = rearrangeApiData(JSON.parse(JSON.stringify(leadersApiData)), groupOfVaults)
@@ -199,7 +172,7 @@ const LeaderBoard = () => {
       })
     }
     return sortableItems
-  }, [correctedApiData, sortConfig]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [correctedApiData, sortConfig])
 
   const { currentItems, pageCount } = useMemo(() => {
     const endOffset = itemOffset + itemsPerPage
@@ -230,7 +203,7 @@ const LeaderBoard = () => {
       const efficiencyB = b[1].totalDailyYield / b[1].totalBalance
       return efficiencyB - efficiencyA
     })
-  }, [correctedApiData]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [correctedApiData])
 
   const balanceRank = useMemo(() => {
     if (account && Object.entries(correctedApiData).length > 0) {
@@ -239,7 +212,7 @@ const LeaderBoard = () => {
       )
     }
     return false
-  }, [sortedByBalance, account]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sortedByBalance, account])
 
   const efficiencyRank = useMemo(() => {
     if (account && Object.entries(correctedApiData).length > 0) {
@@ -249,17 +222,17 @@ const LeaderBoard = () => {
       )
     }
     return false
-  }, [sortedByEfficiency, account]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [sortedByEfficiency, account])
 
   return isMobile ? (
-    <Container bgColor={bgColorNew} fontColor={fontColor}>
+    <Container $bgcolor={bgColorNew} $fontcolor={fontColor}>
       <Inner style={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'column' }}>
         <LeaderBoardTop>
           <div>
-            <TableTitle color={darkMode ? '#ffffff' : '#101828'}>
+            <TableTitle $fontcolor={darkMode ? '#ffffff' : '#101828'}>
               Leaderboard <BetaBadge>Beta</BetaBadge>
             </TableTitle>
-            <TableIntro color={darkMode ? '#ffffff' : '#475467'} marginBottom="0px">
+            <TableIntro $fontcolor={darkMode ? '#ffffff' : '#475467'} $marginbottom="0px">
               Displaying data from all networks.
             </TableIntro>
           </div>
@@ -267,28 +240,28 @@ const LeaderBoard = () => {
             <Dropdown>
               <CurrencyDropDown
                 id="dropdown-basic"
-                bgcolor={bgColorNew}
-                fontcolor2={fontColor2}
-                hovercolor={hoverColorNew}
+                $bgcolor={bgColorNew}
+                $fontcolor2={fontColor2}
+                $hovercolor={hoverColorNew}
                 style={{ padding: 0 }}
               >
                 <CurrencySelect
-                  backcolor={bgColorNew}
-                  borderColor={borderColorBox}
-                  fontcolor2={fontColor2}
-                  hovercolor={hoverColor}
+                  $backcolor={bgColorNew}
+                  $bordercolor={borderColorBox}
+                  $fontcolor2={fontColor2}
+                  $hovercolor={hoverColor}
                 >
                   <div>{selectedItem}</div>
                   <img src={dropDown} alt="Chevron Down" />
                 </CurrencySelect>
               </CurrencyDropDown>
-              <CurrencyDropDownMenu backcolor={bgColorNew} borderColor={borderColorBox}>
+              <CurrencyDropDownMenu $backcolor={bgColorNew} $bordercolor={borderColorBox}>
                 <CurrencyDropDownItem
                   onClick={() => {
                     handleItemClick('Top Allocation')
                     handleSort('balance')
                   }}
-                  fontcolor={fontColor2}
+                  $fontcolor={fontColor2}
                 >
                   <div>Top Allocation</div>
                   {selectedItem === 'Top Allocation' && <IoCheckmark className="check-icon" />}
@@ -298,7 +271,7 @@ const LeaderBoard = () => {
                     handleItemClick('Efficiency')
                     handleSort('Efficiency')
                   }}
-                  fontcolor={fontColor2}
+                  $fontcolor={fontColor2}
                 >
                   <div>Efficiency</div>
                   {selectedItem === 'Efficiency' && <IoCheckmark className="check-icon" />}
@@ -308,7 +281,7 @@ const LeaderBoard = () => {
                     handleItemClick('Monthly Yield')
                     handleSort('MonthlyYield')
                   }}
-                  fontcolor={fontColor2}
+                  $fontcolor={fontColor2}
                 >
                   <div>Monthly Yield</div>
                   {selectedItem === 'Monthly Yield' && <IoCheckmark className="check-icon" />}
@@ -332,22 +305,27 @@ const LeaderBoard = () => {
         </div>
       </Inner>
       <Inner style={{ padding: '0px', borderRadius: '0px' }}>
-        <TableContent borderColor={borderColorBox} count={100}>
+        <TableContent $bordercolor={borderColorBox} $count={100}>
           <Header
-            borderColor={borderColorBox}
-            backColor={bgColorNew}
-            borderRadius="0px"
-            padding="0px"
+            $bordercolor={borderColorBox}
+            $backcolor={bgColorNew}
+            $borderradius="0px"
+            $padding="0px"
           >
-            <Column width="50%" color={fontColor} fontSize="14px" padding="14px 28px 14px 16px">
+            <Column
+              $width="50%"
+              $fontcolor={fontColor}
+              $fontsize="14px"
+              $padding="14px 28px 14px 16px"
+            >
               <Col># User</Col>
             </Column>
             <Column
-              width="50%"
-              color={fontColor}
-              fontSize="14px"
-              padding="14px 28px 14px 16px"
-              alighItems="center"
+              $width="50%"
+              $fontcolor={fontColor}
+              $fontsize="14px"
+              $padding="14px 28px 14px 16px"
+              $alignitems="center"
               onClick={() => {
                 if (selectedItem === 'Top Allocation') {
                   handleSort('balance')
@@ -357,6 +335,7 @@ const LeaderBoard = () => {
                   handleSort('MonthlyYield')
                 }
               }}
+              $darkMode={darkMode}
             >
               <Col>{selectedItem}</Col>
               {selectedItem === 'Efficiency' && (
@@ -367,18 +346,17 @@ const LeaderBoard = () => {
                     onClick={stopPropagation}
                     style={{ marginLeft: '5px' }}
                   />
-                  <ReactTooltip
-                    backgroundColor={darkMode ? 'white' : '#101828'}
-                    borderColor={darkMode ? 'white' : 'black'}
-                    textColor={darkMode ? 'black' : 'white'}
+                  <Tooltip
                     place="top"
                     className="mobileTooltip"
+                    anchorSelect=".question"
+                    opacity={0.9}
                   >
                     <NewLabel
-                      size={isMobile ? '10px' : '12px'}
-                      height={isMobile ? '15px' : '18px'}
-                      weight="600"
-                      width="296px"
+                      $size={isMobile ? '10px' : '12px'}
+                      $height={isMobile ? '15px' : '18px'}
+                      $weight="600"
+                      $width="296px"
                     >
                       <div>
                         <p>This metric shows how effectively a wallet generates yield:</p>
@@ -395,7 +373,7 @@ const LeaderBoard = () => {
                         </ul>
                       </div>
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                 </>
               )}
             </Column>
@@ -432,14 +410,14 @@ const LeaderBoard = () => {
       </Inner>
     </Container>
   ) : (
-    <Container bgColor={bgColorNew} fontColor={fontColor}>
+    <Container $bgcolor={bgColorNew} $fontcolor={fontColor}>
       <Inner>
         <LeaderBoardTop>
           <div>
-            <TableTitle color={darkMode ? '#ffffff' : '#101828'}>
+            <TableTitle $fontcolor={darkMode ? '#ffffff' : '#101828'}>
               Leaderboard <BetaBadge>Beta</BetaBadge>
             </TableTitle>
-            <TableIntro color={darkMode ? '#ffffff' : '#475467'}>
+            <TableIntro $fontcolor={darkMode ? '#ffffff' : '#475467'}>
               Displaying data from all networks.
             </TableIntro>
           </div>
@@ -457,21 +435,21 @@ const LeaderBoard = () => {
               ))}
           </div>
         </LeaderBoardTop>
-        <SpaceLine borderColor={borderColorBox} />
+        <SpaceLine $bordercolor={borderColorBox} />
         <TransactionDetails>
-          <TableContent borderColor={borderColorBox} count={100}>
-            <Header borderColor={borderColorBox} backColor={bgColorNew}>
-              <Column width={isMobile ? '5%' : '10%'} color={fontColor}>
+          <TableContent $bordercolor={borderColorBox} $count={100}>
+            <Header $bordercolor={borderColorBox} $backcolor={bgColorNew}>
+              <Column $width={isMobile ? '5%' : '10%'} $fontcolor={fontColor}>
                 <Col>#</Col>
               </Column>
-              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
+              <Column $width={isMobile ? '5%' : '15%'} $fontcolor={fontColor}>
                 <Col>Wallet</Col>
               </Column>
-              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
+              <Column $width={isMobile ? '5%' : '15%'} $fontcolor={fontColor}>
                 <Col
                   onClick={() => handleSort('totalBalance')}
                   cursor="pointer"
-                  filterColor={filterColor}
+                  $filtercolor={filterColor}
                 >
                   Balance
                   <SortingIcon
@@ -481,14 +459,14 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
+              <Column $width={isMobile ? '5%' : '15%'} $fontcolor={fontColor}>
                 <Col># of Farms</Col>
               </Column>
-              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
+              <Column $width={isMobile ? '5%' : '15%'} $fontcolor={fontColor}>
                 <Col
                   onClick={() => handleSort('balance')}
                   cursor="pointer"
-                  filterColor={filterColor}
+                  $filtercolor={filterColor}
                 >
                   Top Allocation
                   <SortingIcon
@@ -498,25 +476,21 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
+              <Column $width={isMobile ? '5%' : '15%'} $fontcolor={fontColor}>
                 <Col
                   onClick={() => handleSort('Efficiency')}
                   cursor="pointer"
-                  filterColor={filterColor}
+                  $filtercolor={filterColor}
+                  $darkMode={darkMode}
                 >
                   Efficiency
                   <PiQuestion className="question" data-tip />
-                  <ReactTooltip
-                    backgroundColor={darkMode ? 'white' : '#101828'}
-                    borderColor={darkMode ? 'white' : 'black'}
-                    textColor={darkMode ? 'black' : 'white'}
-                    place="top"
-                  >
+                  <Tooltip anchorSelect=".question" className="efficiency-tooltip" opacity={0.8}>
                     <NewLabel
-                      size={isMobile ? '10px' : '12px'}
-                      height={isMobile ? '15px' : '18px'}
-                      weight="600"
-                      width="296px"
+                      $size={isMobile ? '10px' : '12px'}
+                      $height={isMobile ? '15px' : '18px'}
+                      $weight="600"
+                      $width="296px"
                     >
                       <div>
                         <p>This metric shows how effectively a wallet generates yield:</p>
@@ -533,7 +507,7 @@ const LeaderBoard = () => {
                         </ul>
                       </div>
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                   <SortingIcon
                     sortType={sortConfig.direction}
                     sortField={sortConfig.key}
@@ -541,11 +515,11 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '15%'} color={fontColor}>
+              <Column $width={isMobile ? '5%' : '15%'} $fontcolor={fontColor}>
                 <Col
                   onClick={() => handleSort('MonthlyYield')}
                   cursor="pointer"
-                  filterColor={filterColor}
+                  $filtercolor={filterColor}
                 >
                   Monthly Yield
                   <SortingIcon
@@ -555,7 +529,11 @@ const LeaderBoard = () => {
                   />
                 </Col>
               </Column>
-              <Column width={isMobile ? '5%' : '2%'} color={fontColor} justifyContent="center">
+              <Column
+                $width={isMobile ? '5%' : '2%'}
+                $fontcolor={fontColor}
+                $justifycontent="center"
+              >
                 <Col cursor="pointer" />
               </Column>
             </Header>

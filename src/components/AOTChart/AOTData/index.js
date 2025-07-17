@@ -123,16 +123,15 @@ const AOTData = ({ chainName, token, iporHvaultsLFAPY }) => {
     return () => {
       isMounted = false
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [address, chainId, token, setAOTData, setDataKeys])
 
   return (
-    <Container backColor={bgColorNew} borderColor={borderColorBox}>
+    <Container $backcolor={bgColorNew} $bordercolor={borderColorBox}>
       <Header>
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <TokenSymbol className="priceshare" color="#15B088">
+              <TokenSymbol className="priceshare" $fontcolor="#15B088">
                 Allocation
               </TokenSymbol>
             </TooltipInfo>

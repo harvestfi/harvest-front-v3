@@ -43,15 +43,7 @@ export const ROUTES = {
   ADVANCEDFARM: '/:network/:paramAddress',
   AUTOPILOTNOCHAIN: '/autopilot',
   AUTOPILOT: '/autopilot/:network',
-  CHARTS: '/charts',
-  WORK: '/work',
-  POOL: '/pool',
-  ZAPPER: '/zapper',
-  VESTING: 'https://vest.harvest.finance/',
   WIKI: 'https://docs.harvest.finance/',
-  WIKI_ZH: 'https://farm.chainwiki.dev/zh/%E7%AD%96%E7%95%A5',
-  CLAIM_EXT: 'https://claim.harvest.finance',
-  STATS: 'https://farmdashboard.xyz',
   LEADERBOARD: '/leaderboard',
   MIGRATE: '/migrate',
 }
@@ -365,8 +357,8 @@ export const FAQ_ITEMS_SECOND = [
       <>
         Interacting with our farms, whether depositing or withdrawing, comes with network fees.
         Depending on network congestion, the fees can be temporarily higher than usual. We suggest
-        coming back later for lower fees​. (Tip: Sundays are usually low in network activity
-        compared to the rest of the weekdays)
+        coming back later for lower fees. (Tip: Sundays are usually low in network activity compared
+        to the rest of the weekdays)
       </>
     ),
   },
@@ -544,7 +536,7 @@ export const HISTORICAL_RATES_API_ENDPOINT = `${HARVEST_API_URL}/historical-rate
 export const LEADERBOARD_API_ENDPOINT = `${HARVEST_API_URL}/leaderboard?key=${process.env.REACT_APP_EXTERNAL_API_KEY}`
 export const COINGECKO_API_KEY = `${process.env.REACT_APP_COINGECKO_API_KEY}`
 
-export const BEGINNERS_BALANCES_DECIMALS = 2
+export const USD_BALANCES_DECIMALS = 2
 export const POOL_BALANCES_DECIMALS = 8
 export const WIDO_EXTEND_DECIMALS = 9
 export const MAX_BALANCES_DECIMALS = 12
@@ -763,8 +755,6 @@ export const AUDIT_FILE_LINKS = {
     'https://github.com/harvest-finance/harvest/blob/master/audits/PeckShield-Harvest.pdf',
 }
 
-export const ZAPPER_FI_ZAP_IN_ENDPOINT = 'https://api.zapper.fi/v1/zap-in/harvest'
-
 export const UNIV3_POOL_ID_REGEX = '[uU]ni[vV]3'
 
 export const RESTRICTED_COUNTRIES = ['US']
@@ -946,30 +936,6 @@ export const fakeYieldData = [
     tokenSymbol: 'moonwell_WETH',
     value: '0.0001',
   },
-]
-
-export const boostedVaults = [
-  'lodestar_ARB',
-  'lodestar_ETH',
-  'lodestar_PENDLE',
-  'camelot_iFARM_ETH',
-  'lodestar_wstETH',
-  'xGRAIL',
-  'IFARM_arbitrum',
-  'lodestar_LODE',
-  'lodestar_GMX',
-  'camelotV3_GRAIL_ETH',
-  'camelotV3_ARB_USDC',
-  'camelotV3_ETH_USDT',
-  'camelotV3_ETH_USDC',
-  'aave_GHO_arbitrum',
-  'fluid_USDC_arbitrum',
-  'fluid_USDT_arbitrum',
-  'fluid_ETH_arbitrum',
-  'dolomite_DAI',
-  'dolomite_WBTC',
-  'dolomite_USDC',
-  'dolomite_USDT',
 ]
 
 export const supportedCurrencies = [

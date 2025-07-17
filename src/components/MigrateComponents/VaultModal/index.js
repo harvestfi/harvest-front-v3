@@ -1,19 +1,19 @@
 import React, { useState, useEffect, useRef } from 'react'
-// import { get, find } from 'lodash'
-import { isEmpty } from 'lodash'
+import { isEmpty, get } from 'lodash'
 import Modal from 'react-bootstrap/Modal'
 import { BsArrowDown } from 'react-icons/bs'
 import BigNumber from 'bignumber.js'
 import { Spinner } from 'react-bootstrap'
+import { isAddress } from 'ethers'
 import { FTokenInfo, NewLabel, IconCard, ImgBtn } from '../PositionModal/style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import CloseIcon from '../../../assets/images/logos/beginners/close.svg'
-import { fromWei, checkNativeToken } from '../../../services/web3'
+import { fromWei, checkNativeToken } from '../../../services/viem'
 import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import VaultList from '../VaultList'
-import { getMatchedVaultList, getVaultValue } from '../../../utilities/parsers'
-import { FARM_TOKEN_SYMBOL, BEGINNERS_BALANCES_DECIMALS } from '../../../constants'
+import { getMatchedVaultList } from '../../../utilities/parsers'
+import { USD_BALANCES_DECIMALS } from '../../../constants'
 import { usePortals } from '../../../providers/Portals'
 import { VaultBox } from '../PositionList/style'
 
@@ -31,7 +31,6 @@ const VaultModal = ({
   setIsFromModal,
   stopPropagation,
   groupOfVaults,
-  vaultsData,
   pools,
   matchVaultList,
   setMatchVaultList,
@@ -39,10 +38,8 @@ const VaultModal = ({
   setId,
   token,
   id,
-  addresses,
   balances,
   account,
-  ethers,
   setPickedToken,
   positionAddress,
   setBalance,
@@ -62,8 +59,8 @@ const VaultModal = ({
   const [hasPortalsError, setHasPortalsError] = useState(true)
   const [balanceList, setBalanceList] = useState([])
   const [defaultToken, setDefaultToken] = useState(null)
-  // eslint-disable-next-line no-unused-vars
-  const [supTokenList, setSupTokenList] = useState([])
+
+  const [, setSupTokenList] = useState([])
   const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
   const [balanceTokenList, setBalanceTokenList] = useState(balanceList)
@@ -79,14 +76,12 @@ const VaultModal = ({
     getPortalsBalances,
     getPortalsBaseTokens,
     getPortalsToken,
+    getPortalsSupportBatch,
   } = usePortals()
 
-  /* eslint-disable global-require */
   const { tokens } = require('../../../data')
 
-  const useIFARM = id === FARM_TOKEN_SYMBOL
   const filterWord = ''
-  const specialToken = groupOfVaults[FARM_TOKEN_SYMBOL]
 
   let tokenDecimals
 
@@ -99,46 +94,34 @@ const VaultModal = ({
     setIsEnd(false)
     setStartPoint(10)
     setMatchVaultList([])
-  }, [connected]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [connected])
 
   useEffect(() => {
     setMatchVaultList([])
-  }, [chain]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain])
 
   useEffect(() => {
     let matched = []
     const activedList = []
     if (chain && !isEmpty(userStats) && connected) {
-      matched = getMatchedVaultList(groupOfVaults, chain, vaultsData, pools)
-      if (matched.length > 0) {
-        matched.forEach(item => {
-          const vaultValue = getVaultValue(item.vault)
-          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
-            activedList.push(item)
-          }
-        })
-        if (activedList.length > 0) {
-          setMatchingList(activedList)
-          setAllMatchVaultList(activedList)
-        }
-      }
+      matched = getMatchedVaultList(groupOfVaults, chain, pools)
     } else if (!connected) {
-      matched = getMatchedVaultList(groupOfVaults, 8453, vaultsData, pools)
-      if (matched.length > 0) {
-        matched.forEach(item => {
-          const vaultValue = getVaultValue(item.vault)
-          if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
-            activedList.push(item)
-          }
-        })
-        if (activedList.length > 0) {
-          setMatchingList(activedList)
-          setAllMatchVaultList(activedList)
-        }
-      }
+      matched = getMatchedVaultList(groupOfVaults, 8453, pools)
     }
 
-    activedList.sort((a, b) => b.vaultApy - a.vaultApy)
+    if (matched.length > 0) {
+      matched.forEach(item => {
+        const vaultValue = new BigNumber(get(item.vault, 'totalValueLocked', 0))
+        if (Number(item.vaultApy) !== 0 && Number(vaultValue) > 500) {
+          activedList.push(item)
+        }
+      })
+      if (activedList.length > 0) {
+        activedList.sort((a, b) => b.vaultApy - a.vaultApy)
+        setMatchingList(activedList)
+        setAllMatchVaultList(activedList)
+      }
+    }
 
     const fetchSupportedMatches = async () => {
       if (isFetchingRef.current) {
@@ -148,30 +131,43 @@ const VaultModal = ({
       const filteredMatchList = []
 
       if (activedList.length > 0) {
-        activedList.sort((a, b) => b.vaultApy - a.vaultApy)
         const newArray = activedList.slice(0, 10)
-        // eslint-disable-next-line no-restricted-syntax
-        for (const item of newArray) {
-          if (
-            item.vaultApy !== 0 &&
-            item.vault.vaultAddress !== '0x47e3daF382C4603450905fb68766DB8308315407'
-          ) {
+
+        const tokensToCheck = newArray
+          .filter(item => item.vaultApy !== 0)
+          .map(item => {
             const mToken = item.vault
-            const tokenAddress = useIFARM
-              ? addresses.iFARM
-              : mToken.vaultAddress || mToken.tokenAddress
+            const tokenAddress = mToken.vaultAddress || mToken.tokenAddress
             const chainId = mToken.chain || mToken.data.chain
-            // eslint-disable-next-line no-await-in-loop
-            const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-            if (portalsToken) {
-              if (portalsToken.status === 200) {
-                if (portalsToken.data.totalItems !== 0) {
-                  filteredMatchList.push(item)
-                }
-              }
-            } else {
-              console.log('Error in fetching Portals supported')
+            return {
+              address: tokenAddress,
+              chainId: chainId,
+              item: item,
             }
+          })
+
+        if (tokensToCheck.length > 0) {
+          try {
+            const tokensByChain = tokensToCheck.reduce((acc, token) => {
+              if (!acc[token.chainId]) {
+                acc[token.chainId] = []
+              }
+              acc[token.chainId].push(token)
+              return acc
+            }, {})
+
+            for (const [chainId, tokens] of Object.entries(tokensByChain)) {
+              const addresses = tokens.map(t => t.address)
+              const supportResults = await getPortalsSupportBatch(chainId, addresses)
+
+              supportResults.forEach((result, index) => {
+                if (result.status === 200 && result.data.totalItems !== 0) {
+                  filteredMatchList.push(tokens[index].item)
+                }
+              })
+            }
+          } catch (error) {
+            console.log('Error in fetching Portals supported batch:', error)
           }
         }
       }
@@ -184,28 +180,47 @@ const VaultModal = ({
     }
 
     fetchSupportedMatches()
-  }, [chain, pools, setMatchVaultList, specialToken.profitShareAPY, connected, userStats]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chain, connected, userStats])
 
   const fetchMoreMatches = async () => {
     if (!isEnd) {
       setStartSpinner(true)
       const filteredMatchList = []
       const nextArray = matchingList.slice(startPoint, startPoint + 10)
-      // eslint-disable-next-line no-restricted-syntax
-      for (const item of nextArray) {
+
+      const tokensToCheck = nextArray.map(item => {
         const mToken = item.vault
-        const tokenAddress = useIFARM ? addresses.iFARM : mToken.vaultAddress || mToken.tokenAddress
+        const tokenAddress = mToken.vaultAddress || mToken.tokenAddress
         const chainId = mToken.chain || mToken.data.chain
-        // eslint-disable-next-line no-await-in-loop
-        const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-        if (portalsToken) {
-          if (portalsToken.status === 200) {
-            if (portalsToken.data.totalItems !== 0) {
-              filteredMatchList.push(item)
+        return {
+          address: tokenAddress,
+          chainId: chainId,
+          item: item,
+        }
+      })
+
+      if (tokensToCheck.length > 0) {
+        try {
+          const tokensByChain = tokensToCheck.reduce((acc, token) => {
+            if (!acc[token.chainId]) {
+              acc[token.chainId] = []
             }
+            acc[token.chainId].push(token)
+            return acc
+          }, {})
+
+          for (const [chainId, tokens] of Object.entries(tokensByChain)) {
+            const addresses = tokens.map(t => t.address)
+            const supportResults = await getPortalsSupportBatch(chainId, addresses)
+
+            supportResults.forEach((result, index) => {
+              if (result.status === 200 && result.data.totalItems !== 0) {
+                filteredMatchList.push(tokens[index].item)
+              }
+            })
           }
-        } else {
-          console.log('Error in fetching Portals supported')
+        } catch (error) {
+          console.log('Error in fetching Portals supported batch:', error)
         }
       }
 
@@ -277,7 +292,7 @@ const VaultModal = ({
   useEffect(() => {
     async function fetchData() {
       if (token) {
-        const tokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+        const tokenAddress = token.vaultAddress || token.tokenAddress
         const chainId = token.chain || token.data.chain
         const portalsToken = await getPortalsSupport(chainId, tokenAddress)
 
@@ -297,7 +312,6 @@ const VaultModal = ({
     }
 
     fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token])
 
   useEffect(() => {
@@ -327,8 +341,8 @@ const VaultModal = ({
                     logoURI: baseToken.image
                       ? baseToken.image
                       : baseToken.images
-                      ? baseToken.images[0]
-                      : 'https://etherscan.io/images/main/empty-token.png',
+                        ? baseToken.images[0]
+                        : 'https://etherscan.io/images/main/empty-token.png',
                     decimals: baseToken.decimals,
                     chainId: chain,
                   }
@@ -341,7 +355,7 @@ const VaultModal = ({
 
             const curBalances = portalsRawBalances
               .map(rawBalance => {
-                if (!ethers.utils.isAddress(rawBalance.address))
+                if (!isAddress(rawBalance.address))
                   rawBalance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
                 const item = {
                   symbol: rawBalance.symbol,
@@ -356,8 +370,8 @@ const VaultModal = ({
                   logoURI: rawBalance.image
                     ? rawBalance.image
                     : rawBalance.images
-                    ? rawBalance.images[0]
-                    : 'https://etherscan.io/images/main/empty-token.png',
+                      ? rawBalance.images[0]
+                      : 'https://etherscan.io/images/main/empty-token.png',
                   decimals: rawBalance.decimals,
                   chainId: chain,
                 }
@@ -370,29 +384,14 @@ const VaultModal = ({
                 ? token.tokenAddress
                 : token.vaultAddress
 
-            const fTokenAddr = useIFARM
-              ? addresses.iFARM
-              : token.vaultAddress
-              ? token.vaultAddress
-              : token.tokenAddress
+            const fTokenAddr = token.vaultAddress || token.tokenAddress
             const curSortedBalances = curBalances
               .sort(function reducer(a, b) {
                 return b.usdValue - a.usdValue
               })
               .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
 
-            // setBalanceList(
-            //   curSortedBalances.filter(
-            //     item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
-            //   ),
-            // )
             setBalanceList(curSortedBalances)
-
-            curSortedBalances.forEach(balanceToken => {
-              if (balanceToken.symbol === 'ARB') {
-                // setArbBalance(balanceToken.balance)
-              }
-            })
 
             supList = [...curBalances, ...curNoBalances]
 
@@ -434,8 +433,8 @@ const VaultModal = ({
             const directBalance = directData
               ? directData.balance
               : balances[id]
-              ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
-              : '0'
+                ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
+                : '0'
             const directUsdPrice = id === 'FARM_GRAIN_LP' ? 0 : token.usdPrice
             const directUsdValue = directData
               ? directData.usdValue
@@ -461,15 +460,6 @@ const VaultModal = ({
               supList.unshift(directInBalance)
               supList[0].default = true
             } else {
-              // const web3Client = await getWeb3(chain, null)
-              // const { getSymbol } = tokenMethods
-              // const lpInstance = await newContractInstance(
-              //   id,
-              //   tokenAddress,
-              //   tokenContract.abi,
-              //   web3Client,
-              // )
-              // const lpSymbol = await getSymbol(lpInstance)
               const direct = {
                 symbol: 'lpSymbol',
                 address: tokenAddress,
@@ -502,7 +492,6 @@ const VaultModal = ({
             } else {
               setDefaultToken({})
             }
-            // supList.shift()
             setSupTokenList(supList)
 
             const supNoBalanceList = [],
@@ -516,44 +505,24 @@ const VaultModal = ({
             }
             supNoBalanceList.shift()
             setSupTokenNoBalanceList(supNoBalanceList)
-
-            // const soonSupList = []
-            // for (let j = 0; j < curBalances.length; j += 1) {
-            //   const supToken = supList.find(el => el.address === curBalances[j].address)
-            //   if (!supToken) {
-            //     soonSupList.push(curBalances[j])
-            //   }
-
-            //   if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-            //     if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-            //       directInBalance = curBalances[j]
-            //     }
-            //   }
-            // }
-            // setSoonToSupList(soonSupList)
-            // setSoonToSupList({}) // TODO: remove soonToSupList once confirmed
           } else {
             let tokenSymbol,
               decimals = 18
 
-            decimals = useIFARM ? token.data?.watchAsset?.decimals : token.decimals
-            tokenSymbol = useIFARM ? token.tokenNames[0] : token?.pool?.lpTokenData?.symbol
+            decimals = token.decimals
+            tokenSymbol = id
 
             if (tokenSymbol && tokenSymbol.substring(0, 1) === 'f') {
               tokenSymbol = tokenSymbol.substring(1)
             }
-            // const tokenAddress = useIFARM ? addresses.iFARM : token.tokenAddress
+
             const tokenAddress = token.tokenAddress
-            const tokenId = token?.pool?.id
-            const tokenBalance = fromWei(
-              balances[useIFARM ? tokenSymbol : tokenId],
-              decimals,
-              decimals,
-            )
-            const tokenPrice = useIFARM ? token.data?.lpTokenData?.price : token.usdPrice
+            const tokenId = token?.pool?.id || id
+            const tokenBalance = fromWei(balances[tokenId], decimals, decimals)
+            const tokenPrice = token.usdPrice
             const usdValue = formatNumberWido(
               Number(tokenBalance) * Number(tokenPrice),
-              BEGINNERS_BALANCES_DECIMALS,
+              USD_BALANCES_DECIMALS,
             )
             const logoURI =
               token.logoUrl.length === 1
@@ -569,7 +538,7 @@ const VaultModal = ({
               usdPrice: tokenPrice,
               logoURI,
               decimals,
-              chainId: useIFARM ? token.data.chain : token.chain,
+              chainId: token.chain,
             }
             setDefaultToken(defaultTokenData)
           }
@@ -590,68 +559,8 @@ const VaultModal = ({
     id,
     token,
     tokenDecimals,
-    useIFARM,
-    addresses.iFARM,
-    ethers.utils,
     convertSuccess,
   ])
-
-  // useEffect(() => {
-  //   const timer = setTimeout(() => {
-  //     if (defaultToken !== null) {
-  //       let tokenToSet = null
-
-  //       // Check if defaultToken is present in the balanceList
-  //       if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
-  //         setBalance(defaultToken.balance)
-  //         return
-  //       }
-
-  //       // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
-  //       const supportedTokens = balanceList.filter(
-  //         balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
-  //       )
-  //       if (supportedTokens.length > 0) {
-  //         tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
-  //           prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
-  //         )
-  //       }
-
-  //       // If no token is found in SUPPORTED_TOKEN_LIST, set the token with the highest USD value in balanceList
-  //       if (!tokenToSet && balanceList.length > 0) {
-  //         tokenToSet = balanceList.reduce(
-  //           (prevToken, currentToken) =>
-  //             prevToken.usdValue > currentToken.usdValue ? prevToken : currentToken,
-  //           balanceList[0], // Providing the first element as the initial value
-  //         )
-  //       }
-
-  //       // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
-  //       if (tokenToSet) {
-  //         setBalance(
-  //           fromWei(
-  //             tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
-  //             tokenToSet.decimals,
-  //             tokenToSet.decimals,
-  //           ),
-  //         )
-  //       }
-  //     } else if (supTokenList.length !== 0) {
-  //       setBalance('0')
-  //     }
-  //   }, 3000)
-
-  //   return () => clearTimeout(timer)
-  // }, [
-  //   balanceList,
-  //   supTokenList,
-  //   defaultToken,
-  //   chain,
-  //   SUPPORTED_TOKEN_LIST,
-  //   supportedVault,
-  //   hasPortalsError,
-  //   setBalance,
-  // ])
 
   useEffect(() => {
     if (account && pickedToken) {
@@ -769,32 +678,6 @@ const VaultModal = ({
   }, [supTokenNoBalanceList, balanceList, chain, defaultCurToken, defaultToken, getPortalsToken])
 
   useEffect(() => {
-    // let tokenForPick
-    // if (balanceTokenList.length > 0 && positionAddress) {
-    //   const matchingVault = Object.entries(groupOfVaults).find(item => {
-    //     const compareAddress = item[1].poolVault ? item[1].tokenAddress : item[1].vaultAddress
-    //     return compareAddress.toLowerCase() === positionAddress.toLowerCase()
-    //   })
-    //   if (matchingVault) {
-    //     tokenForPick = balanceTokenList.find(item => {
-    //       if (item.address.toLowerCase() === matchingVault[1].tokenAddress.toLowerCase()) {
-    //         return item
-    //       }
-    //       if (item.address.toLowerCase() === positionAddress.toLowerCase()) {
-    //         return item
-    //       }
-    //       return null
-    //     })
-    //   }
-
-    //   if (tokenForPick) {
-    //     setPickedToken(tokenForPick)
-    //     setBalance(tokenForPick.balance)
-    //   } else {
-    //     setPickedToken(null)
-    //   }
-    // }
-
     if (filteredFarmList.length > 0 && positionAddress) {
       const matchingVault = filteredFarmList.find(item => {
         const compareAddress = item.token.poolVault
@@ -805,33 +688,21 @@ const VaultModal = ({
 
       if (matchingVault) {
         let staked, unstaked, total, hasStakeUnstake
-        const useIFARM1 = matchingVault.token.poolVault
 
-        if (useIFARM1) {
-          staked = matchingVault.stake
-          unstaked = matchingVault.unstake
-          total = staked
-          hasStakeUnstake = unstaked
-        } else {
-          staked = matchingVault.stake
+        staked = matchingVault.stake
 
-          unstaked = matchingVault.unstake
+        unstaked = matchingVault.unstake
 
-          total = unstaked
-          hasStakeUnstake = staked
-          // amountBalanceUSD = total * usdPrice * Number(currencyRate)
-        }
-        const newAddress = matchingVault.token.poolVault
-          ? matchingVault.token.tokenAddress
-          : matchingVault.token.vaultAddress
-        const newSymbol = matchingVault.token.poolVault
-          ? 'iFARM'
-          : `f${matchingVault.token.pool.id}`
+        total = unstaked
+        hasStakeUnstake = staked
+
+        const newAddress = matchingVault.token.vaultAddress
+        const newSymbol = matchingVault.token.id || matchingVault.token.pool.id
         const newToken = {
           address: newAddress,
           balance: total,
           chain,
-          decimals: Number(matchingVault.token.decimals),
+          decimals: Number(matchingVault.token.vaultDecimals || matchingVault.token.decimals),
           default: false,
           symbol: newSymbol,
           staked: Number(hasStakeUnstake),
@@ -843,12 +714,11 @@ const VaultModal = ({
         }
       }
     }
-  }, [balanceTokenList, positionAddress, setPickedToken, setBalance]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [balanceTokenList, positionAddress, setPickedToken, setBalance])
 
   return (
     <Modal
       show={showVaultModal}
-      // onHide={onClose}
       dialogClassName="migrate-modal-notification"
       aria-labelledby="contained-modal-title-vcenter"
       centered
@@ -856,27 +726,27 @@ const VaultModal = ({
       <Modal.Header className="migrate-position-modal-header">
         <FTokenInfo>
           <div className="modal-header-part">
-            <NewLabel margin="auto 16px auto 0px">
-              <IconCard bgColor="#5dcf46">
+            <NewLabel $margin="auto 16px auto 0px">
+              <IconCard $bgcolor="#5dcf46">
                 <BsArrowDown />
               </IconCard>
             </NewLabel>
-            <NewLabel align="left" marginRight="12px">
+            <NewLabel $align="left" $marginright="12px">
               <NewLabel
-                color="#5dcf46"
-                size={isMobile ? '18px' : '18px'}
-                height={isMobile ? '28px' : '28px'}
-                weight="600"
-                marginBottom="4px"
+                $fontcolor="#5dcf46"
+                $size={isMobile ? '18px' : '18px'}
+                $height={isMobile ? '28px' : '28px'}
+                $weight="600"
+                $marginbottom="4px"
               >
                 Choose new Strategy
               </NewLabel>
               <NewLabel
-                color={fontColor}
-                size={isMobile ? '14px' : '14px'}
-                height={isMobile ? '20px' : '20px'}
-                weight="400"
-                marginBottom="5px"
+                $fontcolor={fontColor}
+                $size={isMobile ? '14px' : '14px'}
+                $height={isMobile ? '20px' : '20px'}
+                $weight="400"
+                $marginbottom="5px"
               >
                 Pick a destination strategy
               </NewLabel>
@@ -884,16 +754,16 @@ const VaultModal = ({
           </div>
           <NewLabel>
             <NewLabel
-              display="flex"
-              marginBottom={isMobile ? '18px' : '18px'}
-              width="fit-content"
-              cursorType="pointer"
-              weight="600"
-              size={isMobile ? '14px' : '14px'}
-              height={isMobile ? '20px ' : '20px'}
-              darkMode={darkMode}
-              color={inputFontColor}
-              align="center"
+              $display="flex"
+              $marginbottom={isMobile ? '18px' : '18px'}
+              $width="fit-content"
+              $cursortype="pointer"
+              $weight="600"
+              $size={isMobile ? '14px' : '14px'}
+              $height={isMobile ? '20px ' : '20px'}
+              $darkmode={darkMode}
+              $fontcolor={inputFontColor}
+              $align="center"
               onClick={() => {
                 setShowVaultModal(false)
               }}
@@ -906,14 +776,14 @@ const VaultModal = ({
       <Modal.Body className="migrate-position-modal-body">
         {countFarm === 0 ? (
           <NewLabel
-            color={fontColor}
-            size={isMobile ? '12px' : '12px'}
-            height={isMobile ? '20px' : '20px'}
-            weight="400"
-            padding="15px"
-            borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
-            display="flex"
-            justifyContent="center"
+            $fontcolor={fontColor}
+            $size={isMobile ? '12px' : '12px'}
+            $height={isMobile ? '20px' : '20px'}
+            $weight="400"
+            $padding="15px"
+            $borderbottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
+            $display="flex"
+            $justifycontent="center"
           >
             Loading Strategy List
             <AnimatedDots />
@@ -921,12 +791,12 @@ const VaultModal = ({
         ) : (
           <>
             <NewLabel
-              color={fontColor}
-              size={isMobile ? '12px' : '12px'}
-              height={isMobile ? '20px' : '20px'}
-              weight="400"
-              padding="15px"
-              borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
+              $fontcolor={fontColor}
+              $size={isMobile ? '12px' : '12px'}
+              $height={isMobile ? '20px' : '20px'}
+              $weight="400"
+              $padding="15px"
+              $borderbottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
             >
               {`25+ Opportunities found on ${formatNetworkName(networkName)}`}
             </NewLabel>
@@ -934,9 +804,9 @@ const VaultModal = ({
             {isLoadingMore && newPositions}
             {matchingList.length > 0 && (
               <VaultBox
-                borderBottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
-                hoverBgColor={darkMode ? '#1F242F' : '#e9f0f7'}
-                color={darkMode ? '#ffffff' : '#414141'}
+                $borderbottom={darkMode ? '1px solid #1F242F' : '1px solid #ECECEC'}
+                $hoverbgcolor={darkMode ? '#1F242F' : '#e9f0f7'}
+                $fontcolor={darkMode ? '#ffffff' : '#414141'}
                 onClick={() => {
                   setIsLoadingMore(true)
                   fetchMoreMatches()

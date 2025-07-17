@@ -1,6 +1,6 @@
 import React from 'react'
 import { PiQuestion } from 'react-icons/pi'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { Container, Text, NewLabel } from './style'
@@ -11,17 +11,17 @@ const ChartRangeSelect = ({ state, type, text, onClick }) => {
   const isWeek = text === '1W'
   return (
     <Container
-      state={state}
       type={type}
-      text={text}
-      mode={switchMode}
-      activeItem={text === state}
+      // state={state}
+      // text={text}
+      $mode={switchMode}
+      $activeitem={text === state}
       onClick={() => {
         onClick()
       }}
-      display={isMobile && isWeek ? 'none' : 'flex'}
+      $display={isMobile && isWeek ? 'none' : 'flex'}
     >
-      <Text activeItem={text === state}>
+      <Text $activeitem={text === state}>
         {text}
         {text === 'LAST' && (
           <>
@@ -30,24 +30,25 @@ const ChartRangeSelect = ({ state, type, text, onClick }) => {
               fontSize={12}
               className="info"
               data-tip
-              data-for="tooltip-last-timeframe"
-            />
-            <ReactTooltip
               id="tooltip-last-timeframe"
+            />
+            <Tooltip
+              id="tooltip-last-timeframe"
+              anchorSelect="#tooltip-last-timeframe"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
               textColor={darkMode ? 'black' : 'white'}
               place="right"
             >
               <NewLabel
-                size={isMobile ? '12px' : '12px'}
-                height={isMobile ? '18px' : '18px'}
-                weight="500"
+                $size={isMobile ? '12px' : '12px'}
+                $height={isMobile ? '18px' : '18px'}
+                $weight="500"
               >
                 When set to &apos;Last&apos;, the performance chart displays your last interaction
                 (convert or revert) with this farm as the starting point.
               </NewLabel>
-            </ReactTooltip>
+            </Tooltip>
           </>
         )}
       </Text>

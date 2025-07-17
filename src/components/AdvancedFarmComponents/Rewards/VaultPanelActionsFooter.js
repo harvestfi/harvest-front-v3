@@ -8,12 +8,11 @@ import { usePools } from '../../../providers/Pools'
 import { calculateRewardsEarned } from '../../../providers/Pools/utils'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei, newContractInstance } from '../../../services/web3'
-import poolMethods from '../../../services/web3/contracts/pool/methods'
-import tokenContract from '../../../services/web3/contracts/token/contract.json'
-import tokenMethods from '../../../services/web3/contracts/token/methods'
-import vaultMethods from '../../../services/web3/contracts/vault/methods'
-import PoolFooterActions from './PoolFooterActions'
+import { fromWei, newContractInstance } from '../../../services/viem'
+import poolMethods from '../../../services/viem/contracts/pool/methods'
+import tokenContract from '../../../services/viem/contracts/token/contract.json'
+import tokenMethods from '../../../services/viem/contracts/token/methods'
+import vaultMethods from '../../../services/viem/contracts/vault/methods'
 import VaultFooterActions from './VaultFooterActions'
 
 const { addresses, tokens } = require('../../../data')
@@ -33,8 +32,7 @@ const getPoolRewardSymbol = chain => {
 const VaultPanelActionsFooter = ({
   token,
   tokenSymbol,
-  isSpecialVault,
-  fAssetPool,
+  vaultPool,
   rewardTokenPrices,
   loadingBalances,
   pendingAction,
@@ -53,12 +51,12 @@ const VaultPanelActionsFooter = ({
 
   const ratesPerDay = []
 
-  if (fAssetPool) {
+  if (vaultPool) {
     const [, selectedToken] = find(Object.entries(tokens), ([, tokenValues]) =>
-      fAssetPool.rewardTokens.includes(tokenValues.tokenAddress),
+      vaultPool.rewardTokens.includes(tokenValues.tokenAddress),
     )
-    if (fAssetPool.rewardAPY !== null) {
-      fAssetPool.rewardAPY.forEach(rewardApy => {
+    if (vaultPool.rewardAPY !== null) {
+      vaultPool.rewardAPY.forEach(rewardApy => {
         const ratePerDay = new BigNumber(rewardApy).dividedBy(365).dividedBy(100)
         ratesPerDay.push(
           isNaN(ratePerDay.toNumber()) ? 0 : ratePerDay.gte(1) ? 1 : ratePerDay.toFixed(),
@@ -67,7 +65,7 @@ const VaultPanelActionsFooter = ({
     }
 
     totalTokensEarned = fromWei(
-      get(userStats, `[${fAssetPool.id}]['totalRewardsEarned']`, 0),
+      get(userStats, `[${vaultPool.id}]['totalRewardsEarned']`, 0),
       selectedToken.decimals,
       selectedToken.decimals,
     )
@@ -79,7 +77,7 @@ const VaultPanelActionsFooter = ({
         const userBalanceInVault = new BigNumber(
           await tokenMethods.getBalance(account, vaultsData[tokenSymbol].instance),
         )
-        const userBalanceInPool = await poolMethods.balanceOf(account, fAssetPool.contractInstance)
+        const userBalanceInPool = await poolMethods.balanceOf(account, vaultPool.contractInstance)
         const totalBalance = userBalanceInVault.plus(userBalanceInPool)
 
         const vaultStrategyAddress = await vaultMethods.getStrategy(
@@ -110,7 +108,7 @@ const VaultPanelActionsFooter = ({
         setRewardsEarned(mainRewardsEarned)
       }
     },
-    [account, tokenSymbol, vaultsData, fAssetPool.contractInstance],
+    [account, tokenSymbol, vaultsData, vaultPool.contractInstance],
   )
 
   const hodlVaultId = get(vaultsData, `[${tokenSymbol}].hodlVaultId`)
@@ -123,8 +121,8 @@ const VaultPanelActionsFooter = ({
         ? find(pools, selectedPool => selectedPool.collateralAddress === hodlVaultData.vaultAddress)
         : {}
 
-      const mainRewardsEarned = get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`)
-      const mainRewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+      const mainRewardsEarned = get(userStats, `[${get(vaultPool, 'id')}].rewardsEarned`)
+      const mainRewardTokenSymbols = get(vaultPool, 'rewardTokenSymbols', [])
       const hodlRewardTokenSymbols = get(hodlPool, 'rewardTokenSymbols', [])
 
       setRewardTokenSymbols([...mainRewardTokenSymbols, ...hodlRewardTokenSymbols])
@@ -137,14 +135,14 @@ const VaultPanelActionsFooter = ({
     }
 
     fetchRewards()
-  }, [hodlVaultId, userStats, fAssetPool, pools, vaultsData, getRewardsEarned, setLoadingRewards])
+  }, [hodlVaultId, userStats, vaultPool, pools, vaultsData, getRewardsEarned, setLoadingRewards])
 
-  const isLoadingData = loadingBalances || loadingRewards || !fAssetPool.loaded
+  const isLoadingData = loadingBalances || loadingRewards || !vaultPool.loaded
 
   const componentsProps = {
     token,
     isLoadingData,
-    fAssetPool,
+    vaultPool,
     tokenSymbol,
     rewardsEarned,
     rewardTokenSymbols,
@@ -152,20 +150,11 @@ const VaultPanelActionsFooter = ({
     ratesPerDay,
     totalTokensEarned,
     loadingBalances,
-    isSpecialVault,
     poolRewardSymbol: getPoolRewardSymbol(chain),
     setLoadingDots,
     setPendingAction,
     pendingAction,
     loaded,
-  }
-
-  if (isSpecialVault) {
-    return (
-      <>
-        <PoolFooterActions {...componentsProps} />
-      </>
-    )
   }
 
   return (

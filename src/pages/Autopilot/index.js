@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { useHistory, useLocation } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { Dropdown } from 'react-bootstrap'
 import { isEqual, isEmpty } from 'lodash'
 import BigNumber from 'bignumber.js'
@@ -13,9 +13,8 @@ import { useWallet } from '../../providers/Wallet'
 import { useContracts } from '../../providers/Contracts'
 import { someChainsList } from '../../constants'
 import { isSpecialApp } from '../../utilities/formats'
-import { getUnderlyingId } from '../../utilities/parsers'
 import { initBalanceAndDetailData } from '../../utilities/apiCalls'
-import { fromWei } from '../../services/web3'
+import { fromWei } from '../../services/viem'
 import AutopilotPanel from '../../components/AutopilotComponents/AutopilotPanel'
 import {
   Container,
@@ -31,21 +30,13 @@ import {
 } from './style'
 
 const Autopilot = () => {
-  const {
-    darkMode,
-    bgColorNew,
-    hoverColorNew,
-    fontColor,
-    fontColor1,
-    fontColor2,
-    borderColorBox,
-  } = useThemeContext()
+  const { darkMode, bgColorNew, hoverColorNew, fontColor, fontColor1, fontColor2, borderColorBox } =
+    useThemeContext()
 
   const { connected, account, balances, getWalletBalances } = useWallet()
   const { contracts } = useContracts()
-  const history = useHistory()
+  const history = useNavigate()
   const location = useLocation()
-  // const { chainId } = useWallet()
   const { allVaultsData } = useVaults()
   const firstWalletBalanceLoad = useRef(true)
 
@@ -54,7 +45,6 @@ const Autopilot = () => {
   const [, setIsManualSelection] = useState(false)
   const [walletBalances, setWalletBalances] = useState({})
   const [userVBalance, setUserVBalance] = useState({})
-  const [userAssetBalances, setUserAssetBalances] = useState({})
   const [yieldValues, setYieldValues] = useState({})
 
   useEffect(() => {
@@ -63,12 +53,11 @@ const Autopilot = () => {
     const matchedChain = someChainsList.find(item => item.name === networkName)
 
     if (networkName !== 'base') {
-      history.replace('/autopilot/base')
+      history('/autopilot/base')
     } else if (matchedChain) {
       setCurChain(matchedChain)
     } else {
       setCurChain(someChainsList[0])
-      // history.replace('/autopilot/base')
     }
   }, [location.pathname, history])
 
@@ -89,13 +78,12 @@ const Autopilot = () => {
           ...vaultData,
           id: Object.keys(allVaultsData)[index],
         }))
-        .filter(vaultData => vaultData.isIPORVault)
+        .filter(
+          vaultData =>
+            vaultData.isIPORVault && vaultData.chain === curChain.chainId && !vaultData.inactive,
+        )
 
-      const filteredVaultsData = filteredVaults
-        .filter(item => item.chain === curChain.chainId)
-        .slice(0, 3)
-
-      setVaultsData(filteredVaultsData)
+      setVaultsData(filteredVaults)
     }
 
     if (Object.keys(allVaultsData).length !== 0 && !isEmpty(curChain)) {
@@ -103,79 +91,55 @@ const Autopilot = () => {
     }
   }, [allVaultsData, curChain])
 
-  const fetchWalletBalances = async (vaultsDataValue, accountValue, balancesValue) => {
-    if (!accountValue || vaultsDataValue.length === 0 || !balancesValue) return
-
-    setWalletBalances(prev => {
-      const mergedBalances = { ...prev }
-
-      vaultsDataValue.forEach(vault => {
-        if (!(vault.id in mergedBalances)) {
-          mergedBalances[vault.id] = '0'
-        }
-      })
-
-      Object.keys(balancesValue).forEach(underlyingId => {
-        const vault = vaultsDataValue.find(v => getUnderlyingId(v) === underlyingId)
-        if (vault) {
-          mergedBalances[vault.id] = fromWei(
-            balancesValue[underlyingId],
-            vault.decimals,
-            vault.decimals,
-          )
-        }
-      })
-
-      return mergedBalances
+  const fetchWalletBalances = async (vaultsDataValue, balancesValue) => {
+    const balances = {}
+    vaultsDataValue.forEach(vault => {
+      if (vault.id in balancesValue) {
+        balances[vault.id] = fromWei(balancesValue[vault.id], vault.decimals, vault.decimals)
+      } else {
+        balances[vault.id] = walletBalances[vault.id] || '0'
+      }
     })
+
+    setWalletBalances(balances)
   }
 
   useEffect(() => {
     if (account && vaultsData.length > 0 && !isEmpty(balances)) {
-      fetchWalletBalances(vaultsData, account, balances)
+      fetchWalletBalances(vaultsData, balances)
     }
   }, [account, vaultsData, balances])
 
   const fetchBalances = async (vaultsDataVal, accountVal, contractsVal) => {
     const vBalancesMap = {}
-    const assetBalancesMap = {}
     const yieldMap = {}
+
+    await getWalletBalances(
+      vaultsDataVal.map(item => item.id),
+      accountVal,
+      true,
+    )
 
     await Promise.all(
       vaultsDataVal.map(async vault => {
-        const underlyingId = getUnderlyingId(vault)
-        if (underlyingId === '') return
-        await getWalletBalances([vault.id, underlyingId], accountVal, true)
-
         const vaultContract = contractsVal.iporVaults[vault.id]
         const vaultBalance = await vaultContract.methods.getBalanceOf(
           vaultContract.instance,
           accountVal,
         )
-        const AssetBalance = await vaultContract.methods.convertToAssets(
-          vaultContract.instance,
-          vaultBalance,
-        )
 
-        if (new BigNumber(AssetBalance).gt(0)) {
+        if (new BigNumber(vaultBalance).gt(0)) {
           vBalancesMap[vault.id] = fromWei(new BigNumber(vaultBalance), Number(vault.vaultDecimals))
-          assetBalancesMap[vault.id] = fromWei(
-            new BigNumber(AssetBalance),
-            Number(vault.decimals),
-            Number(vault.decimals),
-          )
         } else {
           vBalancesMap[vault.id] = '0'
-          assetBalancesMap[vault.id] = '0'
         }
 
-        const iporVFlag = vault.isIPORVault ?? false
         const { bFlag, vHFlag, sumNetChange } = await initBalanceAndDetailData(
           vault.vaultAddress,
           vault.chain,
           accountVal,
           vault.decimals,
-          iporVFlag,
+          true,
           vault.vaultDecimals,
         )
 
@@ -186,7 +150,6 @@ const Autopilot = () => {
     )
 
     setUserVBalance(vBalancesMap)
-    setUserAssetBalances(assetBalancesMap)
     setYieldValues(yieldMap)
   }
 
@@ -211,14 +174,14 @@ const Autopilot = () => {
   const handleNetworkChange = selectedChain => {
     setCurChain(selectedChain)
     setIsManualSelection(true)
-    history.push(`/autopilot/${selectedChain.name}`)
+    history(`/autopilot/${selectedChain.name}`)
   }
 
   return (
-    <Container bgColor={bgColorNew} fontColor={fontColor}>
-      <Inner bgColor={darkMode ? '#171b25' : '#fff'}>
-        <HeaderWrap padding="21px 11px 15px 23px" borderColor={borderColorBox}>
-          <HeaderTitle fontColor={fontColor} fontColor1={fontColor1}>
+    <Container $bgcolor={bgColorNew} $fontcolor={fontColor}>
+      <Inner $bgcolor={darkMode ? '#171b25' : '#fff'}>
+        <HeaderWrap $padding="21px 11px 15px 23px" $bordercolor={borderColorBox}>
+          <HeaderTitle $fontcolor={fontColor} $fontcolor1={fontColor1}>
             <div className="title">Autopilot</div>
             <div className="desc">Maximized yield efficiency with 1-click autopilot vaults.</div>
           </HeaderTitle>
@@ -226,9 +189,9 @@ const Autopilot = () => {
             <Dropdown>
               <CurrencyDropDown
                 id="dropdown-basic"
-                bgcolor={bgColorNew}
-                fontcolor2={fontColor2}
-                hovercolor={hoverColorNew}
+                $bgcolor={bgColorNew}
+                $fontcolor2={fontColor2}
+                $hovercolor={hoverColorNew}
                 style={{ padding: 0 }}
               >
                 {curChain ? (
@@ -255,8 +218,8 @@ const Autopilot = () => {
                         onClick={() => {
                           handleNetworkChange(elem)
                         }}
-                        hovercolor={hoverColorNew}
-                        backcolor={bgColorNew}
+                        $hovercolor={hoverColorNew}
+                        $backcolor={bgColorNew}
                         key={elem.id}
                       >
                         <img
@@ -286,7 +249,7 @@ const Autopilot = () => {
                   allVaultsData={allVaultsData}
                   vaultData={vault}
                   walletBalance={walletBalances[vault.id] || '0'}
-                  userAssetBalance={userAssetBalances[vault.id] || '0'}
+                  userBalance={userVBalance[vault.id] || '0'}
                   yieldValue={yieldValues[vault.id] || '0'}
                   key={index}
                   index={index}

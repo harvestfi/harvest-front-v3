@@ -94,6 +94,7 @@ const ApexChart = ({
   setSelectedState,
   isExpanded,
   isInactive,
+  showRewardsTab = false,
 }) => {
   const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
@@ -236,7 +237,7 @@ const ApexChart = ({
       const dl1 = data1.length
       if (!connected) {
         setIsDataReady('false')
-      } else if (lpTokenBalance === 0 && !token.isIPORVault) {
+      } else if (lpTokenBalance === 0 && !token.isIPORVault && showRewardsTab) {
         setIsDataReady('loading')
       } else if (lpTokenBalance === '0' && totalValue !== 0 && dl === 0) {
         setIsDataReady('loading')
@@ -244,7 +245,7 @@ const ApexChart = ({
         setIsDataReady('false')
       } else if (lpTokenBalance === 0 && dl !== 0 && dl1 !== 0 && token.isIPORVault) {
         setIsDataReady('true')
-      } else if (totalValue !== '0' && dl === 0) {
+      } else if (totalValue !== '0' && totalValue !== 0 && dl === 0) {
         setIsDataReady('loading')
       } else if (dl !== 0 && dl1 !== 0) {
         setIsDataReady('true')
@@ -527,7 +528,6 @@ const ApexChart = ({
     }
 
     init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     connected,
     range,
@@ -555,7 +555,7 @@ const ApexChart = ({
   return (
     <>
       {isDataReady === 'true' ? (
-        <ChartWrapper bgColorChart={bgColorChart}>
+        <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
             <ComposedChart
               data={mainSeries}
@@ -716,17 +716,17 @@ const ApexChart = ({
       ) : (
         <LoadingDiv>
           {isDataReady === 'loading' ? (
-            <LoaderWrapper height={onlyWidth > 1291 ? '346px' : '365px'}>
+            <LoaderWrapper $height={onlyWidth > 1291 ? '346px' : '365px'}>
               <ClipLoader size={30} margin={2} color={fontColor} />
             </LoaderWrapper>
           ) : (
             <>
               {connected ? (
-                <NoData color={fontColor}>
+                <NoData $fontcolor={fontColor}>
                   No activity found for this wallet. Convert any token to start farming!
                 </NoData>
               ) : (
-                <NoData color={fontColor}>Connect wallet to see your balance chart</NoData>
+                <NoData $fontcolor={fontColor}>Connect wallet to see your balance chart</NoData>
               )}
               <FakeChartWrapper>
                 <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>

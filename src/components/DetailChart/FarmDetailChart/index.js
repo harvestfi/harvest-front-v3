@@ -17,7 +17,7 @@ import ApexChart from '../ApexChart'
 import ChartButtonsGroup from '../ChartButtonsGroup'
 import ChartRangeSelect from '../../ChartRangeSelect'
 import { useRate } from '../../../providers/Rate'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import { calculateApy, handleToggle } from '../../../utilities/parsers'
 import {
   ButtonGroup,
@@ -138,15 +138,10 @@ const FarmDetailChart = ({
             }
           })
 
-          let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] = Array(
-              4,
-            ).fill('-'),
-            [
-              sevenDaysHarvest,
-              thirtyDaysHarvest,
-              oneEightyDaysHarvest,
-              threeSixtyFiveDaysHarvest,
-            ] = Array(4).fill('-'),
+          let [sevenDaysApy, thirtyDaysApy, oneEightyDaysApy, threeSixtyFiveDaysApy] =
+              Array(4).fill('-'),
+            [sevenDaysHarvest, thirtyDaysHarvest, oneEightyDaysHarvest, threeSixtyFiveDaysHarvest] =
+              Array(4).fill('-'),
             lifetimeApyValue = 0,
             frequencyOfHarvest = '-',
             latestSharePriceValue = '-',
@@ -330,7 +325,7 @@ const FarmDetailChart = ({
     return () => {
       isMounted = false
     }
-  }, [address, chainId, isIFARM]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [address, chainId, isIFARM])
 
   return (
     <Container>
@@ -338,8 +333,8 @@ const FarmDetailChart = ({
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <LabelInfo fontColor4={fontColor4}>{tooltipLabel}</LabelInfo>
-              <CurDate fontColor3={fontColor3}>
+              <LabelInfo $fontcolor4={fontColor4}>{tooltipLabel}</LabelInfo>
+              <CurDate $fontcolor3={fontColor3}>
                 {curDate}&nbsp;<span>|</span>&nbsp;
                 <p>
                   {clickedId === 1 ? currencySym : ''}
@@ -383,8 +378,8 @@ const FarmDetailChart = ({
           type="button"
           onClick={handleToggle(setIsExpanded)}
           className="collapse-button"
-          backColor={darkMode ? '#3b3c3e' : '#e9f0f7'}
-          color={darkMode ? 'white' : 'black'}
+          $backcolor={darkMode ? '#3b3c3e' : '#e9f0f7'}
+          $fontcolor={darkMode ? 'white' : 'black'}
         >
           <ChevronIcon className="chevron">
             {isExpanded ? <FaChevronUp /> : <FaChevronDown />}

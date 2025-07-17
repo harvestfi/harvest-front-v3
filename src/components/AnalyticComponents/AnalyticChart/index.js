@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { usePools } from '../../../providers/Pools'
-import { Container, Header, ButtonGroup, ChartDiv, TooltipContent, CurDate } from './style'
-import { SPECIAL_VAULTS } from '../../../constants'
+import { Container, Header, ButtonGroup, ChartDiv, TooltipContent } from './style'
 import { getTotalTVLData } from '../../../utilities/apiCalls'
 import ApexChart from '../ApexChart'
 import ChartRangeSelect from '../../ChartRangeSelect'
@@ -15,23 +13,9 @@ const recommendLinks = [
 ]
 
 const AnalyticChart = () => {
-  const { totalPools } = usePools()
-
-  const farmProfitSharingPool = totalPools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
-  const chainId = farmProfitSharingPool.chain
-
   const [selectedState, setSelectedState] = useState('1Y')
 
-  const address =
-    farmProfitSharingPool.autoStakePoolAddress || farmProfitSharingPool.contractAddress
-
   const [apiData, setApiData] = useState([])
-
-  const [curDate, setCurDate] = useState('')
-  const [curContent, setCurContent] = useState('')
 
   useEffect(() => {
     const initData = async () => {
@@ -40,18 +24,15 @@ const AnalyticChart = () => {
     }
 
     initData()
-  }, [address, chainId])
+  }, [])
 
   const { fontColor } = useThemeContext()
 
   return (
     <>
-      <Container fontColor={fontColor}>
+      <Container $fontcolor={fontColor}>
         <Header>
-          <TooltipContent>
-            <CurDate>{curDate}</CurDate>
-            <div dangerouslySetInnerHTML={{ __html: curContent }} />
-          </TooltipContent>
+          <TooltipContent></TooltipContent>
           <ButtonGroup>
             {recommendLinks.map((item, i) => (
               <ChartRangeSelect
@@ -67,12 +48,7 @@ const AnalyticChart = () => {
           </ButtonGroup>
         </Header>
         <ChartDiv>
-          <ApexChart
-            data={apiData}
-            range={selectedState}
-            setCurDate={setCurDate}
-            setCurContent={setCurContent}
-          />
+          <ApexChart data={apiData} range={selectedState} />
         </ChartDiv>
       </Container>
     </>

@@ -2,15 +2,15 @@ import BigNumber from 'bignumber.js'
 import { find, get, isEqual, isArray, isNaN } from 'lodash'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { RxCross2 } from 'react-icons/rx'
-import { useHistory, useLocation, useParams } from 'react-router-dom'
+import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { ethers } from 'ethers'
+import { isAddress } from 'ethers'
 import { BiLeftArrowAlt, BiInfoCircle } from 'react-icons/bi'
 import { PiQuestion } from 'react-icons/pi'
-import tokenMethods from '../../services/web3/contracts/token/methods'
-import tokenContract from '../../services/web3/contracts/token/contract.json'
+import tokenMethods from '../../services/viem/contracts/token/methods'
+import tokenContract from '../../services/viem/contracts/token/contract.json'
 import ARBITRUM from '../../assets/images/chains/arbitrum.svg'
 import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
@@ -23,7 +23,6 @@ import History from '../../assets/images/logos/beginners/history.svg'
 import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
-import ARBball from '../../assets/images/chains/ARBball-lg.png'
 import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
 import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
 import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
@@ -53,20 +52,15 @@ import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   ROUTES,
-  SPECIAL_VAULTS,
-  BEGINNERS_BALANCES_DECIMALS,
+  USD_BALANCES_DECIMALS,
   POOL_BALANCES_DECIMALS,
   MAX_DECIMALS,
-  SOCIAL_LINKS,
   feeList,
   chainList,
-  boostedVaults,
   historyTags,
 } from '../../constants'
-import { fromWei, newContractInstance, getWeb3 } from '../../services/web3'
-import { addresses } from '../../data'
+import { fromWei, newContractInstance, getViem } from '../../services/viem'
 import { usePools } from '../../providers/Pools'
-import { useStats } from '../../providers/Stats'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
@@ -81,8 +75,6 @@ import {
   showUsdValueCurrency,
 } from '../../utilities/formats'
 import {
-  getTotalApy,
-  getVaultValue,
   getChainName,
   handleToggle,
   getChainNamePortals,
@@ -94,7 +86,6 @@ import {
   getLastHarvestInfo,
   getTokenPriceFromApi,
   initBalanceAndDetailData,
-  fetchRewardToken,
   getIPORLastHarvestInfo,
 } from '../../utilities/apiCalls'
 import {
@@ -115,7 +106,6 @@ import {
   TopLogo,
   TopPart,
   MyBalance,
-  MyTotalReward,
   TotalRewardBox,
   GuideSection,
   GuidePart,
@@ -162,8 +152,6 @@ import {
   IconPart,
   TipTop,
   CrossDiv,
-  StakingInfo,
-  StakingInfoText,
   SwitchTabTag,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
@@ -192,16 +180,12 @@ const AdvancedFarm = () => {
   } = useThemeContext()
 
   const { paramAddress } = useParams()
-  const {
-    getPortalsBaseTokens,
-    getPortalsBalances,
-    getPortalsSupport,
-    SUPPORTED_TOKEN_LIST,
-  } = usePortals()
+  const { getPortalsBaseTokens, getPortalsBalances, getPortalsSupport, SUPPORTED_TOKEN_LIST } =
+    usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
-  const { push } = useHistory()
-  const history = useHistory()
+  const navigate = useNavigate()
+  const history = useNavigate()
 
   const { pathname } = useLocation()
   const location = useLocation()
@@ -210,8 +194,7 @@ const AdvancedFarm = () => {
   const { vaultsData, loadingVaults, allVaultsData } = useVaults()
   const { pools, userStats, fetchUserPoolStats } = usePools()
   const { connected, account, balances, getWalletBalances } = useWallet()
-  const { profitShareAPY } = useStats()
-  /* eslint-disable global-require */
+
   const { tokens } = require('../../data')
 
   const [apiData, setApiData] = useState([])
@@ -219,12 +202,8 @@ const AdvancedFarm = () => {
 
   // Switch Tag (Convert/Revert)
   const [activeDepo, setActiveDepo] = useState(true)
-  const [showLatestEarnings, setShowLatestEarnings] = useState(true)
+  const [showLatestEarnings, setShowLatestEarnings] = useState(false)
   const [showApyHistory, setShowApyHistory] = useState(true)
-  const [isArbCampVault, setIsArbCampVault] = useState(false)
-  const [showGenomesVaultInfo, setShowGenomesVaultInfo] = useState(false)
-  const [showSeamlessVaultInfo, setShowSeamlessVaultInfo] = useState(false)
-  const [showGBVaultInfo, setShowGBVaultInfo] = useState(false)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [supportedVault, setSupportedVault] = useState(false)
   const [hasPortalsError, setHasPortalsError] = useState(true)
@@ -280,7 +259,6 @@ const AdvancedFarm = () => {
   const [supTokenNoBalanceList, setSupTokenNoBalanceList] = useState([])
   const [defaultToken, setDefaultToken] = useState(null)
   const [soonToSupList, setSoonToSupList] = useState([])
-  const [arbBalance, setArbBalance] = useState('0')
 
   const [vaultValue, setVaultValue] = useState(null)
   const [loadingFarmingBalance, setFarmingLoading] = useState(false)
@@ -319,7 +297,6 @@ const AdvancedFarm = () => {
   const [oneEightyDHarvest, setOneEightyDHarvest] = useState('')
   const [threeSixtyDHarvest, setThreeSixtyDHarvest] = useState('')
   const [harvestFrequency, setHarvestFrequency] = useState('')
-  const [rewardTokenData, setRewardTokenData] = useState()
   const [noRewardsData, setNoRewardsData] = useState(false)
 
   const { rates } = useRate()
@@ -327,25 +304,9 @@ const AdvancedFarm = () => {
   const [currencyName, setCurrencyName] = useState('USD')
   const [currencyRate, setCurrencyRate] = useState(1)
   const [showTip, setShowTip] = useState(true)
-  const [showStakingInfo, setShowStakingInfo] = useState(true)
-  const [isFarmToken, setIsFarmToken] = useState(false)
-  const [isReward, setIsReward] = useState(false)
-  const [noNeedStaking, setNoNeedStaking] = useState(false)
+  const [showRewardsTab, setShowRewardsTab] = useState(false)
   const [sharePricesData, setSharePricesData] = useState({})
   const [iporHvaultsLFAPY, setIPORHvaultsLFAPY] = useState({})
-
-  useEffect(() => {
-    const getData = async () => {
-      try {
-        const data = await fetchRewardToken()
-        setRewardTokenData(data)
-      } catch (error) {
-        console.error('Error fetching leaderboard data:', error)
-      }
-    }
-
-    getData()
-  }, [])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -364,39 +325,8 @@ const AdvancedFarm = () => {
     getCoinList()
   }, [])
 
-  const farmProfitSharingPool = pools.find(
-    pool => pool.id === SPECIAL_VAULTS.NEW_PROFIT_SHARING_POOL_ID,
-  )
-
-  const poolVaults = useMemo(
-    () => ({
-      [FARM_TOKEN_SYMBOL]: {
-        poolVault: true,
-        profitShareAPY,
-        data: farmProfitSharingPool,
-        logoUrl: ['./icons/ifarm.svg'],
-        tokenAddress: addresses.FARM,
-        vaultAddress: addresses.iFARM,
-        rewardSymbol: 'iFarm',
-        decimals: 18,
-        tokenNames: ['FARM'],
-      },
-    }),
-    [farmProfitSharingPool, profitShareAPY],
-  )
-
-  const groupOfVaults = { ...vaultsData, ...poolVaults }
+  const groupOfVaults = { ...vaultsData }
   const vaultsKey = Object.keys(groupOfVaults)
-
-  // Add 'boosted' item to vaults that participate in campaign
-  vaultsKey.map(async symbol => {
-    for (let i = 0; i < boostedVaults.length; i += 1) {
-      if (symbol === boostedVaults[i]) {
-        groupOfVaults[symbol].boosted = true
-        return
-      }
-    }
-  })
 
   const vaultIds = vaultsKey.filter(vaultId => {
     const tokenAddress = groupOfVaults[vaultId].tokenAddress || groupOfVaults[vaultId].vaultAddress
@@ -425,25 +355,16 @@ const AdvancedFarm = () => {
 
   const { logoUrl } = token
 
-  const isSpecialVault = token.poolVault
-  const tokenVault = get(vaultsData, token.hodlVaultId || id)
+  const vaultPool = find(pools, pool => pool.collateralAddress === get(token, `vaultAddress`))
 
-  const vaultPool = isSpecialVault
-    ? token.data
-    : find(pools, pool => pool.collateralAddress === get(tokenVault, `vaultAddress`))
-
-  const farmAPY = get(vaultPool, 'totalRewardAPY', 0)
+  const estimatedApy = get(token, `estimatedApy`, 0)
+  const rewardApy = get(vaultPool, 'totalRewardAPY', 0)
   const tradingApy = get(vaultPool, 'tradingApy', 0)
-  const boostedRewardAPY = get(vaultPool, 'boostedRewardAPY', 0)
-  const totalApy = isSpecialVault
-    ? getTotalApy(null, token, true)
-    : getTotalApy(vaultPool, tokenVault)
-
-  const chain = token.chain || token.data.chain
+  const totalApy = Number(estimatedApy) + Number(rewardApy) + Number(tradingApy)
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
   const tokenChain = token.chain || token.data.chain
-  const tokenSelfAddress = token.poolVault ? token.tokenAddress : token.vaultAddress
+
   let chainName = getChainName(tokenChain).toLowerCase()
   if (chainName === 'ethereum') {
     chainName = 'eth'
@@ -452,54 +373,21 @@ const AdvancedFarm = () => {
   }
 
   useEffect(() => {
-    if (rewardTokenData) {
-      let selectedToken
-      const rewardChainList = rewardTokenData[chainName]
-      rewardChainList.map(item => {
-        if (item.collateralAddress.toLowerCase() === tokenSelfAddress.toLowerCase()) {
-          selectedToken = item
-          return true
-        }
-        return false
-      })
-      const rewardAPR = token.isIPORVault ? [] : selectedToken.rewardAPR
-      const sum = rewardAPR.reduce((acc, value) => acc + Number(value), 0)
-      const rewardTokenSymbol = token.isIPORVault ? [] : selectedToken.rewardTokenSymbols
-      rewardTokenSymbol.map(symbol => {
-        if (rewardTokenSymbol !== 'FARM' && Array.from(symbol.trim().toLowerCase())[0] === 'f') {
-          setIsFarmToken(true)
-        }
-        return null
-      })
-      if (Number(sum) > 0) {
-        setIsReward(true)
-      }
-      if (isReward || isFarmToken) {
-        setNoNeedStaking(true)
-      }
-    }
-  }, [chainName, tokenSelfAddress, rewardTokenData, isReward, isFarmToken, token.isIPORVault])
-
-  useEffect(() => {
     const getBadge = () => {
       chainList.forEach((el, i) => {
-        if (el.chainId === Number(chain)) {
+        if (el.chainId === Number(tokenChain)) {
           setBadgeId(i)
         }
       })
     }
     getBadge()
-  }, [chain])
+  }, [tokenChain])
 
   useEffect(() => {
     // 👇️ scroll to top on page load
     window.scrollTo({ top: 0, left: 0, behavior: 'smooth' })
   }, [])
 
-  const useIFARM = id === FARM_TOKEN_SYMBOL
-  const fAssetPool = isSpecialVault
-    ? token.data
-    : find(pools, pool => pool.collateralAddress === tokens[id].vaultAddress)
   const multipleAssets = useMemo(
     () =>
       isArray(tokens[id].tokenAddress) &&
@@ -516,27 +404,22 @@ const AdvancedFarm = () => {
 
   const tokenDecimals = token.decimals || tokens[id].decimals
 
-  const lpTokenBalance = token.isIPORVault
+  const lpTokenBalance = token.id
     ? get(userStats, `[${token.id}]['lpTokenBalance']`, 0)
-    : get(userStats, `[${fAssetPool.id}]['lpTokenBalance']`, 0)
-  const totalStaked = token.isIPORVault
+    : get(userStats, `[${vaultPool.id}]['lpTokenBalance']`, 0)
+  const totalStaked = token.id
     ? get(userStats, `[${token.id}]['totalStaked']`, 0)
-    : get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)
-  const lpTokenApprovedBalance = token.isIPORVault
+    : get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)
+  const lpTokenApprovedBalance = token.id
     ? 0
-    : get(userStats, `[${fAssetPool.id}]['lpTokenApprovedBalance']`, 0)
+    : get(userStats, `[${vaultPool.id}]['lpTokenApprovedBalance']`, 0)
 
-  const tempPricePerFullShare = useIFARM
-    ? get(vaultsData, `${IFARM_TOKEN_SYMBOL}.pricePerFullShare`, 0)
-    : get(token, `pricePerFullShare`, 0)
+  const tempPricePerFullShare = get(token, `pricePerFullShare`, 0)
   const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
 
   const usdPrice =
-    Number(token.vaultPrice) ||
-    Number(token.data && token.data.lpTokenData && token.data.lpTokenData.price) *
-      Number(pricePerFullShare)
-  const farmPrice = token.data && token.data.lpTokenData && token.data.lpTokenData.price
-  const underlyingPrice = get(token, 'usdPrice', get(token, 'data.lpTokenData.price', 0))
+    Number(token.vaultPrice) || Number(token.usdPrice) * Number(pricePerFullShare) || 0
+  const underlyingPrice = get(token, 'usdPrice', 0)
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -548,55 +431,24 @@ const AdvancedFarm = () => {
 
   // Show vault info badge when platform is 'Seamless' or 'Harvest' and first visit
   useEffect(() => {
-    const platform = useIFARM ? 'Harvest' : token.platform?.[0]?.toLowerCase() ?? ''
-    const firstToken = token.tokenNames?.[0]?.toLowerCase() ?? ''
     const firstViewIFarm = localStorage.getItem('firstViewIFarm')
-    const firstViewSeamless = localStorage.getItem('firstViewSeamless')
-    const firstViewGenomes = localStorage.getItem('firstViewGenomes')
-    const firstViewGB = localStorage.getItem('firstViewGB')
 
-    const campaign = token.boosted
-    if (campaign) setIsArbCampVault(true)
-    if (platform === 'Harvest' && (firstViewIFarm === null || firstViewIFarm === 'true')) {
+    if (token.id === IFARM_TOKEN_SYMBOL && (firstViewIFarm === null || firstViewIFarm === 'true')) {
       localStorage.setItem('firstViewIFarm', true)
       setShowIFARMInfo(true)
-    } else if (
-      platform.includes('seamless') &&
-      (firstViewSeamless === null || firstViewSeamless === 'true')
-    ) {
-      localStorage.setItem('firstViewSeamless', true)
-      setShowSeamlessVaultInfo(true)
-    } else if (
-      (firstToken.includes('gene') || firstToken.includes('gnome')) &&
-      (firstViewGenomes === null || firstViewGenomes === 'true')
-    ) {
-      localStorage.setItem('firstViewGenomes', true)
-      setShowGenomesVaultInfo(true)
-    } else if (firstToken.includes('gb') && (firstViewGB === null || firstViewGB === 'true')) {
-      localStorage.setItem('firstViewGB', true)
-      setShowGBVaultInfo(true)
     }
-  }, [token.platform, token.tokenNames, token.boosted, useIFARM])
+  }, [token.id])
 
   const closeIFARMBadge = () => {
     setShowIFARMInfo(false)
     localStorage.setItem('firstViewIFarm', 'false')
   }
-  const closeBadgeGenomes = () => {
-    setShowGenomesVaultInfo(false)
-    localStorage.setItem('firstViewGenomes', 'false')
-  }
-  const closeBadgeGB = () => {
-    setShowGBVaultInfo(false)
-    localStorage.setItem('firstViewGB', 'false')
-  }
 
   useEffect(() => {
-    async function fetchData() {
-      const tokenAddress = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
-      const chainId = token.chain || token.data.chain
+    async function fetchPortalsSupport() {
+      const tokenAddress = token.vaultAddress || token.tokenAddress
 
-      const portalsToken = await getPortalsSupport(chainId, tokenAddress)
+      const portalsToken = await getPortalsSupport(tokenChain, tokenAddress)
 
       if (portalsToken === undefined || portalsToken.status !== 200) {
         setHasPortalsError(true)
@@ -610,69 +462,32 @@ const AdvancedFarm = () => {
       }
     }
 
-    fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [token])
+    fetchPortalsSupport()
+  }, [token, tokenChain])
 
   useEffect(() => {
-    let staked,
-      unstaked,
-      total,
-      amountBalanceUSD,
-      totalRewardAPRByPercent = 0
-    if (useIFARM) {
-      staked = Number(
-        fromWei(
-          get(balances, IFARM_TOKEN_SYMBOL, 0),
-          tokens[IFARM_TOKEN_SYMBOL].decimals,
-          MAX_DECIMALS,
-          true,
-        ),
-      )
-      unstaked = Number(
-        fromWei(
-          get(balances, FARM_TOKEN_SYMBOL, 0),
-          tokens[FARM_TOKEN_SYMBOL].decimals,
-          MAX_DECIMALS,
-          true,
-        ),
-      )
-      total = staked
-      amountBalanceUSD = total * usdPrice * Number(currencyRate)
-    } else {
-      staked = token.isIPORVault
-        ? fromWei(balances[token.id], token.vaultDecimals, token.vaultDecimals)
-        : totalStaked && fromWei(totalStaked, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
+    let staked, unstaked, total, amountBalanceUSD
+    staked = totalStaked && fromWei(totalStaked, token.decimals, MAX_DECIMALS, true)
 
-      unstaked =
-        lpTokenBalance &&
-        fromWei(lpTokenBalance, fAssetPool.lpTokenData.decimals, MAX_DECIMALS, true)
+    unstaked =
+      lpTokenBalance &&
+      fromWei(lpTokenBalance, token.vaultDecimals || token.decimals, MAX_DECIMALS, true)
 
-      total = Number(staked) + Number(unstaked)
-      amountBalanceUSD = total * usdPrice * Number(currencyRate)
-    }
+    total = Number(staked) + Number(unstaked)
+    amountBalanceUSD = total * usdPrice * Number(currencyRate)
     setStakedAmount(Number(staked))
     setUnstakedAmount(Number(unstaked))
     setTotalValue(total)
     setBalanceAmount(amountBalanceUSD)
 
-    const estimatedApyByPercent = get(tokenVault, `estimatedApy`, 0)
-    const estimatedApy = estimatedApyByPercent / 100
-    const vaultAPR = ((1 + estimatedApy) ** (1 / 365) - 1) * 365
-    const vaultAPRDaily = vaultAPR / 365
-    const vaultAPRMonthly = vaultAPR / 12
-    const frl = fAssetPool?.rewardAPR?.length
+    const vaultAPRDaily = (1 + estimatedApy / 100) ** (1 / 365) - 1
+    const vaultAPYMonthly = (1 + vaultAPRDaily) ** (365 / 12) - 1
 
-    for (let j = 0; j < frl; j += 1) {
-      totalRewardAPRByPercent += Number(fAssetPool.rewardAPR[j])
-    }
-    const totalRewardAPR = totalRewardAPRByPercent / 100
+    const totalRewardAPR = rewardApy / 100
     const poolAPRDaily = totalRewardAPR / 365
     const poolAPRMonthly = totalRewardAPR / 12
 
-    const swapFeeAPRYearly = token.isIPORVault
-      ? 0
-      : (fAssetPool.tradingApy ? fAssetPool.tradingApy : 0) / 100
+    const swapFeeAPRYearly = tradingApy / 100
     const swapFeeAPRDaily = swapFeeAPRYearly / 365
     const swapFeeAPRMonthly = swapFeeAPRYearly / 12
 
@@ -681,8 +496,8 @@ const AdvancedFarm = () => {
         Number(unstaked) * usdPrice * (vaultAPRDaily + swapFeeAPRDaily)) *
       Number(currencyRate)
     const monthlyYield =
-      (Number(staked) * usdPrice * (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
-        Number(unstaked) * usdPrice * (vaultAPRMonthly + swapFeeAPRMonthly)) *
+      (Number(staked) * usdPrice * (vaultAPYMonthly + poolAPRMonthly + swapFeeAPRMonthly) +
+        Number(unstaked) * usdPrice * (vaultAPYMonthly + swapFeeAPRMonthly)) *
       Number(currencyRate)
     setYieldDaily(dailyYield)
     setYieldMonthly(monthlyYield)
@@ -691,315 +506,304 @@ const AdvancedFarm = () => {
       Number(minReceiveAmountString) *
       Number(usdPrice) *
       Number(currencyRate) *
-      (vaultAPRMonthly + poolAPRMonthly + swapFeeAPRMonthly)
+      (vaultAPYMonthly + poolAPRMonthly + swapFeeAPRMonthly)
     const convertDailyYieldYieldValue =
       Number(minReceiveAmountString) *
       Number(usdPrice) *
       Number(currencyRate) *
       (vaultAPRDaily + poolAPRDaily + swapFeeAPRDaily)
     const convertYearlyYieldYieldValue =
-      Number(minReceiveAmountString) *
-      Number(usdPrice) *
-      Number(currencyRate) *
-      (vaultAPR + totalRewardAPR + swapFeeAPRYearly)
+      (Number(minReceiveAmountString) *
+        Number(usdPrice) *
+        Number(currencyRate) *
+        (estimatedApy + totalRewardAPR + swapFeeAPRYearly)) /
+      100
     setConvertMonthlyYieldUSD(convertMonthlyYieldValue.toString())
     setConvertDailyYieldUSD(convertDailyYieldYieldValue.toString())
     setConvertYearlyYieldUSD(convertYearlyYieldYieldValue.toString())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    fAssetPool,
-    tokenVault,
+    token,
     usdPrice,
     lpTokenBalance,
     totalStaked,
     minReceiveAmountString,
     currencyRate,
-    balances,
+    estimatedApy,
+    rewardApy,
+    tradingApy,
   ])
 
   useEffect(() => {
-    const getTokenBalance = async () => {
-      try {
-        if (chain && account && Object.keys(balances).length !== 0) {
-          if (!hasPortalsError) {
-            let supList = [],
-              directInSup = {},
-              directInBalance = {}
+    const timeoutId = setTimeout(async () => {
+      const getTokenBalance = async () => {
+        try {
+          if (tokenChain && account && Object.keys(balances).length !== 0) {
+            if (!hasPortalsError) {
+              let supList = [],
+                directInSup = {},
+                directInBalance = {}
 
-            const portalsRawBalances = await getPortalsBalances(account, chain.toString())
-            const portalsBaseTokens = await getPortalsBaseTokens(chain.toString())
-            const curNoBalances = portalsBaseTokens
-              .map(baseToken => {
-                const balToken = portalsRawBalances.find(
-                  el => el.address.toLowerCase() === baseToken.address.toLowerCase(),
-                )
-                if (balToken === undefined) {
+              const [portalsRawBalances, portalsBaseTokens] = await Promise.all([
+                getPortalsBalances(account, tokenChain.toString()),
+                getPortalsBaseTokens(tokenChain.toString()),
+              ])
+              const curNoBalances = portalsBaseTokens
+                .map(baseToken => {
+                  const balToken = portalsRawBalances.find(
+                    el => el.address.toLowerCase() === baseToken.address.toLowerCase(),
+                  )
+                  if (balToken === undefined) {
+                    const item = {
+                      symbol: baseToken.symbol,
+                      address: baseToken.address,
+                      balance: 0,
+                      default: false,
+                      usdValue: 0,
+                      usdPrice: baseToken.price,
+                      logoURI: baseToken.image
+                        ? baseToken.image
+                        : baseToken.images
+                          ? baseToken.images[0]
+                          : 'https://etherscan.io/images/main/empty-token.png',
+                      decimals: baseToken.decimals,
+                      chainId: tokenChain,
+                    }
+                    return item
+                  }
+
+                  return null
+                })
+                .filter(item => item !== null)
+
+              const curBalances = portalsRawBalances
+                .map(balance => {
+                  if (!isAddress(balance.address))
+                    balance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
                   const item = {
-                    symbol: baseToken.symbol,
-                    address: baseToken.address,
-                    balance: 0,
+                    symbol: balance.symbol,
+                    address: balance.address,
+                    balance: new BigNumber(balance.rawBalance)
+                      .div(10 ** balance.decimals)
+                      .toFixed(),
+                    rawBalance: balance.rawBalance,
                     default: false,
-                    usdValue: 0,
-                    usdPrice: baseToken.price,
-                    logoURI: baseToken.image
-                      ? baseToken.image
-                      : baseToken.images
-                      ? baseToken.images[0]
-                      : 'https://etherscan.io/images/main/empty-token.png',
-                    decimals: baseToken.decimals,
-                    chainId: chain,
+                    usdValue: balance.balanceUSD,
+                    usdPrice: balance.price,
+                    logoURI:
+                      balance.symbol === 'bAutopilot_wETH'
+                        ? BaseAutopilotwETH
+                        : balance.symbol === 'bAutopilot_USDC'
+                          ? BaseAutopilotUSDC
+                          : balance.symbol === 'bAutopilot_cbBTC'
+                            ? BaseAutopilotcbBTC
+                            : balance.image
+                              ? balance.image
+                              : balance.images
+                                ? balance.images[0]
+                                : 'https://etherscan.io/images/main/empty-token.png',
+                    decimals: balance.decimals,
+                    chainId: tokenChain,
                   }
                   return item
+                })
+                .filter(item => item.address)
+
+              const tokenAddress = token.tokenAddress ? token.tokenAddress : token.vaultAddress
+
+              const fTokenAddr = token.vaultAddress ? token.vaultAddress : token.tokenAddress
+              const curSortedBalances = curBalances
+                .sort(function reducer(a, b) {
+                  return b.usdValue - a.usdValue
+                })
+                .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
+
+              setBalanceList(curSortedBalances)
+
+              supList = [...curBalances, ...curNoBalances]
+
+              supList = supList.map(sup => {
+                const supToken = curBalances.find(el => el.address === sup.address)
+                if (supToken) {
+                  sup.balance = supToken.balance
+                  sup.usdValue = supToken.usdValue
+                  sup.usdPrice = supToken.usdPrice
+                } else {
+                  sup.balance = '0'
+                  sup.usdValue = '0'
                 }
+                sup.default = false
 
-                return null
-              })
-              .filter(item => item !== null)
-
-            const curBalances = portalsRawBalances
-              .map(balance => {
-                if (!ethers.utils.isAddress(balance.address))
-                  balance.address = '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
-                const item = {
-                  symbol: balance.symbol,
-                  address: balance.address,
-                  balance: new BigNumber(balance.rawBalance).div(10 ** balance.decimals).toFixed(),
-                  rawBalance: balance.rawBalance,
-                  default: false,
-                  usdValue: balance.balanceUSD,
-                  usdPrice: balance.price,
-                  logoURI:
-                    balance.symbol === 'bAutopilot_wETH'
-                      ? BaseAutopilotwETH
-                      : balance.symbol === 'bAutopilot_USDC'
-                      ? BaseAutopilotUSDC
-                      : balance.symbol === 'bAutopilot_cbBTC'
-                      ? BaseAutopilotcbBTC
-                      : balance.image
-                      ? balance.image
-                      : balance.images
-                      ? balance.images[0]
-                      : 'https://etherscan.io/images/main/empty-token.png',
-                  decimals: balance.decimals,
-                  chainId: chain,
+                if (Object.keys(directInSup).length === 0 && tokenAddress) {
+                  if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
+                    directInSup = sup
+                  }
                 }
-                return item
+                return sup
               })
-              .filter(item => item.address)
 
-            const tokenAddress =
-              token.tokenAddress !== undefined && token.tokenAddress.length !== 2
-                ? token.tokenAddress
-                : token.vaultAddress
-
-            const fTokenAddr = useIFARM
-              ? addresses.iFARM
-              : token.vaultAddress
-              ? token.vaultAddress
-              : token.tokenAddress
-            const curSortedBalances = curBalances
-              .sort(function reducer(a, b) {
+              supList = supList.sort(function reducer(a, b) {
                 return b.usdValue - a.usdValue
               })
-              .filter(item => item.address.toLowerCase() !== fTokenAddr.toLowerCase())
-
-            // setBalanceList(
-            //   curSortedBalances.filter(
-            //     item => item.address.toLowerCase() !== tokenAddress.toLowerCase(),
-            //   ),
-            // )
-            setBalanceList(curSortedBalances)
-
-            curSortedBalances.forEach(balanceToken => {
-              if (balanceToken.symbol === 'ARB') {
-                setArbBalance(balanceToken.balance)
-              }
-            })
-
-            supList = [...curBalances, ...curNoBalances]
-
-            supList = supList.map(sup => {
-              const supToken = curBalances.find(el => el.address === sup.address)
-              if (supToken) {
-                sup.balance = supToken.balance
-                sup.usdValue = supToken.usdValue
-                sup.usdPrice = supToken.usdPrice
-              } else {
-                sup.balance = '0'
-                sup.usdValue = '0'
-              }
-              sup.default = false
-
-              if (Object.keys(directInSup).length === 0 && tokenAddress.length !== 2) {
-                if (sup.address.toLowerCase() === tokenAddress.toLowerCase()) {
-                  directInSup = sup
+              const cl = curBalances.length
+              for (let j = 0; j < cl; j += 1) {
+                if (Object.keys(directInBalance).length === 0 && tokenAddress) {
+                  if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
+                    directInBalance = curBalances[j]
+                  }
                 }
               }
-              return sup
-            })
 
-            supList = supList.sort(function reducer(a, b) {
-              return b.usdValue - a.usdValue
-            })
-            const cl = curBalances.length
-            for (let j = 0; j < cl; j += 1) {
-              if (Object.keys(directInBalance).length === 0 && tokenAddress.length !== 2) {
-                if (curBalances[j].address.toLowerCase() === tokenAddress.toLowerCase()) {
-                  directInBalance = curBalances[j]
-                }
-              }
-            }
-
-            const directData = curBalances.find(
-              el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
-            )
-            const directBalance = directData
-              ? directData.balance
-              : token.isIPORVault
-              ? balances[token.tokenNames[0]]
-                ? new BigNumber(token.tokenNames[0]).div(10 ** token.decimals).toFixed()
-                : '0'
-              : balances[id]
-              ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
-              : '0'
-            const directUsdPrice = id === 'FARM_GRAIN_LP' ? 0 : token.usdPrice
-            const directUsdValue = directData
-              ? directData.usdValue
-              : new BigNumber(directBalance).times(directUsdPrice).toFixed()
-
-            if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
-              directInSup.balance = directBalance
-              directInSup.usdPrice =
-                directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
-              directInSup.usdValue =
-                directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
-              supList = supList.sort(function result(x, y) {
-                return x === directInSup ? -1 : y === directInSup ? 1 : 0
-              })
-              supList[0].default = true
-            } else if (
-              !(Object.keys(directInBalance).length === 0 && directInBalance.constructor === Object)
-            ) {
-              directInBalance.balance = directBalance || '0'
-              directInBalance.usdPrice =
-                directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
-              directInBalance.usdValue =
-                directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
-              supList.unshift(directInBalance)
-              supList[0].default = true
-            } else {
-              const web3Client = await getWeb3(chain, null)
-              const { getSymbol } = tokenMethods
-              const lpInstance = await newContractInstance(
-                id,
-                tokenAddress,
-                tokenContract.abi,
-                web3Client,
+              const directData = curBalances.find(
+                el => el.address.toLowerCase() === tokenAddress.toLowerCase(),
               )
-              const lpSymbol = await getSymbol(lpInstance)
-              const logoUri =
-                token.logoUrl && token.logoUrl.length > 1
-                  ? 'https://etherscan.io/images/main/empty-token.png'
-                  : token.logoUrl[0].substring(1)
-              const direct = {
-                symbol: lpSymbol,
-                address: tokenAddress,
-                balance: directBalance || '0',
-                default: true,
-                usdPrice: directUsdPrice || '0',
-                usdValue: directUsdValue || '0',
-                logoURI: logoUri,
-                decimals: tokenDecimals,
-                chainId: parseInt(chain, 0),
-              }
-              supList.unshift(direct)
-            }
 
-            if (supList[0].default) {
-              if (supList[0].balance === '0' && balances[supList[0].symbol]) {
-                const defaultBalance = fromWei(
-                  balances[supList[0].symbol],
-                  supList[0].decimals,
-                  supList[0].decimals,
-                )
-                const defaultUsdBalance = formatNumber(
-                  Number(supList[0].usdPrice) * Number(defaultBalance),
-                  2,
-                )
-                supList[0].balance = defaultBalance
-                supList[0].usdValue = defaultUsdBalance
-              }
-              setDefaultToken(supList[0])
-            } else {
-              setDefaultToken({})
-            }
-            // supList.shift()
-            setSupTokenList(supList)
+              const directBalance = directData
+                ? directData.balance
+                : id === IFARM_TOKEN_SYMBOL
+                  ? new BigNumber(balances[FARM_TOKEN_SYMBOL]).div(10 ** token.decimals).toFixed()
+                  : balances[id]
+                    ? new BigNumber(balances[id]).div(10 ** token.decimals).toFixed()
+                    : '0'
+              const directUsdPrice = token.usdPrice
+              const directUsdValue = new BigNumber(directBalance).times(directUsdPrice).toFixed()
 
-            const supNoBalanceList = [],
-              sl = supList.length
-            if (sl > 0) {
-              for (let i = 0; i < sl; i += 1) {
-                if (Number(supList[i].balance) === 0) {
-                  supNoBalanceList.push(supList[i])
+              if (!(Object.keys(directInSup).length === 0 && directInSup.constructor === Object)) {
+                directInSup.balance = directBalance
+                directInSup.usdPrice =
+                  directInSup.usdPrice > 0 ? directInSup.usdPrice : directUsdPrice
+                directInSup.usdValue =
+                  directInSup.usdValue > 0 ? directInSup.usdValue : directUsdValue
+                supList = supList.sort(function result(x, y) {
+                  return x === directInSup ? -1 : y === directInSup ? 1 : 0
+                })
+                supList[0].default = true
+              } else if (
+                !(
+                  Object.keys(directInBalance).length === 0 &&
+                  directInBalance.constructor === Object
+                )
+              ) {
+                directInBalance.balance = directBalance || '0'
+                directInBalance.usdPrice =
+                  directInBalance.usdPrice > 0 ? directInBalance.usdPrice : directUsdPrice
+                directInBalance.usdValue =
+                  directInBalance.usdValue > 0 ? directInBalance.usdValue : directUsdValue
+                supList.unshift(directInBalance)
+                supList[0].default = true
+              } else {
+                const viemClient = await getViem(tokenChain, null)
+                const { getSymbol } = tokenMethods
+                const lpInstance = await newContractInstance(
+                  id,
+                  tokenAddress,
+                  tokenContract.abi,
+                  viemClient,
+                )
+                const lpSymbol = await getSymbol(lpInstance)
+                const logoUri =
+                  token.logoUrl && token.logoUrl.length > 1
+                    ? 'https://etherscan.io/images/main/empty-token.png'
+                    : token.logoUrl[0].substring(1)
+                const direct = {
+                  symbol: lpSymbol,
+                  address: tokenAddress,
+                  balance: directBalance || '0',
+                  default: true,
+                  usdPrice: directUsdPrice || '0',
+                  usdValue: directUsdValue || '0',
+                  logoURI: logoUri,
+                  decimals: tokenDecimals,
+                  chainId: parseInt(tokenChain, 0),
+                }
+                supList.unshift(direct)
+              }
+
+              if (supList[0].default) {
+                if (supList[0].balance === '0' && balances[supList[0].symbol]) {
+                  const defaultBalance = fromWei(
+                    balances[supList[0].symbol],
+                    supList[0].decimals,
+                    supList[0].decimals,
+                  )
+                  const defaultUsdBalance = formatNumber(
+                    Number(supList[0].usdPrice) * Number(defaultBalance),
+                    2,
+                  )
+                  supList[0].balance = defaultBalance
+                  supList[0].usdValue = defaultUsdBalance
+                }
+                setDefaultToken(supList[0])
+              } else {
+                setDefaultToken({})
+              }
+              // supList.shift()
+              setSupTokenList(supList)
+
+              const supNoBalanceList = [],
+                sl = supList.length
+              if (sl > 0) {
+                for (let i = 0; i < sl; i += 1) {
+                  if (Number(supList[i].balance) === 0) {
+                    supNoBalanceList.push(supList[i])
+                  }
                 }
               }
-            }
-            supNoBalanceList.shift()
-            setSupTokenNoBalanceList(supNoBalanceList)
+              supNoBalanceList.shift()
+              setSupTokenNoBalanceList(supNoBalanceList)
 
-            setSoonToSupList({})
-          } else {
-            let tokenSymbol,
-              decimals = 18
+              setSoonToSupList({})
+            } else {
+              let tokenSymbol
 
-            decimals = useIFARM ? token.data?.watchAsset?.decimals : token.decimals
-            tokenSymbol = useIFARM ? token.tokenNames[0] : token?.pool?.lpTokenData?.symbol
-            if (tokenSymbol && tokenSymbol.substring(0, 1) === 'f') {
-              tokenSymbol = tokenSymbol.substring(1)
-            }
-            // const tokenAddress = useIFARM ? addresses.iFARM : token.tokenAddress
-            const tokenAddress = token.tokenAddress
-            const tokenId = token?.pool?.id
-            const tokenBalance = fromWei(
-              balances[useIFARM ? tokenSymbol : tokenId],
-              decimals,
-              decimals,
-            )
-            const tokenPrice = useIFARM ? token?.data?.lpTokenData?.price : token.usdPrice
-            const usdValue = formatNumberWido(
-              Number(tokenBalance) * Number(tokenPrice),
-              BEGINNERS_BALANCES_DECIMALS,
-            )
-            const logoURI =
-              token.logoUrl.length === 1
-                ? token.logoUrl[0].substring(1)
-                : 'https://etherscan.io/images/main/empty-token.png'
+              const decimals = token.decimals
+              tokenSymbol = id === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : id
+              if (tokenSymbol && tokenSymbol.substring(0, 1) === 'f') {
+                tokenSymbol = tokenSymbol.substring(1)
+              }
 
-            const defaultTokenData = {
-              symbol: tokenSymbol,
-              address: tokenAddress,
-              balance: tokenBalance,
-              default: true,
-              usdValue,
-              usdPrice: tokenPrice,
-              logoURI,
-              decimals,
-              chainId: useIFARM ? token.data.chain : token.chain,
+              const tokenAddress = token.tokenAddress
+              const tokenBalance = fromWei(
+                balances[id === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : id] || '0',
+                decimals,
+                decimals,
+              )
+              const tokenPrice = token.usdPrice
+              const usdValue = formatNumberWido(
+                Number(tokenBalance) * Number(tokenPrice),
+                USD_BALANCES_DECIMALS,
+              )
+              const logoURI =
+                token.logoUrl.length === 1
+                  ? token.logoUrl[0].substring(1)
+                  : 'https://etherscan.io/images/main/empty-token.png'
+
+              const defaultTokenData = {
+                symbol: tokenSymbol,
+                address: tokenAddress,
+                balance: tokenBalance,
+                default: true,
+                usdValue,
+                usdPrice: tokenPrice,
+                logoURI,
+                decimals,
+                chainId: tokenChain,
+              }
+              setDefaultToken(defaultTokenData)
             }
-            setDefaultToken(defaultTokenData)
           }
+        } catch (err) {
+          console.log('getTokenBalance: ', err)
         }
-      } catch (err) {
-        console.log('getTokenBalance: ', err)
       }
-    }
-    console.debug('convert status', convertSuccess)
-    console.debug('revert status', revertSuccess)
-    getTokenBalance()
+      console.debug('convert status', convertSuccess)
+      console.debug('revert status', revertSuccess)
+      getTokenBalance()
+    }, 300)
+
+    return () => clearTimeout(timeoutId)
   }, [
     account,
-    chain,
+    tokenChain,
     balances,
     hasPortalsError,
     convertSuccess,
@@ -1009,7 +813,6 @@ const AdvancedFarm = () => {
     id,
     token,
     tokenDecimals,
-    useIFARM,
   ])
 
   // To calculate Est. values again when input token is changed
@@ -1067,7 +870,7 @@ const AdvancedFarm = () => {
 
         // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
         const supportedTokens = balanceList.filter(
-          balancedToken => SUPPORTED_TOKEN_LIST[chain][balancedToken.symbol],
+          balancedToken => SUPPORTED_TOKEN_LIST[tokenChain][balancedToken.symbol],
         )
         if (supportedTokens.length > 0) {
           tokenToSet = supportedTokens.reduce((prevToken, currentToken) =>
@@ -1106,12 +909,11 @@ const AdvancedFarm = () => {
     }, 3000)
 
     return () => clearTimeout(timer)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     balanceList,
     supTokenList,
     defaultToken,
-    chain,
+    tokenChain,
     SUPPORTED_TOKEN_LIST,
     supportedVault,
     hasPortalsError,
@@ -1121,14 +923,16 @@ const AdvancedFarm = () => {
   const firstUserPoolsLoad = useRef(true)
   const firstWalletBalanceLoad = useRef(true)
 
-  const totalRewardsEarned = token.isIPORVault
-    ? 0
-    : get(userStats, `[${fAssetPool.id}]['totalRewardsEarned']`, 0)
-  const rewardsEarned = token.isIPORVault
-    ? 0
-    : get(userStats, `[${fAssetPool.id}]['rewardsEarned']`, 0)
+  const totalRewardsEarned = get(userStats, `[${vaultPool?.id}]['totalRewardsEarned']`, 0)
+  const rewardsEarned = get(userStats, `[${vaultPool?.id}]['rewardsEarned']`, 0)
 
-  const rewardTokenSymbols = get(fAssetPool, 'rewardTokenSymbols', [])
+  const rewardTokenSymbols = get(vaultPool, 'rewardTokenSymbols', [])
+
+  useEffect(() => {
+    if ((vaultPool && rewardApy) || totalStaked || totalRewardsEarned) {
+      setShowRewardsTab(true)
+    }
+  }, [vaultPool, rewardApy, totalStaked, totalRewardsEarned])
 
   useEffect(() => {
     const fetchTokenPrices = async () => {
@@ -1170,7 +974,6 @@ const AdvancedFarm = () => {
             rewardToken = groupOfVaults[underlyingRewardSymbol]
           }
         } else if (rewardSymbol === FARM_TOKEN_SYMBOL) {
-          // Let us get usdPrice of FARM from IFARM, for when no lpTokenData in FARM vault data(when reloading in Advanced farm)
           rewardToken = groupOfVaults[IFARM_TOKEN_SYMBOL]
         } else {
           rewardToken = groupOfVaults[rewardSymbol]
@@ -1178,16 +981,14 @@ const AdvancedFarm = () => {
 
         if (rewardToken) {
           const usdUnderlyingRewardPrice = rewardToken.usdPrice || 0
-          const pricePerFullShareInVault = rewardToken.pricePerFullShare
+          const pricePerFullShareInVault =
+            rewardSymbol === FARM_TOKEN_SYMBOL
+              ? new BigNumber(1e18).toFixed()
+              : rewardToken.pricePerFullShare
           const decimalsInVault = rewardToken.decimals || 18
           usdRewardPrice =
-            rewardSymbol === IFARM_TOKEN_SYMBOL
-              ? Number(usdUnderlyingRewardPrice)
-              : rewardSymbol === FARM_TOKEN_SYMBOL
-              ? Number(usdUnderlyingRewardPrice) /
-                fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
-              : Number(usdUnderlyingRewardPrice) *
-                fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
+            Number(usdUnderlyingRewardPrice) *
+            fromWei(pricePerFullShareInVault, decimalsInVault, decimalsInVault, true)
         } else {
           try {
             const al = apiData.length
@@ -1198,12 +999,11 @@ const AdvancedFarm = () => {
                 rewardSymbol === 'ECOCNG'
                   ? tempSymbol.toLowerCase() === 'cng'
                   : rewardSymbol === 'GENE'
-                  ? tempSymbol.toLowerCase() === '$gene'
-                  : rewardSymbol === 'GENOME'
-                  ? tempSymbol.toLowerCase() === 'genome'
-                  : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
+                    ? tempSymbol.toLowerCase() === '$gene'
+                    : rewardSymbol === 'GENOME'
+                      ? tempSymbol.toLowerCase() === 'genome'
+                      : rewardSymbol.toLowerCase() === tempSymbol.toLowerCase()
               ) {
-                // eslint-disable-next-line no-await-in-loop
                 usdRewardPrice = await getTokenPriceFromApi(tempData.id)
                 break
               }
@@ -1213,14 +1013,12 @@ const AdvancedFarm = () => {
           }
         }
         usdPrices.push(usdRewardPrice)
-
         setRewardTokenPrices(usdPrices)
       }
     }
 
     fetchTokenPrices()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [apiData, pricePerFullShare, rewardTokenSymbols])
+  }, [apiData, vaultPool, rewardTokenSymbols])
 
   useEffect(() => {
     const calculateTotalReward = () => {
@@ -1254,11 +1052,10 @@ const AdvancedFarm = () => {
     }
 
     calculateTotalReward()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     account,
     userStats,
-    fAssetPool,
+    vaultPool,
     rewardsEarned,
     totalRewardsEarned,
     rewardTokenSymbols,
@@ -1276,7 +1073,7 @@ const AdvancedFarm = () => {
       ) {
         const loadUserPoolsStats = async () => {
           firstUserPoolsLoad.current = false
-          const poolsToLoad = [fAssetPool]
+          const poolsToLoad = [vaultPool]
           await fetchUserPoolStats(poolsToLoad, account, userStats)
         }
         loadUserPoolsStats()
@@ -1317,33 +1114,30 @@ const AdvancedFarm = () => {
   useEffect(() => {
     const getLastHarvest = async () => {
       const value = token.isIPORVault
-        ? await getIPORLastHarvestInfo(paramAddress.toLowerCase(), chain)
-        : await getLastHarvestInfo(paramAddress, chain)
+        ? await getIPORLastHarvestInfo(paramAddress.toLowerCase(), tokenChain)
+        : await getLastHarvestInfo(paramAddress, tokenChain)
       setLastHarvest(value)
     }
 
     getLastHarvest()
-  }, [paramAddress, chain, token.isIPORVault])
+  }, [paramAddress, tokenChain, token.isIPORVault])
 
   useEffect(() => {
-    setVaultValue(getVaultValue(token))
+    setVaultValue(new BigNumber(get(token, 'totalValueLocked', 0)))
   }, [token])
 
   useEffect(() => {
     const depositUsdValue = formatNumber(
-      fromWei(lpTokenBalance, fAssetPool?.lpTokenData?.decimals, POOL_BALANCES_DECIMALS, true) *
-        usdPrice,
+      fromWei(lpTokenBalance, token.decimals, POOL_BALANCES_DECIMALS, true) * usdPrice,
       POOL_BALANCES_DECIMALS,
     )
     setDepositUsdValue(depositUsdValue)
-  }, [lpTokenBalance, fAssetPool, usdPrice])
+  }, [lpTokenBalance, token.decimals, usdPrice])
 
   useEffect(() => {
     const initData = async () => {
-      if (account && token && (vaultPool || token.isIPORVault) && id) {
-        const address =
-          token.vaultAddress || vaultPool?.autoStakePoolAddress || vaultPool?.contractAddress
-        const chainId = token.chain || token.data.chain
+      if (account && token && id) {
+        const address = token.vaultAddress
         const iporVFlag = token.isIPORVault ?? false
         const {
           bFlag,
@@ -1356,7 +1150,7 @@ const AdvancedFarm = () => {
           uniqueVaultHData,
         } = await initBalanceAndDetailData(
           address,
-          chainId,
+          tokenChain,
           account,
           token.decimals,
           iporVFlag,
@@ -1370,7 +1164,7 @@ const AdvancedFarm = () => {
           setUsdEarningsLatest(sumLatestNetChangeUsd)
           const enrichedDataWithSymbol = enrichedData.map(data => ({
             ...data,
-            tokenSymbol: token.isIPORVault ? tokenSym : id,
+            tokenSymbol: tokenSym,
           }))
           setHistoryData(enrichedDataWithSymbol)
           setChartData(uniqueVaultHData)
@@ -1382,7 +1176,6 @@ const AdvancedFarm = () => {
     }
 
     initData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [account, loadingVaults])
 
   const apyDaily = totalApy
@@ -1392,26 +1185,9 @@ const AdvancedFarm = () => {
   const showAPY = () => {
     return (
       <>
-        {isSpecialVault ? (
-          token?.data?.loaded ? (
-            !token.data.dataFetched || totalApy !== null ? (
-              <div>{token.inactive ? 'Inactive' : totalApy ? displayAPY(totalApy) : null}</div>
-            ) : (
-              <div>
-                <AnimatedDots />
-              </div>
-            )
-          ) : (
-            <div>
-              <AnimatedDots />
-            </div>
-          )
-        ) : vaultPool?.loaded && totalApy !== null && !loadingVaults ? (
+        {totalApy !== null && !loadingVaults ? (
           <div>
-            {token?.inactive ||
-            token?.testInactive ||
-            token?.hideTotalApy ||
-            !token?.dataFetched ? (
+            {token?.inactive || token?.testInactive || !token?.dataFetched ? (
               token?.inactive || token?.testInactive ? (
                 'Inactive'
               ) : null
@@ -1419,8 +1195,6 @@ const AdvancedFarm = () => {
               <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
             )}
           </div>
-        ) : token.isIPORVault && totalApy !== null && !loadingVaults ? (
-          <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
         ) : (
           <div>
             <AnimatedDots />
@@ -1433,9 +1207,7 @@ const AdvancedFarm = () => {
   const showTVL = () => {
     return (
       <>
-        {token.excludeVaultStats ? (
-          'N/A'
-        ) : vaultValue ? (
+        {vaultValue ? (
           <>{`${currencySym}${formatNumber(Number(vaultValue) * Number(currencyRate), 2)}`}</>
         ) : (
           <AnimatedDots />
@@ -1447,17 +1219,9 @@ const AdvancedFarm = () => {
   const showApyDaily = () => {
     return (
       <>
-        {isSpecialVault ? (
-          token.data &&
-          token.data.loaded &&
-          (token.data.dataFetched === false || totalApy !== null) ? (
-            <div>{token.inactive ? 'Inactive' : <>{totalApy ? `${apyDaily}%` : null}</>}</div>
-          ) : (
-            <AnimatedDots />
-          )
-        ) : vaultPool?.loaded && totalApy !== null && !loadingVaults ? (
+        {apyDaily !== null && !loadingVaults ? (
           <div>
-            {token.inactive || token.testInactive || token.hideTotalApy || !token.dataFetched ? (
+            {token.inactive || token.testInactive || !token.dataFetched ? (
               token.inactive || token.testInactive ? (
                 'Inactive'
               ) : null
@@ -1465,8 +1229,6 @@ const AdvancedFarm = () => {
               <>{apyDaily}%</>
             )}
           </div>
-        ) : token.isIPORVault && totalApy !== null ? (
-          <>{apyDaily}%</>
         ) : (
           <AnimatedDots />
         )}
@@ -1480,7 +1242,7 @@ const AdvancedFarm = () => {
     { title: 'TVL', showValue: showTVL },
     {
       title: 'Last Harvest',
-      showValue: () => (useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-'),
+      showValue: () => (lastHarvest !== '' ? `${lastHarvest} ago` : '-'),
       className: 'daily-yield-box',
     },
   ]
@@ -1497,7 +1259,7 @@ const AdvancedFarm = () => {
   const harvestFrequencies = [
     {
       label: 'Latest',
-      value: useIFARM ? '-' : lastHarvest !== '' ? `${lastHarvest} ago` : '-',
+      value: lastHarvest !== '' ? `${lastHarvest} ago` : '-',
     },
     { label: '7d', value: formatFrequency(sevenDHarvest) },
     { label: '30d', value: formatFrequency(thirtyDHarvest) },
@@ -1506,20 +1268,20 @@ const AdvancedFarm = () => {
     { label: 'Lifetime', value: formatFrequency(harvestFrequency) },
   ]
 
-  const rewardTxt = getAdvancedRewardText(
-    token,
-    vaultPool,
-    tradingApy,
-    farmAPY,
-    totalApy,
-    true,
-    boostedRewardAPY,
-  )
+  const rewardTxt = getAdvancedRewardText(token, vaultPool, tradingApy, rewardApy)
 
   const profitShare =
-    chain === CHAIN_IDS.ETH_MAINNET ? '10' : chain === CHAIN_IDS.POLYGON_MAINNET ? '5' : '7'
+    tokenChain === CHAIN_IDS.ETH_MAINNET
+      ? '10'
+      : tokenChain === CHAIN_IDS.POLYGON_MAINNET
+        ? '5'
+        : '7'
   const harvestTreasury =
-    chain === CHAIN_IDS.ETH_MAINNET ? '5' : chain === CHAIN_IDS.POLYGON_MAINNET ? '3' : '3'
+    tokenChain === CHAIN_IDS.ETH_MAINNET
+      ? '5'
+      : tokenChain === CHAIN_IDS.POLYGON_MAINNET
+        ? '3'
+        : '3'
 
   const setLoadingDots = (loadingFarm, loadingLp) => {
     setFarmingLoading(loadingFarm)
@@ -1529,8 +1291,7 @@ const AdvancedFarm = () => {
   const viewComponentProps = {
     token,
     tokenDecimals,
-    isSpecialVault,
-    fAssetPool,
+    vaultPool,
     rewardTokenPrices,
     loadingBalances: loadingLpStats || loadingFarmingBalance,
     pendingAction,
@@ -1541,31 +1302,29 @@ const AdvancedFarm = () => {
   }
 
   return (
-    <DetailView backColor={bgColorNew} fontColor={fontColor}>
-      <TopInner darkMode={darkMode}>
+    <DetailView $backcolor={bgColorNew} $fontcolor={fontColor}>
+      <TopInner $darkmode={darkMode}>
         <TopPart>
           <FlexTopDiv>
             <TopButton className="back-btn">
               <BackBtnRect
-                fontColor={fontColor}
+                $fontcolor={fontColor}
                 onClick={() => {
                   if (isFromEarningPage) {
-                    history.push(ROUTES.PORTFOLIO)
+                    history(ROUTES.PORTFOLIO)
                   } else {
-                    history.push(`${ROUTES.ADVANCED}${location.search}`)
+                    history(`${ROUTES.ADVANCED}${location.search}`)
                   }
                 }}
               >
                 <BiLeftArrowAlt fontSize={16} />
-                <BackText fontColor={fontColor}>Back</BackText>
+                <BackText $fontcolor={fontColor}>Back</BackText>
               </BackBtnRect>
               {isMobile && (
                 <MobileChain>
                   <NetDetailItem>
-                    <NetDetailContent fontColor={fontColor}>
-                      {useIFARM || token.platform[0] === 'Autopilot'
-                        ? 'Harvest'
-                        : token.platform && token.platform[0]}
+                    <NetDetailContent $fontcolor={fontColor}>
+                      {token.platform && token.platform[0]}
                     </NetDetailContent>
                   </NetDetailItem>
                   <ChainBack>
@@ -1581,21 +1340,21 @@ const AdvancedFarm = () => {
                 ))}
               </TopLogo>
               <TopDesc
-                weight={600}
-                fontColor2={fontColor2}
-                size={isMobile ? '19.7px' : '25px'}
-                height={isMobile ? '45px' : '82px'}
-                marginBottom={isMobile ? '5px' : '10px'}
+                $weight={600}
+                $fontcolor2={fontColor2}
+                $size={isMobile ? '19.7px' : '25px'}
+                $height={isMobile ? '45px' : '82px'}
+                $marginbottom={isMobile ? '5px' : '10px'}
               >
-                {useIFARM ? `i${token.tokenNames.join(' • ')}` : token.tokenNames.join(' • ')}
+                {token.tokenNames.join(' • ')}
               </TopDesc>
             </FlexDiv>
             <GuideSection>
-              <GuidePart fontColor4={fontColor4}>
+              <GuidePart $fontcolor4={fontColor4}>
                 {displayAPY(totalApy, DECIMAL_PRECISION, 10)}
                 &nbsp;APY
               </GuidePart>
-              <GuidePart fontColor4={fontColor4}>
+              <GuidePart $fontcolor4={fontColor4}>
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
@@ -1604,21 +1363,21 @@ const AdvancedFarm = () => {
             <TabRow>
               <MainTagPanel>
                 {mainTags.map((tag, i) =>
-                  (i === 1 && token.isIPORVault) || (i === 4 && !token.isIPORVault) ? null : (
+                  (i === 1 && !showRewardsTab) || (i === 4 && !token.isIPORVault) ? null : (
                     <MainTag
                       key={i}
-                      fontColor3={fontColor3}
-                      fontColor4={fontColor4}
-                      backColor={bgColorNew}
-                      active={activeMainTag === i ? 'true' : 'false'}
-                      mode={darkMode ? 'dark' : 'light'}
-                      useIFARM={useIFARM}
+                      $fontcolor3={fontColor3}
+                      $fontcolor4={fontColor4}
+                      $backcolor={bgColorNew}
+                      $active={activeMainTag === i ? 'true' : 'false'}
+                      $mode={darkMode ? 'dark' : 'light'}
+                      $threetabs={!showRewardsTab && !token.isIPORVault}
                       onClick={() => {
                         setActiveMainTag(i)
                         if (i !== 0) {
-                          push(`${pathname}${location.search}#${tag.name.toLowerCase()}`)
+                          navigate(`${pathname}${location.search}#${tag.name.toLowerCase()}`)
                         } else {
-                          push(`${pathname}${location.search}`)
+                          navigate(`${pathname}${location.search}`)
                         }
                       }}
                     >
@@ -1630,16 +1389,14 @@ const AdvancedFarm = () => {
               </MainTagPanel>
               <NetDetail>
                 <NetDetailItem>
-                  <NetDetailTitle fontColor={fontColor}>Platform:</NetDetailTitle>
-                  <NetDetailContent fontColor={fontColor}>
-                    {useIFARM || token.platform[0] === 'Autopilot'
-                      ? 'Harvest'
-                      : token.platform && token.platform[0]}
+                  <NetDetailTitle $fontcolor={fontColor}>Platform:</NetDetailTitle>
+                  <NetDetailContent $fontcolor={fontColor}>
+                    {token.platform && token.platform[0]}
                   </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
-                  <NetDetailTitle fontColor={fontColor}>Network</NetDetailTitle>
-                  <NetDetailImg fontColor={fontColor}>
+                  <NetDetailTitle $fontcolor={fontColor}>Network</NetDetailTitle>
+                  <NetDetailImg $fontcolor={fontColor}>
                     <img src={BadgeAry[badgeId]} alt="" />
                   </NetDetailImg>
                 </NetDetailItem>
@@ -1648,181 +1405,16 @@ const AdvancedFarm = () => {
           </FlexTopDiv>
         </TopPart>
       </TopInner>
-      <Inner backColor={bgColorNew}>
+      <Inner $backcolor={bgColorNew}>
         <BigDiv>
-          {activeMainTag === 1 && !noNeedStaking && rewardTokenData && (
-            <StakingInfo
-              bgColorTooltip={bgColorTooltip}
-              borderColor={borderColor}
-              display={showStakingInfo ? 'flex' : 'none'}
-              fontColorTooltip={fontColorTooltip}
-            >
-              <BiInfoCircle className="info-circle" fontSize={20} />
-              <StakingInfoText>
-                <NewLabel
-                  size="14px"
-                  weight="600"
-                  height="20px"
-                  color={fontColor2}
-                  marginBottom="5px"
-                >
-                  Staking Information
-                </NewLabel>
-                <NewLabel size="14px" weight="400" height="20px" color={fontColor2}>
-                  Currently, no extra rewards are streamed to this farm, so staking fTokens
-                  isn&apos;t needed. See this article on &quot;
-                  <WelcomeTicket
-                    href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    linkColor={linkColorTooltip}
-                    linkColorOnHover={linkColorOnHover}
-                  >
-                    Yield Sources on Harvest &ndash; How to Get and Track Them
-                  </WelcomeTicket>
-                  &quot; to better understand yield sources and staking.
-                </NewLabel>
-                <NewLabel
-                  size="14px"
-                  weight="600"
-                  height="20px"
-                  color={fontColor2}
-                  marginTop="15px"
-                  cursor="pointer"
-                  width="fit-content"
-                  onClick={() => {
-                    setShowStakingInfo(false)
-                  }}
-                >
-                  Got it
-                </NewLabel>
-              </StakingInfoText>
-              <CrossDiv
-                onClick={() => {
-                  setShowStakingInfo(false)
-                }}
-              >
-                <RxCross2 onClick={closeBadgeGenomes} />
-              </CrossDiv>
-            </StakingInfo>
-          )}
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
-                {showGenomesVaultInfo ? (
+                {showIFARMInfo ? (
                   <WelcomeBox
-                    bgColorTooltip={bgColorTooltip}
-                    fontColorTooltip={fontColorTooltip}
-                    borderColor={borderColor}
-                  >
-                    <BiInfoCircle className="info-circle" fontSize={20} />
-                    <WelcomeContent>
-                      <WelcomeTitle>Vault Note</WelcomeTitle>
-                      <WelcomeText>
-                        Genomes vaults for GENE and GNOME will be deactivated on the 16th April
-                        2024. A new vault for the GENOME-ETH pool on Base Network can be found{' '}
-                        <WelcomeTicket
-                          href="https://app.harvest.finance/base/0x284c60490212DB0dc0b8F93503d35744f8053381"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
-                        >
-                          here
-                        </WelcomeTicket>
-                        . For more information, check out the #vault-updates channel on{' '}
-                        <WelcomeTicket
-                          href={SOCIAL_LINKS.DISCORD}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
-                        >
-                          our Discord.
-                        </WelcomeTicket>
-                        <WelcomeBottom>
-                          <WelcomeKnow onClick={closeBadgeGenomes}>Got it!</WelcomeKnow>
-                          <WelcomeTicket
-                            href={SOCIAL_LINKS.DISCORD}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            linkColor={linkColorTooltip}
-                            linkColorOnHover={linkColorOnHover}
-                          >
-                            Still having questions? Open Discord ticket.
-                          </WelcomeTicket>
-                        </WelcomeBottom>
-                      </WelcomeText>
-                    </WelcomeContent>
-                    <WelcomeClose>
-                      <RxCross2 onClick={closeBadgeGenomes} />
-                    </WelcomeClose>
-                  </WelcomeBox>
-                ) : showSeamlessVaultInfo ? (
-                  <></>
-                ) : showGBVaultInfo ? (
-                  <WelcomeBox
-                    bgColorTooltip={bgColorTooltip}
-                    fontColorTooltip={fontColorTooltip}
-                    borderColor={borderColor}
-                  >
-                    <BiInfoCircle className="info-circle" fontSize={20} />
-                    <WelcomeContent>
-                      <WelcomeTitle>Vault Note</WelcomeTitle>
-                      <WelcomeText>
-                        <p>
-                          We are following an ongoing situation with the GB token. Before proceeding
-                          with this vault, consider following-up with the latest developments with
-                          one of its token constituents on{' '}
-                          <WelcomeTicket
-                            href="https://twitter.com/search?q=%24GB"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            linkColor={linkColorTooltip}
-                            linkColorOnHover={linkColorOnHover}
-                          >
-                            Twitter/X
-                          </WelcomeTicket>
-                          .
-                        </p>
-                        <p>
-                          At this time USD values and APYs might be inaccurate. Zap reverts might
-                          not be available, but reverts into vAMM-GB/WETH LP-tokens will work. The
-                          LP-tokens can then be withdrawn from{' '}
-                          <WelcomeTicket
-                            href="https://aerodrome.finance/withdraw?pair=0x284ddaDA0B71F2D0D4e395B69b1013dBf6f3e6C1"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            linkColor={linkColorTooltip}
-                            linkColorOnHover={linkColorOnHover}
-                          >
-                            Aerodrome
-                          </WelcomeTicket>
-                          .
-                        </p>
-                        <WelcomeBottom>
-                          <WelcomeKnow onClick={closeBadgeGB}>Got it!</WelcomeKnow>
-                          <WelcomeTicket
-                            href={SOCIAL_LINKS.DISCORD}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            linkColor={linkColorTooltip}
-                            linkColorOnHover={linkColorOnHover}
-                          >
-                            Still having questions? Open Discord ticket.
-                          </WelcomeTicket>
-                        </WelcomeBottom>
-                      </WelcomeText>
-                    </WelcomeContent>
-                    <WelcomeClose>
-                      <RxCross2 onClick={closeBadgeGB} />
-                    </WelcomeClose>
-                  </WelcomeBox>
-                ) : showIFARMInfo ? (
-                  <WelcomeBox
-                    bgColorTooltip={bgColorTooltip}
-                    fontColorTooltip={fontColorTooltip}
-                    borderColor={borderColor}
+                    $bgcolortooltip={bgColorTooltip}
+                    $fontcolortooltip={fontColorTooltip}
+                    $bordercolor={borderColor}
                   >
                     <BiInfoCircle className="info-circle" fontSize={20} />
                     <WelcomeContent>
@@ -1834,8 +1426,8 @@ const AdvancedFarm = () => {
                           href="https://v3.harvest.finance/ethereum/0xa0246c9032bC3A600820415aE600c6388619A14D"
                           target="_blank"
                           rel="noopener noreferrer"
-                          linkColor={linkColorTooltip}
-                          linkColorOnHover={linkColorOnHover}
+                          $linkcolor={linkColorTooltip}
+                          $linkcoloronhover={linkColorOnHover}
                         >
                           under this link
                         </WelcomeTicket>
@@ -1854,21 +1446,21 @@ const AdvancedFarm = () => {
                 )}
                 <ManageBoxWrapper>
                   <MyBalance
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    marginTop={isMobile ? '0px' : '0'}
-                    height={isMobile ? 'unset' : '120px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $margintop={isMobile ? '0px' : '0'}
+                    $height={isMobile ? 'unset' : '120px'}
                   >
                     <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $display="flex"
+                      $justifycontent="space-between"
+                      $size={isMobile ? '12px' : '12px'}
+                      $weight="600"
+                      $height={isMobile ? '20px' : '20px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       <FlexDiv>
                         {showLatestEarnings ? 'Latest Yield' : 'Lifetime Yield'}
@@ -1876,26 +1468,31 @@ const AdvancedFarm = () => {
                         <PiQuestion
                           className="question"
                           data-tip
-                          data-for={
+                          id={
                             showLatestEarnings
                               ? 'tooltip-latest-earning'
                               : 'tooltip-lifetime-earning'
                           }
                         />
-                        <ReactTooltip
+                        <Tooltip
                           id={
                             showLatestEarnings
                               ? 'tooltip-latest-earning'
                               : 'tooltip-lifetime-earning'
+                          }
+                          anchorSelect={
+                            showLatestEarnings
+                              ? '#tooltip-latest-earning'
+                              : '#tooltip-lifetime-earning'
                           }
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
+                            $size={isMobile ? '12px' : '12px'}
+                            $height={isMobile ? '18px' : '18px'}
+                            $weight="500"
                           >
                             {showLatestEarnings ? (
                               <>
@@ -1920,9 +1517,9 @@ const AdvancedFarm = () => {
                               </>
                             )}
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                       </FlexDiv>
-                      <ThemeMode mode={showLatestEarnings ? 'latest' : 'lifetime'}>
+                      <ThemeMode $mode={showLatestEarnings ? 'latest' : 'lifetime'}>
                         <div id="theme-switch">
                           <div className="switch-track">
                             <div className="switch-thumb" />
@@ -1938,23 +1535,23 @@ const AdvancedFarm = () => {
                       </ThemeMode>
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $display="flex"
+                        $size={isMobile ? '12px' : '12px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="600"
+                        $fontcolor={fontColor1}
                       >
                         {showUsdValueCurrency(
                           showLatestEarnings ? usdEarningsLatest : usdEarnings,
@@ -1964,83 +1561,85 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
-                        self="center"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="500"
+                        $fontcolor={fontColor3}
+                        $self="center"
                       >
                         Underlying
                       </NewLabel>
                       <NewLabel
-                        weight="600"
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                        self="center"
-                        fontColor2={fontColor2}
-                        position="relative"
-                        align="right"
-                        marginBottom={isMobile ? '12px' : '0px'}
+                        $weight="600"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
+                        $self="center"
+                        $fontcolor2={fontColor2}
+                        $position="relative"
+                        $align="right"
+                        $marginbottom={isMobile ? '12px' : '0px'}
                       >
-                        <div data-tip data-for="earnings-underlying">
+                        <div data-tip id="earnings-underlying">
                           {showLatestEarnings
                             ? showTokenBalance(underlyingEarningsLatest)
                             : showTokenBalance(underlyingEarnings)}
                         </div>
-                        <ReactTooltip
+                        <Tooltip
                           id="earnings-underlying"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
                           effect="solid"
+                          anchorSelect="#earnings-underlying"
                         >
                           <NewLabel
-                            size={isMobile ? '10px' : '10px'}
-                            height={isMobile ? '14px' : '14px'}
-                            weight="500"
+                            $size={isMobile ? '10px' : '10px'}
+                            $height={isMobile ? '14px' : '14px'}
+                            $weight="500"
                           >
                             {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                         <span className="symbol">{token.tokenNames[0]}</span>
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
                   <MyBalance
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    marginTop={isMobile ? '0px' : '0'}
-                    height={isMobile ? 'unset' : '120px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $margintop={isMobile ? '0px' : '0'}
+                    $height={isMobile ? 'unset' : '120px'}
                   >
                     <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $display="flex"
+                      $justifycontent="space-between"
+                      $size={isMobile ? '12px' : '12px'}
+                      $weight="600"
+                      $height={isMobile ? '20px' : '20px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Total Balance
-                      <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
-                      <ReactTooltip
+                      <PiQuestion className="question" data-tip id="tooltip-total-balance" />
+                      <Tooltip
                         id="tooltip-total-balance"
+                        anchorSelect="#tooltip-total-balance"
                         backgroundColor={darkMode ? 'white' : '#101828'}
                         borderColor={darkMode ? 'white' : 'black'}
                         textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '18px' : '18px'}
-                          weight="500"
+                          $size={isMobile ? '12px' : '12px'}
+                          $height={isMobile ? '18px' : '18px'}
+                          $weight="500"
                         >
                           Total Balance reflects the fTokens in connected wallet, alongside their
                           USD value, which can change with the market.
@@ -2049,119 +1648,119 @@ const AdvancedFarm = () => {
                           The fToken count stays the same unless you revert or convert more crypto
                           in the farm.
                         </NewLabel>
-                      </ReactTooltip>
+                      </Tooltip>
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $display="flex"
+                        $size={isMobile ? '12px' : '12px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="600"
+                        $fontcolor={fontColor1}
                       >
                         {!connected ? (
                           `${currencySym}0.00`
-                        ) : lpTokenBalance || (token.isIPORVault && totalStaked > 0) ? (
-                          showUsdValue(balanceAmount, currencySym)
-                        ) : token.isIPORVault && totalStaked === 0 ? (
-                          `${currencySym}0.00`
-                        ) : (
+                        ) : userStats.length === 0 ? (
                           <AnimatedDots />
+                        ) : (
+                          showUsdValue(balanceAmount, currencySym)
                         )}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
-                        self="center"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="500"
+                        $fontcolor={fontColor3}
+                        $self="center"
                       >
                         fToken
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
-                        fontColor2={fontColor2}
-                        position="relative"
-                        align="right"
-                        marginBottom={isMobile ? '12px' : '0px'}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="600"
+                        $fontcolor={fontColor1}
+                        $fontcolor2={fontColor2}
+                        $position="relative"
+                        $align="right"
+                        $marginbottom={isMobile ? '12px' : '0px'}
                       >
-                        <div className="question" data-tip data-for="fToken-total-balance">
+                        <div className="question" data-tip id="fToken-total-balance">
                           {!connected ? (
                             0
-                          ) : lpTokenBalance || (token.isIPORVault && totalStaked >= 0) ? (
-                            showTokenBalance(totalValue)
-                          ) : (
+                          ) : userStats.length === 0 ? (
                             <AnimatedDots />
+                          ) : (
+                            showTokenBalance(totalValue)
                           )}
                         </div>
-                        <ReactTooltip
+                        <Tooltip
                           id="fToken-total-balance"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
                           effect="solid"
+                          anchorSelect="#fToken-total-balance"
                         >
                           <NewLabel
-                            size={isMobile ? '10px' : '10px'}
-                            height={isMobile ? '14px' : '14px'}
-                            weight="500"
+                            $size={isMobile ? '10px' : '10px'}
+                            $height={isMobile ? '14px' : '14px'}
+                            $weight="500"
                           >
                             {totalValue}
                           </NewLabel>
-                        </ReactTooltip>
-                        <span className="symbol">{useIFARM ? `i${id}` : fTokenName}</span>
+                        </Tooltip>
+                        <span className="symbol">{fTokenName}</span>
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
                   <MyBalance
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    marginTop={isMobile ? '0px' : '0'}
-                    height={isMobile ? 'unset' : '120px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $margintop={isMobile ? '0px' : '0'}
+                    $height={isMobile ? 'unset' : '120px'}
                   >
                     <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $display="flex"
+                      $justifycontent="space-between"
+                      $size={isMobile ? '12px' : '12px'}
+                      $weight="600"
+                      $height={isMobile ? '20px' : '20px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Yield Estimates
-                      <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
-                      <ReactTooltip
+                      <PiQuestion className="question" data-tip id="tooltip-yield-estimate" />
+                      <Tooltip
                         id="tooltip-yield-estimate"
+                        anchorSelect="#tooltip-yield-estimate"
                         backgroundColor={darkMode ? 'white' : '#101828'}
                         borderColor={darkMode ? 'white' : 'black'}
                         textColor={darkMode ? 'black' : 'white'}
                       >
                         <NewLabel
-                          size={isMobile ? '12px' : '12px'}
-                          height={isMobile ? '18px' : '18px'}
-                          weight="500"
+                          $size={isMobile ? '12px' : '12px'}
+                          $height={isMobile ? '18px' : '18px'}
+                          $weight="500"
                         >
                           Estimated yield on your fTokens of this farm based on live APY,
                           denominated in USD. Subject to market fluctuations.
@@ -2169,113 +1768,112 @@ const AdvancedFarm = () => {
                           Note: frequency of auto-compounding events vary, so take these numbers as
                           rough guides, not exact figures.
                         </NewLabel>
-                      </ReactTooltip>
+                      </Tooltip>
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $display="flex"
+                        $size={isMobile ? '12px' : '12px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         Daily
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="600"
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="600"
+                        $fontcolor={fontColor1}
                       >
                         {!connected
                           ? `${currencySym}0`
                           : isNaN(yieldDaily)
-                          ? `${currencySym}0`
-                          : showUsdValue(yieldDaily, currencySym)}
+                            ? `${currencySym}0`
+                            : showUsdValue(yieldDaily, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
-                        self="center"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="500"
+                        $fontcolor={fontColor3}
+                        $self="center"
                       >
                         Monthly
                       </NewLabel>
                       <NewLabel
-                        weight="600"
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
-                        self="center"
+                        $weight="600"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
+                        $self="center"
                       >
                         {!connected
                           ? `${currencySym}0.00`
                           : isNaN(yieldMonthly)
-                          ? `${currencySym}0.00`
-                          : showUsdValue(yieldMonthly, currencySym)}
+                            ? `${currencySym}0.00`
+                            : showUsdValue(yieldMonthly, currencySym)}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
                 </ManageBoxWrapper>
               </>
             ) : activeMainTag === 2 ? (
-              <BoxCover borderColor={borderColorBox}>
+              <BoxCover $bordercolor={borderColorBox}>
                 {detailBoxes.map(({ title, showValue, className }, index) => (
                   <ValueBox
                     key={index}
-                    width="24%"
+                    $width="24%"
                     className={className}
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
                   >
-                    <BoxTitle fontColor3={fontColor3}>{title}</BoxTitle>
-                    <BoxValue fontColor1={fontColor1}>{showValue()}</BoxValue>
+                    <BoxTitle $fontcolor3={fontColor3}>{title}</BoxTitle>
+                    <BoxValue $fontcolor1={fontColor1}>{showValue()}</BoxValue>
                   </ValueBox>
                 ))}
               </BoxCover>
             ) : activeMainTag === 3 ? (
               <>
                 <NewLabel
-                  backColor={darkMode ? '#373737' : '#ebebeb'}
-                  width={isMobile ? '100%' : '40%'}
-                  size={isMobile ? '16px' : '16px'}
-                  height={isMobile ? '24px' : '24px'}
-                  weight="600"
-                  color={fontColor1}
-                  display={token.isIPORVault ? 'none' : 'flex'}
-                  justifyContent="center"
-                  marginBottom="13px"
-                  borderRadius="8px"
-                  transition="0.25s"
+                  $backcolor={darkMode ? '#373737' : '#ebebeb'}
+                  $width={isMobile ? '100%' : '40%'}
+                  $size={isMobile ? '16px' : '16px'}
+                  $height={isMobile ? '24px' : '24px'}
+                  $weight="600"
+                  $fontcolor={fontColor1}
+                  $display={token.isIPORVault ? 'none' : 'flex'}
+                  $justifycontent="center"
+                  $marginbottom="13px"
+                  $borderradius="8px"
+                  $transition="0.25s"
                 >
                   {historyTags.map((tag, i) => (
                     <SwitchTabTag
                       key={i}
-                      num={i}
                       onClick={() => {
                         if ((i === 0 && !activeHarvests) || (i === 1 && activeHarvests))
                           setActiveHarvests(prev => !prev)
                       }}
-                      color={
+                      $fontcolor={
                         (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
                           ? fontColor4
                           : fontColor3
                       }
-                      backColor={
+                      $backcolor={
                         (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
                           ? activeColorNew
                           : ''
                       }
-                      boxShadow={
+                      $boxshadow={
                         (i === 0 && activeHarvests) || (i === 1 && !activeHarvests)
                           ? boxShadowColor2
                           : ''
@@ -2299,10 +1897,10 @@ const AdvancedFarm = () => {
               </>
             ) : activeMainTag === 4 && token.isIPORVault ? (
               <>
-                <FlexDiv marginBottom="20px" width="100%">
+                <FlexDiv $marginbottom="20px" $width="100%">
                   Performance comparison between Autopilot and its sub-vaults.
                 </FlexDiv>
-                <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
+                <MainSection $height={activeMainTag === 0 ? '100%' : 'fit-content'}>
                   <SharePricesData
                     chainName={chainName}
                     token={token}
@@ -2316,33 +1914,33 @@ const AdvancedFarm = () => {
                   />
                 </MainSection>
                 <RestInternalBenchmark>
-                  <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                  <LastHarvestInfo $backcolor={backColor} $bordercolor={borderColor}>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '600'}
-                      height={isMobile ? '20px' : '24px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom="1px solid #F3F6FF"
+                      $size={isMobile ? '12px' : '14px'}
+                      $weight={isMobile ? '600' : '600'}
+                      $height={isMobile ? '20px' : '24px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom="1px solid #F3F6FF"
                     >
                       Lifetime avg. APY
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size="13.4px"
-                        height="20px"
-                        weight="500"
+                        $size="13.4px"
+                        $height="20px"
+                        $weight="500"
                         cursor="pointer"
-                        borderBottom="0.5px dotted white"
-                        color="#5dcf46"
+                        $borderbottom="0.5px dotted white"
+                        $fontcolor="#5dcf46"
                         onClick={() => {}}
                       >
                         Autopilot {token.tokenNames[0]}
                       </NewLabel>
-                      <NewLabel size="13.4px" height="20px" weight="500" color="#5dcf46">
+                      <NewLabel $size="13.4px" $height="20px" $weight="500" $fontcolor="#5dcf46">
                         {iporHvaultsLFAPY && iporHvaultsLFAPY[token.id]
                           ? `${iporHvaultsLFAPY[token.id]}%`
                           : '-'}
@@ -2368,10 +1966,10 @@ const AdvancedFarm = () => {
                           return (
                             <FlexDiv
                               key={apyKey}
-                              justifyContent="space-between"
-                              padding={isMobile ? '10px 15px' : '10px 15px'}
+                              $justifycontent="space-between"
+                              $padding={isMobile ? '10px 15px' : '10px 15px'}
                               onClick={() => {
-                                const lcChainName = getChainNamePortals(token.chain)
+                                const lcChainName = getChainNamePortals(tokenChain)
                                 return allVaultsData[apyKey]?.vaultAddress
                                   ? window.open(
                                       `https://app.harvest.finance/${lcChainName}/${allVaultsData[apyKey]?.vaultAddress}`,
@@ -2381,20 +1979,20 @@ const AdvancedFarm = () => {
                               }}
                             >
                               <NewLabel
-                                size="13.4px"
-                                height="20px"
-                                weight="500"
+                                $size="13.4px"
+                                $height="20px"
+                                $weight="500"
                                 cursor="pointer"
-                                borderBottom="0.5px dotted white"
-                                color={generateColor(iporHvaultsLFAPY, apyKey)}
+                                $borderbottom="0.5px dotted white"
+                                $fontcolor={generateColor(iporHvaultsLFAPY, apyKey)}
                               >
                                 {vaultName}
                               </NewLabel>
                               <NewLabel
-                                size="13.4px"
-                                height="20px"
-                                weight="500"
-                                color={generateColor(iporHvaultsLFAPY, apyKey)}
+                                $size="13.4px"
+                                $height="20px"
+                                $weight="500"
+                                $fontcolor={generateColor(iporHvaultsLFAPY, apyKey)}
                               >
                                 {lifetimeApyValue}
                               </NewLabel>
@@ -2410,142 +2008,67 @@ const AdvancedFarm = () => {
             ) : (
               <></>
             )}
-            <MainSection height={activeMainTag === 0 ? '100%' : 'fit-content'}>
+            <MainSection $height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 !isMobile && (
                   <UserBalanceData
                     token={token}
-                    vaultPool={vaultPool}
                     totalValue={totalValue}
-                    useIFARM={useIFARM}
-                    farmPrice={farmPrice}
                     underlyingPrice={underlyingPrice}
                     lpTokenBalance={lpTokenBalance}
                     chartData={chartData}
+                    showRewardsTab={showRewardsTab}
                   />
                 )
-              ) : activeMainTag === 1 && !token.isIPORVault ? (
-                isArbCampVault ? (
-                  <>
-                    <MyTotalReward marginBottom={isMobile ? '20px' : '25px'}>
-                      <div className="box-image">
-                        <img src={ARBball} alt="" />
-                      </div>
-                      <div className="box-text">
-                        <div className="box-text-first">
-                          Earn more on your claimed ARB rewards with the ARB farm.
-                        </div>
-                        <div className="box-text-second">
-                          Your ARB wallet balance: <span>{showTokenBalance(arbBalance)}</span>
-                        </div>
-                      </div>
-                      <div className="box-btn-wrap">
-                        <div
-                          className="box-btn"
-                          role="button"
-                          tabIndex={0}
-                          onClick={() => {
-                            window.open(
-                              '/arbitrum/0x32DB5Cbac1C278696875eB9F27eD4cD7423dd126',
-                              '_blank',
-                            )
-                          }}
-                          onKeyDown={e => {
-                            if (e.key === 'Enter' || e.key === ' ') {
-                              window.open(
-                                '/arbitrum/0x32DB5Cbac1C278696875eB9F27eD4cD7423dd126',
-                                '_blank',
-                              )
-                            }
-                          }}
-                        >
-                          Open ARB farm
-                        </div>
-                      </div>
-                    </MyTotalReward>
-                    {!isMobile && (
-                      <MyBalance
-                        marginBottom="25px"
-                        backColor={backColor}
-                        borderColor={borderColorBox}
-                      >
-                        <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
-                          height={isMobile ? '20px' : '24px'}
-                          color={fontColor4}
-                          padding={isMobile ? '10px 15px' : '10px 15px'}
-                          borderBottom={`1px solid ${borderColorBox}`}
-                          display="flex"
-                          justifyContent="space-between"
-                        >
-                          <div>My Token Rewards</div>
-                          <div>
-                            {!connected || isNaN(totalReward) ? (
-                              `${currencySym}0`
-                            ) : userStats ? (
-                              showUsdValue(totalReward, currencySym)
-                            ) : (
-                              <AnimatedDots />
-                            )}
-                          </div>
-                        </NewLabel>
-                        <FlexDiv>
-                          <VaultPanelActionsFooter {...viewComponentProps} />
-                        </FlexDiv>
-                      </MyBalance>
-                    )}
-                  </>
-                ) : (
-                  <>
-                    <TotalRewardBox
-                      marginBottom={isMobile ? '20px' : '25px'}
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
+              ) : activeMainTag === 1 ? (
+                <>
+                  <TotalRewardBox
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                  >
+                    <BoxTitle $fontcolor3={fontColor3}>Rewards</BoxTitle>
+                    <RewardValue>
+                      <BoxValue $fontcolor1={fontColor1}>
+                        {!connected ? (
+                          `${currencySym}0`
+                        ) : userStats ? (
+                          showUsdValue(totalReward, currencySym)
+                        ) : (
+                          <AnimatedDots />
+                        )}
+                      </BoxValue>
+                    </RewardValue>
+                  </TotalRewardBox>
+                  {!isMobile && (
+                    <MyBalance
+                      $marginbottom="25px"
+                      $backcolor={bgColorNew}
+                      $bordercolor={borderColorBox}
                     >
-                      <BoxTitle fontColor3={fontColor3}>Rewards</BoxTitle>
-                      <RewardValue>
-                        <BoxValue fontColor1={fontColor1}>
-                          {!connected ? (
-                            `${currencySym}0`
-                          ) : userStats ? (
-                            showUsdValue(totalReward, currencySym)
-                          ) : (
-                            <AnimatedDots />
-                          )}
-                        </BoxValue>
-                      </RewardValue>
-                    </TotalRewardBox>
-                    {!isMobile && (
-                      <MyBalance
-                        marginBottom="25px"
-                        backColor={bgColorNew}
-                        borderColor={borderColorBox}
+                      <NewLabel
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '20px' : '24px'}
+                        $fontcolor={fontColor4}
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom={`1px solid ${borderColorBox}`}
                       >
-                        <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
-                          height={isMobile ? '20px' : '24px'}
-                          color={fontColor4}
-                          padding={isMobile ? '10px 15px' : '10px 15px'}
-                          borderBottom={`1px solid ${borderColorBox}`}
-                        >
-                          My Token Rewards
-                        </NewLabel>
-                        <FlexDiv>
-                          <VaultPanelActionsFooter {...viewComponentProps} />
-                        </FlexDiv>
-                      </MyBalance>
-                    )}
-                  </>
-                )
+                        My Token Rewards
+                      </NewLabel>
+                      <FlexDiv>
+                        <VaultPanelActionsFooter {...viewComponentProps} />
+                      </FlexDiv>
+                    </MyBalance>
+                  )}
+                </>
               ) : activeMainTag === 2 ? (
                 <>
                   <HalfInfo
-                    padding="25px 18px"
-                    marginBottom={isMobile ? '20px' : '25px'}
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
+                    $padding="25px 18px"
+                    $marginbottom={isMobile ? '20px' : '25px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
                   >
                     <FarmDetailChart
                       token={token}
@@ -2567,24 +2090,22 @@ const AdvancedFarm = () => {
                       setHarvestFrequency={setHarvestFrequency}
                     />
                   </HalfInfo>
-                  {!isMobile && (
-                    <SourceOfYield useIFARM={useIFARM} token={token} vaultPool={vaultPool} />
-                  )}
+                  {!isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
                 </>
               ) : (
                 <></>
               )}
             </MainSection>
-            <RestContent height={activeMainTag === 0 ? '100%' : 'fit-content'}>
+            <RestContent $height={activeMainTag === 0 ? '100%' : 'fit-content'}>
               {activeMainTag === 0 ? (
                 <FirstPartSection>
                   <HalfContent
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '0px'}
-                    borderRadius={isMobile ? '12px' : '12px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '0px'}
+                    $borderradius={isMobile ? '12px' : '12px'}
                   >
-                    <DepositSection isShow={activeDepo}>
+                    <DepositSection $isshow={activeDepo}>
                       <DepositBase
                         setSelectToken={setSelectTokenDepo}
                         deposit={depositStart}
@@ -2599,7 +2120,6 @@ const AdvancedFarm = () => {
                         supTokenList={supTokenList}
                         switchMethod={handleToggle(setActiveDepo)}
                         tokenSymbol={tokenSym}
-                        useIFARM={useIFARM}
                         balanceList={balanceList}
                         setFromInfoAmount={setFromInfoAmount}
                         setFromInfoUsdAmount={setFromInfoUsdAmount}
@@ -2643,8 +2163,7 @@ const AdvancedFarm = () => {
                         setInputAmount={setInputAmountDepo}
                         token={token}
                         tokenSymbol={tokenSym}
-                        useIFARM={useIFARM}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         multipleAssets={multipleAssets}
                         fromInfoAmount={fromInfoAmount}
                         fromInfoUsdAmount={fromInfoUsdAmount}
@@ -2654,7 +2173,7 @@ const AdvancedFarm = () => {
                         setConvertSuccess={setConvertSuccess}
                       />
                     </DepositSection>
-                    <WithdrawSection isShow={!activeDepo}>
+                    <WithdrawSection $isshow={!activeDepo}>
                       <WithdrawBase
                         unstakeInputValue={unstakeInputValue}
                         setUnstakeInputValue={setUnstakeInputValue}
@@ -2667,13 +2186,12 @@ const AdvancedFarm = () => {
                         setUnstakeBalance={setUnstakeBalance}
                         balanceList={balanceList}
                         tokenSymbol={tokenSym}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         lpTokenBalance={lpTokenBalance}
                         stakedAmount={stakedAmount}
                         token={token}
                         supTokenList={supTokenList}
                         switchMethod={handleToggle(setActiveDepo)}
-                        useIFARM={useIFARM}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                         setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
@@ -2706,9 +2224,8 @@ const AdvancedFarm = () => {
                         token={token}
                         unstakeBalance={unstakeBalance}
                         tokenSymbol={tokenSym}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         multipleAssets={multipleAssets}
-                        useIFARM={useIFARM}
                         depositedValueUSD={depositedValueUSD}
                         setRevertFromInfoAmount={setRevertFromInfoAmount}
                         revertFromInfoAmount={revertFromInfoAmount}
@@ -2725,8 +2242,6 @@ const AdvancedFarm = () => {
                       token={token}
                       vaultPool={vaultPool}
                       totalValue={totalValue}
-                      useIFARM={useIFARM}
-                      farmPrice={farmPrice}
                       underlyingPrice={underlyingPrice}
                       lpTokenBalance={lpTokenBalance}
                       chartData={chartData}
@@ -2735,137 +2250,131 @@ const AdvancedFarm = () => {
                     <></>
                   )}
                 </FirstPartSection>
-              ) : activeMainTag === 1 && !token.isIPORVault ? (
+              ) : activeMainTag === 1 ? (
                 <SecondPartSection>
                   <MyBalance
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    height={isMobile ? 'unset' : '120px'}
-                    marginBottom={isMobile ? '20px' : '25px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $height={isMobile ? 'unset' : '120px'}
+                    $marginbottom={isMobile ? '20px' : '25px'}
                   >
                     <NewLabel
-                      size={isMobile ? '12px' : '12px'}
-                      weight="600"
-                      height={isMobile ? '20px' : '20px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $size={isMobile ? '12px' : '12px'}
+                      $weight="600"
+                      $height={isMobile ? '20px' : '20px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       {fTokenName}
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight="500"
-                        color={fontColor3}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight="500"
+                        $fontcolor={fontColor3}
                       >
                         Unstaked
-                        <PiQuestion
-                          className="question"
-                          data-tip
-                          data-for="tooltip-unstaked-desc"
-                        />
-                        <ReactTooltip
+                        <PiQuestion className="question" data-tip id="tooltip-unstaked-desc" />
+                        <Tooltip
                           id="tooltip-unstaked-desc"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
+                          anchorSelect="#tooltip-unstaked-desc"
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
+                            $size={isMobile ? '12px' : '12px'}
+                            $height={isMobile ? '18px' : '18px'}
+                            $weight="500"
                           >
                             The number of fTokens you hold, which are not entitled to extra token
                             rewards.
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                       </NewLabel>
                       <NewLabel
-                        weight="600"
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
+                        $weight="600"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
                       >
                         {!connected ? (
                           0
-                        ) : lpTokenBalance ? (
-                          unstakedAmount === 0 ? (
-                            '0.00'
-                          ) : (
-                            unstakedAmount
-                          )
-                        ) : (
+                        ) : userStats.length === 0 ? (
                           <AnimatedDots />
+                        ) : unstakedAmount === 0 ? (
+                          '0.00'
+                        ) : (
+                          unstakedAmount
                         )}
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '5px 15px' : '5px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '5px 15px' : '5px 15px'}
                     >
                       <NewLabel
-                        display="flex"
-                        size={isMobile ? '12px' : '12px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color="#15B088"
+                        $display="flex"
+                        $size={isMobile ? '12px' : '12px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor="#15B088"
                       >
                         Staked
-                        <PiQuestion className="question" data-tip data-for="tooltip-staked-desc" />
-                        <ReactTooltip
+                        <PiQuestion className="question" data-tip id="tooltip-staked-desc" />
+                        <Tooltip
                           id="tooltip-staked-desc"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
+                          anchorSelect="#tooltip-staked-desc"
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
+                            $size={isMobile ? '12px' : '12px'}
+                            $height={isMobile ? '18px' : '18px'}
+                            $weight="500"
                           >
                             The number of fTokens you hold, which are entitled to extra token
                             rewards.
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '24px' : '24px'}
-                        weight={isMobile ? '600' : '600'}
-                        color={isMobile ? '#15B088' : '#15B088'}
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '24px' : '24px'}
+                        $weight={isMobile ? '600' : '600'}
+                        $fontcolor={isMobile ? '#15B088' : '#15B088'}
                       >
                         {!connected ? (
                           0
-                        ) : totalStaked ? (
-                          stakedAmount === 0 ? (
-                            '0.00'
-                          ) : (
-                            stakedAmount
-                          )
-                        ) : (
+                        ) : userStats.length === 0 ? (
                           <AnimatedDots />
+                        ) : stakedAmount === 0 ? (
+                          '0.00'
+                        ) : (
+                          stakedAmount
                         )}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
                   {isMobile && (
                     <MyBalance
-                      marginBottom="20px"
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
+                      $marginbottom="20px"
+                      $backcolor={bgColorNew}
+                      $bordercolor={borderColorBox}
                     >
                       <NewLabel
-                        size={isMobile ? '14px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom={`1px solid ${borderColorBox}`}
+                        $size={isMobile ? '14px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor4}
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom={`1px solid ${borderColorBox}`}
                       >
                         My Token Rewards
                       </NewLabel>
@@ -2875,12 +2384,12 @@ const AdvancedFarm = () => {
                     </MyBalance>
                   )}
                   <HalfContent
-                    backColor={bgColorNew}
-                    borderColor={borderColorBox}
-                    marginBottom={isMobile ? '20px' : '0px'}
-                    borderRadius={isMobile ? '12px' : '12px'}
+                    $backcolor={bgColorNew}
+                    $bordercolor={borderColorBox}
+                    $marginbottom={isMobile ? '20px' : '0px'}
+                    $borderradius={isMobile ? '12px' : '12px'}
                   >
-                    <StakeSection isShow={activeStake}>
+                    <StakeSection $isshow={activeStake}>
                       <StakeBase
                         setStakeStart={setStakeStart}
                         inputAmount={inputAmountStake}
@@ -2889,7 +2398,7 @@ const AdvancedFarm = () => {
                         switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={tokenSym}
                         lpTokenBalance={lpTokenBalance}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                       />
                       <StakeStart
                         stakeStart={stakeStart}
@@ -2898,7 +2407,7 @@ const AdvancedFarm = () => {
                         setInputAmount={setInputAmountStake}
                         token={token}
                         tokenSymbol={tokenSym}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         lpTokenBalance={lpTokenBalance}
                         lpTokenApprovedBalance={lpTokenApprovedBalance}
                         setPendingAction={setPendingAction}
@@ -2912,7 +2421,7 @@ const AdvancedFarm = () => {
                         tokenSymbol={tokenSym}
                       />
                     </StakeSection>
-                    <UnstakeSection isShow={!activeStake}>
+                    <UnstakeSection $isshow={!activeStake}>
                       <UnstakeBase
                         setUnstakeStart={setUnstakeStart}
                         finalStep={unstakeFinalStep}
@@ -2922,7 +2431,7 @@ const AdvancedFarm = () => {
                         switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={tokenSym}
                         totalStaked={totalStaked}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         multipleAssets={multipleAssets}
                         amountsToExecute={amountsToExecuteUnstake}
                         setAmountsToExecute={setAmountsToExecuteUnstake}
@@ -2937,7 +2446,7 @@ const AdvancedFarm = () => {
                         switchMethod={handleToggle(setActiveStake)}
                         tokenSymbol={tokenSym}
                         totalStaked={totalStaked}
-                        fAssetPool={fAssetPool}
+                        vaultPool={vaultPool}
                         setPendingAction={setPendingAction}
                         multipleAssets={multipleAssets}
                         amountsToExecute={amountsToExecuteUnstake}
@@ -2954,34 +2463,34 @@ const AdvancedFarm = () => {
                 </SecondPartSection>
               ) : activeMainTag === 2 ? (
                 <RestInternal>
-                  <LastHarvestInfo backColor={bgColorNew} borderColor={borderColorBox}>
+                  <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '600'}
-                      height={isMobile ? '20px' : '24px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $size={isMobile ? '12px' : '14px'}
+                      $weight={isMobile ? '600' : '600'}
+                      $height={isMobile ? '20px' : '24px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Info
                     </NewLabel>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         Operating since
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
                       >
                         {vaultBirthday === '' ? <AnimatedDots /> : vaultBirthday}{' '}
                         {vaultTotalPeriod !== '' && (
@@ -2990,25 +2499,25 @@ const AdvancedFarm = () => {
                       </NewLabel>
                     </FlexDiv>
                     <FlexDiv
-                      justifyContent="space-between"
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $justifycontent="space-between"
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="500"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor3}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="500"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor3}
                       >
                         SharePrice
                       </NewLabel>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '24px' : '24px'}
-                        color={fontColor1}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '24px' : '24px'}
+                        $fontcolor={fontColor1}
                       >
-                        <div className="question" data-tip data-for="tooltip-sharePrice">
+                        <div className="question" data-tip id="tooltip-sharePrice">
                           {latestSharePrice === '' ? (
                             <AnimatedDots />
                           ) : latestSharePrice === '-' ? (
@@ -3017,35 +2526,36 @@ const AdvancedFarm = () => {
                             Number(latestSharePrice).toFixed(5)
                           )}
                         </div>
-                        <ReactTooltip
+                        <Tooltip
                           id="tooltip-sharePrice"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
+                          anchorSelect="#tooltip-sharePrice"
                         >
                           <NewLabel
-                            size={isMobile ? '12px' : '12px'}
-                            height={isMobile ? '18px' : '18px'}
-                            weight="500"
+                            $size={isMobile ? '12px' : '12px'}
+                            $height={isMobile ? '18px' : '18px'}
+                            $weight="500"
                           >
                             {latestSharePrice}
                           </NewLabel>
-                        </ReactTooltip>
+                        </Tooltip>
                       </NewLabel>
                     </FlexDiv>
                     <NewLabel
-                      display="flex"
-                      justifyContent="space-between"
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '600'}
-                      height={isMobile ? '20px' : '24px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $display="flex"
+                      $justifycontent="space-between"
+                      $size={isMobile ? '12px' : '14px'}
+                      $weight={isMobile ? '600' : '600'}
+                      $height={isMobile ? '20px' : '24px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       {showApyHistory ? 'APY - Live & Historical Average' : 'Harvest Frequency'}
-                      <SwitchMode mode={showApyHistory ? 'apy' : 'harvest'}>
+                      <SwitchMode $mode={showApyHistory ? 'apy' : 'harvest'}>
                         <div id="theme-switch">
                           <div className="switch-track">
                             <div className="switch-thumb" />
@@ -3063,22 +2573,22 @@ const AdvancedFarm = () => {
                       ? apyPeriods.map((period, index) => (
                           <FlexDiv
                             key={index}
-                            justifyContent="space-between"
-                            padding={isMobile ? '10px 15px' : '10px 15px'}
+                            $justifycontent="space-between"
+                            $padding={isMobile ? '10px 15px' : '10px 15px'}
                           >
                             <NewLabel
-                              size={isMobile ? '12px' : '14px'}
-                              weight="500"
-                              height={isMobile ? '24px' : '24px'}
-                              color={fontColor3}
+                              $size={isMobile ? '12px' : '14px'}
+                              $weight="500"
+                              $height={isMobile ? '24px' : '24px'}
+                              $fontcolor={fontColor3}
                             >
                               {period.label}
                             </NewLabel>
                             <NewLabel
-                              size={isMobile ? '12px' : '14px'}
-                              weight="600"
-                              height={isMobile ? '24px' : '24px'}
-                              color={fontColor1}
+                              $size={isMobile ? '12px' : '14px'}
+                              $weight="600"
+                              $height={isMobile ? '24px' : '24px'}
+                              $fontcolor={fontColor1}
                             >
                               {period.value === '' ? <AnimatedDots /> : period.value}
                             </NewLabel>
@@ -3087,52 +2597,57 @@ const AdvancedFarm = () => {
                       : harvestFrequencies.map((period, index) => (
                           <FlexDiv
                             key={index}
-                            justifyContent="space-between"
-                            padding={isMobile ? '10px 15px' : '10px 15px'}
+                            $justifycontent="space-between"
+                            $padding={isMobile ? '10px 15px' : '10px 15px'}
                           >
                             <NewLabel
-                              size={isMobile ? '12px' : '14px'}
-                              weight="500"
-                              height={isMobile ? '24px' : '24px'}
-                              color={fontColor3}
+                              $size={isMobile ? '12px' : '14px'}
+                              $weight="500"
+                              $height={isMobile ? '24px' : '24px'}
+                              $fontcolor={fontColor3}
                             >
                               {period.label}
                             </NewLabel>
                             <NewLabel
-                              size={isMobile ? '12px' : '14px'}
-                              weight="600"
-                              height={isMobile ? '24px' : '24px'}
-                              color={fontColor1}
+                              $size={isMobile ? '12px' : '14px'}
+                              $weight="600"
+                              $height={isMobile ? '24px' : '24px'}
+                              $fontcolor={fontColor1}
                             >
                               {period.value === '' ? <AnimatedDots /> : period.value}
                             </NewLabel>
                           </FlexDiv>
                         ))}
                   </LastHarvestInfo>
-                  {!useIFARM && (
+                  {
                     <MyBalance
-                      marginBottom={isMobile ? '20px' : '25px'}
-                      backColor={bgColorNew}
-                      borderColor={borderColorBox}
+                      $marginbottom={isMobile ? '20px' : '25px'}
+                      $backcolor={bgColorNew}
+                      $bordercolor={borderColorBox}
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight="600"
-                        height={isMobile ? '20px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom={`1px solid ${borderColorBox}`}
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight="600"
+                        $height={isMobile ? '20px' : '24px'}
+                        $fontcolor={fontColor4}
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom={`1px solid ${borderColorBox}`}
                       >
                         APY Breakdown
                       </NewLabel>
-                      <NewLabel padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
+                      <NewLabel $padding={isMobile ? '0px 15px 10px' : '0px 15px 10px'}>
                         <div dangerouslySetInnerHTML={{ __html: rewardTxt }} />
                       </NewLabel>
-                      <Tip display={showTip ? 'block' : 'none'}>
+                      <Tip $display={showTip ? 'block' : 'none'}>
                         <TipTop>
                           <IconPart>
                             <img src={TickIcon} alt="tick icon" style={{ marginRight: '5px' }} />
-                            <NewLabel size="14px" weight="600" height="20px" color="#027A48">
+                            <NewLabel
+                              $size="14px"
+                              $weight="600"
+                              $height="20px"
+                              $fontcolor="#027A48"
+                            >
                               Tip
                             </NewLabel>
                           </IconPart>
@@ -3144,7 +2659,7 @@ const AdvancedFarm = () => {
                             <img src={TickCross} alt="tick cross" />
                           </CrossDiv>
                         </TipTop>
-                        <NewLabel size="14px" height="20px" weight="400" color="#027A48">
+                        <NewLabel $size="14px" $height="20px" $weight="400" $fontcolor="#027A48">
                           For a quick guide on tracking yield sources in your Portfolio, check out
                           our 5-minute article &quot;
                           <a
@@ -3159,97 +2674,98 @@ const AdvancedFarm = () => {
                         </NewLabel>
                       </Tip>
                     </MyBalance>
-                  )}
-                  <LastHarvestInfo backColor={bgColorNew} borderColor={borderColorBox}>
+                  }
+                  <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
                     <NewLabel
-                      size={isMobile ? '12px' : '14px'}
-                      weight={isMobile ? '600' : '600'}
-                      height={isMobile ? '20px' : '24px'}
-                      color={fontColor4}
-                      padding={isMobile ? '10px 15px' : '10px 15px'}
-                      borderBottom={`1px solid ${borderColorBox}`}
+                      $size={isMobile ? '12px' : '14px'}
+                      $weight={isMobile ? '600' : '600'}
+                      $height={isMobile ? '20px' : '24px'}
+                      $fontcolor={fontColor4}
+                      $padding={isMobile ? '10px 15px' : '10px 15px'}
+                      $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Fees
                     </NewLabel>
                     {feeList.map((feeItem, index) => (
                       <FlexDiv
                         key={index}
-                        justifyContent="space-between"
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $justifycontent="space-between"
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="500"
-                          height={isMobile ? '24px' : '24px'}
-                          color={fontColor3}
+                          $size={isMobile ? '12px' : '14px'}
+                          $weight="500"
+                          $height={isMobile ? '24px' : '24px'}
+                          $fontcolor={fontColor3}
                         >
                           {feeItem.label}
                         </NewLabel>
                         <NewLabel
-                          size={isMobile ? '12px' : '14px'}
-                          weight="600"
-                          height={isMobile ? '24px' : '24px'}
-                          color={fontColor1}
+                          $size={isMobile ? '12px' : '14px'}
+                          $weight="600"
+                          $height={isMobile ? '24px' : '24px'}
+                          $fontcolor={fontColor1}
                         >
                           {feeItem.value}
                         </NewLabel>
                       </FlexDiv>
                     ))}
-                    {!useIFARM && (
+                    {
                       <FlexDiv
-                        justifyContent="space-between"
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $justifycontent="space-between"
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
                       >
                         <NewLabel
-                          size={isMobile ? '13px' : '13px'}
-                          weight="300"
-                          height="normal"
-                          color={fontColor3}
+                          $size={isMobile ? '13px' : '13px'}
+                          $weight="300"
+                          $height="normal"
+                          $fontcolor={fontColor3}
                         >
                           The APY shown already considers the performance fee taken only from
                           generated yield and not deposits.
                         </NewLabel>
-                        <NewLabel display="flex" self="center">
-                          <PiQuestion
-                            className="question"
-                            data-tip
-                            data-for="tooltip-last-harvest"
-                          />
-                          <ReactTooltip
+                        <NewLabel $display="flex" $self="center">
+                          <PiQuestion className="question" data-tip id="tooltip-last-harvest" />
+                          <Tooltip
                             id="tooltip-last-harvest"
+                            anchorSelect="#tooltip-last-harvest"
                             backgroundColor={darkMode ? 'white' : '#101828'}
                             borderColor={darkMode ? 'white' : 'black'}
                             textColor={darkMode ? 'black' : 'white'}
                             place={isMobile ? 'left' : 'top'}
                           >
                             <NewLabel
-                              weight="500"
-                              size={isMobile ? '13px' : '13px'}
-                              height={isMobile ? '16px' : '16px'}
+                              $weight="500"
+                              $size={isMobile ? '13px' : '13px'}
+                              $height={isMobile ? '16px' : '16px'}
                             >
-                              <FlexDiv gap="15px" justifyContent="space-between">
+                              <FlexDiv $gap="15px" $justifycontent="space-between">
                                 <div>Harvest Treasury</div>
                                 <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
                               </FlexDiv>
-                              <FlexDiv gap="15px" justifyContent="space-between" marginTop="12px">
+                              <FlexDiv
+                                $gap="15px"
+                                $justifycontent="space-between"
+                                $margintop="12px"
+                              >
                                 <div>Profit Sharing</div>
                                 <div>{token.isIPORVault ? '0' : profitShare}%</div>
                               </FlexDiv>
                             </NewLabel>
-                          </ReactTooltip>
+                          </Tooltip>
                         </NewLabel>
                       </FlexDiv>
-                    )}
+                    }
                   </LastHarvestInfo>
                   {token.isIPORVault && (
-                    <LastHarvestInfo backColor={backColor} borderColor={borderColor}>
+                    <LastHarvestInfo $backcolor={backColor} $bordercolor={borderColor}>
                       <NewLabel
-                        size={isMobile ? '12px' : '14px'}
-                        weight={isMobile ? '600' : '600'}
-                        height={isMobile ? '20px' : '24px'}
-                        color={fontColor4}
-                        padding={isMobile ? '10px 15px' : '10px 15px'}
-                        borderBottom="1px solid #F3F6FF"
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight={isMobile ? '600' : '600'}
+                        $height={isMobile ? '20px' : '24px'}
+                        $fontcolor={fontColor4}
+                        $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom="1px solid #F3F6FF"
                       >
                         Allocation
                       </NewLabel>
@@ -3273,17 +2789,17 @@ const AdvancedFarm = () => {
                           return (
                             <FlexDiv
                               key={index}
-                              justifyContent="space-between"
-                              padding={isMobile ? '10px 15px' : '10px 15px'}
+                              $justifycontent="space-between"
+                              $padding={isMobile ? '10px 15px' : '10px 15px'}
                             >
                               <NewLabel
-                                size="13.4px"
-                                height="20px"
-                                weight="500"
+                                $size="13.4px"
+                                $height="20px"
+                                $weight="500"
                                 cursor="pointer"
-                                borderBottom="0.5px dotted white"
+                                $borderbottom="0.5px dotted white"
                                 onClick={() => {
-                                  const lcChainName = getChainNamePortals(token.chain)
+                                  const lcChainName = getChainNamePortals(tokenChain)
                                   return allVaultsData[data.hVaultId]?.vaultAddress
                                     ? window.open(
                                         `https://app.harvest.finance/${lcChainName}/${
@@ -3296,7 +2812,7 @@ const AdvancedFarm = () => {
                               >
                                 {vaultName}
                               </NewLabel>
-                              <NewLabel size="13.4px" height="20px" weight="500">
+                              <NewLabel $size="13.4px" $height="20px" $weight="500">
                                 {Number(data.allocPoint).toFixed(2)}%
                               </NewLabel>
                             </FlexDiv>
@@ -3307,9 +2823,7 @@ const AdvancedFarm = () => {
                       )}
                     </LastHarvestInfo>
                   )}
-                  {isMobile && (
-                    <SourceOfYield useIFARM={useIFARM} token={token} vaultPool={vaultPool} />
-                  )}
+                  {isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
                 </RestInternal>
               ) : (
                 <></>

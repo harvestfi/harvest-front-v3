@@ -4,19 +4,17 @@ import { useSetChain } from '@web3-onboard/react'
 import { round } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { toast } from 'react-toastify'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
-// import WalletIcon from '../../../../assets/images/logos/beginners/wallet-in-button.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import ThumbUpIcon from '../../../../assets/images/logos/thumb-up.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
-import { fromWei, toWei, checkNativeToken } from '../../../../services/web3'
-import { addresses } from '../../../../data'
+import { fromWei, toWei, checkNativeToken } from '../../../../services/viem'
 import { isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
@@ -31,7 +29,6 @@ import {
   TokenSelect,
   NewLabel,
   AmountSection,
-  // ThemeMode,
   InsufficientSection,
   HasErrorSection,
   FlexDiv,
@@ -56,13 +53,10 @@ const DepositBase = ({
   token,
   switchMethod,
   tokenSymbol,
-  useIFARM,
   setFromInfoAmount,
   setFromInfoUsdAmount,
   fromInfoUsdAmount,
   convertYearlyYieldUSD,
-  // convertMonthlyYieldUSD,
-  // convertDailyYieldUSD,
   minReceiveAmountString,
   setMinReceiveAmountString,
   minReceiveUsdAmount,
@@ -95,7 +89,7 @@ const DepositBase = ({
   } = useThemeContext()
 
   const { connected, connectAction, account, chainId, setChainId } = useWallet()
-  const { getPortalsEstimate, getPortalsToken } = usePortals()
+  const { getPortalsEstimate, getPortalsTokensBatch } = usePortals()
 
   const [
     {
@@ -110,8 +104,8 @@ const DepositBase = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -162,7 +156,7 @@ const DepositBase = ({
             outputAmountDefault = ''
 
           const fromToken = pickedToken.address
-          const toToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+          const toToken = token.vaultAddress || token.tokenAddress
           const pickedTokenRawBalance = toWei(pickedToken.balance, pickedToken.decimals, 0)
 
           const overBalance = new BigNumber(amount.toString()).isGreaterThan(
@@ -200,8 +194,13 @@ const DepositBase = ({
               fromTokenUsdPrice = pickedToken.usdPrice
               toTokenUsdPrice = Number(pickedToken.usdPrice) * Number(pricePerFullShare)
             } else {
-              const fromTokenDetail = await getPortalsToken(chainId, fromToken)
-              const toTokenDetail = await getPortalsToken(chainId, toToken)
+              const tokenDetails = await getPortalsTokensBatch(chainId, [fromToken, toToken])
+              const fromTokenDetail = tokenDetails.find(
+                token => token.address.toLowerCase() === fromToken.toLowerCase(),
+              )
+              const toTokenDetail = tokenDetails.find(
+                token => token.address.toLowerCase() === toToken.toLowerCase(),
+              )
               fromTokenUsdPrice = fromTokenDetail?.price
               toTokenUsdPrice = toTokenDetail?.price
             }
@@ -293,7 +292,6 @@ const DepositBase = ({
     }
 
     getQuoteResult()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     inputAmount,
     account,
@@ -304,7 +302,6 @@ const DepositBase = ({
     defaultToken,
     token,
     tokenChain,
-    useIFARM,
   ])
 
   const onClickDeposit = async () => {
@@ -370,31 +367,30 @@ const DepositBase = ({
     <>
       <BaseWidoDiv>
         <NewLabel
-          bg={darkMode ? '#373D51' : '#fff'}
-          size={isMobile ? '16px' : '16px'}
-          height={isMobile ? '24px' : '24px'}
-          weight="600"
-          color={fontColor1}
-          display="flex"
-          justifyContent="center"
-          padding={isMobile ? '4px 0px' : '4px 0px'}
-          marginBottom="13px"
-          border={`1.3px solid ${borderColorBox}`}
-          borderRadius="8px"
+          $bgcolor={darkMode ? '#373D51' : '#fff'}
+          $size={isMobile ? '16px' : '16px'}
+          $height={isMobile ? '24px' : '24px'}
+          $weight="600"
+          $fontcolor={fontColor1}
+          $display="flex"
+          $justifycontent="center"
+          $padding={isMobile ? '4px 0px' : '4px 0px'}
+          $marginbottom="13px"
+          $border={`1.3px solid ${borderColorBox}`}
+          $borderradius="8px"
         >
           {mainTags.map((tag, i) => (
             <SwitchTabTag
               key={i}
-              num={i}
               onClick={() => {
                 if (i === 1) {
                   switchMethod()
                 }
               }}
-              color={i === 0 ? fontColor4 : fontColor3}
-              borderColor={i === 0 ? activeColor : ''}
-              backColor={i === 0 ? activeColorNew : ''}
-              boxShadow={
+              $fontcolor={i === 0 ? fontColor4 : fontColor3}
+              $bordercolor={i === 0 ? activeColor : ''}
+              $backcolor={i === 0 ? activeColorNew : ''}
+              $boxshadow={
                 i === 0
                   ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
                   : ''
@@ -405,19 +401,17 @@ const DepositBase = ({
             </SwitchTabTag>
           ))}
         </NewLabel>
-        <DepoTitle fontColor={fontColor}>
-          {useIFARM
-            ? `Convert your crypto into interest-bearing i${tokenSymbol}.`
-            : 'Convert your crypto into interest-bearing fTokens.'}
+        <DepoTitle $fontcolor={fontColor}>
+          {'Convert your crypto into interest-bearing fTokens.'}
         </DepoTitle>
         <TokenInfo>
           <AmountSection>
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
-              height={isMobile ? '20px' : '20px'}
-              weight="500"
-              color={fontColor2}
-              marginBottom="6px"
+              $size={isMobile ? '14px' : '14px'}
+              $height={isMobile ? '20px' : '20px'}
+              $weight="500"
+              $fontcolor={fontColor2}
+              $marginbottom="6px"
             >
               Amount to convert
             </NewLabel>
@@ -426,15 +420,15 @@ const DepositBase = ({
                 type="number"
                 value={inputAmount}
                 onChange={onInputBalance}
-                bgColor={bgColorNew}
-                fontColor2={fontColor2}
-                borderColor={borderColorBox}
+                $bgcolor={bgColorNew}
+                $fontcolor2={fontColor2}
+                $bordercolor={borderColorBox}
                 inputMode="numeric"
                 pattern="[0-9]*"
                 placeholder="0"
               />
               <input type="hidden" value={Number(inputAmount)} />
-              <TokenUSDAmount fontColor3={fontColor3}>
+              <TokenUSDAmount $fontcolor3={fontColor3}>
                 {inputAmount === '0' ||
                 inputAmount === '' ||
                 pickedToken.symbol === 'Select Token' ? (
@@ -453,11 +447,11 @@ const DepositBase = ({
           </AmountSection>
           <DepositTokenSection>
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
-              height={isMobile ? '20px' : '20px'}
-              weight="500"
-              color={fontColor2}
-              marginBottom="6px"
+              $size={isMobile ? '14px' : '14px'}
+              $height={isMobile ? '20px' : '20px'}
+              $weight="500"
+              $fontcolor={fontColor2}
+              $marginbottom="6px"
             >
               Input Token
             </NewLabel>
@@ -478,7 +472,7 @@ const DepositBase = ({
           </DepositTokenSection>
         </TokenInfo>
         <BalanceInfo
-          fontColor={fontColor}
+          $fontcolor={fontColor}
           onClick={() => {
             if (account && pickedToken.symbol !== 'Select Token') {
               if (checkNativeToken(pickedToken)) {
@@ -494,17 +488,17 @@ const DepositBase = ({
           <span>{showTokenBalance(balance)}</span>
         </BalanceInfo>
         <InsufficientSection
-          isShow={showWarning ? 'true' : 'false'}
-          activeColor={activeColor}
-          bgColorMessage={bgColorMessage}
+          $isshow={showWarning ? 'true' : 'false'}
+          $activecolor={activeColor}
+          $bgcolormessage={bgColorMessage}
         >
-          <NewLabel display="flex" widthDiv="80%" items="center">
+          <NewLabel $display="flex" $widthdiv="80%" $items="center">
             <img className="info-icon" src={InfoIcon} alt="" />
             <NewLabel
-              size={isMobile ? '14px' : '14px'}
-              height={isMobile ? '20px' : '20px'}
-              weight="600"
-              color={fontColor2}
+              $size={isMobile ? '14px' : '14px'}
+              $height={isMobile ? '20px' : '20px'}
+              $weight="600"
+              $fontcolor={fontColor2}
             >
               Insufficient {pickedToken.symbol} balance in your wallet
             </NewLabel>
@@ -520,17 +514,17 @@ const DepositBase = ({
           </div>
         </InsufficientSection>
         <HasErrorSection
-          isShow={hasErrorOccurred === 1 ? 'true' : 'false'}
-          activeColor={activeColor}
+          $isshow={hasErrorOccurred === 1 ? 'true' : 'false'}
+          $activecolor={activeColor}
         >
-          <NewLabel display="flex" flexFlow="column" widthDiv="100%">
+          <NewLabel $display="flex" $flexflow="column" $widthdiv="100%">
             <FlexDiv>
               <img className="info-icon" src={InfoIcon} alt="" />
               <NewLabel
-                size={isMobile ? '14px' : '14px'}
-                height={isMobile ? '20px' : '20px'}
-                weight="600"
-                color={fontColor2}
+                $size={isMobile ? '14px' : '14px'}
+                $height={isMobile ? '20px' : '20px'}
+                $weight="600"
+                $fontcolor={fontColor2}
               >
                 Oops, we are having small issues with getting quotes. Please try again in 2 minutes.
               </NewLabel>
@@ -547,49 +541,50 @@ const DepositBase = ({
           </div>
         </HasErrorSection>
       </BaseWidoDiv>
-      <BaseWidoDiv borderColor={borderColorBox}>
+      <BaseWidoDiv $bordercolor={borderColorBox}>
         <NewLabel
-          size={isMobile ? '14px' : '14px'}
-          height={isMobile ? '24px' : '24px'}
-          color="#344054"
+          $size={isMobile ? '14px' : '14px'}
+          $height={isMobile ? '24px' : '24px'}
+          $fontcolor="#344054"
         >
           <NewLabel
-            display="flex"
-            justifyContent="space-between"
-            padding={isMobile ? '10px 0' : '10px 0'}
+            $display="flex"
+            $justifycontent="space-between"
+            $padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '24px' : '24px'}
-              color={fontColor3}
-              weight="500"
+              $size={isMobile ? '12px' : '14px'}
+              $height={isMobile ? '24px' : '24px'}
+              $fontcolor={fontColor3}
+              $weight="500"
             >
               Est. Yearly Yield
-              <PiQuestion className="question" data-tip data-for="monthly-yield" />
-              <ReactTooltip
+              <PiQuestion className="question" data-tip id="monthly-yield" />
+              <Tooltip
                 id="monthly-yield"
+                anchorSelect="#monthly-yield"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
                 textColor={darkMode ? 'black' : 'white'}
                 place="right"
               >
                 <NewLabel
-                  size={isMobile ? '12px' : '12px'}
-                  height={isMobile ? '18px' : '18px'}
-                  weight="500"
+                  $size={isMobile ? '12px' : '12px'}
+                  $height={isMobile ? '18px' : '18px'}
+                  $weight="500"
                 >
-                  {useIFARM
-                    ? 'Based on live USD price of iFARM. Considers live APY. Subject to change.'
-                    : 'Calculated using live APY and current values of underlying and reward tokens. Subject to market fluctuations; performance may vary.'}
+                  {
+                    'Calculated using live APY and current values of underlying and reward tokens. Subject to market fluctuations; performance may vary.'
+                  }
                 </NewLabel>
-              </ReactTooltip>
+              </Tooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '24px' : '24px'}
-              color={fontColor4}
-              weight="600"
-              textAlign="right"
+              $size={isMobile ? '12px' : '14px'}
+              $height={isMobile ? '24px' : '24px'}
+              $fontcolor={fontColor4}
+              $weight="600"
+              $textalign="right"
             >
               {account &&
               pickedToken.symbol !== 'Select Token' &&
@@ -617,47 +612,48 @@ const DepositBase = ({
             </NewLabel>
           </NewLabel>
           <NewLabel
-            display="flex"
-            justifyContent="space-between"
-            padding={isMobile ? '10px 0' : '10px 0'}
+            $display="flex"
+            $justifycontent="space-between"
+            $padding={isMobile ? '10px 0' : '10px 0'}
           >
             <NewLabel
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '24px' : '24px'}
-              color={fontColor3}
-              weight="500"
+              $size={isMobile ? '12px' : '14px'}
+              $height={isMobile ? '24px' : '24px'}
+              $fontcolor={fontColor3}
+              $weight="500"
             >
-              {useIFARM ? 'Est. Received' : 'Est. fTokens Received'}
-              <PiQuestion className="question" data-tip data-for="min-received" />
-              <ReactTooltip
+              {'Est. Received'}
+              <PiQuestion className="question" data-tip id="min-received" />
+              <Tooltip
                 id="min-received"
+                anchorSelect="#min-received"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
                 textColor={darkMode ? 'black' : 'white'}
                 place="right"
               >
                 <NewLabel
-                  size={isMobile ? '10px' : '10px'}
-                  height={isMobile ? '14px' : '14px'}
-                  weight="500"
+                  $size={isMobile ? '10px' : '10px'}
+                  $height={isMobile ? '14px' : '14px'}
+                  $weight="500"
                 >
                   The estimated number of fTokens you will receive in your wallet. The default
                   slippage is set as &apos;Auto&apos;.
                 </NewLabel>
-              </ReactTooltip>
+              </Tooltip>
             </NewLabel>
             <NewLabel
-              size={isMobile ? '12px' : '14px'}
-              height={isMobile ? '24px' : '24px'}
-              color={fontColor4}
-              weight="600"
-              textAlign="right"
-              display="flex"
-              items="flex-end"
-              flexFlow="column"
+              $size={isMobile ? '12px' : '14px'}
+              $height={isMobile ? '24px' : '24px'}
+              $fontcolor={fontColor4}
+              $weight="600"
+              $textalign="right"
+              $display="flex"
+              $items="flex-end"
+              $flexflow="column"
             >
               <>
-                <div data-tip data-for="est-fToken-receive">
+                <div data-tip id="est-fToken-receive">
                   {account &&
                   pickedToken.symbol !== 'Select Token' &&
                   !new BigNumber(amount).isEqualTo(0) ? (
@@ -672,8 +668,9 @@ const DepositBase = ({
                     '-'
                   )}
                 </div>
-                <ReactTooltip
+                <Tooltip
                   id="est-fToken-receive"
+                  anchorSelect="#est-fToken-receive"
                   backgroundColor={darkMode ? 'white' : '#101828'}
                   borderColor={darkMode ? 'white' : 'black'}
                   textColor={darkMode ? 'black' : 'white'}
@@ -681,16 +678,16 @@ const DepositBase = ({
                   effect="solid"
                 >
                   <NewLabel
-                    size={isMobile ? '12px' : '12px'}
-                    height={isMobile ? '18px' : '18px'}
-                    weight="500"
+                    $size={isMobile ? '12px' : '12px'}
+                    $height={isMobile ? '18px' : '18px'}
+                    $weight="500"
                   >
                     {minReceiveAmountString}
                   </NewLabel>
-                </ReactTooltip>
+                </Tooltip>
               </>
-              <NewLabel display="flex" flexFlow="column" weight="600" align="right">
-                <span className="token-symbol">{useIFARM ? `i${tokenSymbol}` : tokenSym}</span>
+              <NewLabel $display="flex" $flexflow="column" $weight="600" $align="right">
+                <span className="token-symbol">{tokenSym}</span>
                 <span className="token-symbol">
                   {account &&
                   pickedToken.symbol !== 'Select Token' &&
@@ -707,20 +704,25 @@ const DepositBase = ({
               </NewLabel>
             </NewLabel>
           </NewLabel>
-          <ThumbUp padding={isMobile ? '15px' : '16px'}>
+          <ThumbUp $padding={isMobile ? '15px' : '16px'}>
             <img src={ThumbUpIcon} alt="thumb-up" style={{ marginRight: '15px' }} />
-            <NewLabel size={isMobile ? '10px' : '12px'} weight="600" height="20px" color="#027A48">
+            <NewLabel
+              $size={isMobile ? '10px' : '12px'}
+              $weight="600"
+              $height="20px"
+              $fontcolor="#027A48"
+            >
               You can exit anytime in full at no cost.
             </NewLabel>
           </ThumbUp>
         </NewLabel>
         <NewLabel>
           <Button
-            color="wido-deposit"
-            width="100%"
-            btnColor={btnColor}
-            btnHoverColor={btnHoverColor}
-            btnActiveColor={btnActiveColor}
+            $fontcolor="wido-deposit"
+            $width="100%"
+            $btncolor={btnColor}
+            $btnhovercolor={btnHoverColor}
+            $btnactivecolor={btnActiveColor}
             onClick={() => {
               onClickDeposit()
             }}

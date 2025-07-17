@@ -35,13 +35,13 @@ const HistoryDataLatest = ({ historyData, noFarm, setOneDayYield }) => {
         }
       }
     }
-  }, [totalLength]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [totalLength])
 
   const { highlightColor } = useThemeContext()
   const { connected } = useWallet()
 
   return (
-    <TransactionDetails hasData={(connected && filteredHistoryData?.length > 0) || 'unset'}>
+    <TransactionDetails $hasdata={(connected && filteredHistoryData?.length > 0) || 'unset'}>
       <TableContent>
         {connected && filteredHistoryData?.length > 0 ? (
           <ContentBox>

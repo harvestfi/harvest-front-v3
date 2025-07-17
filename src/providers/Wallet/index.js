@@ -1,26 +1,26 @@
 import { useConnectWallet } from '@web3-onboard/react'
 import { isArray } from 'lodash'
-import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useState, useRef } from 'react'
 import { toast } from 'react-toastify'
-import Web3 from 'web3'
+import { createWalletClient, custom } from 'viem'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import {
   getChainName,
   hasValidUpdatedBalance,
-  ledgerProvider,
-  mainWeb3,
+  // ledgerProvider,
+  mainViem,
   pollUpdatedBalance,
+  getChainObject,
   safeProvider,
-} from '../../services/web3'
-import tokenMethods from '../../services/web3/contracts/token/methods'
+  getViem,
+} from '../../services/viem'
+import tokenMethods from '../../services/viem/contracts/token/methods'
 import { isLedgerLive, isSafeApp } from '../../utilities/formats'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
 
-/* eslint-disable global-require */
 const { tokens } = require('../../data')
-/* eslint-enable global-require */
 
 const WalletContext = createContext()
 const useWallet = () => useContext(WalletContext)
@@ -30,7 +30,7 @@ const WalletProvider = _ref => {
   const [account, setAccount] = useState(null)
   const [connected, setConnected] = useState(false)
   const [chainId, setChainId] = useState(CHAIN_IDS.ETH_MAINNET)
-  const [web3, setWeb3] = useState(mainWeb3)
+  const [viem, setViem] = useState(mainViem)
   const [selChain, setSelChain] = useState([
     CHAIN_IDS.ETH_MAINNET,
     CHAIN_IDS.POLYGON_MAINNET,
@@ -42,18 +42,75 @@ const WalletProvider = _ref => {
   const [logout, setLogout] = useState(false)
   const [balancesToLoad, setBalancesToLoad] = useState([])
   const [approvedBalances, setApprovedBalances] = useState({})
+  const [walletLocked, setWalletLocked] = useState(false)
   const { contracts } = useContracts()
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 
+  const walletLockCheckIntervalRef = useRef(null)
+
+  const checkWalletLock = useCallback(async () => {
+    if (!isSafeApp() && wallet?.provider) {
+      try {
+        const accounts = await wallet.provider.request({ method: 'eth_accounts' })
+
+        if (!accounts || accounts.length === 0) {
+          if (connected) {
+            setConnected(false)
+            setAccount(null)
+            setWalletLocked(true)
+          }
+        } else if (!connected && accounts.length > 0) {
+          setAccount(accounts[0].toLowerCase())
+          // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
+          setConnected(true)
+
+          if (walletLocked) {
+            setWalletLocked(false)
+          }
+        } else if (connected && accounts.length > 0) {
+          if (walletLocked) {
+            setWalletLocked(false)
+          }
+        }
+      } catch (error) {
+        console.error('Error checking wallet lock status:', error)
+        if (connected) {
+          setConnected(false)
+          setAccount(null)
+          setWalletLocked(true)
+        }
+      }
+    }
+  }, [wallet, connected, walletLocked])
+
+  useEffect(() => {
+    checkWalletLock()
+    walletLockCheckIntervalRef.current = setInterval(() => {
+      checkWalletLock()
+    }, 15000)
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        checkWalletLock()
+      }
+    }
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => {
+      if (walletLockCheckIntervalRef.current) {
+        clearInterval(walletLockCheckIntervalRef.current)
+      }
+      document.removeEventListener('visibilitychange', handleVisibilityChange)
+    }
+  }, [checkWalletLock, wallet])
+
   useEffect(() => {
     const fetchData = async () => {
-      if (isLedgerLive()) {
-        const selectedChain = await ledgerProvider.getNetwork()
-        setChainId(selectedChain.chainId.toString())
-        const selectedAccount = await ledgerProvider.getSigner().getAddress()
-        setAccount(selectedAccount && selectedAccount.toLowerCase())
-        setConnected(true)
-      }
+      // if (isLedgerLive()) {
+      //   const selectedChain = await ledgerProvider.getNetwork()
+      //   setChainId(selectedChain.chainId.toString())
+      //   const selectedAccount = await ledgerProvider.getSigner().getAddress()
+      //   setAccount(selectedAccount && selectedAccount.toLowerCase())
+      //   setConnected(true)
+      // }
       if (isSafeApp()) {
         const safeAppProvider = await safeProvider()
         const selectedChain = await safeAppProvider.getNetwork()
@@ -113,29 +170,29 @@ const WalletProvider = _ref => {
           },
         )
       } else {
-        validateChain(
-          newChain,
-          chainId,
-          async () => {
-            window.location.href = '/?ledgerLive=true'
-            setConnected(true)
-            const chainNew = parseInt(newChain, 16).toString()
-            setChainId(chainNew)
-            const selectedAccount = await ledgerProvider.getSigner().getAddress()
-            setAccount(selectedAccount && selectedAccount.toLowerCase())
-            setConnected(true)
-          },
-          () => {
-            toast.error(
-              `App network (${getChainName(
-                chainId,
-              )}) doesn't match to network selected in your wallet (${getChainName(
-                newChain,
-              )}).\nSwitch to the correct chain in your wallet`,
-            )
-            setConnected(false)
-          },
-        )
+        // validateChain(
+        //   newChain,
+        //   chainId,
+        //   async () => {
+        //     window.location.href = '/?ledgerLive=true'
+        //     setConnected(true)
+        //     const chainNew = parseInt(newChain, 16).toString()
+        //     setChainId(chainNew)
+        //     const selectedAccount = await ledgerProvider.getSigner().getAddress()
+        //     setAccount(selectedAccount && selectedAccount.toLowerCase())
+        //     setConnected(true)
+        //   },
+        //   () => {
+        //     toast.error(
+        //       `App network (${getChainName(
+        //         chainId,
+        //       )}) doesn't match to network selected in your wallet (${getChainName(
+        //         newChain,
+        //       )}).\nSwitch to the correct chain in your wallet`,
+        //     )
+        //     setConnected(false)
+        //   },
+        // )
       }
     },
     [chainId],
@@ -143,26 +200,26 @@ const WalletProvider = _ref => {
   useEffect(() => {
     let accountEmitter, networkEmitter
     const fetchData = async () => {
-      if (isLedgerLive()) {
-        if (ledgerProvider && ledgerProvider.provider.on) {
-          networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
-          accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
-            setAccount(accountAddress[0].toLowerCase())
-            setConnected(true)
-          })
-        }
-        return () => {
-          if (accountEmitter && networkEmitter) {
-            accountEmitter.removeAllListeners('accountsChanged')
-            networkEmitter.removeListener('chainChanged', onNetworkChange)
-          }
-        }
-      }
+      // if (isLedgerLive()) {
+      //   if (ledgerProvider && ledgerProvider.provider.on) {
+      //     networkEmitter = ledgerProvider.provider.on('chainChanged', onNetworkChange)
+      //     accountEmitter = ledgerProvider.provider.on('accountsChanged', accountAddress => {
+      //       setAccount(accountAddress[0].toLowerCase())
+      //       setConnected(true)
+      //     })
+      //   }
+      //   return () => {
+      //     if (accountEmitter && networkEmitter) {
+      //       accountEmitter.removeAllListeners('accountsChanged')
+      //       networkEmitter.removeListener('chainChanged', onNetworkChange)
+      //     }
+      //   }
+      // }
       if (isSafeApp()) {
-        const safeweb3Provider = await safeProvider()
-        if (safeweb3Provider && safeweb3Provider.provider.on) {
-          networkEmitter = safeweb3Provider.provider.on('chainChanged', onNetworkChange)
-          accountEmitter = safeweb3Provider.provider.on('accountsChanged', accountAddress => {
+        const safeViemProvider = await safeProvider()
+        if (safeViemProvider && safeViemProvider.provider.on) {
+          networkEmitter = safeViemProvider.provider.on('chainChanged', onNetworkChange)
+          accountEmitter = safeViemProvider.provider.on('accountsChanged', accountAddress => {
             setAccount(accountAddress[0].toLowerCase())
             setConnected(true)
           })
@@ -174,29 +231,50 @@ const WalletProvider = _ref => {
           }
         }
       }
-      if (web3 && web3._provider.on && account) {
-        networkEmitter = web3._provider.on('chainChanged', onNetworkChange)
+
+      if (wallet?.provider && wallet.provider.on) {
+        networkEmitter = wallet.provider.on('chainChanged', onNetworkChange)
+        accountEmitter = wallet.provider.on('accountsChanged', accountAddress => {
+          if (accountAddress && accountAddress.length > 0) {
+            setAccount(accountAddress[0].toLowerCase())
+            // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
+            setConnected(true)
+          } else {
+            setAccount(null)
+            setConnected(false)
+          }
+        })
       }
 
       return () => {
-        if (accountEmitter && networkEmitter) {
-          accountEmitter.removeAllListeners('accountsChanged')
-          networkEmitter.removeListener('chainChanged', onNetworkChange)
+        if (accountEmitter && networkEmitter && wallet?.provider) {
+          if (accountEmitter.removeAllListeners) {
+            accountEmitter.removeAllListeners('accountsChanged')
+          }
+          if (networkEmitter.removeListener) {
+            networkEmitter.removeListener('chainChanged', onNetworkChange)
+          }
         }
       }
     }
     fetchData()
-  }, [web3, chainId, account, onNetworkChange, setAccount])
+  }, [wallet, chainId, account, onNetworkChange, setAccount])
 
   useEffect(() => {
     if (!isSafeApp()) {
       if (wallet) {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
         setAccount(wallet.accounts[0].address.toLowerCase())
+        // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
         setChainId(chainNum)
         if (wallet?.provider) {
-          const newWeb3 = new Web3(wallet.provider)
-          setWeb3(newWeb3)
+          const chain = getChainObject(wallet.chains[0].id)
+          const walletClient = createWalletClient({
+            transport: custom(wallet.provider),
+            chain,
+          })
+
+          setViem(walletClient)
         }
         setConnected(true)
         setLogout(false)
@@ -214,9 +292,7 @@ const WalletProvider = _ref => {
   }, [connect])
 
   const getWalletBalances = useCallback(
-    // eslint-disable-next-line func-names
     async function (selectedTokens, newAccount, fresh) {
-      // eslint-disable-next-line no-void
       if (fresh === void 0) {
         fresh = false
       }
@@ -227,15 +303,20 @@ const WalletProvider = _ref => {
         setBalancesToLoad(selectedTokens)
         await Promise.all(
           selectedTokens
-            .filter(token => !isArray(tokens[token].tokenAddress))
+            .filter(token => !isArray(tokens[token]?.tokenAddress))
             .map(async token => {
-              const { methods, instance } = tokens[token].isIPORVault
-                ? contracts.iporVaults[token]
-                : contracts[token]
-              const vaultAddress =
-                token === IFARM_TOKEN_SYMBOL
-                  ? tokens[token].tokenAddress
-                  : tokens[token].vaultAddress
+              const { methods, instance } = contracts[token]
+              const viemInstance = await getViem(false, account, viem)
+              if (instance && typeof instance.setProvider === 'function') {
+                instance.setProvider(viemInstance)
+              }
+              if (viemInstance.walletClient && instance) {
+                instance.walletClient = viemInstance.walletClient
+                if (viemInstance.writeContract) {
+                  instance.writeContract = viemInstance.writeContract
+                }
+              }
+              const vaultAddress = tokens[token].vaultAddress
               const currAssetBalance = balances[token]
               const newAssetBalance = await tokenMethods.getBalance(account, instance)
 
@@ -256,6 +337,19 @@ const WalletProvider = _ref => {
 
               const approvalContract =
                 contracts[token === IFARM_TOKEN_SYMBOL ? FARM_TOKEN_SYMBOL : token]
+
+              if (
+                approvalContract.instance &&
+                typeof approvalContract.instance.setProvider === 'function'
+              ) {
+                approvalContract.instance.setProvider(viemInstance)
+              }
+              if (viemInstance.walletClient && approvalContract.instance) {
+                approvalContract.instance.walletClient = viemInstance.walletClient
+                if (viemInstance.writeContract) {
+                  approvalContract.instance.writeContract = viemInstance.writeContract
+                }
+              }
               const currApprovedAssetBalance = approvedBalances[token]
               const newApprovedAssetBalance = vaultAddress
                 ? await tokenMethods.getApprovedAmount(
@@ -305,7 +399,7 @@ const WalletProvider = _ref => {
         connected,
         setConnected,
         chainId,
-        web3,
+        viem,
         balances,
         approvedBalances,
         getWalletBalances,
@@ -315,6 +409,8 @@ const WalletProvider = _ref => {
         setSelChain,
         disconnectAction,
         logout,
+        walletLocked,
+        setWalletLocked,
       },
     },
     children,

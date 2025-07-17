@@ -245,7 +245,6 @@ const ApexChart = ({ noFarm, data, range, handleTooltipContent, setCurDate, setC
     }
 
     init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [range, data])
 
   return (
@@ -321,7 +320,7 @@ const ApexChart = ({ noFarm, data, range, handleTooltipContent, setCurDate, setC
             )
           ) : (
             <BoxWrapper>
-              <NoData className="message" color={fontColor}>
+              <NoData className="message" $fontcolor={fontColor}>
                 No activity found for this wallet.
               </NoData>
               <MagicChart />
@@ -332,11 +331,11 @@ const ApexChart = ({ noFarm, data, range, handleTooltipContent, setCurDate, setC
         <BoxWrapper>
           <EmptyInfo
             className="message"
-            height="100%"
-            weight={500}
-            size={14}
-            lineHeight={20}
-            color={fontColor}
+            $height="100%"
+            $weight={500}
+            $size={14}
+            $lineheight={20}
+            $fontcolor={fontColor}
           >
             Connect wallet to see your lifetime yield chart
           </EmptyInfo>

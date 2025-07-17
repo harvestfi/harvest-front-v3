@@ -7,24 +7,26 @@ import React, {
   useRef,
   useState,
 } from 'react'
-// eslint-disable-next-line import/no-unresolved
 import axios from 'axios'
 import isEqual from 'fast-deep-equal/react'
 import { filter, get, map, sumBy } from 'lodash'
 import { forEach } from 'promised-loops'
-// eslint-disable-next-line import/no-unresolved
 import { useInterval } from 'react-interval-hook'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import BigNumber from 'bignumber.js'
 import { POLL_POOL_DATA_INTERVAL_MS, POOLS_API_ENDPOINT, SPECIAL_VAULTS } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
-import { getWeb3, ledgerWeb3, newContractInstance, safeProvider } from '../../services/web3'
-import poolContractData from '../../services/web3/contracts/pool/contract.json'
-import tokenContract from '../../services/web3/contracts/token/contract.json'
-import tokenMethods from '../../services/web3/contracts/token/methods'
 import {
-  isLedgerLive,
+  getViem,
+  // ledgerWeb3,
+  newContractInstance,
+  safeProvider,
+} from '../../services/viem'
+import poolContractData from '../../services/viem/contracts/pool/contract.json'
+import tokenContract from '../../services/viem/contracts/token/contract.json'
+import tokenMethods from '../../services/viem/contracts/token/methods'
+import {
+  // isLedgerLive,
   isSafeApp,
   isSpecialApp,
   truncateNumberString,
@@ -33,12 +35,13 @@ import { useContracts } from '../Contracts'
 import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
 
-/* eslint-disable global-require */
-const { pools: defaultPools, tokens } = require('../../data')
-/* eslint-enable global-require */
+const { pools: defaultPools } = require('../../data')
 
 const PoolsContext = createContext()
 const usePools = () => useContext(PoolsContext)
+
+const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
+const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
 const getReader = (selectedChain, contracts) => {
   switch (String(selectedChain)) {
@@ -57,7 +60,7 @@ const getReader = (selectedChain, contracts) => {
 
 const PoolsProvider = _ref => {
   const { children } = _ref
-  const { account, selChain, chainId, web3, balances: walletBalances, logout } = useWallet()
+  const { account, selChain, chainId, viem, balances: walletBalances, logout } = useWallet()
   const { contracts } = useContracts()
   const [pools, setPools] = useState(defaultPools)
   const [totalPools, setTotalPools] = useState(defaultPools)
@@ -65,7 +68,7 @@ const PoolsProvider = _ref => {
   const [vaultLoading, setVaultLoading] = useState(true)
   const [loadingUserPoolStats, setLoadingUserPoolStats] = useState(false)
   const [disableWallet, setDisableWallet] = useState(true)
-  const loadedUserPoolsWeb3Provider = useRef(false)
+  const loadedUserPoolsViemProvider = useRef(false)
   const loadedInitialStakedAndUnstakedBalances = useRef(false)
   const loadedPools = useMemo(
     () =>
@@ -81,10 +84,10 @@ const PoolsProvider = _ref => {
         selectedAccount = account,
         formattedPools
       try {
-        if (isLedgerLive()) {
-          const selectedChain = await ledgerWeb3.eth.net.getId()
-          curChain = selectedChain.toString()
-        }
+        // if (isLedgerLive()) {
+        //   const selectedChain = await ledgerWeb3.eth.net.getId()
+        //   curChain = selectedChain.toString()
+        // }
         if (isSafeApp()) {
           const safeAppProvider = await safeProvider()
           const selectedChain = await safeAppProvider.getNetwork()
@@ -97,8 +100,8 @@ const PoolsProvider = _ref => {
       }
       formattedPools = await Promise.all(
         defaultPools.map(async pool => {
-          let web3Client = await getWeb3(pool.chain, selectedAccount, web3),
-            web3ClientLocal = await getWeb3(pool.chain, true, web3),
+          let viemClient = await getViem(pool.chain, selectedAccount, viem),
+            viemClientLocal = await getViem(pool.chain, true, viem),
             rewardAPY = ['0'],
             rewardAPR = ['0'],
             autoStakeContractInstance = null,
@@ -115,34 +118,33 @@ const PoolsProvider = _ref => {
             amountToStakeForBoost = null,
             dataFetched = null
           if (isSafeApp()) {
-            web3Client = await getWeb3(pool.chain, selectedAccount)
-            web3ClientLocal = await getWeb3(pool.chain, selectedAccount)
+            viemClient = await getViem(pool.chain, selectedAccount)
+            viemClientLocal = await getViem(pool.chain, selectedAccount)
           }
           if (
             (Object.values(SPECIAL_VAULTS).includes(pool.id) &&
               curChain !== CHAIN_IDS.ETH_MAINNET) ||
             pool.chain !== curChain
           ) {
-            web3Client = await getWeb3(pool.chain, false)
+            viemClient = await getViem(pool.chain, false)
           }
 
           const contractInstance = await newContractInstance(
             null,
             pool.contractAddress,
             poolContractData.abi,
-            web3Client,
+            viemClient,
           )
           const contractLocalInstance = await newContractInstance(
             null,
             pool.contractAddress,
             poolContractData.abi,
-            web3ClientLocal,
+            viemClientLocal,
           )
           const apiPool =
             apiData && apiData.find(fetchedPool => fetchedPool && fetchedPool.id === pool.id)
 
           if (apiPool) {
-            // eslint-disable-next-line prefer-destructuring
             rewardAPY = map(apiPool.rewardAPY, apy => truncateNumberString(apy))
             rewardAPR = map(apiPool.rewardAPR, apr => truncateNumberString(apr))
             tradingApy = truncateNumberString(apiPool.tradingApy)
@@ -157,28 +159,28 @@ const PoolsProvider = _ref => {
               null,
               apiPool.lpTokenData.address,
               tokenContract.abi,
-              web3Client,
+              viemClient,
             )
             lpTokenLocalInstance = await newContractInstance(
               null,
               apiPool.lpTokenData.address,
               tokenContract.abi,
-              web3ClientLocal,
+              viemClientLocal,
             )
             dataFetched = true
           } else if (!pool.breadPage && !pool.fake) {
-            lpTokenData = await getLpTokenData(contractInstance, web3Client)
+            lpTokenData = await getLpTokenData(contractInstance, viemClient)
             lpTokenInstance = await newContractInstance(
               null,
               lpTokenData.address,
               tokenContract.abi,
-              web3Client,
+              viemClient,
             )
             lpTokenLocalInstance = await newContractInstance(
               null,
               lpTokenData.address,
               tokenContract.abi,
-              web3ClientLocal,
+              viemClientLocal,
             )
             dataFetched = false
           }
@@ -188,13 +190,13 @@ const PoolsProvider = _ref => {
               null,
               pool.autoStakePoolAddress,
               poolContractData.abi,
-              web3Client,
+              viemClient,
             )
             autoStakeContractLocalInstance = await newContractInstance(
               null,
               pool.autoStakePoolAddress,
               poolContractData.abi,
-              web3ClientLocal,
+              viemClientLocal,
             )
           }
 
@@ -225,11 +227,11 @@ const PoolsProvider = _ref => {
         }),
       )
       formattedPools = formattedPools.filter(pool => pool !== null)
-      loadedUserPoolsWeb3Provider.current = true
+      loadedUserPoolsViemProvider.current = true
 
       return formattedPools
     },
-    [account, chainId, web3],
+    [account, chainId, viem],
   )
   const getPoolsData = useCallback(async () => {
     let newPools = []
@@ -278,7 +280,7 @@ const PoolsProvider = _ref => {
       if (
         (account !== prevAccount || prevChainId !== chainId) &&
         account &&
-        // !loadedUserPoolsWeb3Provider.current &&
+        // !loadedUserPoolsViemProvider.current &&
         finishPool &&
         !isSpecialApp
       ) {
@@ -291,7 +293,7 @@ const PoolsProvider = _ref => {
       } else if (
         account !== prevAccount &&
         account &&
-        !loadedUserPoolsWeb3Provider.current &&
+        !loadedUserPoolsViemProvider.current &&
         finishPool &&
         isSpecialApp
       ) {
@@ -308,20 +310,18 @@ const PoolsProvider = _ref => {
       const [prevChainId, prevAccount] = _ref3
       const hasSwitchedChain = chainId !== prevChainId
       const hasSwitchedAccount = account !== prevAccount && account
-
       if (
         (hasSwitchedChain ||
           hasSwitchedAccount ||
           !loadedInitialStakedAndUnstakedBalances.current) &&
-        loadedUserPoolsWeb3Provider.current &&
+        loadedUserPoolsViemProvider.current &&
         account
       ) {
         const loadInitialStakedAndUnstakedBalances = async () => {
           loadedInitialStakedAndUnstakedBalances.current = true
           const stats = {}
           const chains = isSpecialApp ? [chainId] : selChain
-          // selChain.forEach( async (ch)=> {
-          /* eslint-disable no-await-in-loop */
+
           const cl = chains.length
           for (let i = 0; i < cl; i += 1) {
             const ch = chains[i]
@@ -336,9 +336,27 @@ const PoolsProvider = _ref => {
               }
 
               if (!Object.values(SPECIAL_VAULTS).includes(pool.id) && pool.chain === ch) {
-                vaultAddresses.push(pool.lpTokenData.address)
+                if (pool.lpTokenData.address.toLowerCase() === farm.toLowerCase()) {
+                  vaultAddresses.push(ifarm)
+                } else {
+                  vaultAddresses.push(pool.lpTokenData.address)
+                }
               }
             })
+
+            for (const vaultId of Object.keys(contracts.iporVaults)) {
+              if (contracts.iporVaults[vaultId].chain === ch) {
+                vaultAddresses.push(contracts.iporVaults[vaultId].address)
+                poolAddresses.push('0x0000000000000000000000000000000000000000') //For IPOR vaults, we don't have a pool address
+                chLoadedPools.push({
+                  id: vaultId,
+                  lpTokenData: {
+                    address: contracts.iporVaults[vaultId].address,
+                  },
+                })
+              }
+            }
+
             const readerInstance = readerType.instance
             const readerMethods = readerType.methods
             const balances = await readerMethods.getAllInformation(
@@ -347,26 +365,23 @@ const PoolsProvider = _ref => {
               poolAddresses,
               readerInstance,
             )
-            // const stats = {}
             await forEach(chLoadedPools, async (pool, index) => {
               let lpTokenBalance
-              const isSpecialVault = !vaultAddresses.includes(pool.lpTokenData.address)
+              const isSpecialVault = pool.id == 'profit-sharing-farm'
 
               if (isSpecialVault) {
-                const lpSymbol = Object.keys(tokens).filter(
-                  symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address,
-                )
+                pool.id = 'IFARM'
 
                 const instance = await newContractInstance(
-                  lpSymbol[0],
+                  pool.id,
                   null,
                   null,
-                  await getWeb3(ch, false),
+                  await getViem(ch, false),
                 )
 
-                lpTokenBalance = !walletBalances[lpSymbol]
+                lpTokenBalance = !walletBalances[pool.id]
                   ? await tokenMethods.getBalance(account, instance)
-                  : walletBalances[lpSymbol]
+                  : walletBalances[pool.id]
               } else {
                 const lpTokenBalanceIdx = vaultAddresses.findIndex(
                   address => address === pool.lpTokenData.address,
@@ -381,29 +396,6 @@ const PoolsProvider = _ref => {
             })
           }
 
-          /* eslint-disable no-restricted-syntax, no-await-in-loop */
-          for (const vaultId of Object.keys(contracts.iporVaults)) {
-            const vaultContract = contracts.iporVaults[vaultId]
-            const vaultBalance = await vaultContract.methods.getBalanceOf(
-              vaultContract.instance,
-              account,
-            )
-            const AssetBalance = await vaultContract.methods.convertToAssets(
-              vaultContract.instance,
-              vaultBalance,
-            )
-
-            if (new BigNumber(AssetBalance).gt(0)) {
-              // eslint-disable-next-line camelcase
-              stats[vaultId] = {
-                lpTokenBalance: 0,
-                totalStaked: AssetBalance,
-              }
-            }
-          }
-          /* eslint-enable no-restricted-syntax, no-await-in-loop */
-          /* eslint-enable no-await-in-loop */
-          // })
           setUserStats(currStats => ({ ...currStats, ...stats }))
         }
 
@@ -415,89 +407,152 @@ const PoolsProvider = _ref => {
   useInterval(() => getPoolsData(), POLL_POOL_DATA_INTERVAL_MS, {
     immediate: true,
   })
-  // eslint-disable-next-line func-names
-  const fetchUserPoolStats = useCallback(async function (
-    selectedPools,
-    selectedAccount,
-    currentStats,
-  ) {
-    // eslint-disable-next-line no-void
-    if (currentStats === void 0) {
-      currentStats = []
-    }
 
-    const stats = {}
+  const fetchUserPoolStats = useCallback(
+    async function (selectedPools, selectedAccount, currentStats) {
+      if (currentStats === void 0) {
+        currentStats = []
+      }
 
-    if (loadedUserPoolsWeb3Provider.current) {
-      setLoadingUserPoolStats(true)
-      await Promise.all(
-        selectedPools.map(async pool => {
-          if (pool) {
-            const web3Client = await getWeb3(pool.chain, false)
-            const contractInstance = await newContractInstance(
-              null,
-              pool.contractAddress,
-              poolContractData.abi,
-              web3Client,
-            )
-            const autoStakeContractInstance = await newContractInstance(
-              null,
-              pool.autoStakePoolAddress,
-              poolContractData.abi,
-              web3Client,
-            )
-            // const lpSymbol = Object.keys(tokens).filter(
-            //   symbol => tokens[symbol].tokenAddress === pool.lpTokenData.address || tokens[symbol].vaultAddress === pool.lpTokenData.address,
-            // )
-            // if(lpSymbol.length !== 0) {
-            const tokenInstance = await newContractInstance(
-              null,
-              pool.lpTokenData.address,
-              poolContractData.abi,
-              web3Client,
-            )
+      const stats = {}
 
-            const fetchedStats = await getUserStats(
+      if (loadedUserPoolsViemProvider.current) {
+        setLoadingUserPoolStats(true)
+        const poolsByChain = {}
+        selectedPools.forEach(pool => {
+          if (!pool) return
+
+          if (typeof pool === 'string') {
+            pool = {
+              id: pool,
+              lpTokenData: {
+                address: contracts.iporVaults[pool]?.address,
+              },
+              contractAddress: '0x0000000000000000000000000000000000000000', //For IPOR vaults, we don't have a pool address
+              chain: contracts.iporVaults[pool]?.chain,
+            }
+          }
+          const chainId = pool.chain
+          if (!poolsByChain[chainId]) {
+            poolsByChain[chainId] = []
+          }
+          poolsByChain[chainId].push(pool)
+        })
+
+        for (const chainId in poolsByChain) {
+          const chainPools = poolsByChain[chainId]
+          const readerType = getReader(chainId, contracts)
+
+          if (readerType) {
+            const poolAddresses = []
+            const vaultAddresses = []
+
+            chainPools.forEach(pool => {
+              poolAddresses.push(pool.contractAddress)
+              vaultAddresses.push(pool.lpTokenData.address)
+            })
+
+            const readerInstance = readerType.instance
+            const readerMethods = readerType.methods
+
+            try {
+              const balances = await readerMethods.getAllInformation(
+                selectedAccount,
+                vaultAddresses,
+                poolAddresses,
+                readerInstance,
+              )
+
+              chainPools.forEach((pool, index) => {
+                if (!pool) return
+
+                stats[pool.id] = {
+                  lpTokenBalance: balances[0][index] || '0',
+                  totalStaked: balances[1][index] || '0',
+                  totalRewardsEarned: balances[2] && balances[2][index] ? balances[2][index] : '0',
+                  lpTokenApprovedBalance: '0',
+                }
+              })
+            } catch (error) {
+              console.error('Error in batch fetching pool stats:', error)
+              await Promise.all(
+                chainPools.map(async pool => {
+                  await processSinglePool(pool, selectedAccount, stats)
+                }),
+              )
+            }
+          } else {
+            await Promise.all(
+              chainPools.map(async pool => {
+                await processSinglePool(pool, selectedAccount, stats)
+              }),
+            )
+          }
+        }
+
+        setUserStats(currStats => ({ ...currStats, ...stats }))
+        setLoadingUserPoolStats(false)
+      }
+
+      return stats
+
+      async function processSinglePool(pool, selectedAccount, stats) {
+        if (!pool) return
+
+        const viemClient = await getViem(pool.chain, false)
+        const contractInstance = await newContractInstance(
+          null,
+          pool.contractAddress,
+          poolContractData.abi,
+          viemClient,
+        )
+        const autoStakeContractInstance = await newContractInstance(
+          null,
+          pool.autoStakePoolAddress,
+          poolContractData.abi,
+          viemClient,
+        )
+        const tokenInstance = await newContractInstance(
+          null,
+          pool.lpTokenData.address,
+          poolContractData.abi,
+          viemClient,
+        )
+
+        const fetchedStats = await getUserStats(
+          contractInstance,
+          tokenInstance,
+          pool.contractAddress,
+          pool.autoStakePoolAddress,
+          selectedAccount,
+          autoStakeContractInstance,
+        )
+
+        if (!isEqual(fetchedStats, currentStats[pool.id])) {
+          stats[pool.id] = fetchedStats
+        } else {
+          await pollUpdatedUserStats(
+            getUserStats(
               contractInstance,
               tokenInstance,
               pool.contractAddress,
               pool.autoStakePoolAddress,
               selectedAccount,
               autoStakeContractInstance,
-            )
-
-            if (!isEqual(fetchedStats, currentStats[pool.id])) {
-              stats[pool.id] = fetchedStats
-            } else {
-              await pollUpdatedUserStats(
-                getUserStats(
-                  contractInstance,
-                  tokenInstance,
-                  pool.contractAddress,
-                  pool.autoStakePoolAddress,
-                  selectedAccount,
-                  autoStakeContractInstance,
-                ),
-                currentStats,
-                () => {
-                  console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
-                },
-                updatedStats => {
-                  stats[pool.id] = updatedStats
-                },
-              )
-            }
-          }
-          // }
-        }),
-      )
-      setUserStats(currStats => ({ ...currStats, ...stats }))
-      setLoadingUserPoolStats(false)
-    }
-
-    return stats
-  },
-  [])
+            ),
+            currentStats,
+            () => {
+              console.error(`Something went wrong during the fetching of ${pool.id} user stats`)
+            },
+            updatedStats => {
+              stats[pool.id] = updatedStats
+            },
+          )
+        }
+      }
+    },
+    [contracts, getReader],
+  )
   return React.createElement(
     PoolsContext.Provider,
     {
@@ -506,7 +561,7 @@ const PoolsProvider = _ref => {
         allPools: pools,
         fetchUserPoolStats,
         userStats,
-        loadedUserPoolsWeb3Provider: loadedUserPoolsWeb3Provider.current,
+        loadedUserPoolsViemProvider: loadedUserPoolsViemProvider.current,
         loadingUserPoolStats,
         vaultLoading,
         setVaultLoading,

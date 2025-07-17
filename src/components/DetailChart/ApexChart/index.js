@@ -35,7 +35,7 @@ import {
   getTimeSlots,
 } from '../../../utilities/parsers'
 import { ChartWrapper, LoadingDiv, NoData } from './style'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import { useRate } from '../../../providers/Rate'
 
 function generateChartDataWithSlots(slots, apiData, kind, filter, decimals) {
@@ -572,7 +572,6 @@ const ApexChart = ({
     }
 
     init()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
     range,
     filter,
@@ -599,7 +598,7 @@ const ApexChart = ({
   return (
     <>
       {!loading ? (
-        <ChartWrapper bgColorChart={bgColorChart}>
+        <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer
             width="100%"
             // height={onlyWidth > 1250 ? 350 : onlyWidth > 1050 ? 330 : 330}
@@ -607,12 +606,12 @@ const ApexChart = ({
               onlyWidth > 1291
                 ? 346
                 : onlyWidth > 1262
-                ? 365
-                : onlyWidth > 1035
-                ? 365
-                : onlyWidth > 992
-                ? 365
-                : 365
+                  ? 365
+                  : onlyWidth > 1035
+                    ? 365
+                    : onlyWidth > 992
+                      ? 365
+                      : 365
             }
           >
             <ComposedChart
@@ -642,7 +641,7 @@ const ApexChart = ({
                 // interval={20}
                 tickCount={isMobile ? 7 : 5}
                 tick={renderCustomXAxisTick}
-                padding={{ right: 10 }}
+                $padding={{ right: 10 }}
               />
               <YAxis
                 dataKey="y"
@@ -748,7 +747,7 @@ const ApexChart = ({
           {isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
-            <NoData color={fontColor}>Vault data soon to be available.</NoData>
+            <NoData $fontcolor={fontColor}>Vault data soon to be available.</NoData>
           )}
         </LoadingDiv>
       )}

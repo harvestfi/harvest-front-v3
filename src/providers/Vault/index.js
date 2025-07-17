@@ -13,45 +13,37 @@ import React, {
 } from 'react'
 import { toast } from 'react-toastify'
 import useEffectWithPrevious from 'use-effect-with-previous'
-import { IFARM_TOKEN_SYMBOL, VAULTS_API_ENDPOINT } from '../../constants'
+import { VAULTS_API_ENDPOINT } from '../../constants'
 import { CHAIN_IDS } from '../../data/constants'
 import {
-  getWeb3,
+  getViem,
   hasValidUpdatedBalance,
   newContractInstance,
   pollUpdatedBalance,
-  ledgerWeb3,
-} from '../../services/web3'
-import univ3ContractData from '../../services/web3/contracts/uniswap-v3/contract.json'
-import vaultContractData from '../../services/web3/contracts/vault/contract.json'
-import vaultMethods from '../../services/web3/contracts/vault/methods'
-import { abbreaviteNumber, isSpecialApp, isLedgerLive } from '../../utilities/formats'
+  // ledgerWeb3,
+} from '../../services/viem'
+import univ3ContractData from '../../services/viem/contracts/uniswap-v3/contract.json'
+import vaultContractData from '../../services/viem/contracts/vault/contract.json'
+import {
+  abbreaviteNumber,
+  isSpecialApp,
+  // isLedgerLive
+} from '../../utilities/formats'
 import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'
 
-/* eslint-disable global-require */
-const { tokens, addresses } = require('../../data')
-/* eslint-enable global-require */
+const { tokens } = require('../../data')
 
 const VaultsContext = createContext()
 const useVaults = () => useContext(VaultsContext)
 
-const importedVaults = pickBy(
-  tokens,
-  token => token.vaultAddress || token.tokenAddress === addresses.iFARM,
-)
-
-const {
-  getUnderlyingBalanceWithInvestment,
-  getUnderlyingBalanceWithInvestmentForHolder,
-  getPricePerFullShare,
-  getTotalSupply,
-} = vaultMethods
+const importedVaults = pickBy(tokens, token => token.vaultAddress)
+importedVaults.IFARM.id = 'IFARM' // Ensure IFARM vault has the correct i
 
 const VaultsProvider = _ref => {
   const { children } = _ref
-  const { account, chainId, web3, selChain, logout } = useWallet()
+  const { account, chainId, viem, selChain, logout } = useWallet()
   const { pools, userStats } = usePools()
   const [loadingVaults, setLoadingVaults] = useState(true)
   const [loadingFarmingBalances, setLoadingFarmingBalances] = useState(false)
@@ -64,25 +56,24 @@ const VaultsProvider = _ref => {
       ),
     [selChain, vaultsData, chainId],
   )
-  // const initialFetch = useRef(true)
-  const loadedUserVaultsWeb3Provider = useRef(false)
+  const loadedUserVaultsViemProvider = useRef(false)
   const setFormattedVaults = useCallback(
     async (apiData, apiFailed) => {
       const formattedVaults = {}
-      let curChainId = chainId
-      try {
-        if (isLedgerLive()) {
-          const selectedChain = await ledgerWeb3.eth.net.getId()
-          curChainId = selectedChain.toString()
-        }
-      } catch (e) {
-        console.log(e)
-      }
+      // let curChainId = chainId
+      // try {
+      //   if (isLedgerLive()) {
+      //     const selectedChain = await ledgerWeb3.eth.net.getId()
+      //     curChainId = selectedChain.toString()
+      //   }
+      // } catch (e) {
+      //   console.log(e)
+      // }
 
       await forEach(Object.keys(importedVaults), async vaultSymbol => {
         const vaultChain = get(importedVaults, `[${vaultSymbol}].chain`)
         try {
-          let web3Client = await getWeb3(vaultChain, account),
+          let viemClient = await getViem(vaultChain, account),
             estimatedApy = null,
             estimatedApyBreakdown = [],
             usdPrice = null,
@@ -101,23 +92,21 @@ const VaultsProvider = _ref => {
             uniswapV3ManagedData = null,
             dataFetched = false
           if (!isSpecialApp) {
-            web3Client = web3
+            viemClient = viem
           }
           if (vaultChain !== chainId) {
-            web3Client = await getWeb3(vaultChain, false)
+            viemClient = await getViem(vaultChain, false)
           }
           const tokenPool = pools.find(
             pool => pool.collateralAddress === importedVaults[vaultSymbol].vaultAddress,
           )
-          const isIFARM = vaultSymbol === IFARM_TOKEN_SYMBOL
+
           const hasMultipleAssets = isArray(importedVaults[vaultSymbol].tokenAddress)
           const instance = await newContractInstance(
             null,
-            isIFARM
-              ? importedVaults[vaultSymbol].tokenAddress
-              : importedVaults[vaultSymbol].vaultAddress,
+            importedVaults[vaultSymbol].vaultAddress,
             hasMultipleAssets ? univ3ContractData.abi : vaultContractData.abi,
-            web3Client,
+            viemClient,
           )
 
           if (apiData && apiData[vaultSymbol]) {
@@ -125,24 +114,24 @@ const VaultsProvider = _ref => {
             estimatedApyBreakdown = apiData[vaultSymbol].estimatedApyBreakdown
             boostedEstimatedAPY = apiData[vaultSymbol].boostedEstimatedAPY
             usdPrice = apiData[vaultSymbol].usdPrice
-            underlyingBalanceWithInvestment = apiData[vaultSymbol].underlyingBalanceWithInvestment
-            totalSupply = apiData[vaultSymbol].totalSupply
-            totalValueLocked = apiData[vaultSymbol].totalValueLocked
+            underlyingBalanceWithInvestment = apiData[vaultSymbol]?.underlyingBalanceWithInvestment
+            totalSupply = apiData[vaultSymbol]?.totalSupply
+            totalValueLocked = apiData[vaultSymbol]?.totalValueLocked
               ? apiData[vaultSymbol].totalValueLocked
               : '0'
-            allocPointData = apiData[vaultSymbol].allocPointData
+            allocPointData = apiData[vaultSymbol]?.allocPointData
               ? apiData[vaultSymbol].allocPointData
               : []
             vaultName = apiData[vaultSymbol].vaultSymbol ? apiData[vaultSymbol].vaultSymbol : null
             pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
               ? importedVaults[vaultSymbol].pricePerFullShareOverride
-              : apiData[vaultSymbol].pricePerFullShare
+              : apiData[vaultSymbol]?.pricePerFullShare
             vaultPrice = new BigNumber(usdPrice)
               .times(pricePerFullShare)
-              .div(10 ** apiData[vaultSymbol].decimals)
-            uniswapV3PositionId = apiData[vaultSymbol].uniswapV3PositionId
-            uniswapV3UnderlyingTokenPrices = apiData[vaultSymbol].uniswapV3UnderlyingTokenPrices
-            if (apiData[vaultSymbol].uniswapV3ManagedData) {
+              .div(10 ** (apiData[vaultSymbol]?.decimals || 18))
+            uniswapV3PositionId = apiData[vaultSymbol]?.uniswapV3PositionId
+            uniswapV3UnderlyingTokenPrices = apiData[vaultSymbol]?.uniswapV3UnderlyingTokenPrices
+            if (apiData[vaultSymbol]?.uniswapV3ManagedData) {
               const { capLimit, currentCap, ranges } = apiData[vaultSymbol].uniswapV3ManagedData
               const upper = abbreaviteNumber(Math.floor(ranges[0].upperBound / 100) * 100, 1)
               const lower = abbreaviteNumber(
@@ -158,31 +147,15 @@ const VaultsProvider = _ref => {
                 ranges,
               }
             }
+            if (vaultSymbol === 'IFARM') {
+              importedVaults[vaultSymbol].id = 'IFARM'
+            }
             dataFetched = !apiFailed
-          } else if (isIFARM) {
-            totalSupply = await getTotalSupply(instance, web3Client)
-            underlyingBalanceWithInvestment = await getUnderlyingBalanceWithInvestment(
-              instance,
-              web3Client,
-            )
-            pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
-              ? importedVaults[vaultSymbol].pricePerFullShareOverride
-              : await getPricePerFullShare(instance, web3Client)
-          }
-
-          if (isIFARM && account && curChainId === CHAIN_IDS.ETH_MAINNET) {
-            underlyingBalanceWithInvestmentForHolder = await getUnderlyingBalanceWithInvestmentForHolder(
-              account,
-              instance,
-              web3Client,
-            )
           }
 
           formattedVaults[vaultSymbol] = {
             ...importedVaults[vaultSymbol],
-            vaultAddress: isIFARM
-              ? importedVaults[vaultSymbol].tokenAddress
-              : importedVaults[vaultSymbol].vaultAddress,
+            vaultAddress: importedVaults[vaultSymbol].vaultAddress,
             estimatedApy,
             estimatedApyBreakdown,
             boostedEstimatedAPY,
@@ -211,31 +184,28 @@ const VaultsProvider = _ref => {
       })
 
       if (account) {
-        loadedUserVaultsWeb3Provider.current = true
+        loadedUserVaultsViemProvider.current = true
       }
 
       setVaults(formattedVaults)
     },
-    [pools, account, chainId, web3],
+    [pools, account, chainId, viem],
   )
   const getFarmingBalances = useCallback(
-    // eslint-disable-next-line func-names
     async function (selectedVaults, selectedBalances, updatedUserStats) {
-      // eslint-disable-next-line no-void
       if (selectedBalances === void 0) {
         selectedBalances = {}
       }
 
       const fetchedBalances = {}
 
-      if (loadedUserVaultsWeb3Provider.current) {
+      if (loadedUserVaultsViemProvider.current) {
         setLoadingFarmingBalances(true)
         const curStats = updatedUserStats || userStats
         if (curStats.length !== 0) {
           await Promise.all(
             filterVaults(selectedVaults).map(async vaultSymbol => {
               const fetchedBalance = await calculateFarmingBalance(
-                pools,
                 updatedUserStats || userStats,
                 vaultSymbol,
                 loadedVaults,
@@ -246,12 +216,7 @@ const VaultsProvider = _ref => {
                 fetchedBalances[vaultSymbol] = fetchedBalance
               } else {
                 await pollUpdatedBalance(
-                  calculateFarmingBalance(
-                    pools,
-                    updatedUserStats || userStats,
-                    vaultSymbol,
-                    loadedVaults,
-                  ),
+                  calculateFarmingBalance(updatedUserStats || userStats, vaultSymbol, loadedVaults),
                   currentBalance,
                   () => {
                     fetchedBalances[vaultSymbol] = 'error'
@@ -309,21 +274,23 @@ const VaultsProvider = _ref => {
       }
     }
 
-    // if (initialFetch.current) {
-    // initialFetch.current = false
     setLoadingVaults(true)
     formatVaults()
-    // }
   }, [setFormattedVaults, chainId])
   useEffectWithPrevious(
     _ref2 => {
       const [prevAccount] = _ref2
 
-      if (account !== prevAccount && account && !loadedUserVaultsWeb3Provider.current) {
+      if (
+        account !== prevAccount &&
+        !loadingVaults &&
+        account &&
+        !loadedUserVaultsViemProvider.current
+      ) {
         setFormattedVaults(vaultsData)
       }
     },
-    [account, vaultsData],
+    [account, vaultsData, loadingVaults],
   )
   return React.createElement(
     VaultsContext.Provider,
@@ -336,7 +303,7 @@ const VaultsProvider = _ref => {
         symbols: Object.keys(loadedVaults),
         farmingBalances,
         getFarmingBalances,
-        loadedUserVaultsWeb3Provider: loadedUserVaultsWeb3Provider.current,
+        loadedUserVaultsViemProvider: loadedUserVaultsViemProvider.current,
       },
     },
     children,

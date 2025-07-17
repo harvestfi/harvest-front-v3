@@ -5,6 +5,4 @@ const FakeChartWrapper = styled.div`
   position: relative;
   filter: blur(4px);
 `
-
-// eslint-disable-next-line import/prefer-default-export
 export { FakeChartWrapper }

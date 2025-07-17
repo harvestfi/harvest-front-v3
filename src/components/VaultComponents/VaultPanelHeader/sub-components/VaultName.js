@@ -1,6 +1,4 @@
 import React from 'react'
-import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
-import { tokens } from '../../../../data'
 import {
   TokenDescriptionContainer,
   TokenNameContainer,
@@ -11,25 +9,11 @@ import {
 } from '../style'
 import Diamond from '../../../../assets/images/logos/diamond.svg'
 
-const VaultName = ({
-  token,
-  tokenSymbol,
-  useIFARM,
-  fontColor1,
-  BadgeAry,
-  badgeId,
-  lsdToken,
-  LSD,
-  desciToken,
-  DESCI,
-  isMobile,
-}) => {
+const VaultName = ({ token, tokenSymbol, fontColor1, BadgeAry, badgeId, isMobile }) => {
   return (
     <TokenDescriptionContainer>
-      <TokenNameContainer fontColor1={fontColor1}>
-        {useIFARM
-          ? tokens[IFARM_TOKEN_SYMBOL].tokenNames.join(' - ')
-          : token.tokenNames.join(' - ') || tokenSymbol}
+      <TokenNameContainer $fontcolor1={fontColor1}>
+        {token.tokenNames.join(' - ') || tokenSymbol}
       </TokenNameContainer>
       {isMobile ? (
         <BadgePlatform>
@@ -40,15 +24,7 @@ const VaultName = ({
               <></>
             )}
           </BadgeIcon>
-          {lsdToken ? <img className="tag" src={LSD} alt="" /> : null}
-          {desciToken ? <img className="tag" src={DESCI} alt="" /> : null}
-          {useIFARM ? (
-            tokens[IFARM_TOKEN_SYMBOL].subLabel ? (
-              `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
-            ) : (
-              tokens[IFARM_TOKEN_SYMBOL].platform[0]
-            )
-          ) : token.subLabel ? (
+          {token.subLabel ? (
             token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
           ) : token.platform[0] && token.platform[0] === 'Autopilot' ? (
             <Autopilot>
@@ -61,13 +37,7 @@ const VaultName = ({
         </BadgePlatform>
       ) : (
         <>
-          {useIFARM ? (
-            tokens[IFARM_TOKEN_SYMBOL].subLabel ? (
-              `${tokens[IFARM_TOKEN_SYMBOL].platform[0]} - ${tokens[IFARM_TOKEN_SYMBOL].subLabel}`
-            ) : (
-              tokens[IFARM_TOKEN_SYMBOL].platform[0]
-            )
-          ) : token.subLabel ? (
+          {token.subLabel ? (
             token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
           ) : token.platform[0] && token.platform[0] === 'Autopilot' ? (
             <Autopilot>

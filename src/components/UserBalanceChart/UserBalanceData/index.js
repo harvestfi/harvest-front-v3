@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { BigNumber } from 'bignumber.js'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
 import { FaChevronDown, FaChevronUp } from 'react-icons/fa'
 import ApexChart from '../ApexChart'
@@ -13,8 +13,7 @@ import {
   getPriceFeeds,
   getSequenceId,
   getUserBalanceHistories,
-  getIPORUserBalanceHistories,
-  getIPORVaultHistories,
+  getVaultHistories,
 } from '../../../utilities/apiCalls'
 import { handleToggle } from '../../../utilities/parsers'
 import {
@@ -42,13 +41,11 @@ const recommendLinks = [
 
 const UserBalanceData = ({
   token,
-  vaultPool,
   totalValue,
-  useIFARM,
-  farmPrice,
   underlyingPrice,
   lpTokenBalance,
   chartData,
+  showRewardsTab,
 }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const { darkMode, bgColorNew, borderColorBox, fontColor3 } = useThemeContext()
@@ -76,18 +73,16 @@ const UserBalanceData = ({
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
   const [isExpanded, setIsExpanded] = useState(false)
 
-  const address = token.vaultAddress || vaultPool.autoStakePoolAddress || vaultPool.contractAddress
-  const chainId = token.chain || token.data.chain
+  const address = token.vaultAddress
+  const chainId = token.chain
 
   const totalValueRef = useRef(totalValue)
-  const farmPriceRef = useRef(farmPrice)
   const usdPriceRef = useRef(underlyingPrice)
 
   useEffect(() => {
     totalValueRef.current = totalValue
-    farmPriceRef.current = farmPrice
     usdPriceRef.current = underlyingPrice
-  }, [totalValue, underlyingPrice, farmPrice])
+  }, [totalValue, underlyingPrice])
 
   const handleTooltipContent = payload => {
     if (payload && payload.length) {
@@ -138,11 +133,11 @@ const UserBalanceData = ({
           let priceFeedData, priceFeedFlag
 
           const data = token.isIPORVault
-            ? await getIPORUserBalanceHistories(address.toLowerCase(), token.chain, account)
+            ? await getUserBalanceHistories(address.toLowerCase(), token.chain, account, true)
             : await getUserBalanceHistories(address, chainId, account)
 
-          const balanceData = token.isIPORVault ? data.balanceIPORData : data.balanceData
-          const balanceFlag = token.isIPORVault ? data.balanceIPORFlag : data.balanceFlag
+          const balanceData = data.balanceData
+          const balanceFlag = data.balanceFlag
           if (token.isIPORVault) {
             balanceData.map(obj => {
               obj.value = new BigNumber(obj.value)
@@ -166,9 +161,9 @@ const UserBalanceData = ({
             priceFeedData = result.priceFeedData
             priceFeedFlag = result.priceFeedFlag
           } else if (balanceFlag && token.isIPORVault) {
-            const result = await getIPORVaultHistories(token.chain, address.toLowerCase())
-            priceFeedFlag = result.vaultHIPORFlag
-            priceFeedData = result.vaultHIPORData
+            const result = await getVaultHistories(address.toLowerCase(), token.chain, true)
+            priceFeedFlag = result.vaultHFlag
+            priceFeedData = result.vaultHData
           }
 
           if (priceFeedFlag && !token.isIPORVault) {
@@ -220,11 +215,11 @@ const UserBalanceData = ({
               }
               while (i < bl) {
                 if (z < ul) {
-                  while (uniqueData2[z].timestamp >= balanceData[i].timestamp) {
+                  while (uniqueData2[z]?.timestamp >= balanceData[i].timestamp) {
                     uniqueData2[z].value = balanceData[i].value
                     mergedData.push(uniqueData2[z])
                     z += 1
-                    if (!addFlag && uniqueData2[z].timestamp === balanceData[i].timestamp) {
+                    if (!addFlag && uniqueData2[z]?.timestamp === balanceData[i].timestamp) {
                       addFlag = true
                     }
                   }
@@ -293,7 +288,7 @@ const UserBalanceData = ({
             }
 
             const firstObject = {
-              priceUnderlying: useIFARM ? farmPriceRef.current : usdPriceRef.current,
+              priceUnderlying: usdPriceRef.current,
               sharePrice: mergedData[0].sharePrice,
               timestamp: currentTimeStamp.toString(),
               value: totalValueRef.current,
@@ -404,29 +399,19 @@ const UserBalanceData = ({
     return () => {
       isMounted = false
     }
-  }, [
-    address,
-    chainId,
-    account,
-    totalValue,
-    underlyingPrice,
-    useIFARM,
-    farmPrice,
-    chartData,
-    token,
-  ])
+  }, [address, chainId, account, totalValue, underlyingPrice, chartData, token])
 
   return (
-    <Container backColor={bgColorNew} borderColor={borderColorBox}>
+    <Container $backcolor={bgColorNew} $bordercolor={borderColorBox}>
       <Header>
         <Total>
           <FlexDiv>
             <TooltipInfo>
-              <TokenSymbol className="priceshare" color="#15B088">
+              <TokenSymbol className="priceshare" $fontcolor="#15B088">
                 {`${rates?.currency?.symbol ?? 'USD'}`} Balance
               </TokenSymbol>
               <FlexDiv>
-                <CurContent color={fontColor3}>
+                <CurContent $fontcolor={fontColor3}>
                   {curContent === '0' ? (
                     ''
                   ) : (
@@ -435,35 +420,36 @@ const UserBalanceData = ({
                     />
                   )}
                 </CurContent>
-                <CurContent color="#15B088">{curContent}</CurContent>
+                <CurContent $fontcolor="#15B088">{curContent}</CurContent>
               </FlexDiv>
             </TooltipInfo>
           </FlexDiv>
           <FlexDiv>
             <TooltipInfo className="tooltip-underlying">
-              <TokenSymbol className="priceshare" color="#8884d8">
+              <TokenSymbol className="priceshare" $fontcolor="#8884d8">
                 Underlying Balance
               </TokenSymbol>
               <FlexDiv>
-                <CurContent color="#8884d8" className="tt-content-underlying">
-                  <div className="question" data-tip data-for="chart-underlying-balance">
+                <CurContent $fontcolor="#8884d8" className="tt-content-underlying">
+                  <div className="question" data-tip id="chart-underlying-balance">
                     {showTokenBalance(curContentUnderlying)}
                   </div>
-                  <ReactTooltip
+                  <Tooltip
                     id="chart-underlying-balance"
+                    anchorSelect="#chart-underlying-balance"
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
                     textColor={darkMode ? 'black' : 'white'}
                     place="top"
                   >
                     <NewLabel
-                      size={isMobile ? '10px' : '10px'}
-                      height={isMobile ? '14px' : '14px'}
+                      $size={isMobile ? '10px' : '10px'}
+                      $height={isMobile ? '14px' : '14px'}
                       weight="500"
                     >
                       {curContentUnderlying}
                     </NewLabel>
-                  </ReactTooltip>
+                  </Tooltip>
                 </CurContent>
               </FlexDiv>
             </TooltipInfo>
@@ -489,6 +475,7 @@ const UserBalanceData = ({
           setSelectedState={setSelectedState}
           isExpanded={isExpanded}
           isInactive={token.inactive}
+          showRewardsTab={showRewardsTab}
         />
       </ChartDiv>
       <ButtonGroup>
@@ -496,8 +483,8 @@ const UserBalanceData = ({
           type="button"
           onClick={handleToggle(setIsExpanded)}
           className="collapse-button"
-          backColor={darkMode ? '#3b3c3e' : '#e9f0f7'}
-          color={darkMode ? 'white' : 'black'}
+          $backcolor={darkMode ? '#3b3c3e' : '#e9f0f7'}
+          $fontcolor={darkMode ? 'white' : 'black'}
         >
           <ChevronIcon className="chevron">
             {isExpanded ? <FaChevronUp /> : <FaChevronDown />}

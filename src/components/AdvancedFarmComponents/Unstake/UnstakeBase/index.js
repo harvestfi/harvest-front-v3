@@ -8,10 +8,9 @@ import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
-import AnimatedDots from '../../../AnimatedDots'
 import { useWallet } from '../../../../providers/Wallet'
 import { isSpecialApp } from '../../../../utilities/formats'
-import { fromWei, toWei } from '../../../../services/web3'
+import { fromWei, toWei } from '../../../../services/viem'
 import Button from '../../../Button'
 import {
   BalanceInfo,
@@ -31,8 +30,6 @@ import {
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getChainName } from '../../../../utilities/parsers'
 
-const { tokens } = require('../../../../data')
-
 const UnstakeBase = ({
   setUnstakeStart,
   finalStep,
@@ -42,7 +39,7 @@ const UnstakeBase = ({
   switchMethod,
   tokenSymbol,
   totalStaked,
-  fAssetPool,
+  vaultPool,
   multipleAssets,
   amountsToExecute,
   setAmountsToExecute,
@@ -77,15 +74,12 @@ const UnstakeBase = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
   const [btnName, setBtnName] = useState('Preview & Unstake')
   const [showWarning, setShowWarning] = useState(false)
   const [warningContent, setWarningContent] = useState('')
   const [unstakeFailed, setUnstakeFailed] = useState(false)
-
-  const isSpecialVault = token.liquidityPoolVault || token.poolVault
-  const tokenDecimals = token.decimals || tokens[tokenSymbol].decimals
 
   useEffect(() => {
     if (account) {
@@ -121,7 +115,7 @@ const UnstakeBase = ({
       if (multipleAssets) {
         return toWei(amount, token.decimals, 0)
       }
-      return toWei(amount, isSpecialVault ? tokenDecimals : token.decimals)
+      return toWei(amount, token.decimals)
     })
 
     if (new BigNumber(amountsToExecuteInWei[0].toString()) === 0) {
@@ -157,19 +151,19 @@ const UnstakeBase = ({
   ]
 
   return (
-    <BaseSection show={!finalStep}>
+    <BaseSection $show={!finalStep}>
       <NewLabel
-        bg={darkMode ? '#373D51' : '#fff'}
-        size={isMobile ? '16px' : '16px'}
-        height={isMobile ? '28px' : '28px'}
-        weight="600"
-        color={fontColor1}
-        display="flex"
-        justifyContent="center"
-        padding={isMobile ? '4px 0px' : '4px 0px'}
-        marginBottom="13px"
-        border={`1.3px solid ${borderColorBox}`}
-        borderRadius="8px"
+        $bgcolor={darkMode ? '#373D51' : '#fff'}
+        $size={isMobile ? '16px' : '16px'}
+        $height={isMobile ? '28px' : '28px'}
+        $weight="600"
+        $fontcolor={fontColor1}
+        $display="flex"
+        $justifycontent="center"
+        $padding={isMobile ? '4px 0px' : '4px 0px'}
+        $marginbottom="13px"
+        $border={`1.3px solid ${borderColorBox}`}
+        $borderradius="8px"
       >
         {mainTags.map((tag, i) => (
           <SwitchTabTag
@@ -179,11 +173,10 @@ const UnstakeBase = ({
                 switchMethod()
               }
             }}
-            num={i}
-            color={i === 1 ? fontColor4 : fontColor3}
-            borderColor={i === 1 ? activeColor : ''}
-            backColor={i === 1 ? activeColorNew : ''}
-            boxShadow={
+            $fontcolor={i === 1 ? fontColor4 : fontColor3}
+            $bordercolor={i === 1 ? activeColor : ''}
+            $backcolor={i === 1 ? activeColorNew : ''}
+            $boxshadow={
               i === 1
                 ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
                 : ''
@@ -194,25 +187,25 @@ const UnstakeBase = ({
           </SwitchTabTag>
         ))}
       </NewLabel>
-      <DepoTitle fontColor={fontColor}>Unstake your fTokens.</DepoTitle>
+      <DepoTitle $fontcolor={fontColor}>Unstake your fTokens.</DepoTitle>
       <AmountSection>
         <NewLabel
-          size={isMobile ? '14px' : '14px'}
-          height={isMobile ? '20px' : '20px'}
-          weight="500"
-          color={fontColor2}
-          marginBottom="6px"
+          $size={isMobile ? '14px' : '14px'}
+          $height={isMobile ? '20px' : '20px'}
+          $weight="500"
+          $fontcolor={fontColor2}
+          $marginbottom="6px"
         >
           Amount to Unstake
         </NewLabel>
-        <AmountInputSection fontColor5={fontColor5}>
+        <AmountInputSection $fontcolor5={fontColor5}>
           <TokenAmount
             type="number"
             value={inputAmount}
             onChange={onInputBalance}
-            bgColor={bgColorNew}
-            fontColor2={fontColor2}
-            borderColor={borderColorBox}
+            $bgcolor={bgColorNew}
+            $fontcolor2={fontColor2}
+            $bordercolor={borderColorBox}
             inputMode="numeric"
             pattern="[0-9]*"
             placeholder="0"
@@ -227,8 +220,8 @@ const UnstakeBase = ({
                   new BigNumber(
                     fromWei(
                       totalStaked,
-                      fAssetPool.lpTokenData.decimals,
-                      fAssetPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
                       false,
                     ),
                   ).toString(),
@@ -237,8 +230,8 @@ const UnstakeBase = ({
                   new BigNumber(
                     fromWei(
                       totalStaked,
-                      fAssetPool.lpTokenData.decimals,
-                      fAssetPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
+                      token.decimals || vaultPool.lpTokenData.decimals,
                       false,
                     ),
                   ).toString(),
@@ -251,15 +244,15 @@ const UnstakeBase = ({
         </AmountInputSection>
       </AmountSection>
       <BalanceInfo
-        fontColor={fontColor}
+        $fontcolor={fontColor}
         onClick={() => {
           if (account) {
             setInputAmount(
               new BigNumber(
                 fromWei(
                   totalStaked,
-                  fAssetPool.lpTokenData.decimals,
-                  fAssetPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
                   false,
                 ),
               ).toString(),
@@ -268,8 +261,8 @@ const UnstakeBase = ({
               new BigNumber(
                 fromWei(
                   totalStaked,
-                  fAssetPool.lpTokenData.decimals,
-                  fAssetPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
                   false,
                 ),
               ).toString(),
@@ -279,34 +272,30 @@ const UnstakeBase = ({
       >
         Balance Available:
         <span>
-          {!connected ? (
-            0
-          ) : totalStaked ? (
-            new BigNumber(
-              fromWei(
-                totalStaked,
-                fAssetPool.lpTokenData.decimals,
-                fAssetPool.lpTokenData.decimals,
-                false,
-              ),
-            ).toString()
-          ) : (
-            <AnimatedDots />
-          )}
+          {!connected
+            ? 0
+            : new BigNumber(
+                fromWei(
+                  totalStaked,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  token.decimals || vaultPool.lpTokenData.decimals,
+                  false,
+                ),
+              ).toString()}
         </span>
       </BalanceInfo>
       <InsufficientSection
-        isShow={showWarning ? 'true' : 'false'}
-        activeColor={activeColor}
-        bgColorMessage={bgColorMessage}
+        $isshow={showWarning ? 'true' : 'false'}
+        $activecolor={activeColor}
+        $bgcolormessage={bgColorMessage}
       >
-        <NewLabel display="flex" widthDiv="80%" items="start">
+        <NewLabel $display="flex" $widthdiv="80%" $items="start">
           <img className="info-icon" src={InfoIcon} alt="" />
           <NewLabel
-            size={isMobile ? '14px' : '14px'}
-            height={isMobile ? '20px' : '20px'}
-            weight="600"
-            color={fontColor2}
+            $size={isMobile ? '14px' : '14px'}
+            $height={isMobile ? '20px' : '20px'}
+            $weight="600"
+            $fontcolor={fontColor2}
           >
             {warningContent}
           </NewLabel>
@@ -322,27 +311,27 @@ const UnstakeBase = ({
         </div>
       </InsufficientSection>
 
-      <FTokenWrong isShow={unstakeFailed ? 'true' : 'false'}>
-        <NewLabel marginRight="12px" display="flex">
+      <FTokenWrong $isshow={unstakeFailed ? 'true' : 'false'}>
+        <NewLabel $marginright="12px" $display="flex">
           <div>
             <img src={AlertIcon} alt="" />
           </div>
-          <NewLabel marginLeft="12px">
+          <NewLabel $marginleft="12px">
             <NewLabel
-              color="#B54708"
-              size={isMobile ? '14px' : '14px'}
-              height={isMobile ? '20px' : '20px'}
-              weight="600"
-              marginBottom="4px"
+              $fontcolor="#B54708"
+              $size={isMobile ? '14px' : '14px'}
+              $height={isMobile ? '20px' : '20px'}
+              $weight="600"
+              $marginbottom="4px"
             >
               Whoops, something went wrong.
             </NewLabel>
             <NewLabel
-              color="#B54708"
-              size={isMobile ? '14px' : '14px'}
-              height={isMobile ? '20px' : '20px'}
-              weight="400"
-              marginBottom="5px"
+              $fontcolor="#B54708"
+              $size={isMobile ? '14px' : '14px'}
+              $height={isMobile ? '20px' : '20px'}
+              $weight="400"
+              $marginbottom="5px"
             >
               Please try to repeat the transaction in your wallet.
             </NewLabel>
@@ -359,13 +348,13 @@ const UnstakeBase = ({
         </NewLabel>
       </FTokenWrong>
 
-      <NewLabel marginTop={isMobile ? '10px' : '10px'}>
+      <NewLabel $margintop={isMobile ? '10px' : '10px'}>
         <Button
-          color="wido-deposit"
-          width="100%"
-          btnColor={btnColor}
-          btnHoverColor={btnHoverColor}
-          btnActiveColor={btnActiveColor}
+          $fontcolor="wido-deposit"
+          $width="100%"
+          $btncolor={btnColor}
+          $btnhovercolor={btnHoverColor}
+          $btnactivecolor={btnActiveColor}
           onClick={async () => {
             if (!connected) {
               connectAction()

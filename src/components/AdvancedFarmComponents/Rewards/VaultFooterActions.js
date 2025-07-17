@@ -1,14 +1,14 @@
 import { get } from 'lodash'
 import React from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { ACTIONS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'
 import { usePools } from '../../../providers/Pools'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
-import { fromWei } from '../../../services/web3'
+import { fromWei } from '../../../services/viem'
 import {
   hasAmountGreaterThanZero,
   hasRequirementsForInteraction,
@@ -30,7 +30,7 @@ import {
 const { tokens } = require('../../../data')
 
 const VaultFooterActions = ({
-  fAssetPool,
+  vaultPool,
   totalTokensEarned,
   token,
   rewardTokenSymbols,
@@ -63,22 +63,22 @@ const VaultFooterActions = ({
   const curChain = isSpecialApp
     ? chainId
     : connectedChain
-    ? parseInt(connectedChain.id, 16).toString()
-    : ''
+      ? parseInt(connectedChain.id, 16).toString()
+      : ''
 
   return (
     <SelectedVaultContainer
-      maxWidth="100%"
-      margin="0px"
-      padding="0px"
-      borderWidth="0px"
-      borderColor={borderColor}
+      $maxwidth="100%"
+      $margin="0px"
+      $padding="0px"
+      $borderwidth="0px"
+      $bordercolor={borderColor}
     >
       {rewardTokenSymbols &&
         rewardTokenSymbols.map((symbol, symbolIdx) => {
           return (
             <SelectedVault key={`${symbol}-rewards-earned`}>
-              <Div fontColor2={fontColor2}>
+              <Div $fontcolor2={fontColor2}>
                 <img
                   src={`/icons/${
                     symbol.toLowerCase() === 'mifarm' ? 'ifarm' : symbol.toLowerCase()
@@ -87,13 +87,13 @@ const VaultFooterActions = ({
                 />
                 {symbol.toLowerCase() === 'mifarm' ? 'iFARM' : symbol}
               </Div>
-              <Monospace fontColor5={fontColor5}>
+              <Monospace $fontcolor5={fontColor5}>
                 {!connected ? (
                   '0.00'
-                ) : !isLoadingData && get(userStats, `[${get(fAssetPool, 'id')}].rewardsEarned`) ? (
+                ) : !isLoadingData && get(userStats, `[${get(vaultPool, 'id')}].rewardsEarned`) ? (
                   <>
                     <Counter
-                      pool={fAssetPool}
+                      pool={vaultPool}
                       totalTokensEarned={
                         rewardTokenSymbols.length > 1
                           ? fromWei(
@@ -103,21 +103,21 @@ const VaultFooterActions = ({
                             )
                           : totalTokensEarned
                       }
-                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                      totalStaked={get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)}
                       ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
                       rewardPerToken={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardPerToken[${symbolIdx}]`,
-                        fAssetPool.rewardPerToken[0],
+                        vaultPool.rewardPerToken[0],
                       )}
                       rewardTokenAddress={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardTokens[${symbolIdx}]`,
-                        fAssetPool.rewardTokens[0],
+                        vaultPool.rewardTokens[0],
                       )}
                     />
                     <CounterUsdPrice
-                      pool={fAssetPool}
+                      pool={vaultPool}
                       totalTokensEarned={
                         rewardTokenSymbols.length > 1
                           ? fromWei(
@@ -127,17 +127,17 @@ const VaultFooterActions = ({
                             )
                           : totalTokensEarned
                       }
-                      totalStaked={get(userStats, `[${fAssetPool.id}]['totalStaked']`, 0)}
+                      totalStaked={get(userStats, `[${vaultPool.id}]['totalStaked']`, 0)}
                       ratePerDay={get(ratesPerDay, symbolIdx, ratesPerDay[0])}
                       rewardPerToken={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardPerToken[${symbolIdx}]`,
-                        fAssetPool.rewardPerToken[0],
+                        vaultPool.rewardPerToken[0],
                       )}
                       rewardTokenAddress={get(
-                        fAssetPool,
+                        vaultPool,
                         `rewardTokens[${symbolIdx}]`,
-                        fAssetPool.rewardTokens[0],
+                        vaultPool.rewardTokens[0],
                       )}
                       rewardTokenUsdPrice={rewardTokenPrices[symbolIdx]}
                     />
@@ -151,7 +151,7 @@ const VaultFooterActions = ({
             </SelectedVault>
           )
         })}
-      <ReactTooltip
+      <Tooltip
         id={`claim-tooltip-${tokenSymbol}`}
         backgroundColor="black"
         borderColor="black"
@@ -172,22 +172,22 @@ const VaultFooterActions = ({
         }
       />
       <BottomPart>
-        <SelectedVaultLabel fontWeight="400" lineHeight="20px" color={fontColor}>
+        <SelectedVaultLabel $fontweight="400" $lineheight="20px" $fontcolor={fontColor}>
           Claim all rewards into your wallet.
         </SelectedVaultLabel>
         <Button
-          color="advanced-reward"
-          // width="100%"
-          size="md"
+          $fontcolor="advanced-reward"
+          // $width="100%"
+          $size="md"
           onClick={async () => {
             if (curChain !== tokenChain) {
               const chainHex = `0x${Number(tokenChain).toString(16)}`
               if (!isSpecialApp) await setChain({ chainId: chainHex })
             } else {
-              handleClaim(account, fAssetPool, setPendingAction, async () => {
+              handleClaim(account, vaultPool, setPendingAction, async () => {
                 await getWalletBalances([poolRewardSymbol])
                 setLoadingDots(false, true)
-                await fetchUserPoolStats([fAssetPool], account, userStats)
+                await fetchUserPoolStats([vaultPool], account, userStats)
                 setLoadingDots(false, false)
               })
             }

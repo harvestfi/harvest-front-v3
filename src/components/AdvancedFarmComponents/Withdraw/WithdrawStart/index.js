@@ -7,9 +7,9 @@ import { BsArrowUp } from 'react-icons/bs'
 import { CiSettings } from 'react-icons/ci'
 import { PiQuestion } from 'react-icons/pi'
 import { IoIosArrowUp } from 'react-icons/io'
-import ReactTooltip from 'react-tooltip'
+import { Tooltip } from 'react-tooltip'
 import { Spinner } from 'react-bootstrap'
-import { useHistory } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import AutopilotVaults from '../../../../assets/images/logos/advancedfarm/btc-eth-usdc.svg'
 import AlertIcon from '../../../../assets/images/logos/beginners/alert-triangle.svg'
 import AlertCloseIcon from '../../../../assets/images/logos/beginners/alert-close.svg'
@@ -19,19 +19,16 @@ import ProgressTwo from '../../../../assets/images/logos/advancedfarm/progress-s
 import ProgressThree from '../../../../assets/images/logos/advancedfarm/progress-step3.png'
 import ProgressFour from '../../../../assets/images/logos/advancedfarm/progress-step4.png'
 import ProgressFive from '../../../../assets/images/logos/advancedfarm/progress-step5.png'
-import { IFARM_TOKEN_SYMBOL } from '../../../../constants'
 import { useActions } from '../../../../providers/Actions'
 import { useVaults } from '../../../../providers/Vault'
-import { useContracts } from '../../../../providers/Contracts'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { getWeb3, fromWei } from '../../../../services/web3'
+import { getViem, fromWei } from '../../../../services/viem'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import AnimatedDots from '../../../AnimatedDots'
-import { addresses } from '../../../../data'
 import { getMatchedVaultList } from '../../../../utilities/parsers'
 import {
   Buttons,
@@ -70,8 +67,7 @@ const WithdrawStart = ({
   token,
   unstakeBalance,
   tokenSymbol,
-  fAssetPool,
-  useIFARM,
+  vaultPool,
   setRevertFromInfoAmount,
   revertFromInfoAmount,
   revertFromInfoUsdAmount,
@@ -90,10 +86,9 @@ const WithdrawStart = ({
     borderColor,
     btnHoverColor,
   } = useThemeContext()
-  const { account, web3, getWalletBalances } = useWallet()
+  const { account, viem, getWalletBalances } = useWallet()
   const { fetchUserPoolStats, userStats, pools } = usePools()
-  const { contracts } = useContracts()
-  const { push } = useHistory()
+  const navigate = useNavigate()
   const [slippagePercentage, setSlippagePercentage] = useState(null)
   const [slippageSetting, setSlippageSetting] = useState(false)
   const [customSlippage, setCustomSlippage] = useState(null)
@@ -117,27 +112,11 @@ const WithdrawStart = ({
   const [fromTokenAddress, setFromTokenAddress] = useState()
   const [toVaultAddress, setToVaultAddress] = useState()
   const [matchVaultList, setMatchVaultList] = useState([])
-  // eslint-disable-next-line no-unused-vars
-  const [networkName, setNetworkName] = useState('')
+
   const isFetchingRef = useRef(false)
 
   const curChain = token.poolVault ? token.data.chain : token.chain
   const tokenName = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
-
-  useEffect(() => {
-    const tokenChain = token.poolVault ? token.data.chain : token.chain
-    const network =
-      Number(tokenChain) === 42161
-        ? 'Arbitrum'
-        : Number(tokenChain) === 8453
-        ? 'Base'
-        : Number(tokenChain) === 324
-        ? 'Zksync'
-        : Number(tokenChain) === 137
-        ? 'Polygon'
-        : 'Ethereum'
-    setNetworkName(network)
-  }, [token])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -146,7 +125,7 @@ const WithdrawStart = ({
     }
   }, [rates])
 
-  const { getPortalsApproval, portalsApprove, getPortals, getPortalsSupport } = usePortals()
+  const { getPortalsApproval, portalsApprove, getPortals, getPortalsSupportBatch } = usePortals()
 
   let pickedDefaultToken
   if (pickedToken.symbol !== 'Select' && defaultToken) {
@@ -173,18 +152,19 @@ const WithdrawStart = ({
   }
 
   const chainId = token.chain || token.data.chain
-  const fromToken = useIFARM ? addresses.iFARM : token.vaultAddress || token.tokenAddress
+  const fromToken = token.vaultAddress || token.tokenAddress
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, fromToken, amnt.toString())
-    const mainWeb = await getWeb3(chainId, account, web3)
+    const mainViem = await getViem(chainId, account, viem)
 
-    await mainWeb.eth.sendTransaction({
-      from: account,
-      data: approve.data,
+    await mainViem.sendTransaction({
+      account,
       to: approve.to,
+      data: approve.data,
+      value: approve.value ? BigInt(approve.value) : undefined,
     })
   }
 
@@ -227,30 +207,17 @@ const WithdrawStart = ({
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
-        let assetBal
-        if (token.isIPORVault) {
-          const vaultContract = contracts.iporVaults[token.id]
-          assetBal = await vaultContract.methods.convertToAssets(
-            vaultContract.instance,
-            unstakeBalance,
-          )
-        }
         isSuccess = token.isIPORVault
-          ? await handleIPORWithdraw(account, token, assetBal, async () => {
-              await getWalletBalances([token.id], false, true)
-              await fetchUserPoolStats([fAssetPool], account, userStats)
-            })
+          ? await handleIPORWithdraw(account, token, unstakeBalance, async () => {})
           : await handleWithdraw(
               account,
-              useIFARM ? IFARM_TOKEN_SYMBOL : tokenSym,
+              tokenSym,
               unstakeBalance,
               vaultsData,
               null,
               false,
               null,
-              async () => {
-                await fetchUserPoolStats([fAssetPool], account, userStats)
-              },
+              async () => {},
               async () => {
                 setWithdrawFailed(true)
                 setStartSpinner(false)
@@ -265,7 +232,7 @@ const WithdrawStart = ({
           setStartSpinner(true)
           const amount = unstakeBalance
           const toToken = pickedToken.address
-          const mainWeb = await getWeb3(chainId, account, web3)
+          const mainViem = await getViem(chainId, account, viem)
           const portalData = await getPortals({
             chainId,
             sender: account,
@@ -275,11 +242,11 @@ const WithdrawStart = ({
             slippage: slippagePercentage,
           })
 
-          await mainWeb.eth.sendTransaction({
-            from: portalData.tx.from,
-            data: portalData.tx.data,
+          await mainViem.sendTransaction({
+            account,
             to: portalData.tx.to,
-            value: portalData.tx.value,
+            data: portalData.tx.data,
+            value: portalData.tx.value ? BigInt(portalData.tx.value) : undefined,
           })
 
           const receiveString = portalData
@@ -292,8 +259,6 @@ const WithdrawStart = ({
           const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
           setRevertedAmount(receiveString)
           setRevertedAmountUsd(formatNumberWido(receiveUsdString))
-
-          await fetchUserPoolStats([fAssetPool], account, userStats)
         } catch (err) {
           setWithdrawFailed(true)
           setStartSpinner(false)
@@ -305,6 +270,11 @@ const WithdrawStart = ({
       }
       // End Approve and Withdraw successfully
       if (isSuccess) {
+        await getWalletBalances([tokenSym], false, true)
+        token.isIPORVault
+          ? await fetchUserPoolStats([token.id], account, userStats)
+          : await fetchUserPoolStats([vaultPool], account, userStats)
+
         setStartSpinner(false)
         setWithdrawFailed(false)
         setProgressStep(4)
@@ -340,7 +310,7 @@ const WithdrawStart = ({
   useEffect(() => {
     let activedList = []
     if (chainId) {
-      const matched = getMatchedVaultList(groupOfVaults, chainId, vaultsData, pools)
+      const matched = getMatchedVaultList(groupOfVaults, chainId, pools)
       if (matched.length > 0) {
         activedList = matched.filter(
           el => el.vaultApy !== 0 && el.vaultTvl > 500 && el.vault?.tokenNames.length === 1,
@@ -358,30 +328,38 @@ const WithdrawStart = ({
       if (activedList.length > 0) {
         activedList.sort((a, b) => b.vaultApy - a.vaultApy)
         const newArray = activedList.slice(0, 10)
-        // eslint-disable-next-line no-restricted-syntax
-        for (const item of newArray) {
-          if (
+
+        const validItems = newArray.filter(
+          item =>
             item.vaultApy !== 0 &&
-            item.vault.vaultAddress.toLowerCase() !== '0x47e3daf382c4603450905fb68766db8308315407'
-          ) {
+            item.vault.vaultAddress.toLowerCase() !== '0x47e3daf382c4603450905fb68766db8308315407',
+        )
+
+        if (validItems.length > 0) {
+          const tokenAddresses = validItems.map(item => {
             const mToken = item.vault
-            const tokenAddress = useIFARM
-              ? addresses.iFARM
-              : mToken.vaultAddress || mToken.tokenAddress
-            // eslint-disable-next-line no-await-in-loop
-            const portalsToken = await getPortalsSupport(chainId, tokenAddress)
-            if (portalsToken) {
-              if (portalsToken.status === 200) {
-                if (portalsToken.data.totalItems !== 0) {
-                  filteredMatchList.push(item)
-                }
+            return mToken.vaultAddress || mToken.tokenAddress
+          })
+
+          try {
+            const supportResults = await getPortalsSupportBatch(chainId, tokenAddresses)
+
+            validItems.forEach((item, index) => {
+              const supportResult = supportResults[index]
+              if (
+                supportResult &&
+                supportResult.status === 200 &&
+                supportResult.data.totalItems !== 0
+              ) {
+                filteredMatchList.push(item)
               }
-            } else {
-              console.log('Error in fetching Portals supported')
-            }
+            })
+          } catch (error) {
+            console.log('Error in fetching Portals supported batch:', error)
           }
         }
       }
+
       if (filteredMatchList.length > 0) {
         setMatchVaultList(filteredMatchList)
       }
@@ -390,7 +368,7 @@ const WithdrawStart = ({
     }
 
     fetchSupportedMatches()
-  }, [chainId, pools, setMatchVaultList, token]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [chainId, pools, setMatchVaultList, token])
 
   useEffect(() => {
     if (
@@ -414,7 +392,7 @@ const WithdrawStart = ({
       setFromTokenAddress(token.vaultAddress.toLowerCase())
       setToVaultAddress(matchVaultList[1].vault.vaultAddress.toLowerCase())
     }
-  }, [matchVaultList, token]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [matchVaultList, token])
 
   return (
     <Modal
@@ -427,27 +405,27 @@ const WithdrawStart = ({
       <Modal.Header className="deposit-modal-header">
         <FTokenInfo>
           <FTokenDiv>
-            <NewLabel margin="auto 0px">
+            <NewLabel $margin="auto 0px">
               <IconCard>
                 <BsArrowUp />
               </IconCard>
             </NewLabel>
-            <NewLabel textAlign="left" marginRight="12px">
+            <NewLabel $textalign="left" $marginright="12px">
               <NewLabel
-                color="#5dcf46"
-                size={isMobile ? '18px' : '18px'}
-                height={isMobile ? '28px' : '28px'}
-                weight="600"
-                marginBottom="4px"
+                $fontcolor="#5dcf46"
+                $size={isMobile ? '18px' : '18px'}
+                $height={isMobile ? '28px' : '28px'}
+                $weight="600"
+                $marginbottom="4px"
               >
                 Summary
               </NewLabel>
               <NewLabel
-                color={fontColor1}
-                size={isMobile ? '14px' : '14px'}
-                height={isMobile ? '20px' : '20px'}
-                weight="400"
-                marginBottom="5px"
+                $fontcolor={fontColor1}
+                $size={isMobile ? '14px' : '14px'}
+                $height={isMobile ? '20px' : '20px'}
+                $weight="400"
+                $marginbottom="5px"
               >
                 Revert your fTokens into selected token
               </NewLabel>
@@ -455,15 +433,15 @@ const WithdrawStart = ({
           </FTokenDiv>
           <NewLabel>
             <NewLabel
-              display="flex"
-              marginBottom={isMobile ? '16px' : '16px'}
-              width="fit-content"
-              cursorType="pointer"
-              weight="600"
-              size={isMobile ? '14px' : '14px'}
-              height={isMobile ? '20px' : '20px'}
-              color="#667085"
-              align="center"
+              $display="flex"
+              $marginbottom={isMobile ? '16px' : '16px'}
+              $width="fit-content"
+              $cursortype="pointer"
+              $weight="600"
+              $size={isMobile ? '14px' : '14px'}
+              $height={isMobile ? '20px' : '20px'}
+              $fontcolor="#667085"
+              $align="center"
               onClick={() => {
                 closeWithdraw()
               }}
@@ -476,18 +454,18 @@ const WithdrawStart = ({
       <Modal.Body className="deposit-modal-body">
         <SelectTokenWido>
           <NewLabel
-            size={isMobile ? '14px' : '14px'}
-            height={isMobile ? '24px' : '24px'}
-            padding="15px 24px"
-            color={fontColor2}
+            $size={isMobile ? '14px' : '14px'}
+            $height={isMobile ? '24px' : '24px'}
+            $padding="15px 24px"
+            $fontcolor={fontColor2}
           >
             <NewLabel
-              display="flex"
-              justifyContent="space-between"
-              padding={isMobile ? '10px 0' : '10px 0'}
+              $display="flex"
+              $justifycontent="space-between"
+              $padding={isMobile ? '10px 0' : '10px 0'}
             >
-              <NewLabel weight="500">{progressStep === 4 ? 'Reverted' : 'Reverting'}</NewLabel>
-              <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
+              <NewLabel $weight="500">{progressStep === 4 ? 'Reverted' : 'Reverting'}</NewLabel>
+              <NewLabel $display="flex" $flexflow="column" $weight="600" $textalign="right">
                 <>
                   {revertFromInfoAmount === '-' || revertFromInfoAmount === 'NaN' ? (
                     unstakeInputValue
@@ -499,8 +477,8 @@ const WithdrawStart = ({
                     </AnimateDotDiv>
                   )}
                 </>
-                <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
-                  <span>{useIFARM ? `i${tokenSymbol}` : tokenName}</span>
+                <NewLabel $display="flex" $flexflow="column" $weight="600" $textalign="right">
+                  <span>{tokenName}</span>
                   <span>
                     {revertFromInfoUsdAmount !== '' ? (
                       <>≈{revertFromInfoUsdAmount}</>
@@ -512,22 +490,23 @@ const WithdrawStart = ({
               </NewLabel>
             </NewLabel>
             <NewLabel
-              display="flex"
-              justifyContent="space-between"
-              padding={isMobile ? '10px 0' : '10px 0'}
+              $display="flex"
+              $justifycontent="space-between"
+              $padding={isMobile ? '10px 0' : '10px 0'}
             >
               <NewLabel
                 className="beginners"
-                weight="500"
-                items="center"
-                display="flex"
-                alignSelf="flex-start"
+                $weight="500"
+                $items="center"
+                $display="flex"
+                $alignself="flex-start"
               >
                 {progressStep === 4 ? 'Received' : 'Est. Received'}
                 {progressStep !== 4 && (
                   <>
-                    <PiQuestion className="question" data-tip data-for="min-help" />
-                    <ReactTooltip
+                    <PiQuestion className="question" data-tip id="min-help" />
+                    <Tooltip
+                      anchorSelect="#min-help"
                       id="min-help"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
@@ -535,21 +514,21 @@ const WithdrawStart = ({
                       place="right"
                     >
                       <NewLabel
-                        size={isMobile ? '12px' : '12px'}
-                        height={isMobile ? '18px' : '18px'}
-                        weight="600"
+                        $size={isMobile ? '12px' : '12px'}
+                        $height={isMobile ? '18px' : '18px'}
+                        $weight="600"
                       >
                         The estimated number of tokens you will receive in your wallet. The default
                         slippage is set as &lsquo;Auto&lsquo;.
                       </NewLabel>
-                    </ReactTooltip>
+                    </Tooltip>
                   </>
                 )}
               </NewLabel>
-              <NewLabel display="flex" flexFlow="column" weight="600" textAlign="right">
+              <NewLabel $display="flex" $flexflow="column" $weight="600" $textalign="right">
                 <>
                   <>
-                    <div data-tip data-for="modal-fToken-receive-revert">
+                    <div data-tip id="modal-fToken-receive-revert">
                       {!pickedDefaultToken && progressStep === 4 ? (
                         revertedAmount !== '' ? (
                           showTokenBalance(revertedAmount)
@@ -566,17 +545,18 @@ const WithdrawStart = ({
                         </AnimateDotDiv>
                       )}
                     </div>
-                    <ReactTooltip
+                    <Tooltip
                       id="modal-fToken-receive-revert"
+                      anchorSelect="#modal-fToken-receive-revert"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
                       textColor={darkMode ? 'black' : 'white'}
                       place="top"
                     >
                       <NewLabel
-                        size={isMobile ? '10px' : '10px'}
-                        height={isMobile ? '14px' : '14px'}
-                        weight="500"
+                        $size={isMobile ? '10px' : '10px'}
+                        $height={isMobile ? '14px' : '14px'}
+                        $weight="500"
                       >
                         {!pickedDefaultToken && progressStep === 4 ? (
                           revertedAmount !== '' ? (
@@ -594,7 +574,7 @@ const WithdrawStart = ({
                           </AnimateDotDiv>
                         )}
                       </NewLabel>
-                    </ReactTooltip>
+                    </Tooltip>
                   </>
                   <span>{pickedToken.symbol}</span>
                 </>
@@ -621,27 +601,27 @@ const WithdrawStart = ({
             </NewLabel>
           </NewLabel>
 
-          <FTokenWrong isShow={withdrawFailed ? 'true' : 'false'}>
-            <NewLabel marginRight="12px" display="flex">
+          <FTokenWrong $isshow={withdrawFailed ? 'true' : 'false'}>
+            <NewLabel $marginright="12px" $display="flex">
               <div>
                 <img src={AlertIcon} alt="" />
               </div>
-              <NewLabel marginLeft="12px">
+              <NewLabel $marginleft="12px">
                 <NewLabel
-                  color="#B54708"
-                  size={isMobile ? '14px' : '14px'}
-                  height={isMobile ? '20px' : '20px'}
-                  weight="600"
-                  marginBottom="4px"
+                  $fontcolor="#B54708"
+                  $size={isMobile ? '14px' : '14px'}
+                  $height={isMobile ? '20px' : '20px'}
+                  $weight="600"
+                  $marginbottom="4px"
                 >
                   Whoops, something went wrong.
                 </NewLabel>
                 <NewLabel
-                  color="#B54708"
-                  size={isMobile ? '14px' : '14px'}
-                  height={isMobile ? '20px' : '20px'}
-                  weight="400"
-                  marginBottom="5px"
+                  $fontcolor="#B54708"
+                  $size={isMobile ? '14px' : '14px'}
+                  $height={isMobile ? '20px' : '20px'}
+                  $weight="400"
+                  $marginbottom="5px"
                 >
                   Please try to repeat the transaction in your wallet.
                 </NewLabel>
@@ -657,27 +637,27 @@ const WithdrawStart = ({
               />
             </NewLabel>
           </FTokenWrong>
-          <FTokenWrong isShow={slippageFailed ? 'true' : 'false'}>
-            <NewLabel marginRight="12px" display="flex">
+          <FTokenWrong $isshow={slippageFailed ? 'true' : 'false'}>
+            <NewLabel $marginright="12px" $display="flex">
               <div>
                 <img src={AlertIcon} alt="" />
               </div>
-              <NewLabel marginLeft="12px">
+              <NewLabel $marginleft="12px">
                 <NewLabel
-                  color="#B54708"
-                  size={isMobile ? '14px' : '14px'}
-                  height={isMobile ? '20px' : '20px'}
-                  weight="600"
-                  marginBottom="4px"
+                  $fontcolor="#B54708"
+                  $size={isMobile ? '14px' : '14px'}
+                  $height={isMobile ? '20px' : '20px'}
+                  $weight="600"
+                  $marginbottom="4px"
                 >
                   Whoops, slippage set too low
                 </NewLabel>
                 <NewLabel
-                  color="#B54708"
-                  size={isMobile ? '14px' : '14px'}
-                  height={isMobile ? '20px' : '20px'}
-                  weight="400"
-                  marginBottom="5px"
+                  $fontcolor="#B54708"
+                  $size={isMobile ? '14px' : '14px'}
+                  $height={isMobile ? '20px' : '20px'}
+                  $weight="400"
+                  $marginbottom="5px"
                 >
                   Slippage for this conversion is set too low. Expected slippage is &gt;[number%].
                   If you wish to proceed, set it manually via the gear button below.
@@ -702,28 +682,28 @@ const WithdrawStart = ({
                 progressStep === 0
                   ? ProgressOne
                   : progressStep === 1
-                  ? ProgressTwo
-                  : progressStep === 2
-                  ? ProgressThree
-                  : progressStep === 3
-                  ? ProgressFour
-                  : ProgressFive
+                    ? ProgressTwo
+                    : progressStep === 2
+                      ? ProgressThree
+                      : progressStep === 3
+                        ? ProgressFour
+                        : ProgressFive
               }
               alt="progress bar"
             />
           </NewLabel>
-          <ProgressLabel fontColor2={fontColor2}>
-            <ProgressText width="50%" padding="0px 0px 0px 30px">
+          <ProgressLabel $fontcolor2={fontColor2}>
+            <ProgressText $width="50%" $padding="0px 0px 0px 30px">
               Approve
               <br />
               Token
             </ProgressText>
-            <ProgressText width="unset" padding="0px 0px 0px 7px">
+            <ProgressText $width="unset" $padding="0px 0px 0px 7px">
               Confirm
               <br />
               Transaction
             </ProgressText>
-            <ProgressText width="50%" padding="0px 10px 0px 0px">
+            <ProgressText $width="50%" $padding="0px 10px 0px 0px">
               Transaction
               <br />
               Successful
@@ -732,11 +712,11 @@ const WithdrawStart = ({
           {curChain === '8453' && token.platform?.[0] !== 'Autopilot' && (
             <NewLabel>
               <NewLabel
-                color={darkMode ? '#ffffff' : '#344054'}
-                size={isMobile ? '14px' : '14px'}
-                height={isMobile ? '20px' : '28px'}
-                weight="600"
-                padding="20px 24px 0px 24px"
+                $fontcolor={darkMode ? '#ffffff' : '#344054'}
+                $size={isMobile ? '14px' : '14px'}
+                $height={isMobile ? '20px' : '28px'}
+                $weight="600"
+                $padding="20px 24px 0px 24px"
               >
                 Tired of jumping between strategies? Try our Autopilots.
               </NewLabel>
@@ -748,7 +728,7 @@ const WithdrawStart = ({
                     if (e.ctrlKey) {
                       window.open(url, '_blank')
                     } else {
-                      push(url)
+                      navigate(url)
                     }
                   }}
                 >
@@ -756,20 +736,20 @@ const WithdrawStart = ({
                     <img className="logo-img" src={AutopilotVaults} alt="logo" />
                     <div>
                       <NewLabel
-                        color="#15202b"
-                        size={isMobile ? '14px' : '14px'}
-                        height={isMobile ? '20px' : '20px'}
-                        weight="600"
-                        padding="0px 10px"
+                        $fontcolor="#15202b"
+                        $size={isMobile ? '14px' : '14px'}
+                        $height={isMobile ? '20px' : '20px'}
+                        $weight="600"
+                        $padding="0px 10px"
                       >
                         Autopilot
                       </NewLabel>
                       <NewLabel
-                        color="#15202b"
-                        size={isMobile ? '14px' : '10px'}
-                        height={isMobile ? '20px' : '20px'}
-                        weight="400"
-                        padding="0px 10px"
+                        $fontcolor="#15202b"
+                        $size={isMobile ? '14px' : '10px'}
+                        $height={isMobile ? '20px' : '20px'}
+                        $weight="400"
+                        $padding="0px 10px"
                       >
                         Harvest
                       </NewLabel>
@@ -783,20 +763,20 @@ const WithdrawStart = ({
           {curChain !== '8453' && curChain !== '324' && (
             <NewLabel>
               <NewLabel
-                color={darkMode ? '#ffffff' : '#344054'}
-                size={isMobile ? '14px' : '14px'}
-                height={isMobile ? '20px' : '28px'}
-                weight="600"
-                padding="20px 24px 0px 24px"
+                $fontcolor={darkMode ? '#ffffff' : '#344054'}
+                $size={isMobile ? '14px' : '14px'}
+                $height={isMobile ? '20px' : '28px'}
+                $weight="600"
+                $padding="20px 24px 0px 24px"
               >
                 Other users also like
               </NewLabel>
               <NewLabel
-                color={darkMode ? '#ffffff' : '#15202b'}
-                size={isMobile ? '14px' : '10px'}
-                height={isMobile ? '20px' : '20px'}
-                weight="400"
-                padding="0px 24px"
+                $fontcolor={darkMode ? '#ffffff' : '#15202b'}
+                $size={isMobile ? '14px' : '10px'}
+                $height={isMobile ? '20px' : '20px'}
+                $weight="400"
+                $padding="0px 24px"
               >
                 Click on the new opportunity below to open a Migrate tool.
               </NewLabel>
@@ -812,7 +792,7 @@ const WithdrawStart = ({
                     if (e.ctrlKey) {
                       window.open(url, '_blank')
                     } else {
-                      push(url)
+                      navigate(url)
                     }
                   }}
                 >
@@ -826,7 +806,7 @@ const WithdrawStart = ({
                             <BigLogoImg
                               key={i}
                               className="logo-img"
-                              zIndex={10 - i}
+                              $zindex={10 - i}
                               src={`.${el}`}
                               alt={tokenNames[i]}
                             />
@@ -836,20 +816,20 @@ const WithdrawStart = ({
                     </ImagePart>
                     <NamePart>
                       <NewLabel
-                        color="#15202b"
-                        size={isMobile ? '14px' : '14px'}
-                        height={isMobile ? '20px' : '20px'}
-                        weight="600"
-                        padding="0px 10px"
+                        $fontcolor="#15202b"
+                        $size={isMobile ? '14px' : '14px'}
+                        $height={isMobile ? '20px' : '20px'}
+                        $weight="600"
+                        $padding="0px 10px"
                       >
                         {tokenNames.length === 0 ? <AnimatedDots /> : tokenNames.join(' - ')}
                       </NewLabel>
                       <NewLabel
-                        color="#15202b"
-                        size={isMobile ? '14px' : '10px'}
-                        height={isMobile ? '20px' : '20px'}
-                        weight="400"
-                        padding="0px 10px"
+                        $fontcolor="#15202b"
+                        $size={isMobile ? '14px' : '10px'}
+                        $height={isMobile ? '20px' : '20px'}
+                        $weight="400"
+                        $padding="0px 10px"
                       >
                         {platformNames.length === 0 ? <AnimatedDots /> : platformNames.join(', ')}
                       </NewLabel>
@@ -863,12 +843,12 @@ const WithdrawStart = ({
             </NewLabel>
           )}
           <NewLabel
-            size={isMobile ? '16px' : '16px'}
-            height={isMobile ? '24px' : '24px'}
-            weight={600}
-            color="#1F2937"
-            padding={slippageSetting ? '25px 24px 10px' : '25px 24px 24px'}
-            display="flex"
+            $size={isMobile ? '16px' : '16px'}
+            $height={isMobile ? '24px' : '24px'}
+            $weight={600}
+            $fontcolor="#1F2937"
+            $padding={slippageSetting ? '25px 24px 10px' : '25px 24px 24px'}
+            $display="flex"
           >
             <SlippageBox onClick={() => setSlippageSetting(!slippageSetting)}>
               {slippageSetting ? (
@@ -878,7 +858,7 @@ const WithdrawStart = ({
               )}
             </SlippageBox>
             <Buttons
-              hoverColor={btnHoverColor}
+              $hovercolor={btnHoverColor}
               onClick={() => {
                 startWithdraw()
               }}
@@ -892,24 +872,24 @@ const WithdrawStart = ({
             </Buttons>
           </NewLabel>
           <NewLabel
-            size={isMobile ? '12px' : '12px'}
-            height={isMobile ? '24px' : '24px'}
-            color={fontColor3}
-            padding="10px 24px"
-            display={slippageSetting ? 'flex' : 'none'}
-            flexFlow="column"
+            $size={isMobile ? '12px' : '12px'}
+            $height={isMobile ? '24px' : '24px'}
+            $fontcolor={fontColor3}
+            $padding="10px 24px"
+            $display={slippageSetting ? 'flex' : 'none'}
+            $flexflow="column"
           >
-            <NewLabel display="flex" justifyContent="space-between">
+            <NewLabel $display="flex" $justifycontent="space-between">
               <NewLabel>Slippage Settings</NewLabel>
-              <MiddleLine width={isMobile ? '65%' : '75%'} />
+              <MiddleLine $width={isMobile ? '65%' : '75%'} />
             </NewLabel>
-            <NewLabel padding="10px 0px">
+            <NewLabel $padding="10px 0px">
               Current slippage:{' '}
               <span className="auto-slippage">
                 {slippagePercentage === null ? 'Auto (0 - 2.5%)' : `${slippagePercentage}%`}
               </span>
             </NewLabel>
-            <SlippageRow borderColor={borderColor}>
+            <SlippageRow $bordercolor={borderColor}>
               {SlippageValues.map((percentage, index) => (
                 <SlipValue
                   key={index}
@@ -917,29 +897,29 @@ const WithdrawStart = ({
                     setSlippagePercentage(percentage)
                     setCustomSlippage(null)
                   }}
-                  color={slippagePercentage === percentage ? '#fff' : fontColor2}
-                  bgColor={slippagePercentage === percentage ? bgColorSlippage : ''}
-                  borderColor={borderColor}
-                  isLastChild={index === SlippageValues.length - 1}
-                  isFirstChild={index === 0}
+                  $fontcolor={slippagePercentage === percentage ? '#fff' : fontColor2}
+                  $bgcolor={slippagePercentage === percentage ? bgColorSlippage : ''}
+                  $bordercolor={borderColor}
+                  $islastchild={index === SlippageValues.length - 1}
+                  $isfirstchild={index === 0}
                 >
                   {percentage === null ? 'Auto' : `${percentage}%`}
                 </SlipValue>
               ))}
             </SlippageRow>
             <NewLabel
-              display="flex"
-              justifyContent="space-between"
-              padding="15px 0px 5px"
-              gap="10px"
+              $display="flex"
+              $justifycontent="space-between"
+              $padding="15px 0px 5px"
+              $gap="10px"
             >
-              <NewLabel color={fontColor2} weight="600" margin="auto">
+              <NewLabel $fontcolor={fontColor2} $weight="600" $margin="auto">
                 or
               </NewLabel>
               <SlippageInput
-                fontColor2={fontColor2}
-                backColor={backColor}
-                borderColor={
+                $fontcolor2={fontColor2}
+                $backcolor={backColor}
+                $bordercolor={
                   customSlippage === null || customSlippage === 0 ? borderColor : '#5dcf46'
                 }
               >
@@ -953,17 +933,19 @@ const WithdrawStart = ({
               </SlippageInput>
               <SlippageBtn
                 onClick={onSlippageSave}
-                color={
+                $fontcolor={
                   !darkMode
                     ? '#fff'
                     : customSlippage === null || customSlippage === 0
-                    ? '#0C111D'
-                    : '#fff'
+                      ? '#0C111D'
+                      : '#fff'
                 }
-                bgColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
+                $bgcolor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#5dcf46'}
                 cursor={customSlippage === null || customSlippage === 0 ? 'not-allowed' : 'pointer'}
-                hoverColor={customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#51e932'}
-                activeColor={
+                $hovercolor={
+                  customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#51e932'
+                }
+                $activecolor={
                   customSlippage === null || customSlippage === 0 ? '#ced3e6' : '#46eb25'
                 }
               >
