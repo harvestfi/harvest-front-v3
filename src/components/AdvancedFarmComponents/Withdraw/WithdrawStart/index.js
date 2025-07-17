@@ -504,8 +504,9 @@ const WithdrawStart = ({
                 {progressStep === 4 ? 'Received' : 'Est. Received'}
                 {progressStep !== 4 && (
                   <>
-                    <PiQuestion className="question" data-tip data-for="min-help" />
+                    <PiQuestion className="question" data-tip id="min-help" />
                     <Tooltip
+                      anchorSelect="#min-help"
                       id="min-help"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
@@ -527,7 +528,7 @@ const WithdrawStart = ({
               <NewLabel $display="flex" $flexflow="column" $weight="600" $textalign="right">
                 <>
                   <>
-                    <div data-tip data-for="modal-fToken-receive-revert">
+                    <div data-tip id="modal-fToken-receive-revert">
                       {!pickedDefaultToken && progressStep === 4 ? (
                         revertedAmount !== '' ? (
                           showTokenBalance(revertedAmount)
@@ -546,6 +547,7 @@ const WithdrawStart = ({
                     </div>
                     <Tooltip
                       id="modal-fToken-receive-revert"
+                      anchorSelect="#modal-fToken-receive-revert"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
                       textColor={darkMode ? 'black' : 'white'}

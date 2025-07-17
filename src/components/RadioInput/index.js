@@ -14,6 +14,7 @@ const RadioInput = ({
       <>
         <Tooltip
           id={`${option.value}-tooltip`}
+          anchorSelect={`${option.value}-tooltip`}
           backgroundColor="white"
           borderColor="black"
           border
@@ -26,7 +27,7 @@ const RadioInput = ({
           onClick={() => onChange(option.value)}
           disabled={option.disabled || componentDisaled}
           data-tip=""
-          data-for={`${option.value}-tooltip`}
+          id={`${option.value}-tooltip`}
         >
           <Label>{option.label}</Label>
           <input

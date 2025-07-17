@@ -9,13 +9,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { Monospace } from '../../../GlobalStyle'
 import { useRate } from '../../../../providers/Rate'
 
-const VaultUserBalance = ({
-  token,
-  tokenSymbol,
-  loadingFarmingBalance,
-  loadedVault,
-  fontColor1,
-}) => {
+const VaultUserBalance = ({ token, tokenSymbol, loadedVault, fontColor1 }) => {
   const { farmingBalances } = useVaults()
   const { connected } = useWallet()
   const [userVaultBalance, setUserVaultBalance] = useState(null)
@@ -39,8 +33,7 @@ const VaultUserBalance = ({
     getBalance()
   }, [tokenSymbol, farmingBalances])
 
-  const isLoadingUserBalance =
-    loadedVault === false || loadingFarmingBalance || userVaultBalance === false
+  const isLoadingUserBalance = !loadedVault || userVaultBalance === false
 
   return (
     <Monospace

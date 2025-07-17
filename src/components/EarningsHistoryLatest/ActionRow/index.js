@@ -69,11 +69,12 @@ const ActionRow = ({ info }) => {
             $fontcolor={darkMode ? '#e8e8e8' : '#202020'}
             $paddingright={isMobile ? '8px' : '0px'}
           >
-            <div className="timestamp" data-tip data-for={`tooltip-latest-yield-${info.timestamp}`}>
+            <div className="timestamp" data-tip id={`tooltip-latest-yield-${info.timestamp}`}>
               {formatAge(info.timestamp)} ago
             </div>
             <Tooltip
               id={`tooltip-latest-yield-${info.timestamp}`}
+              anchorSelect={`tooltip-latest-yield-${info.timestamp}`}
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
               textColor={darkMode ? 'black' : 'white'}

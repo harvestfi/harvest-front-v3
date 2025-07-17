@@ -335,6 +335,7 @@ const LeaderBoard = () => {
                   handleSort('MonthlyYield')
                 }
               }}
+              $darkMode={darkMode}
             >
               <Col>{selectedItem}</Col>
               {selectedItem === 'Efficiency' && (
@@ -346,11 +347,10 @@ const LeaderBoard = () => {
                     style={{ marginLeft: '5px' }}
                   />
                   <Tooltip
-                    backgroundColor={darkMode ? 'white' : '#101828'}
-                    borderColor={darkMode ? 'white' : 'black'}
-                    textColor={darkMode ? 'black' : 'white'}
                     place="top"
                     className="mobileTooltip"
+                    anchorSelect=".question"
+                    opacity={0.9}
                   >
                     <NewLabel
                       $size={isMobile ? '10px' : '12px'}
@@ -481,15 +481,11 @@ const LeaderBoard = () => {
                   onClick={() => handleSort('Efficiency')}
                   cursor="pointer"
                   $filtercolor={filterColor}
+                  $darkMode={darkMode}
                 >
                   Efficiency
                   <PiQuestion className="question" data-tip />
-                  <Tooltip
-                    backgroundColor={darkMode ? 'white' : '#101828'}
-                    borderColor={darkMode ? 'white' : 'black'}
-                    textColor={darkMode ? 'black' : 'white'}
-                    place="top"
-                  >
+                  <Tooltip anchorSelect=".question" className="efficiency-tooltip" opacity={0.8}>
                     <NewLabel
                       $size={isMobile ? '10px' : '12px'}
                       $height={isMobile ? '15px' : '18px'}

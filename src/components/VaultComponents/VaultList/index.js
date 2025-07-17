@@ -297,7 +297,8 @@ const SortingIcon = ({ sortType, sortField, selectedField, riskId }) => {
 const VaultList = () => {
   const { fontColor, filterColor, bgColorNew, borderColorBox, darkMode } = useThemeContext()
 
-  const { vaultsData, getFarmingBalances, loadedUserVaultsViemProvider } = useVaults()
+  const { vaultsData, getFarmingBalances, loadedUserVaultsViemProvider, loadingVaults } =
+    useVaults()
 
   const { pools, totalPools, fetchUserPoolStats, userStats, loadedUserPoolsViemProvider } =
     usePools()
@@ -462,7 +463,8 @@ const VaultList = () => {
           hasSwitchedAccount ||
           firstFarmingBalancesLoad.current ||
           (userStats && !isEqual(userStats, prevUserStats))) &&
-        loadedUserVaultsViemProvider
+        loadedUserVaultsViemProvider &&
+        !loadingVaults
       ) {
         setLoaded(false)
         const loadUserFarmingBalances = async () => {
@@ -480,7 +482,7 @@ const VaultList = () => {
         setSortingParams('deposits')
       }
     },
-    [chain, account, userStats],
+    [chain, account, userStats, loadedUserVaultsViemProvider, loadingVaults],
   )
 
   const [sortId, setSortId] = useState(0)

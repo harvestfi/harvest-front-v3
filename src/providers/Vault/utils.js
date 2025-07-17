@@ -19,11 +19,10 @@ export const calculateTotalValueDeposited = async vaults => {
   return totalDeposited
 }
 
-export const calculateFarmingBalance = async (pools, userStats, vaultSymbol, vaultsData) => {
+export const calculateFarmingBalance = async (userStats, vaultSymbol, vaultsData) => {
   let farmedBalance = '0'
   if (!vaultsData[vaultSymbol]) return '0'
   const { pricePerFullShare, decimals, vaultDecimals } = vaultsData[vaultSymbol]
-
   try {
     const userBalanceInVault = new BigNumber(
       userStats[vaultSymbol] && userStats[vaultSymbol].lpTokenBalance,
@@ -34,7 +33,7 @@ export const calculateFarmingBalance = async (pools, userStats, vaultSymbol, vau
     )
 
     const underlyingPoolBalanceForHolder = new BigNumber(userBalanceInPool.plus(userBalanceInVault))
-      .times(pricePerFullShare)
+      .times(pricePerFullShare ?? 1)
       .dividedBy(10 ** (vaultDecimals || decimals))
 
     farmedBalance = underlyingPoolBalanceForHolder.toFixed()

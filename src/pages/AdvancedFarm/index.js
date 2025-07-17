@@ -1468,7 +1468,7 @@ const AdvancedFarm = () => {
                         <PiQuestion
                           className="question"
                           data-tip
-                          data-for={
+                          id={
                             showLatestEarnings
                               ? 'tooltip-latest-earning'
                               : 'tooltip-lifetime-earning'
@@ -1479,6 +1479,11 @@ const AdvancedFarm = () => {
                             showLatestEarnings
                               ? 'tooltip-latest-earning'
                               : 'tooltip-lifetime-earning'
+                          }
+                          anchorSelect={
+                            showLatestEarnings
+                              ? '#tooltip-latest-earning'
+                              : '#tooltip-lifetime-earning'
                           }
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
@@ -1579,7 +1584,7 @@ const AdvancedFarm = () => {
                         $align="right"
                         $marginbottom={isMobile ? '12px' : '0px'}
                       >
-                        <div data-tip data-for="earnings-underlying">
+                        <div data-tip id="earnings-underlying">
                           {showLatestEarnings
                             ? showTokenBalance(underlyingEarningsLatest)
                             : showTokenBalance(underlyingEarnings)}
@@ -1591,6 +1596,7 @@ const AdvancedFarm = () => {
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
                           effect="solid"
+                          anchorSelect="#earnings-underlying"
                         >
                           <NewLabel
                             $size={isMobile ? '10px' : '10px'}
@@ -1622,9 +1628,10 @@ const AdvancedFarm = () => {
                       $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Total Balance
-                      <PiQuestion className="question" data-tip data-for="tooltip-total-balance" />
+                      <PiQuestion className="question" data-tip id="tooltip-total-balance" />
                       <Tooltip
                         id="tooltip-total-balance"
+                        anchorSelect="#tooltip-total-balance"
                         backgroundColor={darkMode ? 'white' : '#101828'}
                         borderColor={darkMode ? 'white' : 'black'}
                         textColor={darkMode ? 'black' : 'white'}
@@ -1694,7 +1701,7 @@ const AdvancedFarm = () => {
                         $align="right"
                         $marginbottom={isMobile ? '12px' : '0px'}
                       >
-                        <div className="question" data-tip data-for="fToken-total-balance">
+                        <div className="question" data-tip id="fToken-total-balance">
                           {!connected ? (
                             0
                           ) : userStats.length === 0 ? (
@@ -1710,6 +1717,7 @@ const AdvancedFarm = () => {
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
                           effect="solid"
+                          anchorSelect="#fToken-total-balance"
                         >
                           <NewLabel
                             $size={isMobile ? '10px' : '10px'}
@@ -1741,9 +1749,10 @@ const AdvancedFarm = () => {
                       $borderbottom={`1px solid ${borderColorBox}`}
                     >
                       Yield Estimates
-                      <PiQuestion className="question" data-tip data-for="tooltip-yield-estimate" />
+                      <PiQuestion className="question" data-tip id="tooltip-yield-estimate" />
                       <Tooltip
                         id="tooltip-yield-estimate"
+                        anchorSelect="#tooltip-yield-estimate"
                         backgroundColor={darkMode ? 'white' : '#101828'}
                         borderColor={darkMode ? 'white' : 'black'}
                         textColor={darkMode ? 'black' : 'white'}
@@ -2270,16 +2279,13 @@ const AdvancedFarm = () => {
                         $fontcolor={fontColor3}
                       >
                         Unstaked
-                        <PiQuestion
-                          className="question"
-                          data-tip
-                          data-for="tooltip-unstaked-desc"
-                        />
+                        <PiQuestion className="question" data-tip id="tooltip-unstaked-desc" />
                         <Tooltip
                           id="tooltip-unstaked-desc"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
+                          anchorSelect="#tooltip-unstaked-desc"
                         >
                           <NewLabel
                             $size={isMobile ? '12px' : '12px'}
@@ -2320,12 +2326,13 @@ const AdvancedFarm = () => {
                         $fontcolor="#15B088"
                       >
                         Staked
-                        <PiQuestion className="question" data-tip data-for="tooltip-staked-desc" />
+                        <PiQuestion className="question" data-tip id="tooltip-staked-desc" />
                         <Tooltip
                           id="tooltip-staked-desc"
                           backgroundColor={darkMode ? 'white' : '#101828'}
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
+                          anchorSelect="#tooltip-staked-desc"
                         >
                           <NewLabel
                             $size={isMobile ? '12px' : '12px'}
@@ -2510,7 +2517,7 @@ const AdvancedFarm = () => {
                         $height={isMobile ? '24px' : '24px'}
                         $fontcolor={fontColor1}
                       >
-                        <div className="question" data-tip data-for="tooltip-sharePrice">
+                        <div className="question" data-tip id="tooltip-sharePrice">
                           {latestSharePrice === '' ? (
                             <AnimatedDots />
                           ) : latestSharePrice === '-' ? (
@@ -2525,6 +2532,7 @@ const AdvancedFarm = () => {
                           borderColor={darkMode ? 'white' : 'black'}
                           textColor={darkMode ? 'black' : 'white'}
                           place="top"
+                          anchorSelect="#tooltip-sharePrice"
                         >
                           <NewLabel
                             $size={isMobile ? '12px' : '12px'}
@@ -2717,13 +2725,10 @@ const AdvancedFarm = () => {
                           generated yield and not deposits.
                         </NewLabel>
                         <NewLabel $display="flex" $self="center">
-                          <PiQuestion
-                            className="question"
-                            data-tip
-                            data-for="tooltip-last-harvest"
-                          />
+                          <PiQuestion className="question" data-tip id="tooltip-last-harvest" />
                           <Tooltip
                             id="tooltip-last-harvest"
+                            anchorSelect="#tooltip-last-harvest"
                             backgroundColor={darkMode ? 'white' : '#101828'}
                             borderColor={darkMode ? 'white' : 'black'}
                             textColor={darkMode ? 'black' : 'white'}

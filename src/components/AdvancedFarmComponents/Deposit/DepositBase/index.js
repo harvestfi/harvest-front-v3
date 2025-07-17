@@ -559,9 +559,10 @@ const DepositBase = ({
               $weight="500"
             >
               Est. Yearly Yield
-              <PiQuestion className="question" data-tip data-for="monthly-yield" />
+              <PiQuestion className="question" data-tip id="monthly-yield" />
               <Tooltip
                 id="monthly-yield"
+                anchorSelect="#monthly-yield"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
                 textColor={darkMode ? 'black' : 'white'}
@@ -622,9 +623,10 @@ const DepositBase = ({
               $weight="500"
             >
               {'Est. Received'}
-              <PiQuestion className="question" data-tip data-for="min-received" />
+              <PiQuestion className="question" data-tip id="min-received" />
               <Tooltip
                 id="min-received"
+                anchorSelect="#min-received"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
                 textColor={darkMode ? 'black' : 'white'}
@@ -651,7 +653,7 @@ const DepositBase = ({
               $flexflow="column"
             >
               <>
-                <div data-tip data-for="est-fToken-receive">
+                <div data-tip id="est-fToken-receive">
                   {account &&
                   pickedToken.symbol !== 'Select Token' &&
                   !new BigNumber(amount).isEqualTo(0) ? (
@@ -668,6 +670,7 @@ const DepositBase = ({
                 </div>
                 <Tooltip
                   id="est-fToken-receive"
+                  anchorSelect="#est-fToken-receive"
                   backgroundColor={darkMode ? 'white' : '#101828'}
                   borderColor={darkMode ? 'white' : 'black'}
                   textColor={darkMode ? 'black' : 'white'}

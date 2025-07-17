@@ -64,9 +64,10 @@ const ActionRow = ({ info, showTotalBalance }) => {
           </Badge>
           {info.event === 'Harvest' && info.netChange < 0 && (
             <IconWrapper>
-              <PiQuestion className="question" data-tip data-for="harvest-event-minus" />
+              <PiQuestion className="question" data-tip id="harvest-event-minus" />
               <Tooltip
                 id="harvest-event-minus"
+                anchorSelect="#harvest-event-minus"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
                 textColor={darkMode ? 'black' : 'white'}

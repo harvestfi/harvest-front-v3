@@ -435,9 +435,10 @@ const DepositStart = ({
                 {progressStep === 4 ? 'fTokens Received' : 'Est. fTokens Received'}
                 {progressStep !== 4 && (
                   <>
-                    <PiQuestion className="question" data-tip data-for="min-help" />
+                    <PiQuestion className="question" data-tip id="min-help" />
                     <Tooltip
                       id="min-help"
+                      anchorSelect="#min-help"
                       backgroundColor={darkMode ? 'white' : '#101828'}
                       borderColor={darkMode ? 'white' : 'black'}
                       textColor={darkMode ? 'black' : 'white'}
@@ -456,7 +457,7 @@ const DepositStart = ({
               </NewLabel>
               <NewLabel $weight="600" $textalign="right" $display="flex" $flexflow="column">
                 <>
-                  <div data-tip data-for="modal-fToken-receive-convert">
+                  <div data-tip id="modal-fToken-receive-convert">
                     {!pickedDefaultToken && progressStep === 4 ? (
                       receiveAmount !== '' ? (
                         showTokenBalance(receiveAmount)
@@ -475,6 +476,7 @@ const DepositStart = ({
                   </div>
                   <Tooltip
                     id="modal-fToken-receive-convert"
+                    anchorSelect="#modal-fToken-receive-convert"
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
                     textColor={darkMode ? 'black' : 'white'}

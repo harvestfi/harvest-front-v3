@@ -61,6 +61,7 @@ const WalletProvider = _ref => {
           }
         } else if (!connected && accounts.length > 0) {
           setAccount(accounts[0].toLowerCase())
+          // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
           setConnected(true)
 
           if (walletLocked) {
@@ -236,6 +237,7 @@ const WalletProvider = _ref => {
         accountEmitter = wallet.provider.on('accountsChanged', accountAddress => {
           if (accountAddress && accountAddress.length > 0) {
             setAccount(accountAddress[0].toLowerCase())
+            // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
             setConnected(true)
           } else {
             setAccount(null)
@@ -263,6 +265,7 @@ const WalletProvider = _ref => {
       if (wallet) {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
         setAccount(wallet.accounts[0].address.toLowerCase())
+        // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
         setChainId(chainNum)
         if (wallet?.provider) {
           const chain = getChainObject(wallet.chains[0].id)

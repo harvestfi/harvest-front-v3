@@ -30,10 +30,11 @@ const ChartRangeSelect = ({ state, type, text, onClick }) => {
               fontSize={12}
               className="info"
               data-tip
-              data-for="tooltip-last-timeframe"
+              id="tooltip-last-timeframe"
             />
             <Tooltip
               id="tooltip-last-timeframe"
+              anchorSelect="#tooltip-last-timeframe"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
               textColor={darkMode ? 'black' : 'white'}

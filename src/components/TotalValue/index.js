@@ -34,8 +34,9 @@ const TotalValue = ({
       <Div $fontcolor3={fontColor3}>
         {content}
         {content === 'Lifetime Yield' && <BetaBadge>Beta</BetaBadge>}
-        <PiQuestion className="question" data-tip data-for={toolTipTitle} color="#718BC5" />
+        <PiQuestion className="question" data-tip id={toolTipTitle} color="#718BC5" />
         <Tooltip
+          anchorSelect={toolTipTitle}
           id={toolTipTitle}
           backgroundColor={darkMode ? 'white' : '#101828'}
           borderColor={darkMode ? 'white' : 'black'}

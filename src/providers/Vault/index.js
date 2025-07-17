@@ -114,24 +114,24 @@ const VaultsProvider = _ref => {
             estimatedApyBreakdown = apiData[vaultSymbol].estimatedApyBreakdown
             boostedEstimatedAPY = apiData[vaultSymbol].boostedEstimatedAPY
             usdPrice = apiData[vaultSymbol].usdPrice
-            underlyingBalanceWithInvestment = apiData[vaultSymbol].underlyingBalanceWithInvestment
-            totalSupply = apiData[vaultSymbol].totalSupply
-            totalValueLocked = apiData[vaultSymbol].totalValueLocked
+            underlyingBalanceWithInvestment = apiData[vaultSymbol]?.underlyingBalanceWithInvestment
+            totalSupply = apiData[vaultSymbol]?.totalSupply
+            totalValueLocked = apiData[vaultSymbol]?.totalValueLocked
               ? apiData[vaultSymbol].totalValueLocked
               : '0'
-            allocPointData = apiData[vaultSymbol].allocPointData
+            allocPointData = apiData[vaultSymbol]?.allocPointData
               ? apiData[vaultSymbol].allocPointData
               : []
             vaultName = apiData[vaultSymbol].vaultSymbol ? apiData[vaultSymbol].vaultSymbol : null
             pricePerFullShare = importedVaults[vaultSymbol].pricePerFullShareOverride
               ? importedVaults[vaultSymbol].pricePerFullShareOverride
-              : apiData[vaultSymbol].pricePerFullShare
+              : apiData[vaultSymbol]?.pricePerFullShare
             vaultPrice = new BigNumber(usdPrice)
               .times(pricePerFullShare)
-              .div(10 ** apiData[vaultSymbol].decimals)
-            uniswapV3PositionId = apiData[vaultSymbol].uniswapV3PositionId
-            uniswapV3UnderlyingTokenPrices = apiData[vaultSymbol].uniswapV3UnderlyingTokenPrices
-            if (apiData[vaultSymbol].uniswapV3ManagedData) {
+              .div(10 ** (apiData[vaultSymbol]?.decimals || 18))
+            uniswapV3PositionId = apiData[vaultSymbol]?.uniswapV3PositionId
+            uniswapV3UnderlyingTokenPrices = apiData[vaultSymbol]?.uniswapV3UnderlyingTokenPrices
+            if (apiData[vaultSymbol]?.uniswapV3ManagedData) {
               const { capLimit, currentCap, ranges } = apiData[vaultSymbol].uniswapV3ManagedData
               const upper = abbreaviteNumber(Math.floor(ranges[0].upperBound / 100) * 100, 1)
               const lower = abbreaviteNumber(
@@ -206,7 +206,6 @@ const VaultsProvider = _ref => {
           await Promise.all(
             filterVaults(selectedVaults).map(async vaultSymbol => {
               const fetchedBalance = await calculateFarmingBalance(
-                pools,
                 updatedUserStats || userStats,
                 vaultSymbol,
                 loadedVaults,
@@ -217,12 +216,7 @@ const VaultsProvider = _ref => {
                 fetchedBalances[vaultSymbol] = fetchedBalance
               } else {
                 await pollUpdatedBalance(
-                  calculateFarmingBalance(
-                    pools,
-                    updatedUserStats || userStats,
-                    vaultSymbol,
-                    loadedVaults,
-                  ),
+                  calculateFarmingBalance(updatedUserStats || userStats, vaultSymbol, loadedVaults),
                   currentBalance,
                   () => {
                     fetchedBalances[vaultSymbol] = 'error'
@@ -287,11 +281,16 @@ const VaultsProvider = _ref => {
     _ref2 => {
       const [prevAccount] = _ref2
 
-      if (account !== prevAccount && account && !loadedUserVaultsViemProvider.current) {
+      if (
+        account !== prevAccount &&
+        !loadingVaults &&
+        account &&
+        !loadedUserVaultsViemProvider.current
+      ) {
         setFormattedVaults(vaultsData)
       }
     },
-    [account, vaultsData],
+    [account, vaultsData, loadingVaults],
   )
   return React.createElement(
     VaultsContext.Provider,

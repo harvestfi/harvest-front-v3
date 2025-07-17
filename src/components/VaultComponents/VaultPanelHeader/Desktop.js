@@ -14,13 +14,7 @@ import VaultName from './sub-components/VaultName'
 import VaultUserBalance from './sub-components/VaultUserBalance'
 import VaultValue from './sub-components/VaultValue'
 
-const DesktopPanelHeader = ({
-  token,
-  tokenSymbol,
-  vaultPool,
-  loadedVault,
-  loadingFarmingBalance,
-}) => {
+const DesktopPanelHeader = ({ token, tokenSymbol, vaultPool, loadedVault }) => {
   const location = useLocation()
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
 
@@ -104,7 +98,6 @@ const DesktopPanelHeader = ({
           <VaultUserBalance
             token={token}
             tokenSymbol={tokenSymbol}
-            loadingFarmingBalance={loadingFarmingBalance}
             loadedVault={loadedVault}
             $fontcolor1={fontColor1}
           />

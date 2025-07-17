@@ -529,9 +529,10 @@ const WithdrawBase = ({
               $weight="500"
             >
               Est. Received
-              <PiQuestion className="question" data-tip data-for="min-received" />
+              <PiQuestion className="question" data-tip id="min-received" />
               <Tooltip
                 id="min-received"
+                anchorSelect="#min-received"
                 backgroundColor={darkMode ? 'white' : '#101828'}
                 borderColor={darkMode ? 'white' : 'black'}
                 textColor={darkMode ? 'black' : 'white'}
@@ -559,7 +560,7 @@ const WithdrawBase = ({
             >
               <>
                 <TokenInfo>
-                  <div data-tip data-for="est-fToken-receive-revert">
+                  <div data-tip id="est-fToken-receive-revert">
                     {account &&
                     pickedToken.symbol !== 'Select Token' &&
                     !new BigNumber(unstakeBalance.toString()).isEqualTo(0) &&
@@ -577,6 +578,7 @@ const WithdrawBase = ({
                   </div>
                   <Tooltip
                     id="est-fToken-receive-revert"
+                    anchorSelect="#est-fToken-receive-revert"
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
                     textColor={darkMode ? 'black' : 'white'}

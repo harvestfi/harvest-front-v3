@@ -81,6 +81,11 @@ const Column = styled.div`
 
   .mobileTooltip {
     left: 50px !important;
+    background-color: ${props => (props.$darkMode ? 'white' : '#101828')};
+    border-color: ${props => (props.$darkMode ? 'white' : 'black')};
+    color: ${props => (props.$darkMode ? 'black' : 'white')};
+    border-radius: 8px;
+    z-index: 1000;
   }
 `
 
@@ -89,7 +94,10 @@ const Col = styled.div`
   cursor: ${props => props.$cursor};
   width: fit-content;
   @media screen and (max-width: 1200px) {
-    flex-flow: column;
+    font-size: 10px;
+  }
+  @media screen and (max-width: 1000px) {
+    font-size: 14px;
   }
 
   img.sortIcon {
@@ -119,6 +127,14 @@ const Col = styled.div`
 
   img.sort-icon {
     filter: ${props => props.$filtercolor};
+  }
+
+  .efficiency-tooltip {
+    background-color: ${props => (props.$darkMode ? 'white' : '#101828')};
+    border-color: ${props => (props.$darkMode ? 'white' : 'black')};
+    color: ${props => (props.$darkMode ? 'black' : 'white')};
+    border-radius: 8px;
+    z-index: 1000;
   }
 `
 

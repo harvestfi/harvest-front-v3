@@ -165,7 +165,7 @@ const Analytic = () => {
             </CompHeader>
             <FarmSubTitle
               data-tip
-              data-for="profits-to-farmers"
+              id="profits-to-farmers"
               $bold={600}
               $size="30px"
               $lineheight="38px"
@@ -183,6 +183,7 @@ const Analytic = () => {
             </FarmSubTitle>
             <Tooltip
               id="profits-to-farmers"
+              anchorSelect="#profits-to-farmers"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
               textColor={darkMode ? 'black' : 'white'}

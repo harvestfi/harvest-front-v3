@@ -53,9 +53,10 @@ const LifetimeYieldData = ({ noFarm, totalHistoryData }) => {
         <TooltipContent>
           <div className="title">
             Lifetime Yield
-            <PiQuestion className="question" data-tip data-for="lifetime-yield-desktop" />
+            <PiQuestion className="question" data-tip id="lifetime-yield-desktop" />
             <Tooltip
               id="lifetime-yield-desktop"
+              anchorSelect="#lifetime-yield-desktop"
               backgroundColor={darkMode ? 'white' : '#101828'}
               borderColor={darkMode ? 'white' : 'black'}
               textColor={darkMode ? 'black' : 'white'}

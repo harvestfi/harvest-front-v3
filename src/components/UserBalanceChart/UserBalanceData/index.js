@@ -431,11 +431,12 @@ const UserBalanceData = ({
               </TokenSymbol>
               <FlexDiv>
                 <CurContent $fontcolor="#8884d8" className="tt-content-underlying">
-                  <div className="question" data-tip data-for="chart-underlying-balance">
+                  <div className="question" data-tip id="chart-underlying-balance">
                     {showTokenBalance(curContentUnderlying)}
                   </div>
                   <Tooltip
                     id="chart-underlying-balance"
+                    anchorSelect="#chart-underlying-balance"
                     backgroundColor={darkMode ? 'white' : '#101828'}
                     borderColor={darkMode ? 'white' : 'black'}
                     textColor={darkMode ? 'black' : 'white'}
