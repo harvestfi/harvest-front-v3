@@ -284,7 +284,7 @@ const ApexChart = ({
 
       const checkPeriod = (currentTimeStamp - Number(firstDate1)) / (24 * 60 * 60)
 
-      if (isInactive || checkPeriod < 100) {
+      if (isInactive || checkPeriod < 100 || token.isIPORVault) {
         usedData = data
         firstDate = firstDate1
         maxTimestamp = usedData[0].timestamp * 1000
