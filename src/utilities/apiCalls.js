@@ -1176,8 +1176,13 @@ const processBalanceAndVaultData = (
           // Balance entry without a matching Vault entry
           const balanceEntry = { ...processedBalanceData[i] }
           balanceEntry.priceUnderlying =
-            uniqueVaultHData[z]?.priceUnderlying || lastKnownPriceUnderlying
-          balanceEntry.sharePrice = uniqueVaultHData[z]?.sharePrice || lastKnownSharePrice
+            uniqueVaultHData[z]?.priceUnderlying ||
+            uniqueVaultHData[z - 1]?.priceUnderlying ||
+            lastKnownPriceUnderlying
+          balanceEntry.sharePrice =
+            uniqueVaultHData[z]?.sharePrice ||
+            uniqueVaultHData[z - 1]?.sharePrice ||
+            lastKnownSharePrice
           balanceEntry.tvl = uniqueVaultHData[z]?.tvl || 0
           balanceEntry.apy = uniqueVaultHData[z]?.apy || 0
           mergedData.push(balanceEntry)
