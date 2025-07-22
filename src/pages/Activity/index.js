@@ -67,7 +67,6 @@ const Activity = () => {
           await fetchAndParseVaultData({
             account,
             groupOfVaults,
-            isPortfolio: false,
           })
 
         if (stakedVaults.length === 0) {

@@ -512,11 +512,11 @@ export const generateColor = (vaultList, key) => {
   return color
 }
 
-export async function fetchAndParseVaultData({ account, groupOfVaults, isPortfolio = false }) {
+export async function fetchAndParseVaultData({ account, groupOfVaults }) {
   let combinedEnrichedData = [],
     cumulativeLifetimeYield = 0
 
-  const { userBalanceVaults } = await getUserBalanceVaults(account, isPortfolio)
+  const { userBalanceVaults } = await getUserBalanceVaults(account)
 
   const stakedVaults = Object.keys(groupOfVaults).filter(key => {
     const vault = groupOfVaults[key]
@@ -563,6 +563,8 @@ export async function fetchAndParseVaultData({ account, groupOfVaults, isPortfol
 
     return acc
   }, {})
+
+  console.log('Vaults by chain and type:', vaultsByChainAndType)
 
   const groupPromises = Object.values(vaultsByChainAndType).map(async group => {
     const { chainId, isIPORVault, vaults, vaultData } = group

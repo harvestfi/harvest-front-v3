@@ -481,7 +481,6 @@ const Portfolio = () => {
         } = await fetchAndParseVaultData({
           account,
           groupOfVaults,
-          isPortfolio: true,
         })
 
         if (stakedVaults.length === 0) {

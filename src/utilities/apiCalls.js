@@ -341,10 +341,11 @@ export const getMultiVaultHistories = async (addresses, chainId, isIPOR = false)
 
   if (isIPOR) {
     query = `
-      query getMultipleVaultHistories($vaults: [String!]) {
+      query getMultipleVaultHistories($vaults: [String!], $finishTime: BigInt!) {
         plasmaVaultHistories(
           where: {
             plasmaVault_in: $vaults,
+            timestamp_lt: $finishTime
           },
           first: 1000,
           orderBy: timestamp,
@@ -356,11 +357,13 @@ export const getMultiVaultHistories = async (addresses, chainId, isIPOR = false)
     `
   } else {
     query = `
-      query getMultipleVaultHistories($vaults: [String!]) {
+      query getMultipleVaultHistories($vaults: [String!], $finishTime: BigInt!) {
         vaultHistories(
           first: 1000,
           where: {
             vault_in: $vaults,
+            timestamp_lt: $finishTime
+
           },
           orderBy: timestamp,
           orderDirection: desc
@@ -370,7 +373,8 @@ export const getMultiVaultHistories = async (addresses, chainId, isIPOR = false)
       }
     `
   }
-  variables = { vaults: processedAddresses }
+  const now = Math.ceil(new Date().getTime() / 1000)
+  variables = { vaults: processedAddresses, finishTime: now }
 
   const url = GRAPH_URLS[chainId]
 
@@ -381,6 +385,20 @@ export const getMultiVaultHistories = async (addresses, chainId, isIPOR = false)
       vaultHistoryData = data?.plasmaVaultHistories || []
     } else {
       vaultHistoryData = data?.vaultHistories || []
+    }
+
+    while (vaultHistoryData.length % 1000 === 0 && vaultHistoryData.length > 0) {
+      const lastTimestamp = vaultHistoryData[vaultHistoryData.length - 1].timestamp
+      variables.finishTime = lastTimestamp
+      const additionalData = await executeGraphCall(url, query, variables)
+      if (isIPOR) {
+        vaultHistoryData = vaultHistoryData.concat(additionalData?.plasmaVaultHistories || [])
+      } else {
+        vaultHistoryData = vaultHistoryData.concat(additionalData?.vaultHistories || [])
+      }
+      if (vaultHistoryData.length === 1000) {
+        break
+      }
     }
   } catch (e) {
     console.error('Error fetching vault histories:', e)
@@ -1158,10 +1176,10 @@ const processBalanceAndVaultData = (
           // Balance entry without a matching Vault entry
           const balanceEntry = { ...processedBalanceData[i] }
           balanceEntry.priceUnderlying =
-            uniqueVaultHData[z - 1]?.priceUnderlying || lastKnownPriceUnderlying
-          balanceEntry.sharePrice = uniqueVaultHData[z - 1]?.sharePrice || lastKnownSharePrice
-          balanceEntry.tvl = uniqueVaultHData[z - 1]?.tvl || 0
-          balanceEntry.apy = uniqueVaultHData[z - 1]?.apy || 0
+            uniqueVaultHData[z]?.priceUnderlying || lastKnownPriceUnderlying
+          balanceEntry.sharePrice = uniqueVaultHData[z]?.sharePrice || lastKnownSharePrice
+          balanceEntry.tvl = uniqueVaultHData[z]?.tvl || 0
+          balanceEntry.apy = uniqueVaultHData[z]?.apy || 0
           mergedData.push(balanceEntry)
           i += 1
         } else {
@@ -1596,7 +1614,7 @@ export const getPlasmaVaultHistory = async (address, chainId) => {
   return data
 }
 
-export const getUserBalanceVaults = async (account, isPortfolio = false) => {
+export const getUserBalanceVaults = async account => {
   const userBalanceVaults = []
   let userBalanceFlag = true
   if (account) {
@@ -1661,13 +1679,7 @@ export const getUserBalanceVaults = async (account, isPortfolio = false) => {
         userBalanceVaultData.plasmaUserBalances ? userBalanceVaultData.plasmaUserBalances : [],
       )
       balances.forEach(balance => {
-        if (isPortfolio) {
-          if (parseFloat(balance.value) > 0) {
-            userBalanceVaults.push(balance.vault?.id || balance.plasmaVault?.id)
-          }
-        } else {
-          userBalanceVaults.push(balance.vault?.id || balance.plasmaVault?.id)
-        }
+        userBalanceVaults.push(balance.vault?.id || balance.plasmaVault?.id)
       })
     })
   } catch (err) {
