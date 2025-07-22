@@ -564,8 +564,6 @@ export async function fetchAndParseVaultData({ account, groupOfVaults }) {
     return acc
   }, {})
 
-  console.log('Vaults by chain and type:', vaultsByChainAndType)
-
   const groupPromises = Object.values(vaultsByChainAndType).map(async group => {
     const { chainId, isIPORVault, vaults, vaultData } = group
     const addresses = vaults.map(vault => vault.address)

@@ -441,53 +441,12 @@ const PoolsProvider = _ref => {
 
         for (const chainId in poolsByChain) {
           const chainPools = poolsByChain[chainId]
-          const readerType = getReader(chainId, contracts)
 
-          if (readerType) {
-            const poolAddresses = []
-            const vaultAddresses = []
-
-            chainPools.forEach(pool => {
-              poolAddresses.push(pool.contractAddress)
-              vaultAddresses.push(pool.lpTokenData.address)
-            })
-
-            const readerInstance = readerType.instance
-            const readerMethods = readerType.methods
-
-            try {
-              const balances = await readerMethods.getAllInformation(
-                selectedAccount,
-                vaultAddresses,
-                poolAddresses,
-                readerInstance,
-              )
-
-              chainPools.forEach((pool, index) => {
-                if (!pool) return
-
-                stats[pool.id] = {
-                  lpTokenBalance: balances[0][index] || '0',
-                  totalStaked: balances[1][index] || '0',
-                  totalRewardsEarned: balances[2] && balances[2][index] ? balances[2][index] : '0',
-                  lpTokenApprovedBalance: '0',
-                }
-              })
-            } catch (error) {
-              console.error('Error in batch fetching pool stats:', error)
-              await Promise.all(
-                chainPools.map(async pool => {
-                  await processSinglePool(pool, selectedAccount, stats)
-                }),
-              )
-            }
-          } else {
-            await Promise.all(
-              chainPools.map(async pool => {
-                await processSinglePool(pool, selectedAccount, stats)
-              }),
-            )
-          }
+          await Promise.all(
+            chainPools.map(async pool => {
+              await processSinglePool(pool, selectedAccount, stats)
+            }),
+          )
         }
 
         setUserStats(currStats => ({ ...currStats, ...stats }))

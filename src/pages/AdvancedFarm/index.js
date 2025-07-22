@@ -930,7 +930,11 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     if ((vaultPool && rewardApy) || totalStaked || totalRewardsEarned) {
-      setShowRewardsTab(true)
+      if (rewardApy > 0 || totalStaked > 0 || totalRewardsEarned > 0) {
+        setShowRewardsTab(true)
+      } else {
+        setShowRewardsTab(false)
+      }
     }
   }, [vaultPool, rewardApy, totalStaked, totalRewardsEarned])
 
