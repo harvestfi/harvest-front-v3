@@ -11,7 +11,7 @@ const ThemeContext = createContext({})
  */
 export function ThemeProvider({ children }) {
   /** usePersistedState for storing state in local store */
-  const [showInactiveFarms, setShowInactiveFarms] = usePersistedState('showInactiveFarms', false)
+  const [showInactiveFarms, setShowInactiveFarms] = usePersistedState('showInactiveFarms', true)
   // const [darkMode, setDarkMode] = useState(false);
   const [darkMode, setDarkMode] = usePersistedState('darkmode', false)
 

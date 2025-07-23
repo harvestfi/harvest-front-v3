@@ -159,7 +159,7 @@ const Settings = () => {
               </div>
             </RowWrap>
             <RowWrap>
-              <CateName>Show Inactive Positions in Portfolio</CateName>
+              <CateName>Hide Inactive Positions in Portfolio</CateName>
               <div>
                 <ThemeMode
                   className="inactive"
@@ -182,7 +182,7 @@ const Settings = () => {
                       type="checkbox"
                       checked={showInactiveFarms}
                       onChange={handleToggle(setShowInactiveFarms)}
-                      aria-label="Switch between dark and light mode"
+                      aria-label="Hide or show inactive positions in portfolio"
                     />
                   </div>
                 </ThemeMode>
