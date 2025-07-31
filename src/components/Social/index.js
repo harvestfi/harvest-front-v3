@@ -8,11 +8,11 @@ import twitter from '../../assets/images/logos/sidebar/twitter.svg'
 import medium from '../../assets/images/logos/sidebar/medium.svg'
 
 const Socials = () => {
-  const { darkMode, socialBackColor, socialIconColor } = useThemeContext()
+  const { darkMode, socialBackColor } = useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   return (
-    <SocialsContainer iconColor={socialIconColor} $backcolor={socialBackColor}>
+    <SocialsContainer $backcolor={socialBackColor}>
       <Social $darkmode={darkMode} href={SOCIAL_LINKS.MEDIUM} target="_blank">
         <img src={medium} alt="" />
       </Social>

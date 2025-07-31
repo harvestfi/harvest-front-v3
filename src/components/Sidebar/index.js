@@ -274,7 +274,7 @@ const MobileMenu = ({ item, isDropdownLink, fontColor, filterColor, darkMode, is
       $farmsfilter={farmsFilter}
     >
       <SideIcons className="sideIcon" src={item.imgPath} alt="Harvest" width="25px" height="25px" />
-      <LinkName color={active ? '#6ED459' : darkMode ? '#fff' : '#7A7A7A'} $margintop="2px">
+      <LinkName $fontcolor={active ? '#6ED459' : darkMode ? '#fff' : '#7A7A7A'} $margintop="2px">
         {item.linkName}
       </LinkName>
       {item.new ? <NewTag>New</NewTag> : <></>}
@@ -296,7 +296,6 @@ const Sidebar = ({ width }) => {
     fontColor5,
     fontColor7,
     inputBorderColor,
-    toggleColor,
     borderColorBox,
     hoverColor,
     btnHoverColor,
@@ -718,15 +717,13 @@ const Sidebar = ({ width }) => {
           ))}
 
           <MobileMenuContainer>
-            <LinkMobile className="more" type="button" onClick={handleMobileShow}>
-              <SideIcons
-                width="25px"
-                height="25px"
-                $togglecolor={toggleColor}
-                $filterColor={filterColorBottom}
-                src={Toggle}
-                alt=""
-              />
+            <LinkMobile
+              className="more"
+              type="button"
+              onClick={handleMobileShow}
+              $farmsfilter={filterColorBottom}
+            >
+              <SideIcons width="25px" height="25px" src={Toggle} alt="" />
               <LinkName $margintop="2px" $fontcolor={darkMode ? '#fff' : '#7A7A7A'}>
                 More
               </LinkName>

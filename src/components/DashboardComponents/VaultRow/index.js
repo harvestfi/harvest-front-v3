@@ -231,17 +231,17 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
             </Content>
             <Content $width="30%">
               <ContentInner>
-                <ListItem color="#718BC5" $weight={500} $size={10} height={18} value="Balance" />
+                <ListItem color="#718BC5" weight={500} size={10} height={18} value="Balance" />
                 <ListItem
                   weight={400}
                   size={12}
                   height={18}
-                  color={fontColor1}
+                  color={isMobile ? fontColor1 : fontColor}
                   value={showUsdValueCurrency(info.balance, currencySym, currencyRate)}
                 />
               </ContentInner>
               <ContentInner $margintop="25px">
-                <ListItem color="#718BC5" $weight={500} size={10} height={18} value="Rewards" />
+                <ListItem color="#718BC5" weight={500} size={10} height={18} value="Rewards" />
                 <ListItem
                   weight={400}
                   size={12}

@@ -144,7 +144,7 @@ const ListItem = ({
             $fontcolor="#6988FF"
             $fontsize="10px"
             $justifycontent="end"
-            whiteSpace="nowrap"
+            $whitespace="nowrap"
           >
             {`${tokenName} (${platform})`}
             <ChainImage src={chain} imgMargin={imgMargin} className="chainImage" alt="" />
