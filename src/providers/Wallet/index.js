@@ -304,6 +304,7 @@ const WalletProvider = _ref => {
         await Promise.all(
           selectedTokens
             .filter(token => !isArray(tokens[token]?.tokenAddress))
+            .filter(token => token !== undefined)
             .map(async token => {
               const { methods, instance } = contracts[token]
               const viemInstance = await getViem(false, account, viem)
