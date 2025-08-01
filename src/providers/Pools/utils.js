@@ -72,6 +72,7 @@ export const getUserStats = async (
   autoStakePoolAddress,
   account,
   autoStakeContractInstance,
+  isIPOR = false,
 ) => {
   let lpTokenBalance = '0',
     lpTokenApprovedBalance = '0',
@@ -83,47 +84,49 @@ export const getUserStats = async (
   if (account) {
     totalStaked = await getTotalStaked(account, autoStakeContractInstance || poolContractInstance)
 
-    const rewardTokenSymbols = get(
-      pools.find(pool => pool.contractAddress === poolContractAddress),
-      'rewardTokenSymbols',
-      [],
-    )
+    if (!isIPOR) {
+      const rewardTokenSymbols = get(
+        pools.find(pool => pool.contractAddress === poolContractAddress),
+        'rewardTokenSymbols',
+        [],
+      )
 
-    const rewardTokens = get(
-      pools.find(pool => pool.contractAddress === poolContractAddress),
-      'rewardTokens',
-      [],
-    )
+      const rewardTokens = get(
+        pools.find(pool => pool.contractAddress === poolContractAddress),
+        'rewardTokens',
+        [],
+      )
 
-    if (rewardTokenSymbols.length > 1) {
-      totalRewardsEarned = new BigNumber(0)
+      if (rewardTokenSymbols.length > 1) {
+        totalRewardsEarned = new BigNumber(0)
 
-      await forEach(rewardTokenSymbols, async (symbol, index) => {
-        let rewardAddress = ''
-        try {
-          rewardAddress = rewardTokens[index] || tokens[symbol].tokenAddress
-        } catch (err) {
-          console.log('rewardSymbol: ', rewardTokenSymbols, symbol)
-        }
+        await forEach(rewardTokenSymbols, async (symbol, index) => {
+          let rewardAddress = ''
+          try {
+            rewardAddress = rewardTokens[index] || tokens[symbol].tokenAddress
+          } catch (err) {
+            console.log('rewardSymbol: ', rewardTokenSymbols, symbol)
+          }
 
-        rewardsEarned[symbol] =
-          rewardAddress !== ''
-            ? await calculateRewardsEarned(rewardAddress, account, poolContractInstance)
-            : '0'
-        totalRewardsEarned = totalRewardsEarned.plus(new BigNumber(rewardsEarned[symbol]))
-      })
+          rewardsEarned[symbol] =
+            rewardAddress !== ''
+              ? await calculateRewardsEarned(rewardAddress, account, poolContractInstance)
+              : '0'
+          totalRewardsEarned = totalRewardsEarned.plus(new BigNumber(rewardsEarned[symbol]))
+        })
 
-      totalRewardsEarned = totalRewardsEarned.toFixed()
-    } else {
-      totalRewardsEarned = await calculateTotalRewardsEarned(account, poolContractInstance)
+        totalRewardsEarned = totalRewardsEarned.toFixed()
+      } else {
+        totalRewardsEarned = await calculateTotalRewardsEarned(account, poolContractInstance)
+      }
+
+      lpTokenBalance = await tokenMethods.getBalance(account, lpTokenContractInstance)
+      lpTokenApprovedBalance = await tokenMethods.getApprovedAmount(
+        account,
+        autoStakePoolAddress || poolContractAddress,
+        lpTokenContractInstance,
+      )
     }
-
-    lpTokenBalance = await tokenMethods.getBalance(account, lpTokenContractInstance)
-    lpTokenApprovedBalance = await tokenMethods.getApprovedAmount(
-      account,
-      autoStakePoolAddress || poolContractAddress,
-      lpTokenContractInstance,
-    )
   }
 
   return {

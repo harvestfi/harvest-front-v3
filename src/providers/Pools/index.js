@@ -36,6 +36,7 @@ import { useWallet } from '../Wallet'
 import { getLpTokenData, getUserStats, pollUpdatedUserStats } from './utils'
 
 const { pools: defaultPools } = require('../../data')
+const { tokens } = require('../../data')
 
 const PoolsContext = createContext()
 const usePools = () => useContext(PoolsContext)
@@ -426,10 +427,11 @@ const PoolsProvider = _ref => {
             pool = {
               id: pool,
               lpTokenData: {
-                address: contracts.iporVaults[pool]?.address,
+                address: tokens[pool].tokenAddress,
               },
-              contractAddress: '0x0000000000000000000000000000000000000000', //For IPOR vaults, we don't have a pool address
+              contractAddress: contracts.iporVaults[pool]?.address, //For IPOR vaults, we don't have a pool address
               chain: contracts.iporVaults[pool]?.chain,
+              isIPOR: tokens[pool]?.isIPORVault ?? false,
             }
           }
           const chainId = pool.chain
@@ -485,6 +487,7 @@ const PoolsProvider = _ref => {
           pool.autoStakePoolAddress,
           selectedAccount,
           autoStakeContractInstance,
+          pool?.isIPOR,
         )
 
         if (!isEqual(fetchedStats, currentStats[pool.id])) {
@@ -498,6 +501,7 @@ const PoolsProvider = _ref => {
               pool.autoStakePoolAddress,
               selectedAccount,
               autoStakeContractInstance,
+              pool?.isIPOR,
             ),
             currentStats,
             () => {
