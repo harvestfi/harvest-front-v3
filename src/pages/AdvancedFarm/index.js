@@ -467,7 +467,8 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     let staked, unstaked, total, amountBalanceUSD
-    staked = totalStaked && fromWei(totalStaked, token.decimals, MAX_DECIMALS, true)
+    staked =
+      totalStaked && fromWei(totalStaked, token.vaultDecimals || token.decimals, MAX_DECIMALS, true)
 
     unstaked =
       lpTokenBalance &&
