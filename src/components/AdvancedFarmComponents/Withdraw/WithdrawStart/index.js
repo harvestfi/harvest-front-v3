@@ -259,6 +259,7 @@ const WithdrawStart = ({
           const receiveUsdString = portalData ? portalData.context?.outputAmountUsd : ''
           setRevertedAmount(receiveString)
           setRevertedAmountUsd(formatNumberWido(receiveUsdString))
+          isSuccess = true
         } catch (err) {
           setWithdrawFailed(true)
           setStartSpinner(false)

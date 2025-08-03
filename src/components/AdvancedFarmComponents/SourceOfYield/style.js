@@ -291,6 +291,11 @@ const FlexDiv = styled.div`
       flex-flow: column;
     }
   }
+
+  @media screen and (max-width: 400px) {
+    flex-flow: column;
+    gap: 10px;
+  }
 `
 
 const InfoLabel = styled.a`
@@ -324,7 +329,7 @@ const InfoLabel = styled.a`
   border-radius: 8px;
   border: 1px solid ${props => props.$bordercolor};
   text-decoration: none;
-  padding: 9px 17px;
+  padding: ${props => props.$padding};
   align-self: center;
   position: relative;
   color: #15202b;
@@ -345,6 +350,10 @@ const InfoLabel = styled.a`
     .address {
       font-weight: bold;
     }
+  }
+
+  @media screen and (max-width: 400px) {
+    width: 90%;
   }
 `
 
