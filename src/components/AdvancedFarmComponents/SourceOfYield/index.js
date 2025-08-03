@@ -6,16 +6,8 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { getExplorerLink } from '../../../services/viem'
 
 const SourceOfYield = params => {
-  const {
-    bgColor,
-    bgColorNew,
-    borderColorBox,
-    hoverColor,
-    fontColor1,
-    fontColor3,
-    fontColor4,
-    fontColor6,
-  } = useThemeContext()
+  const { bgColorNew, borderColorBox, hoverColor, fontColor1, fontColor3, fontColor4, fontColor6 } =
+    useThemeContext()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const token = params.token
@@ -80,10 +72,11 @@ const SourceOfYield = params => {
             $bgcolor={bgColorNew}
             $hovercolor={hoverColor}
             $bordercolor={borderColorBox}
+            $padding={isMobile ? '9px 5px' : '9px 17px'}
           >
             <NewLabel
-              $size="12px"
-              $weight={isMobile ? 600 : 600}
+              $size={isMobile ? '10px' : '12px'}
+              $weight={isMobile ? 400 : 600}
               $height="16px"
               $self="center"
               $fontcolor={fontColor1}
@@ -102,10 +95,11 @@ const SourceOfYield = params => {
             $bgcolor={bgColorNew}
             $hovercolor={hoverColor}
             $bordercolor={borderColorBox}
+            $padding={isMobile ? '9px 5px' : '9px 17px'}
           >
             <NewLabel
-              $size="12px"
-              $weight={isMobile ? 600 : 600}
+              $size={isMobile ? '10px' : '12px'}
+              $weight={isMobile ? 400 : 600}
               $height="16px"
               $self="center"
               $fontcolor={fontColor1}
@@ -129,9 +123,10 @@ const SourceOfYield = params => {
               $bgcolor={bgColorNew}
               $hovercolor={hoverColor}
               $bordercolor={borderColorBox}
+              $padding={isMobile ? '9px 5px' : '9px 17px'}
             >
               <NewLabel
-                $size="12px"
+                $size={isMobile ? '10px' : '12px'}
                 $weight={isMobile ? 400 : 600}
                 $height="16px"
                 $self="center"
@@ -147,13 +142,14 @@ const SourceOfYield = params => {
                 target="_blank"
                 onClick={e => e.stopPropagation()}
                 rel="noopener noreferrer"
-                $bgcolor={bgColor}
+                $bgcolor={bgColorNew}
                 $hovercolor={hoverColor}
                 $bordercolor={borderColorBox}
+                $padding={isMobile ? '9px 5px' : '9px 17px'}
               >
                 <NewLabel
-                  $size="12px"
-                  $weight={isMobile ? 600 : 600}
+                  $size={isMobile ? '10px' : '12px'}
+                  $weight={isMobile ? 400 : 600}
                   $height="16px"
                   $self="center"
                   $fontcolor={fontColor1}
