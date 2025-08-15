@@ -52,11 +52,11 @@ const VaultPanelActionsFooter = ({
   const ratesPerDay = []
 
   if (vaultPool) {
-    console.log('vaultPool', vaultPool)
-    console.log('rewardTokens', vaultPool.rewardTokens)
-    console.log('tokens', Object.entries(tokens))
-    const [, selectedToken] = find(Object.entries(tokens), ([, tokenValues]) =>
-      vaultPool.rewardTokens?.includes(tokenValues.tokenAddress),
+    const [, selectedToken] = find(
+      Object.entries(tokens),
+      ([, tokenValues]) =>
+        vaultPool.rewardTokens?.includes(tokenValues.tokenAddress) ||
+        vaultPool.rewardTokens?.includes(tokenValues.vaultAddress),
     )
     if (vaultPool.rewardAPY !== null) {
       vaultPool.rewardAPY.forEach(rewardApy => {
