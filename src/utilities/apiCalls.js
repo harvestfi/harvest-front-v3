@@ -265,10 +265,11 @@ export const getVaultHistories = async (address, chainId, isIPOR = false) => {
 
   if (isIPOR) {
     query = `
-      query getVaultHistories($vault: String!) {
+      query getVaultHistories($vault: String!, $finishTime: BigInt!) {
         plasmaVaultHistories(
           where: {
             plasmaVault: $vault,
+            timestamp_lt: $finishTime
           },
           first: 1000,
           orderBy: timestamp,
@@ -278,14 +279,15 @@ export const getVaultHistories = async (address, chainId, isIPOR = false) => {
         }
       }
     `
-    variables = { vault: address }
+    variables = { vault: address, finishTime: Math.ceil(new Date().getTime() / 1000) }
   } else {
     query = `
-      query getVaultHistories($vault: String!) {
+      query getVaultHistories($vault: String!, $finishTime: BigInt!) {
         vaultHistories(
           first: 1000,
           where: {
             vault: $vault,
+            timestamp_lt: $finishTime
           },
           orderBy: timestamp,
           orderDirection: desc
@@ -294,7 +296,10 @@ export const getVaultHistories = async (address, chainId, isIPOR = false) => {
         }
       }
     `
-    variables = address === farm ? { vault: ifarm } : { vault: address }
+    variables =
+      address === farm
+        ? { vault: ifarm, finishTime: Math.ceil(new Date().getTime() / 1000) }
+        : { vault: address, finishTime: Math.ceil(new Date().getTime() / 1000) }
   }
 
   const url = GRAPH_URLS[chainId]
@@ -306,6 +311,20 @@ export const getVaultHistories = async (address, chainId, isIPOR = false) => {
       vaultHistoryData = data?.plasmaVaultHistories || []
     } else {
       vaultHistoryData = data?.vaultHistories || []
+    }
+
+    while (vaultHistoryData.length % 1000 === 0 && vaultHistoryData.length > 0) {
+      const lastTimestamp = vaultHistoryData[vaultHistoryData.length - 1].timestamp
+      variables.finishTime = lastTimestamp
+      const additionalData = await executeGraphCall(url, query, variables)
+      if (isIPOR) {
+        vaultHistoryData = vaultHistoryData.concat(additionalData?.plasmaVaultHistories || [])
+      } else {
+        vaultHistoryData = vaultHistoryData.concat(additionalData?.vaultHistories || [])
+      }
+      if (vaultHistoryData.length === 1000) {
+        break
+      }
     }
   } catch (e) {
     console.error('Error fetching vault histories:', e)
@@ -802,12 +821,13 @@ export const getUserBalanceHistories = async (address, chainId, account, isIPOR 
 
   if (isIPOR) {
     query = `
-      query getUserBalanceHistories($vault: String!, $account: String!) {
+      query getUserBalanceHistories($vault: String!, $account: String!, $finishTime: BigInt!) {
         plasmaUserBalanceHistories(
           first: 1000,
           where: {
             plasmaVault: $vault,
             userAddress: $account,
+            timestamp_lt: $finishTime
           },
           orderBy: timestamp,
           orderDirection: desc,
@@ -818,12 +838,13 @@ export const getUserBalanceHistories = async (address, chainId, account, isIPOR 
     `
   } else {
     query = `
-      query getUserBalanceHistories($vault: String!, $account: String!) {
+      query getUserBalanceHistories($vault: String!, $account: String!, $finishTime: BigInt!) {
         userBalanceHistories(
           first: 1000,
           where: {
             vault: $vault,
             userAddress: $account,
+            timestamp_lt: $finishTime
           },
           orderBy: timestamp,
           orderDirection: desc,
@@ -834,7 +855,10 @@ export const getUserBalanceHistories = async (address, chainId, account, isIPOR 
     `
   }
 
-  variables = address === farm ? { vault: ifarm, account } : { vault: address, account }
+  variables =
+    address === farm
+      ? { vault: ifarm, account, finishTime: Math.ceil(new Date().getTime() / 1000) }
+      : { vault: address, account, finishTime: Math.ceil(new Date().getTime() / 1000) }
   const url = GRAPH_URLS[chainId]
 
   try {
@@ -844,6 +868,20 @@ export const getUserBalanceHistories = async (address, chainId, account, isIPOR 
       balanceData = data?.plasmaUserBalanceHistories || []
     } else {
       balanceData = data?.userBalanceHistories || []
+    }
+
+    while (balanceData.length % 1000 === 0 && balanceData.length > 0) {
+      const lastTimestamp = balanceData[balanceData.length - 1].timestamp
+      variables.finishTime = lastTimestamp
+      const additionalData = await executeGraphCall(url, query, variables)
+      if (isIPOR) {
+        balanceData = balanceData.concat(additionalData?.plasmaUserBalanceHistories || [])
+      } else {
+        balanceData = balanceData.concat(additionalData?.userBalanceHistories || [])
+      }
+      if (balanceData.length === 1000) {
+        break
+      }
     }
   } catch (e) {
     console.error('Error fetching user balance histories:', e)
@@ -885,12 +923,13 @@ export const getMultipleUserBalanceHistories = async (
 
   if (isIPOR) {
     query = `
-      query getMultipleUserBalanceHistories($vaults: [String!]!, $account: String!) {
+      query getMultipleUserBalanceHistories($vaults: [String!]!, $account: String!, $finishTime: BigInt!) {
         plasmaUserBalanceHistories(
           first: 1000,
           where: {
             plasmaVault_in: $vaults,
             userAddress: $account,
+            timestamp_lt: $finishTime
           },
           orderBy: timestamp,
           orderDirection: desc,
@@ -901,12 +940,13 @@ export const getMultipleUserBalanceHistories = async (
     `
   } else {
     query = `
-      query getMultipleUserBalanceHistories($vaults: [String!]!, $account: String!) {
+      query getMultipleUserBalanceHistories($vaults: [String!]!, $account: String!, $finishTime: BigInt!) {
         userBalanceHistories(
           first: 1000,
           where: {
             vault_in: $vaults,
             userAddress: $account,
+            timestamp_lt: $finishTime
           },
           orderBy: timestamp,
           orderDirection: desc,
@@ -917,7 +957,11 @@ export const getMultipleUserBalanceHistories = async (
     `
   }
 
-  variables = { vaults: processedAddresses, account }
+  variables = {
+    vaults: processedAddresses,
+    account,
+    finishTime: Math.ceil(new Date().getTime() / 1000),
+  }
   const url = GRAPH_URLS[chainId]
 
   try {
@@ -927,6 +971,20 @@ export const getMultipleUserBalanceHistories = async (
       balanceData = data?.plasmaUserBalanceHistories || []
     } else {
       balanceData = data?.userBalanceHistories || []
+    }
+
+    while (balanceData.length % 1000 === 0 && balanceData.length > 0) {
+      const lastTimestamp = balanceData[balanceData.length - 1].timestamp
+      variables.finishTime = lastTimestamp
+      const additionalData = await executeGraphCall(url, query, variables)
+      if (isIPOR) {
+        balanceData = balanceData.concat(additionalData?.plasmaUserBalanceHistories || [])
+      } else {
+        balanceData = balanceData.concat(additionalData?.userBalanceHistories || [])
+      }
+      if (balanceData.length === 1000) {
+        break
+      }
     }
   } catch (e) {
     console.error('Error fetching user balance histories:', e)
