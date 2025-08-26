@@ -1964,8 +1964,12 @@ const AdvancedFarm = () => {
                             vaultName = vaultParts
                               .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
                               .join(' ')
-                          if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
-                          if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
+                          if (vaultName === 'USDC' && chainName == 'base')
+                            vaultName = 'Compound V3 USDC'
+                          if (vaultName === 'USDC' && chainName == 'eth')
+                            vaultName = 'Morpho GF USDC'
+                          if (vaultName === 'WETH' && chainName == 'base')
+                            vaultName = 'Compound V3 WETH'
 
                           lifetimeApyValue = `${iporHvaultsLFAPY[apyKey]}%`
                           return (
@@ -2788,8 +2792,12 @@ const AdvancedFarm = () => {
                             vaultName = vaultParts
                               .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
                               .join(' ')
-                            if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
-                            if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
+                            if (vaultName === 'USDC' && chainName == 'base')
+                              vaultName = 'Compound V3 USDC'
+                            if (vaultName === 'USDC' && chainName == 'eth')
+                              vaultName = 'Morpho GF USDC'
+                            if (vaultName === 'WETH' && chainName == 'base')
+                              vaultName = 'Compound V3 WETH'
                           }
                           return (
                             <FlexDiv

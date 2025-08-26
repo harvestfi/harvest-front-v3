@@ -7,7 +7,7 @@ import { ChartDiv, Container, Header, Total, TokenSymbol, TooltipInfo, FlexDiv }
 
 /* eslint-disable camelcase */
 const vaultAdded = {
-  morphoMW_USDC: 1752451200,
+  morphoMW_USDC: 1754956800,
   morphoGC_USDC: 1751241600,
   morphoSE_USDC: 1747440000,
   morphoGP_USDC: 1746316800,
@@ -16,21 +16,28 @@ const vaultAdded = {
   euler_USDC_AR: 1746520200,
   arcadia_USDC: 1746520200,
   fortyAcres_USDC: 1748595000,
-  morpho_AR_USDC: 1751673600,
-  morpho_UN_USDC: 1748595000,
-  morpho_YOG_USDC: 1751241600,
+  morpho_AR_USDC: 1753228800,
+  morpho_UN_USDC: 1755648000,
+  morpho_YOG_USDC: 1753574400,
+  morpho_GF_USDC: 1753920000,
+  morphoRE7_USDC: 1755648000,
   arcadia_ETH: 1746520200,
-  morphoSH_ETH: 1750032000,
-  morphoSE_ETH: 1752105600,
-  morphoMW_ETH: 1752451200,
-  morphoGC_ETH: 1750032000,
-  morphoMW_cbBTC: 1752364800,
+  morphoSH_ETH: 1753488000,
+  morphoSE_ETH: 1755216000,
+  morphoMW_ETH: 1755907200,
+  morphoGC_ETH: 1755216000,
+  morpho_YOG_ETH: 1755907200,
+  morphoION_ETH: 1755907200,
+  morphoMW_cbBTC: 1753833600,
   arcadia_cbBTC: 1746520200,
   IPOR_USDC_base: 1746057600,
   IPOR_WETH_base: 1746057600,
   IPOR_cbBTC_base: 1746057600,
-  morpho_FA_USDC: 1750204800,
-  IPOR_USDC_ethereum: 1748955600,
+  morpho_FA_USDC: 1752796800,
+  morpho_SH_USDC: 1753488000,
+  euler_RE_USDC: 1752105600,
+  euler_SM_USDC: 1752105600,
+  IPOR_USDC_ethereum: 1752105600,
   IPOR_USDC_arbitrum: 1743465600,
   IPOR_WETH_arbitrum: 1743465600,
   IPOR_WBTC_arbitrum: 1743465600,
@@ -115,7 +122,7 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
           })
         })
         // Remove outliers
-        if (adjustedEntries[0].sharePrice / targetFinalValue > 1.001) {
+        if (adjustedEntries[0].sharePrice / targetFinalValue > 1.01) {
           delete sharepriceData[key]
         } else {
           sharepriceData[key] = adjustedEntries

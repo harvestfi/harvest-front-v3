@@ -350,8 +350,9 @@ const AutopilotInfo = ({ allVaultsData, vaultData, setPilotInfoShow }) => {
                   vaultName = vaultParts
                     .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
                     .join(' ')
-                  if (vaultName === 'USDC') vaultName = 'Compound V3 USDC'
-                  if (vaultName === 'WETH') vaultName = 'Compound V3 WETH'
+                  if (vaultName === 'USDC' && chainName == 'base') vaultName = 'Compound V3 USDC'
+                  if (vaultName === 'USDC' && chainName == 'eth') vaultName = 'Morpho GF USDC'
+                  if (vaultName === 'WETH' && chainName == 'base') vaultName = 'Compound V3 WETH'
                 }
                 return (
                   <RowDiv key={index}>
