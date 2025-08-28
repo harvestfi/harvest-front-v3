@@ -45,6 +45,7 @@ const Autopilot = () => {
   const [, setIsManualSelection] = useState(false)
   const [walletBalances, setWalletBalances] = useState({})
   const [userVBalance, setUserVBalance] = useState({})
+  const [userAssetBalances, setUserAssetBalances] = useState({})
   const [yieldValues, setYieldValues] = useState({})
 
   useEffect(() => {
@@ -112,6 +113,7 @@ const Autopilot = () => {
 
   const fetchBalances = async (vaultsDataVal, accountVal, contractsVal) => {
     const vBalancesMap = {}
+    const assetBalancesMap = {}
     const yieldMap = {}
 
     await getWalletBalances(
@@ -127,11 +129,21 @@ const Autopilot = () => {
           vaultContract.instance,
           accountVal,
         )
+        const assetBalance = await vaultContract.methods.convertToAssets(
+          vaultContract.instance,
+          vaultBalance,
+        )
 
         if (new BigNumber(vaultBalance).gt(0)) {
           vBalancesMap[vault.id] = fromWei(new BigNumber(vaultBalance), Number(vault.vaultDecimals))
+          assetBalancesMap[vault.id] = fromWei(
+            new BigNumber(assetBalance),
+            Number(vault.decimals),
+            Number(vault.decimals),
+          )
         } else {
           vBalancesMap[vault.id] = '0'
+          assetBalancesMap[vault.id] = '0'
         }
 
         const { bFlag, vHFlag, sumNetChange } = await initBalanceAndDetailData(
@@ -150,6 +162,7 @@ const Autopilot = () => {
     )
 
     setUserVBalance(vBalancesMap)
+    setUserAssetBalances(assetBalancesMap)
     setYieldValues(yieldMap)
   }
 
@@ -249,7 +262,7 @@ const Autopilot = () => {
                   allVaultsData={allVaultsData}
                   vaultData={vault}
                   walletBalance={walletBalances[vault.id] || '0'}
-                  userBalance={userVBalance[vault.id] || '0'}
+                  userAssetBalance={userAssetBalances[vault.id] || '0'}
                   yieldValue={yieldValues[vault.id] || '0'}
                   key={index}
                   index={index}

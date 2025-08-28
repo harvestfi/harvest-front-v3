@@ -43,7 +43,7 @@ const AutopilotPanel = ({
   allVaultsData,
   vaultData,
   walletBalance,
-  userBalance,
+  userAssetBalance,
   yieldValue,
   index,
 }) => {
@@ -177,7 +177,7 @@ const AutopilotPanel = ({
         } else {
           toast.error(`InputAmount exceeds wallet Balance!`)
         }
-      } else if (Number(userBalance) >= Number(inputAmount)) {
+      } else if (Number(userAssetBalance) >= Number(inputAmount)) {
         setModalShow(true)
       } else {
         toast.error(`InputAmount exceeds deposited Balance!`)
@@ -234,7 +234,7 @@ const AutopilotPanel = ({
                 $marginbottom="10px"
                 $marginright="25px"
               >
-                {showTokenBalance(userBalance)}&nbsp;{vaultData?.vaultSymbol}
+                {showTokenBalance(userAssetBalance)}&nbsp;{vaultData?.tokenNames[0]}
               </NewLabel>
             </FlexDiv>
             <FlexDiv $flexdirection="row" $justifycontent="space-between">
@@ -333,7 +333,7 @@ const AutopilotPanel = ({
                     if (subscribe) {
                       setInputAmount(getRawTokenBalance(walletBalance, 8))
                     } else {
-                      setInputAmount(getRawTokenBalance(userBalance, 8))
+                      setInputAmount(getRawTokenBalance(userAssetBalance, 8))
                     }
                   }
                 }}
@@ -341,7 +341,7 @@ const AutopilotPanel = ({
                 {subscribe ? 'Wallet Balance' : 'My Balance'}:{' '}
                 {subscribe
                   ? `${showTokenBalance(walletBalance, 8)} ${vaultData?.tokenNames[0]}`
-                  : `${showTokenBalance(userBalance, 8)} ${vaultData?.vaultSymbol}`}
+                  : `${showTokenBalance(userAssetBalance, 8)} ${vaultData?.tokenNames[0]}`}
               </NewLabel>
             </FlexDiv>
             <FlexDiv $margintop="18px">
