@@ -341,7 +341,7 @@ const VaultList = () => {
 
   groupOfVaults = Object.fromEntries(
     Object.entries(groupOfVaults).filter(
-      ([, vault]) => !(vault.isIPORVault && vault.chain !== '8453'),
+      ([, vault]) => !(vault.isIPORVault && vault.chain == '42161'),
     ),
   )
 
