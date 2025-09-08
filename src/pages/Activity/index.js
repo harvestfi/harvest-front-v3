@@ -77,6 +77,17 @@ const Activity = () => {
           setNoRewardsData(true)
         }
 
+        sortedCombinedEnrichedArray.forEach(token => {
+          if (token.isIPORVault) {
+            const matchingVault = Object.values(groupOfVaults).find(
+              vault =>
+                vault.vaultAddress &&
+                vault.vaultAddress.toLowerCase() === token.vaultId?.toLowerCase(),
+            )
+            token.tokenSymbol = matchingVault ? matchingVault.vaultSymbol : token.tokenSymbol
+          }
+        })
+
         setTotalHistoryData(sortedCombinedEnrichedArray)
       }
 
