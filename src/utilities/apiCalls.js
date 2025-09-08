@@ -723,87 +723,104 @@ export const getIPORDataQuery = async (
   const sequenceIdsArray = []
   if (vaultTVLCount > 10000) {
     const step = Math.ceil(vaultTVLCount / 2000)
-    for (let i = 1; i <= vaultTVLCount; i += step) {
-      sequenceIdsArray.push(i)
-    }
+    for (let i = 1; i <= vaultTVLCount; i += step) sequenceIdsArray.push(i)
   } else if (vaultTVLCount > 1000) {
     const step = Math.ceil(vaultTVLCount / 1000)
-    for (let i = 1; i <= vaultTVLCount; i += step) {
-      sequenceIdsArray.push(i)
-    }
+    for (let i = 1; i <= vaultTVLCount; i += step) sequenceIdsArray.push(i)
   } else {
-    for (let i = 1; i <= vaultTVLCount; i += 1) {
-      sequenceIdsArray.push(i)
-    }
+    for (let i = 1; i <= vaultTVLCount; i += 1) sequenceIdsArray.push(i)
   }
 
-  const nowTime = Math.floor(new Date().getTime() / 1000)
-  const timestampQuery = asQuery ? timestamp : nowTime
-
-  const query = `
-    query getData($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
-    generalApies: plasmaVaultHistories(
-        where: {
-          plasmaVault: $vault,
-        },
-        first: 1000,
-        orderBy: timestamp, 
-        orderDirection: desc
-      ) { 
-        apy, timestamp
-      }
-      tvls: plasmaVaultHistories(
-        first: 1000,
-        where: {
-          plasmaVault: $vault,
-          timestamp_lt: $endTime,
-          historySequenceId_in: $sequenceIds
-        },
-        orderBy: timestamp,
-        orderDirection: desc
-      ) {
-        tvl, timestamp
-      },
-      vaultHistories: plasmaVaultHistories(
-        where: {
-          plasmaVault: $vault,
-        },
-        first: 1000,
-        orderBy: timestamp,
-        orderDirection: desc
-      ) {
-        priceUnderlying, sharePrice, timestamp
-      }
-    }
-  `
-  const variables = { vault, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
+  const nowTime = Math.floor(Date.now() / 1000)
+  const initialEndTime = String(asQuery ? timestamp : nowTime)
   const url = GRAPH_URLS[chainId]
+  const pageSize = 1000
 
-  const data = await executeGraphCall(url, query, variables)
-  // To merge the response data into the chartData object
-  Object.keys(data).forEach(key => {
-    if (!Object.prototype.hasOwnProperty.call(chartData, key)) {
-      chartData[key] = data[key]
-    } else if (Array.isArray(chartData[key]) && Array.isArray(data[key])) {
-      chartData[key].push(...data[key])
-    } else if (typeof chartData[key] === 'object' && typeof data[key] === 'object') {
-      Object.assign(chartData[key], data[key])
-    } else {
-      chartData[key] = data[key]
-    }
-  })
-
-  const dataTimestamp = Number(chartData.tvls[chartData.tvls.length - 1]?.timestamp)
-  const initTimestamp = Number(chartData.generalApies[chartData.generalApies.length - 1]?.timestamp)
-
-  if (data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
-    await getDataQuery(vaultTVLCount, true, dataTimestamp, chartData)
+  const lastTs = arr => {
+    const n = arr?.length ?? 0
+    return n ? Number(arr[n - 1].timestamp) : undefined
   }
 
-  chartData.tvls.forEach(obj => {
-    obj.value = obj.tvl
-    delete obj.tvl
-  })
+  // 1) Fetch ALL generalApies
+  const allGeneralApies = []
+  {
+    let endTime = initialEndTime
+    while (true) {
+      const query = `
+        query getGeneralApies($vault: String!, $endTime: BigInt) {
+          generalApies: plasmaVaultHistories(
+            where: { plasmaVault: $vault, timestamp_lt: $endTime },
+            first: ${pageSize},
+            orderBy: timestamp,
+            orderDirection: desc
+          ) { apy, timestamp }
+        }
+      `
+      const variables = { vault, endTime }
+      const { generalApies = [] } = (await executeGraphCall(url, query, variables)) ?? {}
+      allGeneralApies.push(...generalApies)
+      if (generalApies.length < pageSize) break
+      const ts = lastTs(generalApies)
+      if (!Number.isFinite(ts)) break
+      endTime = String(ts)
+    }
+  }
+
+  const allVaultHistories = []
+  {
+    let endTime = initialEndTime
+    while (true) {
+      const query = `
+        query getVaultHistories($vault: String!, $endTime: BigInt) {
+          vaultHistories: plasmaVaultHistories(
+            where: { plasmaVault: $vault, timestamp_lt: $endTime },
+            first: ${pageSize},
+            orderBy: timestamp,
+            orderDirection: desc
+          ) { priceUnderlying, sharePrice, timestamp }
+        }
+      `
+      const variables = { vault, endTime }
+      const { vaultHistories = [] } = (await executeGraphCall(url, query, variables)) ?? {}
+      allVaultHistories.push(...vaultHistories)
+      if (vaultHistories.length < pageSize) break
+      const ts = lastTs(vaultHistories)
+      if (!Number.isFinite(ts)) break
+      endTime = String(ts)
+    }
+  }
+
+  const allTvls = []
+  {
+    let endTime = initialEndTime
+    while (true) {
+      const query = `
+        query getTvls($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
+          tvls: plasmaVaultHistories(
+            where: {
+              plasmaVault: $vault,
+              timestamp_lt: $endTime,
+              historySequenceId_in: $sequenceIds
+            },
+            first: ${pageSize},
+            orderBy: timestamp,
+            orderDirection: desc
+          ) { tvl, timestamp }
+        }
+      `
+      const variables = { vault, endTime, sequenceIds: sequenceIdsArray }
+      const { tvls = [] } = (await executeGraphCall(url, query, variables)) ?? {}
+      allTvls.push(...tvls)
+      if (tvls.length < pageSize) break
+      const ts = lastTs(tvls)
+      if (!Number.isFinite(ts)) break
+      endTime = String(ts)
+    }
+  }
+
+  chartData.generalApies = allGeneralApies
+  chartData.vaultHistories = allVaultHistories
+  chartData.tvls = allTvls.map(({ tvl, ...rest }) => ({ ...rest, value: tvl }))
 
   return chartData
 }
