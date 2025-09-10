@@ -38,9 +38,10 @@ const vaultAdded = {
   euler_RE_USDC: 1752105600,
   euler_SM_USDC: 1752105600,
   IPOR_USDC_ethereum: 1752105600,
-  IPOR_USDC_arbitrum: 1743465600,
+  IPOR_USDC_arbitrum: 1757422800,
   IPOR_WETH_arbitrum: 1743465600,
   IPOR_WBTC_arbitrum: 1743465600,
+  IPOR_MORPHO_USDC_base: 1757422800,
 }
 
 const { tokens } = require('../../../data')

@@ -339,12 +339,6 @@ const VaultList = () => {
     groupOfVaults = { ...vaultsData }
   }
 
-  groupOfVaults = Object.fromEntries(
-    Object.entries(groupOfVaults).filter(
-      ([, vault]) => !(vault.isIPORVault && vault.chain == '42161'),
-    ),
-  )
-
   useEffect(() => {
     const getCreatedAtData = async () => {
       if (groupOfVaults) {
