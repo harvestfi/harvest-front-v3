@@ -60,6 +60,11 @@ const ApexChart = ({ chainName, token, loadComplete, aotData, dataKeys, iporHvau
               const vaultKey = Object.entries(vaultsData).find(
                 ([, vault]) => vault.vaultAddress.toLowerCase() === address.toLowerCase(),
               )?.[0]
+
+              if (!vaultKey) {
+                return null
+              }
+
               const vaultParts = vaultKey
                 .split('_')
                 .map(part => part.charAt(0).toUpperCase() + part.slice(1))
