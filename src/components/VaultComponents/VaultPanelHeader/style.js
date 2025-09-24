@@ -378,12 +378,87 @@ const Autopilot = styled.div`
   color: #5dcf46;
   padding: 3px 10px;
   gap: 5px;
+
+  @media screen and (max-width: 1400px) {
+    padding: 2px 8px;
+    gap: 4px;
+  }
+
+  @media screen and (max-width: 992px) {
+    padding: 2px 6px;
+    gap: 3px;
+  }
 `
 
 const NewLabel = styled.div`
   font-size: 10px;
   font-weight: 500;
   line-height: 15px;
+
+  @media screen and (max-width: 1600px) {
+    font-size: 9px;
+    line-height: 13px;
+  }
+
+  @media screen and (max-width: 992px) {
+    font-size: 8px;
+    line-height: 12px;
+  }
+`
+
+const BadgeRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+
+  @media screen and (max-width: 1600px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+  }
+
+  @media screen and (max-width: 992px) {
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  }
+`
+
+const MorphoBadge = styled.div`
+  display: flex;
+  flex-flow: row;
+  border-radius: 13px;
+  justify-content: space-between;
+  align-items: center;
+  background: #f0f4ff;
+  color: #3b82f6;
+  padding: 3px 10px;
+  gap: 5px;
+
+  .question {
+    font-size: 12px;
+    cursor: pointer;
+    color: #475467;
+  }
+
+  @media screen and (max-width: 1600px) {
+    padding: 2px 8px;
+    gap: 4px;
+
+    .question {
+      font-size: 12px;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    padding: 2px 6px;
+    gap: 3px;
+
+    .question {
+      font-size: 12px;
+    }
+  }
 `
 
 export {
@@ -409,4 +484,6 @@ export {
   LogoImg,
   Autopilot,
   NewLabel,
+  MorphoBadge,
+  BadgeRow,
 }

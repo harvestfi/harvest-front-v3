@@ -26,6 +26,7 @@ import TickCross from '../../assets/images/logos/tick-cross.svg'
 import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
 import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
 import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
+import MorphoIcon from '../../assets/images/ui/morpho.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
 import DepositSelectToken from '../../components/AdvancedFarmComponents/Deposit/DepositSelectToken'
@@ -153,6 +154,8 @@ import {
   TipTop,
   CrossDiv,
   SwitchTabTag,
+  MorphoBadge,
+  BadgeRow,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
 import { usePortals } from '../../providers/Portals'
@@ -1329,7 +1332,35 @@ const AdvancedFarm = () => {
                 <MobileChain>
                   <NetDetailItem>
                     <NetDetailContent $fontcolor={fontColor}>
-                      {token.platform && token.platform[0]}
+                      {token.platform && token.platform[0].includes('Autopilot - MORPHO') ? (
+                        <BadgeRow>
+                          <span>Autopilot</span>
+                          <MorphoBadge>
+                            <img src={MorphoIcon} width="12" height="12" alt="" />
+                            <span>Morpho-Only</span>
+                            <PiQuestion
+                              className="question"
+                              data-tip
+                              id="tooltip-morpho-only-mobile"
+                            />
+                            <Tooltip
+                              id="tooltip-morpho-only-mobile"
+                              anchorSelect="#tooltip-morpho-only-mobile"
+                              backgroundColor="#101828"
+                              borderColor="black"
+                              textColor="white"
+                              place="top"
+                              style={{ width: '300px' }}
+                            >
+                              <span>
+                                {`This Autopilot only supplies liquidity to curated ${token.tokenNames[0]} vaults on Morpho, Base Network.`}
+                              </span>
+                            </Tooltip>
+                          </MorphoBadge>
+                        </BadgeRow>
+                      ) : (
+                        token.platform && token.platform[0]
+                      )}
                     </NetDetailContent>
                   </NetDetailItem>
                   <ChainBack>
@@ -1396,7 +1427,35 @@ const AdvancedFarm = () => {
                 <NetDetailItem>
                   <NetDetailTitle $fontcolor={fontColor}>Platform:</NetDetailTitle>
                   <NetDetailContent $fontcolor={fontColor}>
-                    {token.platform && token.platform[0]}
+                    {token.platform && token.platform[0].includes('Autopilot - MORPHO') ? (
+                      <BadgeRow>
+                        <span>Autopilot</span>
+                        <MorphoBadge>
+                          <img src={MorphoIcon} width="12" height="12" alt="" />
+                          <span>Morpho-Only</span>
+                          <PiQuestion
+                            className="question"
+                            data-tip
+                            id="tooltip-morpho-only-advanced"
+                          />
+                          <Tooltip
+                            id="tooltip-morpho-only-advanced"
+                            anchorSelect="#tooltip-morpho-only-advanced"
+                            backgroundColor="#101828"
+                            borderColor="black"
+                            textColor="white"
+                            place="top"
+                            style={{ width: '300px' }}
+                          >
+                            <span>
+                              {`This Autopilot only supplies liquidity to curated ${token.tokenNames[0]} vaults on Morpho, Base Network.`}
+                            </span>
+                          </Tooltip>
+                        </MorphoBadge>
+                      </BadgeRow>
+                    ) : (
+                      token.platform && token.platform[0]
+                    )}
                   </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
