@@ -1551,6 +1551,35 @@ const StakingInfoText = styled.div`
   flex-direction: column;
 `
 
+const BadgeRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 5px;
+`
+
+const MorphoBadge = styled.div`
+  display: flex;
+  flex-flow: row;
+  border-radius: 13px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 15px;
+  justify-content: space-between;
+  align-items: center;
+  background: #f0f4ff;
+  color: #3b82f6;
+  padding: 4px 10px;
+  gap: 4px;
+  height: 20px;
+
+  .question {
+    font-size: 12px;
+    cursor: pointer;
+    color: #475467;
+  }
+`
+
 export {
   DetailView,
   StakingInfo,
@@ -1625,4 +1654,6 @@ export {
   RewardValue,
   SwitchTabTag,
   Tip,
+  MorphoBadge,
+  BadgeRow,
 }
