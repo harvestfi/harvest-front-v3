@@ -8,6 +8,7 @@ import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import Diamond from '../../../assets/images/logos/diamond.svg'
+import MorphoAutopilotBadges from '../../MorphoAutopilotBadges'
 import {
   BadgeIcon,
   Content,
@@ -105,7 +106,13 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
                   marginTop={isMobile ? 15 : 0}
                   color={fontColor1}
                 />
-                {info.platform === 'Autopilot' ? (
+                {info.platform && info.platform.includes('Autopilot - MORPHO') ? (
+                  <MorphoAutopilotBadges
+                    tokenNames={info.tokenNames}
+                    tooltipId={`tooltip-morpho-desktop-${cKey}`}
+                    isPortfolio={true}
+                  />
+                ) : info.platform === 'Autopilot' ? (
                   <Autopilot>
                     <img src={Diamond} width="12" height="12" alt="" />
                     <NewLabel>{info.platform}</NewLabel>
@@ -213,7 +220,13 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
                 >
                   <img src={info.chain ? info.chain : ETHEREUM} width="15px" height="15px" alt="" />
                 </BadgeIcon>
-                {info.platform === 'Autopilot' ? (
+                {info.platform && info.platform.includes('Autopilot - MORPHO') ? (
+                  <MorphoAutopilotBadges
+                    tokenNames={info.tokenNames}
+                    tooltipId={`tooltip-morpho-portfolio-${cKey}`}
+                    isPortfolio={true}
+                  />
+                ) : info.platform === 'Autopilot' ? (
                   <Autopilot>
                     <img src={Diamond} width="12" height="12" alt="" />
                     <NewLabel>{info.platform}</NewLabel>
