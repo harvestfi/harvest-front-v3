@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSetChain } from '@web3-onboard/react'
-import { PiInfoBold } from 'react-icons/pi'
+import { PiInfoBold, PiQuestion } from 'react-icons/pi'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { toast } from 'react-toastify'
 import { useThemeContext } from '../../../providers/useThemeContext'
@@ -21,6 +21,8 @@ import DisclaimersModal from '../DisclaimersModal'
 import SubscribeModal from '../SubscribeModal'
 import UnsubscribeModal from '../UnsubscribeModal'
 import AutopilotInfo from '../AutoPilotInfo'
+import { Tooltip } from 'react-tooltip'
+import MorphoIcon from '../../../assets/images/ui/morpho.svg'
 import {
   PanelHeader,
   BasePanelBox,
@@ -37,6 +39,7 @@ import {
   TokenUSDAmount,
   TokenType,
   TokenName,
+  MorphoOnlyBadge,
 } from './style'
 
 const AutopilotPanel = ({
@@ -187,6 +190,11 @@ const AutopilotPanel = ({
     }
   }
 
+  // Check if this is a Morpho autopilot vault
+  const isMorphoVault =
+    vaultData?.id?.includes('MORPHO') ||
+    vaultData?.platform?.some(p => p.includes('Autopilot - MORPHO'))
+
   return (
     <>
       {!pilotInfoShow && (
@@ -195,9 +203,35 @@ const AutopilotPanel = ({
             <TokenInfo>
               <img className="logo" src={`.${vaultData?.logoUrl}`} width={90} height={90} alt="" />
               <ApyInfo>
-                <NewLabel $size="11px" $height="20px" $weight="600" $fontcolor={fontColor8}>
-                  Live APY
-                </NewLabel>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                  <NewLabel $size="11px" $height="20px" $weight="600" $fontcolor={fontColor8}>
+                    Live APY
+                  </NewLabel>
+                  {isMorphoVault && (
+                    <MorphoOnlyBadge>
+                      <img src={MorphoIcon} width="12" height="12" alt="" />
+                      <NewLabel>Morpho-Only</NewLabel>
+                      <PiQuestion
+                        className="question"
+                        data-tip
+                        id={`tooltip-morpho-autopilot-${index}`}
+                      />
+                      <Tooltip
+                        id={`tooltip-morpho-autopilot-${index}`}
+                        anchorSelect={`#tooltip-morpho-autopilot-${index}`}
+                        backgroundColor="#101828"
+                        borderColor="black"
+                        textColor="white"
+                        place="top"
+                        style={{ width: '300px', zIndex: 100 }}
+                      >
+                        <NewLabel>
+                          {`This Autopilot only supplies liquidity to curated ${vaultData?.tokenNames?.[0] || 'USDC'} vaults on Morpho, Base Network.`}
+                        </NewLabel>
+                      </Tooltip>
+                    </MorphoOnlyBadge>
+                  )}
+                </div>
                 <NewLabel $size="20px" $height="28px" $weight="700" $fontcolor={fontColor3}>
                   {formatNumber(vaultData?.estimatedApy, 2)}%
                 </NewLabel>

@@ -132,6 +132,7 @@ const BasePanelBox = styled.div`
   margin-top: 25px;
   display: flex;
   flex-direction: column;
+  position: relative;
   background: ${props => props.$backcolor};
   /* key: ${props => props.key}; */
   border-radius: 9px;
@@ -475,6 +476,52 @@ const TokenName = styled.div`
   font-weight: 400;
 `
 
+const MorphoOnlyBadge = styled.div`
+  display: flex;
+  flex-flow: row;
+  border-radius: 13px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 15px;
+  justify-content: space-between;
+  align-items: center;
+  background: #f0f4ff;
+  color: #3b82f6;
+  padding: 4px 10px;
+  gap: 4px;
+  height: 20px;
+
+  .question {
+    font-size: 12px;
+    cursor: pointer;
+    color: #475467;
+  }
+
+  @media screen and (max-width: 1600px) {
+    padding: 3px 8px;
+    gap: 3px;
+    height: 18px;
+    font-size: 9px;
+    line-height: 13px;
+
+    .question {
+      font-size: 11px;
+    }
+  }
+
+  @media screen and (max-width: 992px) {
+    padding: 2px 6px;
+    gap: 3px;
+    height: auto;
+    font-size: 8px;
+    line-height: 12px;
+
+    .question {
+      font-size: 10px;
+    }
+  }
+`
+
 export {
   ThemeMode,
   PanelHeader,
@@ -491,4 +538,5 @@ export {
   TokenUSDAmount,
   TokenType,
   TokenName,
+  MorphoOnlyBadge,
 }
