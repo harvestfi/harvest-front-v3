@@ -223,7 +223,7 @@ const AutopilotPanel = ({
                         borderColor="black"
                         textColor="white"
                         place="top"
-                        style={{ width: '300px' }}
+                        style={{ width: '300px', zIndex: 100 }}
                       >
                         <NewLabel>
                           {`This Autopilot only supplies liquidity to curated ${vaultData?.tokenNames?.[0] || 'USDC'} vaults on Morpho, Base Network.`}
