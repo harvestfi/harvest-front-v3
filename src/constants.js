@@ -799,6 +799,7 @@ export const ChainsList = [
 export const someChainsList = [
   { id: 0, name: 'base', img: BASE, chainId: CHAIN_IDS.BASE },
   { id: 1, name: 'arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
+  { id: 2, name: 'mainnet', img: ETHEREUM, chainId: CHAIN_IDS.ETH_MAINNET },
 ]
 
 export const fakeChartData = [
