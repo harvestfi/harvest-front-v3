@@ -97,7 +97,7 @@ const HeaderTitle = styled.div`
 `
 
 const HeaderButton = styled.div`
-  display: none;
+  display: flex;
   margin: auto 0px;
   gap: 15px;
 

@@ -12,7 +12,6 @@ import { useVaults } from '../../providers/Vault'
 import { useWallet } from '../../providers/Wallet'
 import { useContracts } from '../../providers/Contracts'
 import { someChainsList } from '../../constants'
-import { isSpecialApp } from '../../utilities/formats'
 import { initBalanceAndDetailData } from '../../utilities/apiCalls'
 import { fromWei } from '../../services/viem'
 import AutopilotPanel from '../../components/AutopilotComponents/AutopilotPanel'
@@ -53,12 +52,11 @@ const Autopilot = () => {
     const networkName = pathSegments[pathSegments.length - 1]
     const matchedChain = someChainsList.find(item => item.name === networkName)
 
-    if (networkName !== 'base') {
-      history('/autopilot/base')
-    } else if (matchedChain) {
+    if (matchedChain) {
       setCurChain(matchedChain)
     } else {
-      setCurChain(someChainsList[0])
+      // Default to base if no valid chain is found in URL
+      history('/autopilot/base')
     }
   }, [location.pathname, history])
 
@@ -223,34 +221,30 @@ const Autopilot = () => {
                   <></>
                 )}
               </CurrencyDropDown>
-              {!isSpecialApp ? (
-                <CurrencyDropDownMenu>
-                  {someChainsList.map(elem => {
-                    return (
-                      <CurrencyDropDownItem
-                        onClick={() => {
-                          handleNetworkChange(elem)
-                        }}
-                        $hovercolor={hoverColorNew}
-                        $backcolor={bgColorNew}
-                        key={elem.id}
-                      >
-                        <img
-                          className={darkMode ? 'logo-dark' : 'logo'}
-                          src={elem.img}
-                          width={14}
-                          height={14}
-                          alt=""
-                        />
-                        <span>Autopilots</span>
-                        {curChain?.id === elem.id ? <IoCheckmark className="check-icon" /> : <></>}
-                      </CurrencyDropDownItem>
-                    )
-                  })}
-                </CurrencyDropDownMenu>
-              ) : (
-                <></>
-              )}
+              <CurrencyDropDownMenu>
+                {someChainsList.map(elem => {
+                  return (
+                    <CurrencyDropDownItem
+                      onClick={() => {
+                        handleNetworkChange(elem)
+                      }}
+                      $hovercolor={hoverColorNew}
+                      $backcolor={bgColorNew}
+                      key={elem.id}
+                    >
+                      <img
+                        className={darkMode ? 'logo-dark' : 'logo'}
+                        src={elem.img}
+                        width={14}
+                        height={14}
+                        alt=""
+                      />
+                      <span>Autopilots</span>
+                      {curChain?.id === elem.id ? <IoCheckmark className="check-icon" /> : <></>}
+                    </CurrencyDropDownItem>
+                  )
+                })}
+              </CurrencyDropDownMenu>
             </Dropdown>
           </HeaderButton>
         </HeaderWrap>
