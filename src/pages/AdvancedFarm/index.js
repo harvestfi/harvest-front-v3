@@ -186,6 +186,7 @@ const AdvancedFarm = () => {
   const { getPortalsBaseTokens, getPortalsBalances, getPortalsSupport, SUPPORTED_TOKEN_LIST } =
     usePortals()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+  const isSmallScreen = useMediaQuery({ query: '(max-width: 1200px)' })
 
   const navigate = useNavigate()
   const history = useNavigate()
@@ -1337,7 +1338,7 @@ const AdvancedFarm = () => {
                           <span>Autopilot</span>
                           <MorphoBadge>
                             <img src={MorphoIcon} width="12" height="12" alt="" />
-                            <span>Morpho-Only</span>
+                            <span>Morpho</span>
                             <PiQuestion
                               className="question"
                               data-tip
@@ -1394,7 +1395,7 @@ const AdvancedFarm = () => {
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
-              {token.platform && token.platform[0] === 'Autopilot' && <TopBadge />}
+              {token.platform && token.platform[0].includes('Autopilot') && <TopBadge />}
             </GuideSection>
             <TabRow>
               <MainTagPanel>
@@ -1432,7 +1433,7 @@ const AdvancedFarm = () => {
                         <span>Autopilot</span>
                         <MorphoBadge>
                           <img src={MorphoIcon} width="12" height="12" alt="" />
-                          <span>Morpho-Only</span>
+                          <span>{isSmallScreen ? 'Morpho' : 'Morpho-Only'}</span>
                           <PiQuestion
                             className="question"
                             data-tip

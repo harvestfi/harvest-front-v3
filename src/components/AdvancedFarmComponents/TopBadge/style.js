@@ -1,6 +1,9 @@
 import styled from 'styled-components'
 
 const BadgeWrap = styled.div`
+  display: flex;
+  gap: 10px;
+
   @media screen and (max-width: 992px) {
     width: 100%;
     display: flex;
@@ -73,4 +76,15 @@ const LearnLink = styled.a`
   }
 `
 
-export { BadgeWrap, GuidePart, TooltipWrapper, TooltipBox, LearnLink }
+const FusionPointsBadge = styled(GuidePart)`
+  background: #ecddf5;
+  border: 1.3px solid #ecddf5;
+  color: #6c00ff;
+
+  img {
+    width: 14px;
+    height: 14px;
+  }
+`
+
+export { BadgeWrap, GuidePart, FusionPointsBadge, TooltipWrapper, TooltipBox, LearnLink }

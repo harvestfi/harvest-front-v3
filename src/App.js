@@ -16,6 +16,7 @@ import { ROUTES } from './constants'
 import { Body, GlobalStyle } from './components/GlobalStyle'
 import Modal from './components/Modal'
 import Providers from './providers'
+import GlobalTooltips from './components/GlobalTooltips'
 import '@fontsource/work-sans'
 import '@fontsource/dm-sans'
 import 'bootstrap/dist/css/bootstrap.min.css'
@@ -73,6 +74,7 @@ const App = () => (
       <GlobalStyleWrapper />
       <ToastContainer />
       <NewLoginModal />
+      <GlobalTooltips />
       <Body id="page-content">
         <Sidebar width="260px" />
         <Routes>

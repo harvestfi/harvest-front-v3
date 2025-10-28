@@ -119,9 +119,11 @@ const ValueContainer = styled.div`
   text-align: ${props => props.$textalign || 'center'};
   display: flex;
   justify-content: start;
+  align-items: center;
   ${props => (props.$textalign === 'left' ? `justify-content: start;` : '')}
   padding-right: ${props => props.$paddingright || '0px'};
   padding-left: ${props => props.$paddingleft || '0px'};
+  position: relative;
 
   .tag {
     display: none;
@@ -140,8 +142,8 @@ const ValueContainer = styled.div`
 
 const LogoImg = styled.img`
   z-index: 10;
-  width: 37px;
-  height: 37px;
+  width: 30px;
+  height: 30px;
   &:not(:first-child) {
     margin-left: -7px;
     ${props =>
@@ -160,8 +162,9 @@ const LogoImg = styled.img`
 
 const BadgeIcon = styled.div`
   position: absolute;
-  top: 26px;
-  left: 24px;
+  top: 50%;
+  left: -50%;
+  transform: translateY(-50%);
   width: 23px;
   height: 23px;
   display: flex;
@@ -179,6 +182,9 @@ const BadgeIcon = styled.div`
     width: 13.096px;
     height: 13.096px;
     margin: auto 5px auto 0px;
+    transform: none;
+    top: auto;
+    left: auto;
     img {
       padding: 1.708px 1.706px 1.709px 1.71px;
       width: 13px;

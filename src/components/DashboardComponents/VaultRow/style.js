@@ -120,8 +120,8 @@ const BadgeIcon = styled.div`
 `
 const LogoImg = styled.img`
   z-index: 10;
-  width: 37px;
-  height: 37px;
+  width: 32px;
+  height: 32px;
 
   ${props =>
     props.$marginleft

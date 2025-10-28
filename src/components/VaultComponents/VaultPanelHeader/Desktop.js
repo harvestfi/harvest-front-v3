@@ -60,7 +60,7 @@ const DesktopPanelHeader = ({ token, tokenSymbol, vaultPool, loadedVault }) => {
         }}
       >
         <ValueContainer $width="5%" />
-        <ValueContainer $width="20%" $textalign="left">
+        <ValueContainer $width="10%" $textalign="left">
           {logoUrl.map((el, i) => (
             <LogoImg key={i} className="logo-img" $zindex={10 - i} src={el} alt={tokenSymbol} />
           ))}
@@ -72,7 +72,7 @@ const DesktopPanelHeader = ({ token, tokenSymbol, vaultPool, loadedVault }) => {
             )}
           </BadgeIcon>
         </ValueContainer>
-        <ValueContainer $width="20%" $textalign="left" $paddingleft="0%">
+        <ValueContainer $width="30%" $textalign="left" $paddingleft="0%">
           <VaultName token={token} tokenSymbol={tokenSymbol} $fontcolor1={fontColor1} />
         </ValueContainer>
         <ValueContainer $width="15%">
