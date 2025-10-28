@@ -7,8 +7,7 @@ import { useThemeContext } from '../../../providers/useThemeContext'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useRate } from '../../../providers/Rate'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
-import Diamond from '../../../assets/images/logos/diamond.svg'
-import MorphoAutopilotBadges from '../../MorphoAutopilotBadges'
+import AutopilotBadges from '../../AutopilotBadges'
 import {
   BadgeIcon,
   Content,
@@ -17,8 +16,6 @@ import {
   LogoImg,
   ContentInner,
   MobileContentContainer,
-  Autopilot,
-  NewLabel,
 } from './style'
 
 const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
@@ -77,7 +74,7 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
           <>
             <Content $width={isMobile ? '100%' : '40%'} $display={isMobile ? 'block' : 'flex'}>
               <ContentInner
-                $width={isMobile ? '100%' : '50%'}
+                $width={isMobile ? '100%' : '25%'}
                 $display={isMobile ? 'block' : 'flex'}
               >
                 <BadgeIcon className="network-badge">
@@ -95,7 +92,7 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
                   ))}
               </ContentInner>
               <ContentInner
-                $width={isMobile ? '100%' : '50%'}
+                $width={isMobile ? '100%' : '75%'}
                 $marginleft={isMobile ? '0px' : '11px'}
               >
                 <ListItem
@@ -106,17 +103,14 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
                   marginTop={isMobile ? 15 : 0}
                   color={fontColor1}
                 />
-                {info.platform && info.platform.includes('Autopilot - MORPHO') ? (
-                  <MorphoAutopilotBadges
+                {info.platform &&
+                (info.platform.includes('Autopilot - MORPHO') || info.platform === 'Autopilot') ? (
+                  <AutopilotBadges
                     tokenNames={info.tokenNames}
-                    tooltipId={`tooltip-morpho-desktop-${cKey}`}
+                    isMorphoOnly={info.platform.includes('Autopilot - MORPHO')}
+                    tooltipIdMorpho={`tooltip-morpho-desktop-${cKey}`}
                     isPortfolio={true}
                   />
-                ) : info.platform === 'Autopilot' ? (
-                  <Autopilot>
-                    <img src={Diamond} width="12" height="12" alt="" />
-                    <NewLabel>{info.platform}</NewLabel>
-                  </Autopilot>
                 ) : (
                   <ListItem
                     weight={400}
@@ -220,17 +214,14 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
                 >
                   <img src={info.chain ? info.chain : ETHEREUM} width="15px" height="15px" alt="" />
                 </BadgeIcon>
-                {info.platform && info.platform.includes('Autopilot - MORPHO') ? (
-                  <MorphoAutopilotBadges
+                {info.platform &&
+                (info.platform.includes('Autopilot - MORPHO') || info.platform === 'Autopilot') ? (
+                  <AutopilotBadges
                     tokenNames={info.tokenNames}
-                    tooltipId={`tooltip-morpho-portfolio-${cKey}`}
+                    isMorphoOnly={info.platform.includes('Autopilot - MORPHO')}
+                    tooltipIdMorpho={`tooltip-morpho-portfolio-${cKey}`}
                     isPortfolio={true}
                   />
-                ) : info.platform === 'Autopilot' ? (
-                  <Autopilot>
-                    <img src={Diamond} width="12" height="12" alt="" />
-                    <NewLabel>{info.platform}</NewLabel>
-                  </Autopilot>
                 ) : (
                   <ListItem
                     weight={400}
