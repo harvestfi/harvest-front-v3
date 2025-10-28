@@ -356,6 +356,7 @@ const Sidebar = ({ width }) => {
         CHAIN_IDS.ARBITRUM_ONE,
         CHAIN_IDS.BASE,
         CHAIN_IDS.ZKSYNC,
+        CHAIN_IDS.HYPEREVM,
       ])
     }
     navigate(path)

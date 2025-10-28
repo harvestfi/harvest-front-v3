@@ -23,6 +23,9 @@ import ReaderBaseMethods from './reader-base/methods'
 import ReaderZksyncContract from './reader-zksync/contract.json'
 import ReaderZksyncMethods from './reader-zksync/methods'
 
+import ReaderHyperevmContract from './reader-hyperevm/contract.json'
+import ReaderHyperevmMethods from './reader-hyperevm/methods'
+
 import IporVaultContract from './ipor-vault/contract.json'
 import IporVaultMethods from './ipor-vault/methods'
 
@@ -107,6 +110,12 @@ export default {
     contract: ReaderZksyncContract,
     methods: ReaderZksyncMethods,
     chain: CHAIN_IDS.ZKSYNC,
+  },
+
+  readerHyperevm: {
+    contract: ReaderHyperevmContract,
+    methods: ReaderHyperevmMethods,
+    chain: CHAIN_IDS.HYPEREVM,
   },
 
   ...getTokensContracts(),

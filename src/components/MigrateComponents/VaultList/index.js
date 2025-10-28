@@ -4,6 +4,7 @@ import ARBITRUM from '../../../assets/images/logos/badge/arbitrum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../../assets/images/logos/badge/base.svg'
+import HYPEREVM from '../../../assets/images/logos/badge/hype.svg'
 import { formatNumber } from '../../../utilities/formats'
 import {
   VaultBox,
@@ -46,7 +47,9 @@ const VaultList = ({
             ? ZKSYNC
             : chainId === 137
               ? POLYGON
-              : ETHEREUM
+              : chainId === 999
+                ? HYPEREVM
+                : ETHEREUM
   } else if (!connected) {
     chainUrl = BASE
   }

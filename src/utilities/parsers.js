@@ -8,6 +8,7 @@ import Base from '../assets/images/chains/base.svg'
 import Zksync from '../assets/images/chains/zksync.svg'
 import Ethereum from '../assets/images/chains/ethereum.svg'
 import Polygon from '../assets/images/chains/polygon.svg'
+import Hyperevm from '../assets/images/chains/hype.svg'
 import { fromWei } from '../services/viem'
 import {
   getAllRewardEntities,
@@ -65,6 +66,9 @@ export const getChainNamePortals = chain => {
     case CHAIN_IDS.ZKSYNC:
       chainName = 'zksync'
       break
+    case CHAIN_IDS.HYPEREVM:
+      chainName = 'hyperevm'
+      break
     default:
       chainName = 'ethereum'
       break
@@ -86,6 +90,9 @@ export const getChainName = chain => {
       break
     case CHAIN_IDS.ZKSYNC:
       chainName = 'Zksync'
+      break
+    case CHAIN_IDS.HYPEREVM:
+      chainName = 'HyperEVM'
       break
     default:
       chainName = 'Ethereum'
@@ -112,6 +119,9 @@ export const getChainIcon = chainNum => {
         break
       case CHAIN_IDS.ZKSYNC:
         icon = Zksync
+        break
+      case CHAIN_IDS.HYPEREVM:
+        icon = Hyperevm
         break
       default:
         icon = Ethereum

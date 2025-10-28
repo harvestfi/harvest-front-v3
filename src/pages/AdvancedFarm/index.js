@@ -16,6 +16,7 @@ import BASE from '../../assets/images/chains/base.svg'
 import ETHEREUM from '../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../assets/images/chains/polygon.svg'
 import ZKSYNC from '../../assets/images/chains/zksync.svg'
+import HYPEREVM from '../../assets/images/chains/hype.svg'
 import Safe from '../../assets/images/logos/beginners/safe.svg'
 import Diamond from '../../assets/images/logos/beginners/diamond.svg'
 import BarChart from '../../assets/images/logos/beginners/bar-chart-01.svg'
@@ -365,7 +366,7 @@ const AdvancedFarm = () => {
   const tradingApy = get(vaultPool, 'tradingApy', 0)
   const totalApy = Number(estimatedApy) + Number(rewardApy) + Number(tradingApy)
 
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC, HYPEREVM]
   const tokenChain = token.chain || token.data.chain
 
   let chainName = getChainName(tokenChain).toLowerCase()

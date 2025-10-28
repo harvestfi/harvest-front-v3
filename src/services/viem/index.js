@@ -5,15 +5,17 @@ import BigNumber from 'bignumber.js'
 import { BrowserProvider, MaxUint256 } from 'ethers'
 import { mainnet, arbitrum, polygon, base, optimism, zksync } from 'viem/chains'
 import { isNaN } from 'lodash'
-import { createPublicClient, createWalletClient, http, custom } from 'viem'
+import { createPublicClient, createWalletClient, http, custom, defineChain } from 'viem'
 import {
   ARBISCAN_URL,
   ARBITRUM_URL,
   BASE_URL,
   ZKSYNC_URL,
+  HYPEREVM_URL,
   BASESCAN_URL,
   ETHERSCAN_URL,
   ZKSYNCSCAN_URL,
+  HYPEREVMSCAN_URL,
   INFURA_URL,
   MATICSCAN_URL,
   MATIC_URL,
@@ -28,12 +30,37 @@ import contracts from './contracts'
 
 export const getChainHexadecimal = chainId => `0x${Number(chainId).toString(16)}`
 
+export const hyperevm = /*#__PURE__*/ defineChain({
+  id: 999,
+  name: 'HyperEVM',
+  network: 'hyperevm',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'HyperEVM',
+    symbol: 'HYPE',
+  },
+  rpcUrls: {
+    default: {
+      http: ['https://hyperliquid.drpc.org'],
+      webSocket: ['wss://hyperliquid.drpc.org'],
+    },
+  },
+  blockExplorers: {
+    default: {
+      name: 'Hyperevmscan',
+      url: 'https://hyperevmscan.io',
+      apiUrl: 'https://api.hyperevmscan.io/api',
+    },
+  },
+})
+
 const SDK = new SafeAppsSDK()
 export const infuraViem = createPublicClient({ transport: http(INFURA_URL) })
 export const maticVIem = createPublicClient({ transport: http(MATIC_URL) })
 export const arbitrumViem = createPublicClient({ transport: http(ARBITRUM_URL) })
 export const baseViem = createPublicClient({ transport: http(BASE_URL) })
 export const zksyncViem = createPublicClient({ transport: http(ZKSYNC_URL) })
+export const hyperevmViem = createPublicClient({ transport: http(HYPEREVM_URL) })
 // export const ledgerProvider = new BrowserProvider(new IFrameEthereumProvider())
 // export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
 export const safeProvider = async () => {
@@ -162,6 +189,9 @@ export const getChainName = chainId => {
     case Number(CHAIN_IDS.POLYGON_MAINNET):
     case getChainHexadecimal(CHAIN_IDS.POLYGON_MAINNET):
       return 'Polygon (Matic)'
+    case Number(CHAIN_IDS.HYPEREVM):
+    case getChainHexadecimal(CHAIN_IDS.HYPEREVM):
+      return 'HyperEVM'
     default:
       return `Unknown(${chainId})`
   }
@@ -184,6 +214,8 @@ export const getChainObject = chainIdHex => {
         return optimism
       case 324:
         return zksync
+      case 999:
+        return hyperevm
       default:
         return mainnet
     }
@@ -317,6 +349,8 @@ export const getExplorerLink = chainId => {
       return BASESCAN_URL
     case CHAIN_IDS.ZKSYNC:
       return ZKSYNCSCAN_URL
+    case CHAIN_IDS.HYPEREVM:
+      return HYPEREVMSCAN_URL
     default:
       return ETHERSCAN_URL
   }

@@ -37,6 +37,7 @@ const CHAIN_NAMES = {
   42161: 'Arbitrum',
   8453: 'Base',
   324: 'ZkSync',
+  999: 'HyperEVM',
 }
 
 function generateChartDataWithSlots(slots, apiData) {
@@ -202,13 +203,22 @@ const ApexChart = ({ data, range }) => {
         len = 0,
         unitBtw
 
-      if (data && data.ETH && data.MATIC && data.ARBITRUM && data.BASE && data.ZKSYNC) {
+      if (
+        data &&
+        data.ETH &&
+        data.MATIC &&
+        data.ARBITRUM &&
+        data.BASE &&
+        data.ZKSYNC &&
+        data.HYPEREVM
+      ) {
         if (
           data.ETH.length === 0 &&
           data.MATIC.length === 0 &&
           data.ARBITRUM.length === 0 &&
           data.BASE.length === 0 &&
-          data.ZKSYNC.length === 0
+          data.ZKSYNC.length === 0 &&
+          data.HYPEREVM.length === 0
         ) {
           setIsDataReady(false)
           return
@@ -322,6 +332,13 @@ const ApexChart = ({ data, range }) => {
               stackId="TVL"
               stroke="#8a9a5b"
               fill="#8a9a5b"
+              fillOpacity={0.7}
+            />
+            <Area
+              dataKey="HyperEVM"
+              stackId="TVL"
+              stroke="#80f0e0"
+              fill="#80f0e0"
               fillOpacity={0.7}
             />
             <Line dataKey="Total" stroke="#000000" strokeWidth={1} dot={false} />
