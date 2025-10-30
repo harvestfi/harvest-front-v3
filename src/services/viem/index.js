@@ -55,12 +55,12 @@ export const hyperevm = /*#__PURE__*/ defineChain({
 })
 
 const SDK = new SafeAppsSDK()
-export const infuraViem = createPublicClient({ transport: http(INFURA_URL) })
-export const maticVIem = createPublicClient({ transport: http(MATIC_URL) })
-export const arbitrumViem = createPublicClient({ transport: http(ARBITRUM_URL) })
-export const baseViem = createPublicClient({ transport: http(BASE_URL) })
-export const zksyncViem = createPublicClient({ transport: http(ZKSYNC_URL) })
-export const hyperevmViem = createPublicClient({ transport: http(HYPEREVM_URL) })
+export const infuraViem = createPublicClient({ transport: http(INFURA_URL), chain: mainnet })
+export const maticVIem = createPublicClient({ transport: http(MATIC_URL), chain: polygon })
+export const arbitrumViem = createPublicClient({ transport: http(ARBITRUM_URL), chain: arbitrum })
+export const baseViem = createPublicClient({ transport: http(BASE_URL), chain: base })
+export const zksyncViem = createPublicClient({ transport: http(ZKSYNC_URL), chain: zksync })
+export const hyperevmViem = createPublicClient({ transport: http(HYPEREVM_URL), chain: hyperevm })
 // export const ledgerProvider = new BrowserProvider(new IFrameEthereumProvider())
 // export const ledgerWeb3 = new Web3(new IFrameEthereumProvider())
 export const safeProvider = async () => {
@@ -270,6 +270,10 @@ export const getViem = async (chainId, account, viem = null) => {
 
     if (chainIdStr === CHAIN_IDS.ZKSYNC) {
       return zksyncViem
+    }
+
+    if (chainIdStr === CHAIN_IDS.HYPEREVM) {
+      return hyperevmViem
     }
 
     return infuraViem
