@@ -30,6 +30,8 @@ import Accordian from '../../components/MigrateComponents/Accordian'
 import ARBITRUM from '../../assets/images/logos/badge/arbitrum.svg'
 import POLYGON from '../../assets/images/logos/badge/polygon.svg'
 import BASE from '../../assets/images/logos/badge/base.svg'
+import ZKSYNC from '../../assets/images/logos/badge/zksync.svg'
+import HYPEREVM from '../../assets/images/logos/badge/hype.svg'
 import { CHAIN_IDS } from '../../data/constants'
 import { getTokenPriceFromApi, getCoinListFromApi } from '../../utilities/apiCalls'
 import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL } from '../../constants'
@@ -134,6 +136,8 @@ const Migrate = () => {
     { id: 1, name: 'Polygon', img: POLYGON, chainId: CHAIN_IDS.POLYGON_MAINNET },
     { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
     { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
+    { id: 4, name: 'ZKSync', img: ZKSYNC, chainId: CHAIN_IDS.ZKSYNC },
+    { id: 5, name: 'HyperEVM', img: HYPEREVM, chainId: CHAIN_IDS.HYPEREVM },
   ]
 
   const isSpecialChain = Number(chainId) === 324
@@ -148,7 +152,11 @@ const Migrate = () => {
             ? BASE
             : Number(selectedChain) === 137
               ? POLYGON
-              : ETHEREUM
+              : Number(selectedChain) === 324
+                ? ZKSYNC
+                : Number(selectedChain) === 999
+                  ? HYPEREVM
+                  : ETHEREUM
     } else if (!isEmpty(userStats) && isSpecialChain) {
       badgeUrl = BASE
     } else if (!connected) {
@@ -165,7 +173,9 @@ const Migrate = () => {
               ? 'zksync'
               : Number(selectedChain) === 137
                 ? 'polygon'
-                : 'ethereum'
+                : Number(selectedChain) === 999
+                  ? 'hyperevm'
+                  : 'ethereum'
     } else if (!connected) {
       network = 'base'
     }

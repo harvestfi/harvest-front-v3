@@ -167,6 +167,18 @@ export const getPublishDate = async () => {
         }
       }`,
     },
+    {
+      url: GRAPH_URLS[CHAIN_IDS.HYPEREVM],
+      query: `{
+        vaults(
+          first: 1000,
+          orderBy: timestamp,
+          orderDirection: desc
+        ) {
+          id, timestamp
+        }
+      }`,
+    },
   ]
 
   try {
@@ -1742,6 +1754,7 @@ export const getUserBalanceVaults = async account => {
     GRAPH_URLS[CHAIN_IDS.BASE],
     GRAPH_URLS[CHAIN_IDS.ARBITRUM_ONE],
     GRAPH_URLS[CHAIN_IDS.ZKSYNC],
+    GRAPH_URLS[CHAIN_IDS.HYPEREVM],
   ]
 
   try {

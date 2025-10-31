@@ -14,6 +14,7 @@ import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
+import HYPEREVM from '../../../assets/images/logos/badge/hype.svg'
 import ListItem from '../ListItem'
 import { truncateAddress, formatNumber } from '../../../utilities/formats'
 import { useRate } from '../../../providers/Rate'
@@ -29,8 +30,8 @@ const HolderRow = ({ value, cKey, accounts, groupOfVaults, lastItem, selectedIte
   const [walletApy, setWalletApy] = useState(0)
   const [monthlyYield, setMonthlyYield] = useState(0)
 
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
-  const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync']
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC, HYPEREVM]
+  const networkNames = ['ethereum', 'polygon', 'arbitrum', 'base', 'zksync', 'hyperevm']
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const { borderColorBox, hoverColor, fontColor1 } = useThemeContext()

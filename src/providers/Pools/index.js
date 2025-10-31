@@ -54,6 +54,8 @@ const getReader = (selectedChain, contracts) => {
       return contracts.readerMatic
     case CHAIN_IDS.ZKSYNC:
       return contracts.readerZksync
+    case CHAIN_IDS.HYPEREVM:
+      return contracts.readerHyperevm
     default:
       return contracts.readerEth
   }
@@ -246,6 +248,7 @@ const PoolsProvider = _ref => {
         ...apiData.arbitrum,
         ...apiData.base,
         ...apiData.zksync,
+        ...apiData.hyperevm,
       ])
       setDisableWallet(false)
     } catch (err) {

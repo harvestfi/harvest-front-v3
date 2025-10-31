@@ -261,6 +261,9 @@ const QuickFilter = ({
   if (selChain.includes(CHAIN_IDS.ZKSYNC)) {
     curChain.push(4)
   }
+  if (selChain.includes(CHAIN_IDS.HYPEREVM)) {
+    curChain.push(5)
+  }
 
   const [selectedClass, setSelectedClass] = useState(curChain)
 
@@ -518,7 +521,7 @@ const QuickFilter = ({
                   setAssetsId(-1)
                   setFarmId(-1)
                   onDepositedOnlyClick(false)
-                  setSelectedClass([0, 1, 2, 3, 4])
+                  setSelectedClass([0, 1, 2, 3, 4, 5])
                   onSelectStableCoin(false)
                   onAssetClick('')
                   onSelectFarmType('')
@@ -528,6 +531,7 @@ const QuickFilter = ({
                     CHAIN_IDS.ARBITRUM_ONE,
                     CHAIN_IDS.BASE,
                     CHAIN_IDS.ZKSYNC,
+                    CHAIN_IDS.HYPEREVM,
                   ])
                   clearFilter()
                 }}
@@ -922,7 +926,7 @@ const QuickFilter = ({
                   setRiskId(-1)
                   setFarmId(-1)
                   setMobileFilterCount(0)
-                  setSelectedClass([0, 1, 2, 3, 4])
+                  setSelectedClass([0, 1, 2, 3, 4, 5])
                   setShowInactiveFarms(false)
                   setSelChain([
                     CHAIN_IDS.ETH_MAINNET,
@@ -930,6 +934,7 @@ const QuickFilter = ({
                     CHAIN_IDS.ARBITRUM_ONE,
                     CHAIN_IDS.BASE,
                     CHAIN_IDS.ZKSYNC,
+                    CHAIN_IDS.HYPEREVM,
                   ])
                   clearFilter()
                 }}

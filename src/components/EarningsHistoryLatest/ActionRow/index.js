@@ -19,6 +19,7 @@ import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
 import BASE from '../../../assets/images/logos/badge/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
+import HYPEREVM from '../../../assets/images/logos/badge/hype.svg'
 import UpperIcon from '../../../assets/images/logos/history-upper.svg'
 import Diamond from '../../../assets/images/logos/diamond.svg'
 
@@ -41,7 +42,9 @@ const ActionRow = ({ info }) => {
             ? ZKSYNC
             : Number(chainId) === 137
               ? POLYGON
-              : ETHEREUM
+              : Number(chainId) === 999
+                ? HYPEREVM
+                : ETHEREUM
     setBadgeUrl(badge)
   }, [info])
 

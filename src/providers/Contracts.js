@@ -8,6 +8,7 @@ import {
   arbitrumViem,
   baseViem,
   zksyncViem,
+  hyperevmViem,
   infuraViem,
 } from '../services/viem'
 import { CHAIN_IDS } from '../data/constants'
@@ -30,6 +31,10 @@ const getViem = chainId => {
 
   if (chainId === CHAIN_IDS.ZKSYNC) {
     return zksyncViem
+  }
+
+  if (chainId === CHAIN_IDS.HYPEREVM) {
+    return hyperevmViem
   }
 
   return infuraViem
