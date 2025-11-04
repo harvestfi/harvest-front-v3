@@ -1487,7 +1487,7 @@ const AdvancedFarm = () => {
       </TopInner>
       <Inner $backcolor={bgColorNew}>
         <BigDiv>
-          {(id === 'silo_VM_USDC' || id === 'silo_sUSDX_USDC') && showSiloUSDCInfo && (
+          {id === 'silo_VM_USDC' && showSiloUSDCInfo && (
             <WelcomeBox
               $bgcolortooltip={bgColorTooltip}
               $fontcolortooltip={fontColorTooltip}
@@ -1498,8 +1498,51 @@ const AdvancedFarm = () => {
                 <WelcomeTitle>Vault Notice</WelcomeTitle>
                 <WelcomeText>
                   This vault may be affected by the ongoing Stream Finance incident. Users are
-                  advised that this vault may experience periods of illiquidity as market conditions
-                  resolve.
+                  advised that this vault may experience periods of illiquidity as the Silo market
+                  conditions resolve. Refer to the Silo Finance announcement on that matter -{' '}
+                  <WelcomeTicket
+                    className="useIFARM"
+                    href="https://silofinance.medium.com/stream-finance-incident-transparency-report-cc21fb76f0b5"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    $linkcolor={linkColorTooltip}
+                    $linkcoloronhover={linkColorOnHover}
+                  >
+                    source
+                  </WelcomeTicket>
+                  .
+                </WelcomeText>
+              </WelcomeContent>
+              <WelcomeClose>
+                <RxCross2 onClick={closeSiloUSDCBadge} />
+              </WelcomeClose>
+            </WelcomeBox>
+          )}
+          {id === 'silo_sUSDX_USDC' && showSiloUSDCInfo && (
+            <WelcomeBox
+              $bgcolortooltip={bgColorTooltip}
+              $fontcolortooltip={fontColorTooltip}
+              $bordercolor={borderColor}
+            >
+              <BiInfoCircle className="info-circle" fontSize={20} />
+              <WelcomeContent>
+                <WelcomeTitle>Vault Notice</WelcomeTitle>
+                <WelcomeText>
+                  This vault may be affected by the ongoing Balancer incident. Users are advised
+                  that this vault may experience periods of illiquidity as market conditions
+                  resolve. Stables Labs stated that "Liquidity on Arbitrum and Base chains will be
+                  gradually restored once safety is confirmed" -{' '}
+                  <WelcomeTicket
+                    className="useIFARM"
+                    href="https://x.com/StablesLabs/status/1985565496482398619"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    $linkcolor={linkColorTooltip}
+                    $linkcoloronhover={linkColorOnHover}
+                  >
+                    source
+                  </WelcomeTicket>
+                  .
                 </WelcomeText>
               </WelcomeContent>
               <WelcomeClose>
