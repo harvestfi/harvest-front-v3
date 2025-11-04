@@ -209,6 +209,7 @@ const AdvancedFarm = () => {
   const [showLatestEarnings, setShowLatestEarnings] = useState(false)
   const [showApyHistory, setShowApyHistory] = useState(true)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
+  const [showSiloUSDCInfo, setShowSiloUSDCInfo] = useState(true)
   const [supportedVault, setSupportedVault] = useState(false)
   const [hasPortalsError, setHasPortalsError] = useState(true)
   const [badgeId, setBadgeId] = useState(-1)
@@ -447,6 +448,20 @@ const AdvancedFarm = () => {
     setShowIFARMInfo(false)
     localStorage.setItem('firstViewIFarm', 'false')
   }
+
+  const closeSiloUSDCBadge = () => {
+    setShowSiloUSDCInfo(false)
+    localStorage.setItem(`siloInfoClosed_${id}`, 'true')
+  }
+
+  useEffect(() => {
+    if (id === 'silo_VM_USDC' || id === 'silo_sUSDX_USDC') {
+      const siloInfoClosed = localStorage.getItem(`siloInfoClosed_${id}`)
+      if (siloInfoClosed === 'true') {
+        setShowSiloUSDCInfo(false)
+      }
+    }
+  }, [id])
 
   useEffect(() => {
     async function fetchPortalsSupport() {
@@ -1472,6 +1487,26 @@ const AdvancedFarm = () => {
       </TopInner>
       <Inner $backcolor={bgColorNew}>
         <BigDiv>
+          {(id === 'silo_VM_USDC' || id === 'silo_sUSDX_USDC') && showSiloUSDCInfo && (
+            <WelcomeBox
+              $bgcolortooltip={bgColorTooltip}
+              $fontcolortooltip={fontColorTooltip}
+              $bordercolor={borderColor}
+            >
+              <BiInfoCircle className="info-circle" fontSize={20} />
+              <WelcomeContent>
+                <WelcomeTitle>Vault Notice</WelcomeTitle>
+                <WelcomeText>
+                  This vault may be affected by the ongoing Stream Finance incident. Users are
+                  advised that this vault may experience periods of illiquidity as market conditions
+                  resolve.
+                </WelcomeText>
+              </WelcomeContent>
+              <WelcomeClose>
+                <RxCross2 onClick={closeSiloUSDCBadge} />
+              </WelcomeClose>
+            </WelcomeBox>
+          )}
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
