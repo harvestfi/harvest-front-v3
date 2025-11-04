@@ -455,7 +455,7 @@ const AdvancedFarm = () => {
   }
 
   useEffect(() => {
-    if (id === 'silo_VM_USDC' || id === 'silo_sUSDX_USDC') {
+    if (id === 'silo_VM_USDC' || id === 'silo_sUSDX_USDC' || id === 'IPOR_USDC_arbitrum') {
       const siloInfoClosed = localStorage.getItem(`siloInfoClosed_${id}`)
       if (siloInfoClosed === 'true') {
         setShowSiloUSDCInfo(false)
@@ -1543,6 +1543,40 @@ const AdvancedFarm = () => {
                     source
                   </WelcomeTicket>
                   .
+                </WelcomeText>
+              </WelcomeContent>
+              <WelcomeClose>
+                <RxCross2 onClick={closeSiloUSDCBadge} />
+              </WelcomeClose>
+            </WelcomeBox>
+          )}
+          {id === 'IPOR_USDC_arbitrum' && showSiloUSDCInfo && (
+            <WelcomeBox
+              $bgcolortooltip={bgColorTooltip}
+              $fontcolortooltip={fontColorTooltip}
+              $bordercolor={borderColor}
+            >
+              <BiInfoCircle className="info-circle" fontSize={20} />
+              <WelcomeContent>
+                <WelcomeTitle>Vault Notice</WelcomeTitle>
+                <WelcomeText>
+                  The USDC Autopilot on Arbitrum has been temporarily deactivated following
+                  liquidity issues at third-party protocols (Silo / Stream Finance) that Harvest's
+                  public smart contracts interacted with to generate yield. This action has been
+                  taken solely to protect Autopilot users. Harvest continues to monitor the
+                  situation closely and will provide a further update within 48 hours. Please follow
+                  the Harvest Discord{' '}
+                  <WelcomeTicket
+                    className="useIFARM"
+                    href="https://discord.com/channels/748967094745563176/896552850665123860"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    $linkcolor={linkColorTooltip}
+                    $linkcoloronhover={linkColorOnHover}
+                  >
+                    #vault-updates
+                  </WelcomeTicket>{' '}
+                  channel for more information.
                 </WelcomeText>
               </WelcomeContent>
               <WelcomeClose>
