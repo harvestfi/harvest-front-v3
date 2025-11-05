@@ -1487,103 +1487,36 @@ const AdvancedFarm = () => {
       </TopInner>
       <Inner $backcolor={bgColorNew}>
         <BigDiv>
-          {id === 'silo_VM_USDC' && showSiloUSDCInfo && (
-            <WelcomeBox
-              $bgcolortooltip={bgColorTooltip}
-              $fontcolortooltip={fontColorTooltip}
-              $bordercolor={borderColor}
-            >
-              <BiInfoCircle className="info-circle" fontSize={20} />
-              <WelcomeContent>
-                <WelcomeTitle>Vault Notice</WelcomeTitle>
-                <WelcomeText>
-                  This vault may be affected by the ongoing Stream Finance incident. Users are
-                  advised that this vault may experience periods of illiquidity as the Silo market
-                  conditions resolve. Refer to the Silo Finance announcement on that matter -{' '}
-                  <WelcomeTicket
-                    className="useIFARM"
-                    href="https://silofinance.medium.com/stream-finance-incident-transparency-report-cc21fb76f0b5"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    $linkcolor={linkColorTooltip}
-                    $linkcoloronhover={linkColorOnHover}
-                  >
-                    source
-                  </WelcomeTicket>
-                  .
-                </WelcomeText>
-              </WelcomeContent>
-              <WelcomeClose>
-                <RxCross2 onClick={closeSiloUSDCBadge} />
-              </WelcomeClose>
-            </WelcomeBox>
-          )}
-          {id === 'silo_sUSDX_USDC' && showSiloUSDCInfo && (
-            <WelcomeBox
-              $bgcolortooltip={bgColorTooltip}
-              $fontcolortooltip={fontColorTooltip}
-              $bordercolor={borderColor}
-            >
-              <BiInfoCircle className="info-circle" fontSize={20} />
-              <WelcomeContent>
-                <WelcomeTitle>Vault Notice</WelcomeTitle>
-                <WelcomeText>
-                  This vault may be affected by the ongoing Balancer incident. Users are advised
-                  that this vault may experience periods of illiquidity as market conditions
-                  resolve. Stables Labs stated that "Liquidity on Arbitrum and Base chains will be
-                  gradually restored once safety is confirmed" -{' '}
-                  <WelcomeTicket
-                    className="useIFARM"
-                    href="https://x.com/StablesLabs/status/1985565496482398619"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    $linkcolor={linkColorTooltip}
-                    $linkcoloronhover={linkColorOnHover}
-                  >
-                    source
-                  </WelcomeTicket>
-                  .
-                </WelcomeText>
-              </WelcomeContent>
-              <WelcomeClose>
-                <RxCross2 onClick={closeSiloUSDCBadge} />
-              </WelcomeClose>
-            </WelcomeBox>
-          )}
-          {id === 'IPOR_USDC_arbitrum' && showSiloUSDCInfo && (
-            <WelcomeBox
-              $bgcolortooltip={bgColorTooltip}
-              $fontcolortooltip={fontColorTooltip}
-              $bordercolor={borderColor}
-            >
-              <BiInfoCircle className="info-circle" fontSize={20} />
-              <WelcomeContent>
-                <WelcomeTitle>Vault Notice</WelcomeTitle>
-                <WelcomeText>
-                  The USDC Autopilot on Arbitrum has been temporarily deactivated following
-                  liquidity issues at third-party protocols (Silo / Stream Finance) that Harvest's
-                  public smart contracts interacted with to generate yield. This action has been
-                  taken solely to protect Autopilot users. Harvest continues to monitor the
-                  situation closely and will provide a further update within 48 hours. Please follow
-                  the Harvest Discord{' '}
-                  <WelcomeTicket
-                    className="useIFARM"
-                    href="https://discord.com/channels/748967094745563176/896552850665123860"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    $linkcolor={linkColorTooltip}
-                    $linkcoloronhover={linkColorOnHover}
-                  >
-                    #vault-updates
-                  </WelcomeTicket>{' '}
-                  channel for more information.
-                </WelcomeText>
-              </WelcomeContent>
-              <WelcomeClose>
-                <RxCross2 onClick={closeSiloUSDCBadge} />
-              </WelcomeClose>
-            </WelcomeBox>
-          )}
+          {(id === 'silo_VM_USDC' || id === 'silo_sUSDX_USDC' || id === 'IPOR_USDC_arbitrum') &&
+            showSiloUSDCInfo && (
+              <WelcomeBox
+                $bgcolortooltip={bgColorTooltip}
+                $fontcolortooltip={fontColorTooltip}
+                $bordercolor={borderColor}
+              >
+                <BiInfoCircle className="info-circle" fontSize={20} />
+                <WelcomeContent>
+                  <WelcomeTitle>Vault Notice</WelcomeTitle>
+                  <WelcomeText>
+                    This vault has been paused following liquidity issues at third-party protocols.{' '}
+                    <WelcomeTicket
+                      className="useIFARM"
+                      href="https://medium.com/harvest-finance/november-2025-liquidity-event-autopilot-vault-status-overview-21139858e524"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      $linkcolor={linkColorTooltip}
+                      $linkcoloronhover={linkColorOnHover}
+                    >
+                      Read Harvest's latest announcement regarding the next steps on the Medium Blog
+                    </WelcomeTicket>
+                    . If you have any questions, please open a Discord Ticket via the menu button.
+                  </WelcomeText>
+                </WelcomeContent>
+                <WelcomeClose>
+                  <RxCross2 onClick={closeSiloUSDCBadge} />
+                </WelcomeClose>
+              </WelcomeBox>
+            )}
           <InternalSection>
             {activeMainTag === 0 ? (
               <>
