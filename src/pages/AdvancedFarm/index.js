@@ -1497,18 +1497,19 @@ const AdvancedFarm = () => {
               <WelcomeContent>
                 <WelcomeTitle>Vault Notice</WelcomeTitle>
                 <WelcomeText>
-                  This vault has been paused following liquidity issues at third-party protocols.{' '}
+                  This vault's distribution process has been completed. All affected positions have{' '}
+                  been returned on-chain through receipt tokens representing users' proportional{' '}
+                  holdings within the Silo protocol.{' '}
                   <WelcomeTicket
                     className="useIFARM"
-                    href="https://medium.com/harvest-finance/november-2025-liquidity-event-autopilot-vault-status-overview-21139858e524"
+                    href="https://discord.com/channels/748967094745563176/748969913489817720/1437866891258495241"
                     target="_blank"
                     rel="noopener noreferrer"
                     $linkcolor={linkColorTooltip}
                     $linkcoloronhover={linkColorOnHover}
                   >
-                    Read Harvest's latest announcement regarding the next steps on the Medium Blog
+                    Read the announcement here.
                   </WelcomeTicket>
-                  . If you have any questions, please open a Discord Ticket via the menu button.
                 </WelcomeText>
               </WelcomeContent>
               <WelcomeClose>
