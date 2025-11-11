@@ -1502,7 +1502,7 @@ const AdvancedFarm = () => {
                   holdings within the Silo protocol.{' '}
                   <WelcomeTicket
                     className="useIFARM"
-                    href="https://discord.com/channels/748967094745563176/748969913489817720/1436000240812425306"
+                    href="https://discord.com/channels/748967094745563176/748969913489817720/1437866891258495241"
                     target="_blank"
                     rel="noopener noreferrer"
                     $linkcolor={linkColorTooltip}
