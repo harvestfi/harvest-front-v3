@@ -1502,7 +1502,7 @@ const AdvancedFarm = () => {
                   holdings within the Silo protocol.{' '}
                   <WelcomeTicket
                     className="useIFARM"
-                    href="https://discord.com/channels/748967094745563176/748969913489817720/1437866891258495241"
+                    href="https://medium.com/harvest-finance/completion-of-receipt-token-distribution-0d61511d3713"
                     target="_blank"
                     rel="noopener noreferrer"
                     $linkcolor={linkColorTooltip}
@@ -1529,8 +1529,8 @@ const AdvancedFarm = () => {
                 <WelcomeText>
                   This Autopilot has been unpaused and is now fully operational, with the sharePrice
                   adjusted to reflect liquid USDC. The affected 'Silo – sUSDX' and 'Silo –
-                  Varlamore' subvaults have been disconnected. Receipt tokens for these markets will
-                  be distributed directly to user wallets. Follow the #announcements channel on
+                  Varlamore' subvaults have been disconnected. Receipt tokens for these markets have
+                  been distributed directly to user wallets. Follow the #announcements channel on
                   Discord for the latest updates.
                 </WelcomeText>
               </WelcomeContent>
