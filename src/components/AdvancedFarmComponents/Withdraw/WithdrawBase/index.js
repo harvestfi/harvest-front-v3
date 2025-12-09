@@ -316,7 +316,7 @@ const WithdrawBase = ({
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const mainTags = [
-    { name: 'Convert', img: BsArrowDown },
+    { name: 'Supply', img: BsArrowDown },
     { name: 'Revert', img: BsArrowUp },
   ]
 

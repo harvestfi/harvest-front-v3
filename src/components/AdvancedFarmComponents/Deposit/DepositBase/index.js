@@ -9,7 +9,6 @@ import { PiQuestion } from 'react-icons/pi'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
-import ThumbUpIcon from '../../../../assets/images/logos/thumb-up.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { useWallet } from '../../../../providers/Wallet'
@@ -35,7 +34,10 @@ import {
   CloseBtn,
   DepositTokenSection,
   SwitchTabTag,
-  ThumbUp,
+  CheckboxContainer,
+  CheckboxInput,
+  CheckboxLabel,
+  SupplyButton,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
 import { getChainName } from '../../../../utilities/parsers'
@@ -70,6 +72,7 @@ const DepositBase = ({
   setFailureCount,
   supportedVault,
   setSupportedVault,
+  activeDepo,
 }) => {
   const {
     darkMode,
@@ -110,10 +113,21 @@ const DepositBase = ({
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
   const [currencyRate, setCurrencyRate] = useState(1)
-  const [depositName, setDepositName] = useState('Preview & Convert')
+  const [depositName, setDepositName] = useState('Preview & Supply')
   const [showWarning, setShowWarning] = useState(false)
+  const [activeTabIndex, setActiveTabIndex] = useState(0) // 0 = Supply, 1 = Revert
+  const [isCheckboxChecked, setIsCheckboxChecked] = useState(false)
+  const [tabLabel, setTabLabel] = useState('Supply')
   // const [showDepositIcon, setShowDepositIcon] = useState(true)
   const amount = toWei(inputAmount, pickedToken.decimals, 0)
+
+  useEffect(() => {
+    if (activeDepo) {
+      setTabLabel('Supply')
+      setActiveTabIndex(0)
+      setIsCheckboxChecked(false)
+    }
+  }, [activeDepo])
 
   useEffect(() => {
     if (rates.rateData) {
@@ -129,7 +143,7 @@ const DepositBase = ({
         setDepositName(`Change Network to ${chainName}`)
         // setShowDepositIcon(false)
       } else {
-        setDepositName('Preview & Convert')
+        setDepositName('Preview & Supply')
       }
     } else {
       setDepositName('Connect Wallet to Get Started')
@@ -316,8 +330,14 @@ const DepositBase = ({
         setChainId(tokenChain)
       }
     } else {
+      if (activeTabIndex === 0 && !isCheckboxChecked) {
+        toast.error(
+          'Please confirm that you have read and understood the product, Risk Disclosures, and Terms and Conditions.',
+        )
+        return
+      }
       if (pickedToken.symbol === 'Select Token') {
-        toast.error('Please choose your Output Token.')
+        toast.error('Please choose your Input Token.')
         return
       }
       if (
@@ -357,11 +377,29 @@ const DepositBase = ({
   }
 
   const mainTags = [
-    { name: 'Convert', img: BsArrowDown },
+    { name: tabLabel, img: BsArrowDown },
     { name: 'Revert', img: BsArrowUp },
   ]
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
+
+  const isButtonDisabled =
+    activeTabIndex === 0 && account && curChain === tokenChain && !isCheckboxChecked
+  const disabledButtonColor = '#DADFE6'
+
+  const linkConfig = {
+    riskDisclosures: { text: 'Risk Disclosures', href: '#' },
+    termsAndConditions: {
+      text: 'Terms and Conditions',
+      href: 'https://docs.harvest.finance/legal/terms-and-conditions',
+    },
+  }
+
+  const linkProps = {
+    target: '_blank',
+    rel: 'noopener noreferrer',
+    onClick: e => e.stopPropagation(),
+  }
 
   return (
     <>
@@ -383,15 +421,21 @@ const DepositBase = ({
             <SwitchTabTag
               key={i}
               onClick={() => {
-                if (i === 1) {
+                if (i === 0) {
+                  setActiveTabIndex(0)
+                  setTabLabel('Supply')
+                } else if (i === 1) {
+                  setActiveTabIndex(1)
+                  setIsCheckboxChecked(false)
+                  setTabLabel('Convert')
                   switchMethod()
                 }
               }}
-              $fontcolor={i === 0 ? fontColor4 : fontColor3}
-              $bordercolor={i === 0 ? activeColor : ''}
-              $backcolor={i === 0 ? activeColorNew : ''}
+              $fontcolor={i === activeTabIndex ? fontColor4 : fontColor3}
+              $bordercolor={i === activeTabIndex ? activeColor : ''}
+              $backcolor={i === activeTabIndex ? activeColorNew : ''}
               $boxshadow={
-                i === 0
+                i === activeTabIndex
                   ? '0px 1px 2px 0px rgba(16, 24, 40, 0.06), 0px 1px 3px 0px rgba(16, 24, 40, 0.10)'
                   : ''
               }
@@ -402,7 +446,7 @@ const DepositBase = ({
           ))}
         </NewLabel>
         <DepoTitle $fontcolor={fontColor}>
-          {'Convert your crypto into interest-bearing fTokens.'}
+          {'Supply your crypto into interest-bearing fTokens.'}
         </DepoTitle>
         <TokenInfo>
           <AmountSection>
@@ -413,7 +457,7 @@ const DepositBase = ({
               $fontcolor={fontColor2}
               $marginbottom="6px"
             >
-              Amount to convert
+              Amount to supply
             </NewLabel>
             <TokenInput>
               <TokenAmount
@@ -704,32 +748,42 @@ const DepositBase = ({
               </NewLabel>
             </NewLabel>
           </NewLabel>
-          <ThumbUp $padding={isMobile ? '15px' : '16px'}>
-            <img src={ThumbUpIcon} alt="thumb-up" style={{ marginRight: '15px' }} />
-            <NewLabel
-              $size={isMobile ? '10px' : '12px'}
-              $weight="600"
-              $height="20px"
-              $fontcolor="#027A48"
-            >
-              You can exit anytime in full at no cost.
-            </NewLabel>
-          </ThumbUp>
+          {activeTabIndex === 0 && (
+            <CheckboxContainer $darkMode={darkMode}>
+              <CheckboxInput
+                type="checkbox"
+                id="terms-checkbox"
+                checked={isCheckboxChecked}
+                onChange={e => setIsCheckboxChecked(e.target.checked)}
+              />
+              <CheckboxLabel htmlFor="terms-checkbox" $isMobile={isMobile} $darkMode={darkMode}>
+                I confirm that I have read and understand the product, have read the{' '}
+                <a href={linkConfig.riskDisclosures.href} {...linkProps}>
+                  {linkConfig.riskDisclosures.text}
+                </a>
+                , and agree to the{' '}
+                <a href={linkConfig.termsAndConditions.href} {...linkProps}>
+                  {linkConfig.termsAndConditions.text}
+                </a>
+                .
+              </CheckboxLabel>
+            </CheckboxContainer>
+          )}
         </NewLabel>
         <NewLabel>
-          <Button
-            $fontcolor="wido-deposit"
-            $width="100%"
-            $btncolor={btnColor}
-            $btnhovercolor={btnHoverColor}
-            $btnactivecolor={btnActiveColor}
-            onClick={() => {
-              onClickDeposit()
-            }}
-          >
-            {depositName}
-            {/* {showDepositIcon && <img src={WalletIcon} alt="" />} */}
-          </Button>
+          <SupplyButton $isDisabled={isButtonDisabled}>
+            <Button
+              $fontcolor="wido-deposit"
+              $width="100%"
+              $btncolor={isButtonDisabled ? disabledButtonColor : btnColor}
+              $btnhovercolor={isButtonDisabled ? disabledButtonColor : btnHoverColor}
+              $btnactivecolor={isButtonDisabled ? disabledButtonColor : btnActiveColor}
+              $disabled={isButtonDisabled}
+              onClick={onClickDeposit}
+            >
+              {depositName}
+            </Button>
+          </SupplyButton>
         </NewLabel>
       </BaseWidoDiv>
     </>

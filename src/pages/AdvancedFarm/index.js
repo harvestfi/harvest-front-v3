@@ -865,13 +865,8 @@ const AdvancedFarm = () => {
 
         setPickedTokenWith(defaultToken)
 
-        // Check if defaultToken is present in the balanceList
         if (defaultToken.balance !== '0' || !supportedVault || hasPortalsError) {
-          if (!fromTokenList) {
-            setPickedTokenDepo(defaultToken)
-            setBalanceDepo(defaultToken.balance)
-            return
-          }
+          // Supply mode (pickedTokenDepo) stays as "Select Token"
         }
 
         // If defaultToken is not found, find the token with the highest USD value among those in the SUPPORTED_TOKEN_LIST and balanceList
@@ -893,24 +888,15 @@ const AdvancedFarm = () => {
           )
         }
 
-        // Set the pickedTokenDepo and balanceDepo based on the determined tokenToSet
+        // Set the pickedTokenWith (Revert mode) based on the determined tokenToSet
+        // Do NOT set pickedTokenDepo (Supply mode) - keep it as "Select Token"
         if (tokenToSet) {
-          if (!fromTokenList) {
-            setPickedTokenDepo(tokenToSet)
-            setBalanceDepo(
-              fromWei(
-                tokenToSet.rawBalance ? tokenToSet.rawBalance : 0,
-                tokenToSet.decimals,
-                tokenToSet.decimals,
-              ),
-            )
-          }
+          // Only set for Revert mode
+          // Supply mode stays as "Select Token" - users must manually select
         }
       } else if (supTokenList.length !== 0) {
-        if (!fromTokenList) {
-          setPickedTokenDepo(supTokenList.find(coin => coin.symbol === 'USDC'))
-          setBalanceDepo('0')
-        }
+        // Only set for Revert mode if no defaultToken
+        // Supply mode stays as "Select Token"
       }
     }, 3000)
 
@@ -2190,6 +2176,7 @@ const AdvancedFarm = () => {
                         supTokenList={supTokenList}
                         switchMethod={handleToggle(setActiveDepo)}
                         tokenSymbol={tokenSym}
+                        activeDepo={activeDepo}
                         balanceList={balanceList}
                         setFromInfoAmount={setFromInfoAmount}
                         setFromInfoUsdAmount={setFromInfoUsdAmount}
