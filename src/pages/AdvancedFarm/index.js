@@ -827,6 +827,48 @@ const AdvancedFarm = () => {
   }, [pickedTokenDepo])
 
   useEffect(() => {
+    if (
+      pickedTokenDepo &&
+      pickedTokenDepo.symbol !== 'Select Token' &&
+      pickedTokenDepo.address &&
+      (balanceList.length > 0 || supTokenList.length > 0 || defaultToken)
+    ) {
+      let updatedToken = balanceList.find(
+        token =>
+          token.address &&
+          pickedTokenDepo.address &&
+          token.address.toLowerCase() === pickedTokenDepo.address.toLowerCase(),
+      )
+
+      if (!updatedToken && supTokenList.length > 0) {
+        updatedToken = supTokenList.find(
+          token =>
+            token.address &&
+            pickedTokenDepo.address &&
+            token.address.toLowerCase() === pickedTokenDepo.address.toLowerCase(),
+        )
+      }
+
+      if (
+        !updatedToken &&
+        defaultToken &&
+        defaultToken.address &&
+        pickedTokenDepo.address &&
+        defaultToken.address.toLowerCase() === pickedTokenDepo.address.toLowerCase()
+      ) {
+        updatedToken = defaultToken
+      }
+
+      if (updatedToken && updatedToken.balance !== undefined) {
+        const newBalance = updatedToken.rawBalance
+          ? fromWei(updatedToken.rawBalance, updatedToken.decimals, updatedToken.decimals)
+          : updatedToken.balance
+        setBalanceDepo(newBalance)
+      }
+    }
+  }, [balanceList, supTokenList, defaultToken, pickedTokenDepo])
+
+  useEffect(() => {
     if (sharePricesData && token.isIPORVault) {
       let avgAPYData = {}
       Object.keys(sharePricesData).forEach(key => {

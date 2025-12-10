@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useSetChain } from '@web3-onboard/react'
 import { round } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
@@ -128,6 +128,17 @@ const DepositBase = ({
       setIsCheckboxChecked(false)
     }
   }, [activeDepo])
+
+  const prevDepositRef = useRef(deposit)
+  useEffect(() => {
+    if (prevDepositRef.current === true && deposit === false) {
+      setIsCheckboxChecked(false)
+      if (inputAmount !== '0' && inputAmount !== '') {
+        setInputAmount('0')
+      }
+    }
+    prevDepositRef.current = deposit
+  }, [deposit, inputAmount, setInputAmount])
 
   useEffect(() => {
     if (rates.rateData) {
