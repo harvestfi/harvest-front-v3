@@ -479,10 +479,71 @@ const ThumbUp = styled.div`
   display: flex;
 `
 
+const CheckboxContainer = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 16px;
+  background: ${props => (props.$darkMode ? '#1F2937' : '#F9FAFB')};
+  border: 1px solid ${props => (props.$darkMode ? '#374151' : '#E5E7EB')};
+  border-radius: 12px;
+  margin-top: 10px;
+  margin-bottom: 25px;
+`
+
+const CheckboxInput = styled.input`
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+  cursor: pointer;
+  flex-shrink: 0;
+  accent-color: #5dcf46;
+  border-color: #d1d5db;
+  border-radius: 4px;
+
+  &:focus {
+    outline-offset: 2px;
+  }
+
+  &:checked {
+    border-color: #d1d5db;
+  }
+`
+
+const CheckboxLabel = styled.label`
+  font-size: ${props => (props.$isMobile ? '12px' : '14px')};
+  line-height: 1.5;
+  color: ${props => (props.$darkMode ? '#D1D5DB' : '#374151')};
+  font-weight: 400;
+  flex: 1;
+  cursor: pointer;
+
+  a {
+    color: #5dcf46;
+    text-decoration: underline;
+    cursor: pointer;
+
+    &:hover {
+      color: #4ab835;
+    }
+  }
+`
+
+const SupplyButton = styled.div`
+  button {
+    cursor: ${props => (props.$isDisabled ? 'not-allowed' : 'pointer')};
+    color: ${props => (props.$isDisabled ? '#9CA3AF' : 'white')};
+  }
+`
+
 export {
   FlexDiv,
   BaseWidoDiv,
   ThumbUp,
+  CheckboxContainer,
+  CheckboxInput,
+  CheckboxLabel,
+  SupplyButton,
   NewLabel,
   TokenInput,
   TokenAmount,
