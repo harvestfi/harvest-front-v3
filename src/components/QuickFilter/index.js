@@ -479,7 +479,7 @@ const QuickFilter = ({
                           }
 
                           if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                            tempIds = [0, 1, 2, 3, 4]
+                            tempIds = [0, 1, 2, 3, 4, 5]
                             setSelectedClass(tempIds)
                           } else {
                             setSelectedClass(tempIds)
@@ -647,7 +647,7 @@ const QuickFilter = ({
                     }
 
                     if (tempIds.length === 0 || tempIds.length === ChainsList.length) {
-                      tempIds = [0, 1, 2, 3, 4]
+                      tempIds = [0, 1, 2, 3, 4, 5]
                       setSelectedClass(tempIds)
                     } else {
                       setSelectedClass(tempIds)
