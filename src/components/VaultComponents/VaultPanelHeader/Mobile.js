@@ -6,6 +6,7 @@ import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/chains/ethereum.svg'
 import POLYGON from '../../../assets/images/chains/polygon.svg'
 import ZKSYNC from '../../../assets/images/chains/zksync.svg'
+import HYPEREVM from '../../../assets/images/logos/badge/hype.svg'
 import APYIcon from '../../../assets/images/logos/farm/sortAPY.svg'
 import TVLIcon from '../../../assets/images/logos/farm/sortBank.svg'
 import DailyIcon from '../../../assets/images/logos/farm/sortCurrency.svg'
@@ -31,7 +32,7 @@ const MobilePanelHeader = ({
   loadingFarmingBalance,
 }) => {
   const location = useLocation()
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC, HYPEREVM]
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
   const chainId = token.chain || token.data.chain

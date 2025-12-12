@@ -5,6 +5,7 @@ import BASE from '../../../assets/images/chains/base.svg'
 import ETHEREUM from '../../../assets/images/logos/badge/ethereum.svg'
 import POLYGON from '../../../assets/images/logos/badge/polygon.svg'
 import ZKSYNC from '../../../assets/images/logos/badge/zksync.svg'
+import HYPEREVM from '../../../assets/images/logos/badge/hype.svg'
 import { chainList, directDetailUrl } from '../../../constants'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { BadgeIcon, LogoImg, PanelContainer, ValueContainer } from './style'
@@ -16,7 +17,7 @@ import VaultValue from './sub-components/VaultValue'
 
 const DesktopPanelHeader = ({ token, tokenSymbol, vaultPool, loadedVault }) => {
   const location = useLocation()
-  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC]
+  const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC, HYPEREVM]
 
   const chainId = token.chain || token.data.chain
   const [badgeId, setBadgeId] = useState(-1)

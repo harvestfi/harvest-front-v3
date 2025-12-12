@@ -10,6 +10,7 @@ import BASE from './assets/images/chains/base.svg'
 import ETHEREUM from './assets/images/chains/ethereum.svg'
 import POLYGON from './assets/images/chains/polygon.svg'
 import ZKSYNC from './assets/images/chains/zksync.svg'
+import HYPEREVM from './assets/images/chains/hype.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
@@ -65,6 +66,7 @@ export const MATIC_URL = `https://polygon-mainnet.g.alchemy.com/v2/${process.env
 export const BASE_URL = `https://base-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const ARBITRUM_URL = `https://arb-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 export const ZKSYNC_URL = `https://zksync-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
+export const HYPEREVM_URL = `https://hyperliquid-mainnet.g.alchemy.com/v2/${process.env.REACT_APP_ALCHEMY_KEY}`
 
 export const GRAPH_URLS = {
   1: process.env.REACT_APP_GRAPH_URL_MAINNET || 'https://monkfish-app-mhcjl.ondigitalocean.app/1',
@@ -72,6 +74,8 @@ export const GRAPH_URLS = {
     process.env.REACT_APP_GRAPH_URL_POLYGON || 'https://monkfish-app-mhcjl.ondigitalocean.app/137',
   324:
     process.env.REACT_APP_GRAPH_URL_ZKSYNC || 'https://monkfish-app-mhcjl.ondigitalocean.app/324',
+  999:
+    process.env.REACT_APP_GRAPH_URL_HYPEREVM || 'https://monkfish-app-mhcjl.ondigitalocean.app/999',
   8453:
     process.env.REACT_APP_GRAPH_URL_BASE || 'https://monkfish-app-mhcjl.ondigitalocean.app/8453',
   42161:
@@ -88,6 +92,8 @@ export const BASESCAN_URL = 'https://basescan.org'
 export const ARBISCAN_URL = 'https://arbiscan.io'
 
 export const ZKSYNCSCAN_URL = 'https://explorer.zksync.io/'
+
+export const HYPEREVMSCAN_URL = 'https://hyperevmscan.io//'
 
 export const PORTALS_FI_API_URL = 'https://api.portals.fi'
 
@@ -786,6 +792,7 @@ export const chainList = [
   { id: 3, name: 'Arbitrum', chainId: 42161 },
   { id: 4, name: 'Base', chainId: 8453 },
   { id: 5, name: 'Zksync', chainId: 324 },
+  { id: 6, name: 'HyperEVM', chainId: 999 },
 ]
 
 export const ChainsList = [
@@ -794,6 +801,7 @@ export const ChainsList = [
   { id: 2, name: 'Arbitrum', img: ARBITRUM, chainId: CHAIN_IDS.ARBITRUM_ONE },
   { id: 3, name: 'Base', img: BASE, chainId: CHAIN_IDS.BASE },
   { id: 4, name: 'Zksync', img: ZKSYNC, chainId: CHAIN_IDS.ZKSYNC },
+  { id: 5, name: 'HyperEVM', img: HYPEREVM, chainId: CHAIN_IDS.HYPEREVM },
 ]
 
 export const someChainsList = [

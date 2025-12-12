@@ -118,6 +118,12 @@ export const web3Onboard = init({
       label: 'Zksync',
       rpcUrl: 'https://rpc.ankr.com/zksync_era',
     },
+    {
+      id: 999,
+      token: 'HYPE',
+      label: 'HyperEVM',
+      rpcUrl: 'https://hyperliquid.drpc.org',
+    },
   ],
   appMetadata: {
     name: 'Harvest',
