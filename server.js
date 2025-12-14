@@ -25,6 +25,7 @@ app.use(
           'https://static.cloudflareinsights.com',
           'https://cdn.jsdelivr.net/npm/@ledgerhq/connect-kit@1',
           'https://cdn.usefathom.com/script.js',
+          'https://tag.safary.club',
         ],
         connectSrc: ["'self'", '*'],
         imgSrc: ["'self'", 'https: data:'],
