@@ -399,7 +399,10 @@ const DepositBase = ({
   const disabledButtonColor = '#DADFE6'
 
   const linkConfig = {
-    riskDisclosures: { text: 'Risk Disclosures', href: '#' },
+    riskDisclosures: {
+      text: 'Risk Disclosures',
+      href: 'https://docs.harvest.finance/legal/risk-disclosures',
+    },
     termsAndConditions: {
       text: 'Terms and Conditions',
       href: 'https://docs.harvest.finance/legal/terms-and-conditions',
