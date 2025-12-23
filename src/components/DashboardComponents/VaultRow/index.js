@@ -110,6 +110,7 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
                     isMorphoOnly={info.platform.includes('Autopilot - MORPHO')}
                     tooltipIdMorpho={`tooltip-morpho-desktop-${cKey}`}
                     isPortfolio={true}
+                    address={address}
                   />
                 ) : (
                   <ListItem
@@ -221,6 +222,7 @@ const VaultRow = ({ info, lifetimeYield, lastElement, cKey, darkMode }) => {
                     isMorphoOnly={info.platform.includes('Autopilot - MORPHO')}
                     tooltipIdMorpho={`tooltip-morpho-portfolio-${cKey}`}
                     isPortfolio={true}
+                    address={address}
                   />
                 ) : (
                   <ListItem
