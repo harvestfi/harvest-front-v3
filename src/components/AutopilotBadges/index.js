@@ -14,11 +14,15 @@ const AutopilotBadges = ({
   className = '',
   mobileLayout = 'column',
   isPortfolio = false,
+  address,
 }) => {
   const tokenName = tokenNames && tokenNames[0] ? tokenNames[0] : 'USDC'
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
   const tokenNameForId = tokenNames ? tokenNames.join('-') : 'default'
   const morphoTooltipId = `${tooltipIdMorpho}-${tokenNameForId}`
+
+  // Hide Fusion Points badge for this specific autopilot address
+  const hideFusionPoints = address?.toLowerCase() === '0xce4d997a3b404f9eaa796f89deae40747d3647b7'
 
   return (
     <BadgeRow className={className} $mobileLayout={mobileLayout}>
@@ -54,15 +58,17 @@ const AutopilotBadges = ({
         </>
       )}
 
-      <FusionBadge $isPortfolio={isPortfolio}>
-        <img src={FusionIcon} width="12" height="12" alt="" />
-        <NewLabel $isPortfolio={isPortfolio}>{isMobile ? 'Fusion' : 'Fusion Points'}</NewLabel>
-        <PiQuestion
-          className="question"
-          data-tooltip-id="fusion-tooltip-global"
-          onClick={e => e.preventDefault()}
-        />
-      </FusionBadge>
+      {!hideFusionPoints && (
+        <FusionBadge $isPortfolio={isPortfolio}>
+          <img src={FusionIcon} width="12" height="12" alt="" />
+          <NewLabel $isPortfolio={isPortfolio}>{isMobile ? 'Fusion' : 'Fusion Points'}</NewLabel>
+          <PiQuestion
+            className="question"
+            data-tooltip-id="fusion-tooltip-global"
+            onClick={e => e.preventDefault()}
+          />
+        </FusionBadge>
+      )}
     </BadgeRow>
   )
 }

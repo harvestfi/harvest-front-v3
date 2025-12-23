@@ -18,6 +18,7 @@ const VaultName = ({ token, tokenSymbol, fontColor1, BadgeAry, badgeId, isMobile
           tooltipIdMorpho={`tooltip-morpho-vault-${uniqueId}`}
           mobileLayout="row"
           isPortfolio={false}
+          address={token.vaultAddress || token.tokenAddress}
         />
       )
     } else {

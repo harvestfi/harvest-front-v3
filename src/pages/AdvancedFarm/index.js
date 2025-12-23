@@ -1439,7 +1439,9 @@ const AdvancedFarm = () => {
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
-              {token.platform && token.platform[0].includes('Autopilot') && <TopBadge />}
+              {token.platform && token.platform[0].includes('Autopilot') && (
+                <TopBadge address={paramAddress} />
+              )}
             </GuideSection>
             <TabRow>
               <MainTagPanel>
