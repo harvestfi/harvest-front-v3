@@ -305,8 +305,6 @@ const FarmDetailChart = ({
           set360DHarvest(threeSixtyFiveDaysHarvest)
           setHarvestFrequency(frequencyOfHarvest)
 
-          // Count yield earning events (each vaultHistories entry represents a harvest event)
-          // Count yield earning events (each vaultHistories entry represents a harvest event)
           const count = updatedData.vaultHistories?.length || 0
           setHarvestEventCount(count)
 
