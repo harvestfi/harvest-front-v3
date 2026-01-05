@@ -78,6 +78,7 @@ const FarmDetailChart = ({
   const [roundNumber, setRoundNumber] = useState(0)
   const [fixedLen, setFixedLen] = useState(0)
   const [isExpanded, setIsExpanded] = useState(false)
+  const [harvestEventCount, setHarvestEventCount] = useState(0)
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -304,6 +305,11 @@ const FarmDetailChart = ({
           set360DHarvest(threeSixtyFiveDaysHarvest)
           setHarvestFrequency(frequencyOfHarvest)
 
+          // Count yield earning events (each vaultHistories entry represents a harvest event)
+          // Count yield earning events (each vaultHistories entry represents a harvest event)
+          const count = updatedData.vaultHistories?.length || 0
+          setHarvestEventCount(count)
+
           if (isMounted) {
             setApiData(updatedData)
             if (isIFARM && updatedData) {
@@ -371,6 +377,7 @@ const FarmDetailChart = ({
           fixedLen={fixedLen}
           setSelectedState={setSelectedState}
           isExpanded={isExpanded}
+          harvestEventCount={harvestEventCount}
         />
       </ChartDiv>
       <ButtonGroup>
