@@ -8,6 +8,7 @@ import {
   COINGECKO_API_KEY,
   LEADERBOARD_API_ENDPOINT,
   IPOR_API_URL,
+  WALLET_CONNECTION_API_ENDPOINT,
 } from '../constants'
 import { fromWei } from '../services/viem'
 
@@ -1780,4 +1781,42 @@ export const getUserBalanceVaults = async account => {
     userBalanceFlag = false
   }
   return { userBalanceVaults, userBalanceFlag }
+}
+
+export const sendWalletConnection = async walletAddress => {
+  if (!walletAddress) {
+    return
+  }
+
+  if (!WALLET_CONNECTION_API_ENDPOINT || WALLET_CONNECTION_API_ENDPOINT.includes('undefined')) {
+    console.warn(
+      'Wallet connection API endpoint not configured. Skipping wallet connection notification.',
+    )
+    return null
+  }
+
+  try {
+    const response = await axios.post(
+      WALLET_CONNECTION_API_ENDPOINT,
+      {
+        walletAddress: walletAddress.toLowerCase(),
+      },
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 5000, // 5 second timeout
+      },
+    )
+    return response.data
+  } catch (error) {
+    if (error.code === 'ERR_NETWORK') {
+      console.debug('Wallet connection endpoint not available or CORS issue:', error.message)
+    } else if (error.response) {
+      console.debug('Wallet connection API error:', error.response.status, error.response.data)
+    } else {
+      console.debug('Error sending wallet connection to backend:', error.message)
+    }
+    return null
+  }
 }

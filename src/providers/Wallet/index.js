@@ -17,6 +17,7 @@ import {
 } from '../../services/viem'
 import tokenMethods from '../../services/viem/contracts/token/methods'
 import { isLedgerLive, isSafeApp } from '../../utilities/formats'
+import { sendWalletConnection } from '../../utilities/apiCalls'
 import { useContracts } from '../Contracts'
 import { validateChain } from './utils'
 
@@ -24,6 +25,22 @@ const { tokens } = require('../../data')
 
 const WalletContext = createContext()
 const useWallet = () => useContext(WalletContext)
+
+const useSendWalletConnection = lastSentRef => {
+  return useCallback(
+    walletAddress => {
+      if (!walletAddress) return
+
+      const normalizedAddress = walletAddress.toLowerCase()
+      // Only send if this is a different address than last time
+      if (lastSentRef.current !== normalizedAddress) {
+        lastSentRef.current = normalizedAddress
+        sendWalletConnection(normalizedAddress)
+      }
+    },
+    [], // Refs are stable, no need for dependencies
+  )
+}
 
 const WalletProvider = _ref => {
   const { children } = _ref
@@ -48,6 +65,8 @@ const WalletProvider = _ref => {
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet()
 
   const walletLockCheckIntervalRef = useRef(null)
+  const lastSentWalletAddressRef = useRef(null)
+  const sendWalletConnectionOnce = useSendWalletConnection(lastSentWalletAddressRef)
 
   const checkWalletLock = useCallback(async () => {
     if (!isSafeApp() && wallet?.provider) {
@@ -61,13 +80,15 @@ const WalletProvider = _ref => {
             setWalletLocked(true)
           }
         } else if (!connected && accounts.length > 0) {
-          setAccount(accounts[0].toLowerCase())
+          const walletAddress = accounts[0].toLowerCase()
+          setAccount(walletAddress)
           // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
           setConnected(true)
 
           if (walletLocked) {
             setWalletLocked(false)
           }
+          sendWalletConnectionOnce(walletAddress)
         } else if (connected && accounts.length > 0) {
           if (walletLocked) {
             setWalletLocked(false)
@@ -117,8 +138,12 @@ const WalletProvider = _ref => {
         const selectedChain = await safeAppProvider.getNetwork()
         setChainId(selectedChain.chainId.toString())
         const selectedAccount = await safeAppProvider.getSigner().getAddress()
-        setAccount(selectedAccount && selectedAccount.toLowerCase())
+        const walletAddress = selectedAccount && selectedAccount.toLowerCase()
+        setAccount(walletAddress)
         setConnected(true)
+        if (walletAddress) {
+          sendWalletConnectionOnce(walletAddress)
+        }
       }
     }
     fetchData()
@@ -221,8 +246,10 @@ const WalletProvider = _ref => {
         if (safeViemProvider && safeViemProvider.provider.on) {
           networkEmitter = safeViemProvider.provider.on('chainChanged', onNetworkChange)
           accountEmitter = safeViemProvider.provider.on('accountsChanged', accountAddress => {
-            setAccount(accountAddress[0].toLowerCase())
+            const walletAddress = accountAddress[0].toLowerCase()
+            setAccount(walletAddress)
             setConnected(true)
+            sendWalletConnectionOnce(walletAddress)
           })
         }
         return () => {
@@ -237,9 +264,11 @@ const WalletProvider = _ref => {
         networkEmitter = wallet.provider.on('chainChanged', onNetworkChange)
         accountEmitter = wallet.provider.on('accountsChanged', accountAddress => {
           if (accountAddress && accountAddress.length > 0) {
-            setAccount(accountAddress[0].toLowerCase())
+            const walletAddress = accountAddress[0].toLowerCase()
+            setAccount(walletAddress)
             // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
             setConnected(true)
+            sendWalletConnectionOnce(walletAddress)
           } else {
             setAccount(null)
             setConnected(false)
@@ -265,7 +294,8 @@ const WalletProvider = _ref => {
     if (!isSafeApp()) {
       if (wallet) {
         const chainNum = parseInt(wallet.chains[0].id, 16).toString()
-        setAccount(wallet.accounts[0].address.toLowerCase())
+        const walletAddress = wallet.accounts[0].address.toLowerCase()
+        setAccount(walletAddress)
         // setAccount("0x6a74649aCFD7822ae8Fb78463a9f2192752E5Aa2".toLowerCase())
         setChainId(chainNum)
         if (wallet?.provider) {
@@ -279,11 +309,13 @@ const WalletProvider = _ref => {
         }
         setConnected(true)
         setLogout(false)
+        sendWalletConnectionOnce(walletAddress)
       } else {
         setConnected(false)
         setAccount(null)
         setBalances({})
         setLogout(true)
+        lastSentWalletAddressRef.current = null
       }
     }
   }, [wallet])
