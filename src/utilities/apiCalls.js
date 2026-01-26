@@ -1114,16 +1114,16 @@ export const getPriceFeeds = async (
 
   if (vaultPriceFeedCount > 10000) {
     const step = Math.ceil(vaultPriceFeedCount / 2000)
-    for (let i = 1; i <= vaultPriceFeedCount; i += step) {
+    for (let i = 0; i <= vaultPriceFeedCount; i += step) {
       sequenceIdsArray.push(i)
     }
   } else if (vaultPriceFeedCount > 1000) {
     const step = Math.ceil(vaultPriceFeedCount / 1000)
-    for (let i = 1; i <= vaultPriceFeedCount; i += step) {
+    for (let i = 0; i <= vaultPriceFeedCount; i += step) {
       sequenceIdsArray.push(i)
     }
   } else {
-    for (let i = 1; i <= vaultPriceFeedCount; i += 1) {
+    for (let i = 0; i <= vaultPriceFeedCount; i += 1) {
       sequenceIdsArray.push(i)
     }
   }
