@@ -211,6 +211,7 @@ const AdvancedFarm = () => {
   const [showApyHistory, setShowApyHistory] = useState(true)
   const [showIFARMInfo, setShowIFARMInfo] = useState(false)
   const [showSiloUSDCInfo, setShowSiloUSDCInfo] = useState(true)
+  const [showFoldingStrategyInfo, setShowFoldingStrategyInfo] = useState(true)
   const [supportedVault, setSupportedVault] = useState(false)
   const [hasPortalsError, setHasPortalsError] = useState(true)
   const [badgeId, setBadgeId] = useState(-1)
@@ -455,11 +456,25 @@ const AdvancedFarm = () => {
     localStorage.setItem(`siloInfoClosed_${id}`, 'true')
   }
 
+  const closeFoldingStrategyBadge = () => {
+    setShowFoldingStrategyInfo(false)
+    localStorage.setItem(`foldingStrategyInfoClosed_${id}`, 'true')
+  }
+
   useEffect(() => {
     if (id === 'silo_VM_USDC' || id === 'silo_sUSDX_USDC' || id === 'IPOR_USDC_arbitrum') {
       const siloInfoClosed = localStorage.getItem(`siloInfoClosed_${id}`)
       if (siloInfoClosed === 'true') {
         setShowSiloUSDCInfo(false)
+      }
+    }
+  }, [id])
+
+  useEffect(() => {
+    if (id === 'moonwellLoop_wstETH_ETH' || id === 'moonwellLoop_cbETH_ETH') {
+      const foldingInfoClosed = localStorage.getItem(`foldingStrategyInfoClosed_${id}`)
+      if (foldingInfoClosed === 'true') {
+        setShowFoldingStrategyInfo(false)
       }
     }
   }, [id])
@@ -1548,6 +1563,29 @@ const AdvancedFarm = () => {
               </WelcomeClose>
             </WelcomeBox>
           )}
+          {(id === 'moonwellLoop_wstETH_ETH' || id === 'moonwellLoop_cbETH_ETH') &&
+            showFoldingStrategyInfo && (
+              <WelcomeBox
+                $bgcolortooltip="#E6F7F0"
+                $fontcolortooltip={fontColorTooltip}
+                $bordercolor="#1BC27C"
+              >
+                <BiInfoCircle className="info-circle" fontSize={20} color="#1BC27C" />
+                <WelcomeContent>
+                  <WelcomeText>
+                    This vault uses an automated folding strategy. SharePrice updates may occur at
+                    wider intervals, sometimes every 4–7 days. SharePrice can move in both
+                    directions, and the app may display negative USD changes. This is a normal
+                    characteristic of folding automation. The Details tab includes a sharePrice
+                    chart that helps visualize the expected experience for participants in this
+                    vault.
+                  </WelcomeText>
+                </WelcomeContent>
+                <WelcomeClose>
+                  <RxCross2 onClick={closeFoldingStrategyBadge} />
+                </WelcomeClose>
+              </WelcomeBox>
+            )}
           {id === 'IPOR_USDC_arbitrum' && showSiloUSDCInfo && (
             <WelcomeBox
               $bgcolortooltip={bgColorTooltip}
@@ -1711,15 +1749,53 @@ const AdvancedFarm = () => {
                         in {`${currencyName}`}
                       </NewLabel>
                       <NewLabel
+                        $display="flex"
+                        $alignitems="center"
                         $size={isMobile ? '12px' : '12px'}
                         $height={isMobile ? '24px' : '24px'}
                         $weight="600"
                         $fontcolor={fontColor1}
                       >
-                        {showUsdValueCurrency(
-                          showLatestEarnings ? usdEarningsLatest : usdEarnings,
-                          currencySym,
-                          currencyRate,
+                        {(id === 'moonwellLoop_wstETH_ETH' || id === 'moonwellLoop_cbETH_ETH') &&
+                        showLatestEarnings &&
+                        (Number(usdEarningsLatest) <= 0 ||
+                          usdEarningsLatest === null ||
+                          usdEarningsLatest === undefined) ? (
+                          <>
+                            <BiInfoCircle
+                              className="question"
+                              data-tip
+                              id="tooltip-latest-yield-usd-looping"
+                              color="#718BC5"
+                              style={{ marginRight: '4px', cursor: 'pointer' }}
+                            />
+                            <Tooltip
+                              id="tooltip-latest-yield-usd-looping"
+                              anchorSelect="#tooltip-latest-yield-usd-looping"
+                              backgroundColor={darkMode ? 'white' : '#101828'}
+                              borderColor={darkMode ? 'white' : 'black'}
+                              textColor={darkMode ? 'black' : 'white'}
+                              place="top"
+                              style={{ width: '300px' }}
+                            >
+                              <NewLabel
+                                $size={isMobile ? '10px' : '12px'}
+                                $height={isMobile ? '15px' : '18px'}
+                                $weight="600"
+                              >
+                                Displayed USD values can temporarily decrease due to sharePrice
+                                movement. This is expected behavior for folding strategies. View
+                                Details tab to see the sharePrice pattern over a longer timeframe.
+                              </NewLabel>
+                            </Tooltip>
+                            None Yet
+                          </>
+                        ) : (
+                          showUsdValueCurrency(
+                            showLatestEarnings ? usdEarningsLatest : usdEarnings,
+                            currencySym,
+                            currencyRate,
+                          )
                         )}
                       </NewLabel>
                     </FlexDiv>
