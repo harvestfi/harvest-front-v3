@@ -1114,16 +1114,16 @@ export const getPriceFeeds = async (
 
   if (vaultPriceFeedCount > 10000) {
     const step = Math.ceil(vaultPriceFeedCount / 2000)
-    for (let i = 1; i <= vaultPriceFeedCount; i += step) {
+    for (let i = 0; i <= vaultPriceFeedCount; i += step) {
       sequenceIdsArray.push(i)
     }
   } else if (vaultPriceFeedCount > 1000) {
     const step = Math.ceil(vaultPriceFeedCount / 1000)
-    for (let i = 1; i <= vaultPriceFeedCount; i += step) {
+    for (let i = 0; i <= vaultPriceFeedCount; i += step) {
       sequenceIdsArray.push(i)
     }
   } else {
-    for (let i = 1; i <= vaultPriceFeedCount; i += 1) {
+    for (let i = 0; i <= vaultPriceFeedCount; i += 1) {
       sequenceIdsArray.push(i)
     }
   }
@@ -1783,6 +1783,10 @@ export const getUserBalanceVaults = async account => {
   return { userBalanceVaults, userBalanceFlag }
 }
 
+const pendingRequests = new Map() // walletAddress -> Promise
+const lastSentTimes = new Map() // walletAddress -> timestamp
+const COOLDOWN_PERIOD_MS = 2000 // 2 seconds cooldown between requests for same address
+
 export const sendWalletConnection = async walletAddress => {
   if (!walletAddress) {
     return
@@ -1795,28 +1799,63 @@ export const sendWalletConnection = async walletAddress => {
     return null
   }
 
-  try {
-    const response = await axios.post(
-      WALLET_CONNECTION_API_ENDPOINT,
-      {
-        walletAddress: walletAddress.toLowerCase(),
-      },
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        timeout: 5000, // 5 second timeout
-      },
+  const normalizedAddress = walletAddress.toLowerCase()
+
+  // Check if there's already a pending request for this address
+  if (pendingRequests.has(normalizedAddress)) {
+    console.debug(
+      `Wallet connection request already in progress for ${normalizedAddress}. Skipping duplicate request.`,
     )
-    return response.data
-  } catch (error) {
-    if (error.code === 'ERR_NETWORK') {
-      console.debug('Wallet connection endpoint not available or CORS issue:', error.message)
-    } else if (error.response) {
-      console.debug('Wallet connection API error:', error.response.status, error.response.data)
-    } else {
-      console.debug('Error sending wallet connection to backend:', error.message)
-    }
+    return pendingRequests.get(normalizedAddress)
+  }
+
+  // Check cooldown period - prevent rapid-fire requests
+  const lastSentTime = lastSentTimes.get(normalizedAddress)
+  const now = Date.now()
+  if (lastSentTime && now - lastSentTime < COOLDOWN_PERIOD_MS) {
+    const timeRemaining = COOLDOWN_PERIOD_MS - (now - lastSentTime)
+    console.debug(
+      `Wallet connection request for ${normalizedAddress} is in cooldown. ${timeRemaining}ms remaining. Skipping.`,
+    )
     return null
   }
+
+  // Create the request promise
+  const requestPromise = (async () => {
+    try {
+      const response = await axios.post(
+        WALLET_CONNECTION_API_ENDPOINT,
+        {
+          walletAddress: normalizedAddress,
+        },
+        {
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          timeout: 5000, // 5 second timeout
+        },
+      )
+
+      // Update last sent time on success
+      lastSentTimes.set(normalizedAddress, Date.now())
+      return response.data
+    } catch (error) {
+      if (error.code === 'ERR_NETWORK') {
+        console.debug('Wallet connection endpoint not available or CORS issue:', error.message)
+      } else if (error.response) {
+        console.debug('Wallet connection API error:', error.response.status, error.response.data)
+      } else {
+        console.debug('Error sending wallet connection to backend:', error.message)
+      }
+      return null
+    } finally {
+      // Remove from pending requests after completion (success or failure)
+      pendingRequests.delete(normalizedAddress)
+    }
+  })()
+
+  // Store the pending request
+  pendingRequests.set(normalizedAddress, requestPromise)
+
+  return requestPromise
 }
