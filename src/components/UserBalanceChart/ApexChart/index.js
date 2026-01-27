@@ -4,6 +4,7 @@ import {
   XAxis,
   YAxis,
   Line,
+  Area,
   Tooltip,
   CartesianGrid,
   ResponsiveContainer,
@@ -33,7 +34,16 @@ import {
   getTimeSlots,
   getYAxisValues,
 } from '../../../utilities/parsers'
-import { ChartWrapper, LoadingDiv, NoData, FakeChartWrapper, LoaderWrapper } from './style'
+import {
+  ChartWrapper,
+  LoadingDiv,
+  NoData,
+  FakeChartWrapper,
+  LoaderWrapper,
+  ChartPlaceholder,
+  PlaceholderChartWrapper,
+  PlaceholderText,
+} from './style'
 import { useWallet } from '../../../providers/Wallet'
 import { useRate } from '../../../providers/Rate'
 import { fakeChartData } from '../../../constants'
@@ -95,6 +105,7 @@ const ApexChart = ({
   isExpanded,
   isInactive,
   showRewardsTab = false,
+  harvestEventCount = 0,
 }) => {
   const { fontColor, fontColor5, bgColorChart } = useThemeContext()
   const { connected } = useWallet()
@@ -103,6 +114,7 @@ const ApexChart = ({
   const [mainSeries, setMainSeries] = useState([])
   const [allMainSeries, setAllMainSeries] = useState([])
   const [isDataReady, setIsDataReady] = useState('false')
+  const [loading, setLoading] = useState(false)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
   const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
   const [hourUnit, setHourUnit] = useState(false)
@@ -528,6 +540,9 @@ const ApexChart = ({
     }
 
     init()
+
+    // Update loading state based on loadComplete
+    setLoading(!loadComplete)
   }, [
     connected,
     range,
@@ -552,9 +567,12 @@ const ApexChart = ({
     setEndPoint(value[1])
   }
 
+  // Show placeholder if we have less than 5 harvest events and data has finished loading
+  const showPlaceholder = harvestEventCount < 5 && !loading && isDataReady === 'true'
+
   return (
     <>
-      {isDataReady === 'true' ? (
+      {isDataReady === 'true' && !showPlaceholder ? (
         <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
             <ComposedChart
@@ -713,6 +731,82 @@ const ApexChart = ({
             </>
           )}
         </ChartWrapper>
+      ) : showPlaceholder ? (
+        <ChartPlaceholder
+          $height={
+            onlyWidth > 1291
+              ? '346px'
+              : onlyWidth > 1262
+                ? '365px'
+                : onlyWidth > 1035
+                  ? '365px'
+                  : onlyWidth > 992
+                    ? '365px'
+                    : '365px'
+          }
+        >
+          <PlaceholderChartWrapper>
+            <ResponsiveContainer
+              width="100%"
+              height={
+                onlyWidth > 1291
+                  ? 346
+                  : onlyWidth > 1262
+                    ? 365
+                    : onlyWidth > 1035
+                      ? 365
+                      : onlyWidth > 992
+                        ? 365
+                        : 365
+              }
+            >
+              <ComposedChart
+                data={fakeChartData}
+                margin={{
+                  top: 20,
+                  right: 0,
+                  bottom: 0,
+                  left: 0,
+                }}
+              >
+                <defs>
+                  <linearGradient id="colorUvPlaceholder" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
+                    <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
+                <CartesianGrid
+                  strokeDasharray="0"
+                  strokeLinecap="butt"
+                  stroke="rgba(228, 228, 228, 0.2)"
+                  vertical={false}
+                />
+                <Line
+                  dataKey="y"
+                  type="monotone"
+                  strokeLinecap="round"
+                  strokeWidth={2}
+                  stroke="#00D26B"
+                  dot={false}
+                  legendType="none"
+                />
+                <Area
+                  type="monotone"
+                  dataKey="y"
+                  stroke="#00D26B"
+                  strokeWidth={2}
+                  fillOpacity={1}
+                  fill="url(#colorUvPlaceholder)"
+                />
+                <XAxis dataKey="x" tickLine={false} tickCount={5} />
+                <YAxis tickLine={false} tickCount={5} />
+              </ComposedChart>
+            </ResponsiveContainer>
+          </PlaceholderChartWrapper>
+          <PlaceholderText>
+            Chart will appear once 5 yield earning events are registered.
+          </PlaceholderText>
+        </ChartPlaceholder>
       ) : (
         <LoadingDiv>
           {isDataReady === 'loading' ? (

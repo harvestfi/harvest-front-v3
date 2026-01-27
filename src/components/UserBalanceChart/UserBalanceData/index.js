@@ -72,6 +72,7 @@ const UserBalanceData = ({
   const [fixedLen, setFixedLen] = useState(0)
   const [lastFarmingTimeStamp, setLastFarmingTimeStamp] = useState('-')
   const [isExpanded, setIsExpanded] = useState(false)
+  const [harvestEventCount, setHarvestEventCount] = useState(0)
 
   const address = token.vaultAddress
   const chainId = token.chain
@@ -383,6 +384,9 @@ const UserBalanceData = ({
                 .filter(Boolean)
 
               setApiData(enrichedData)
+              // Count harvest events for placeholder check
+              const harvestCount = enrichedData.filter(item => item.event === 'Harvest').length
+              setHarvestEventCount(harvestCount)
             }
           }
           if (isMounted) {
@@ -476,6 +480,7 @@ const UserBalanceData = ({
           isExpanded={isExpanded}
           isInactive={token.inactive}
           showRewardsTab={showRewardsTab}
+          harvestEventCount={harvestEventCount}
         />
       </ChartDiv>
       <ButtonGroup>
