@@ -1572,17 +1572,17 @@ const AdvancedFarm = () => {
               >
                 <BiInfoCircle className="info-circle" fontSize={20} color="#1BC27C" />
                 <WelcomeContent>
-                  <WelcomeText>
-                    This vault uses an automated folding strategy. SharePrice updates may occur at
-                    wider intervals, sometimes every 4–7 days. SharePrice can move in both
-                    directions, and the app may display negative USD changes. This is a normal
-                    characteristic of folding automation. The Details tab includes a sharePrice
-                    chart that helps visualize the expected experience for participants in this
+                  <WelcomeText style={{ color: '#1BC27C' }}>
+                    <strong>This vault uses an automated folding strategy.</strong> SharePrice
+                    updates may occur at wider intervals, sometimes every 4–7 days. SharePrice can
+                    move in both move in both directions, and the app may display negative USD
+                    changes. This is a normal characteristic of folding automation. The Details tab
+                    includes a chart that helps visualize the expected experience for participants
                     vault.
                   </WelcomeText>
                 </WelcomeContent>
                 <WelcomeClose>
-                  <RxCross2 onClick={closeFoldingStrategyBadge} />
+                  <RxCross2 onClick={closeFoldingStrategyBadge} color="#1BC27C" />
                 </WelcomeClose>
               </WelcomeBox>
             )}
