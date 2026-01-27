@@ -101,7 +101,7 @@ const ChartPlaceholder = styled.div`
   justify-content: center;
   overflow: hidden;
   border-radius: 12px;
-  background: #212933;
+  background: ${props => (props.$darkmode ? '#212933' : props.$bgcolor || '#fff')};
 
   &::before {
     content: '';
@@ -135,7 +135,7 @@ const PlaceholderChartWrapper = styled.div`
 const PlaceholderText = styled.div`
   position: relative;
   z-index: 2;
-  color: #ffffff;
+  color: ${props => props.$fontcolor || '#ffffff'};
   font-size: 16px;
   font-weight: 500;
   text-align: center;
