@@ -107,7 +107,7 @@ const ApexChart = ({
   showRewardsTab = false,
   harvestEventCount = 0,
 }) => {
-  const { fontColor, fontColor5, bgColorChart } = useThemeContext()
+  const { fontColor, fontColor5, bgColorChart, darkMode, bgColorNew } = useThemeContext()
   const { connected } = useWallet()
   const onlyWidth = useWindowWidth()
 
@@ -744,6 +744,8 @@ const ApexChart = ({
                     ? '365px'
                     : '365px'
           }
+          $bgcolor={bgColorNew}
+          $darkmode={darkMode}
         >
           <PlaceholderChartWrapper>
             <ResponsiveContainer
@@ -803,7 +805,7 @@ const ApexChart = ({
               </ComposedChart>
             </ResponsiveContainer>
           </PlaceholderChartWrapper>
-          <PlaceholderText>
+          <PlaceholderText $fontcolor={fontColor}>
             Chart will appear once 5 yield earning events are registered.
           </PlaceholderText>
         </ChartPlaceholder>

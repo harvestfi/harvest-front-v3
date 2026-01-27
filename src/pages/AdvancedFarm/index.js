@@ -1783,9 +1783,10 @@ const AdvancedFarm = () => {
                                 $height={isMobile ? '15px' : '18px'}
                                 $weight="600"
                               >
-                                Displayed USD values can temporarily decrease due to sharePrice
-                                movement. This is expected behavior for folding strategies. View
-                                Details tab to see the sharePrice pattern over a longer timeframe.
+                                Folding strategies can produce short-term sharePrice downswings, so
+                                USD changes are displayed only once sharePrice moves above the
+                                user’s most recent supply reference point. See the Details tab for
+                                the full sharePrice evolution chart.
                               </NewLabel>
                             </Tooltip>
                             None Yet
