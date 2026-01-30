@@ -1757,10 +1757,9 @@ const AdvancedFarm = () => {
                         $fontcolor={fontColor1}
                       >
                         {(id === 'moonwellLoop_wstETH_ETH' || id === 'moonwellLoop_cbETH_ETH') &&
-                        showLatestEarnings &&
-                        (Number(usdEarningsLatest) <= 0 ||
-                          usdEarningsLatest === null ||
-                          usdEarningsLatest === undefined) ? (
+                        (Number(showLatestEarnings ? usdEarningsLatest : usdEarnings) <= 0 ||
+                          (showLatestEarnings ? usdEarningsLatest : usdEarnings) === null ||
+                          (showLatestEarnings ? usdEarningsLatest : usdEarnings) === undefined) ? (
                           <>
                             <BiInfoCircle
                               className="question"
@@ -1776,12 +1775,13 @@ const AdvancedFarm = () => {
                               borderColor={darkMode ? 'white' : 'black'}
                               textColor={darkMode ? 'black' : 'white'}
                               place="top"
-                              style={{ width: '300px' }}
+                              style={{ width: '300px', textAlign: 'left' }}
                             >
                               <NewLabel
                                 $size={isMobile ? '10px' : '12px'}
                                 $height={isMobile ? '15px' : '18px'}
                                 $weight="600"
+                                style={{ textAlign: 'left' }}
                               >
                                 Folding strategies can produce short-term sharePrice downswings, so
                                 USD changes are displayed only once sharePrice moves above the
@@ -1824,29 +1824,73 @@ const AdvancedFarm = () => {
                         $align="right"
                         $marginbottom={isMobile ? '12px' : '0px'}
                       >
-                        <div data-tip id="earnings-underlying">
-                          {showLatestEarnings
-                            ? showTokenBalance(underlyingEarningsLatest)
-                            : showTokenBalance(underlyingEarnings)}
-                        </div>
-                        <Tooltip
-                          id="earnings-underlying"
-                          backgroundColor={darkMode ? 'white' : '#101828'}
-                          borderColor={darkMode ? 'white' : 'black'}
-                          textColor={darkMode ? 'black' : 'white'}
-                          place="top"
-                          effect="solid"
-                          anchorSelect="#earnings-underlying"
-                        >
-                          <NewLabel
-                            $size={isMobile ? '10px' : '10px'}
-                            $height={isMobile ? '14px' : '14px'}
-                            $weight="500"
-                          >
-                            {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
-                          </NewLabel>
-                        </Tooltip>
-                        <span className="symbol">{token.tokenNames[0]}</span>
+                        {(id === 'moonwellLoop_wstETH_ETH' || id === 'moonwellLoop_cbETH_ETH') &&
+                        (Number(
+                          showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings,
+                        ) <= 0 ||
+                          (showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings) ===
+                            null ||
+                          (showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings) ===
+                            undefined) ? (
+                          <>
+                            <BiInfoCircle
+                              className="question"
+                              data-tip
+                              id="tooltip-latest-yield-underlying-looping"
+                              color="#718BC5"
+                              style={{ marginRight: '4px', cursor: 'pointer' }}
+                            />
+                            <Tooltip
+                              id="tooltip-latest-yield-underlying-looping"
+                              anchorSelect="#tooltip-latest-yield-underlying-looping"
+                              backgroundColor={darkMode ? 'white' : '#101828'}
+                              borderColor={darkMode ? 'white' : 'black'}
+                              textColor={darkMode ? 'black' : 'white'}
+                              place="top"
+                              style={{ width: '300px', textAlign: 'left' }}
+                            >
+                              <NewLabel
+                                $size={isMobile ? '10px' : '12px'}
+                                $height={isMobile ? '15px' : '18px'}
+                                $weight="600"
+                                style={{ textAlign: 'left' }}
+                              >
+                                Folding strategies can produce short-term sharePrice downswings, so
+                                the Underlying changes are displayed only once sharePrice moves
+                                above the user's most recent supply reference point. See the Details
+                                tab for the full sharePrice evolution chart.
+                              </NewLabel>
+                            </Tooltip>
+                            None Yet
+                            <span className="symbol">{token.tokenNames[0]}</span>
+                          </>
+                        ) : (
+                          <>
+                            <div data-tip id="earnings-underlying">
+                              {showLatestEarnings
+                                ? showTokenBalance(underlyingEarningsLatest)
+                                : showTokenBalance(underlyingEarnings)}
+                            </div>
+                            <Tooltip
+                              id="earnings-underlying"
+                              backgroundColor={darkMode ? 'white' : '#101828'}
+                              borderColor={darkMode ? 'white' : 'black'}
+                              textColor={darkMode ? 'black' : 'white'}
+                              place="top"
+                              effect="solid"
+                              anchorSelect="#earnings-underlying"
+                            >
+                              <NewLabel
+                                $size={isMobile ? '10px' : '10px'}
+                                $height={isMobile ? '14px' : '14px'}
+                                $weight="500"
+                              >
+                                {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
+                              </NewLabel>
+                            </Tooltip>
+                            <span className="symbol">{token.tokenNames[0]}</span>
+                          </>
+                        )}
                       </NewLabel>
                     </FlexDiv>
                   </MyBalance>
