@@ -92,4 +92,68 @@ const LoaderWrapper = styled.div`
   align-items: center;
 `
 
-export { ChartWrapper, LoadingDiv, NoData, FakeChartWrapper, LoaderWrapper }
+const ChartPlaceholder = styled.div`
+  position: relative;
+  width: 100%;
+  height: ${props => props.$height || '346px'};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 12px;
+  background: ${props => (props.$darkmode ? '#212933' : props.$bgcolor || '#fff')};
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(
+      135deg,
+      rgba(52, 211, 153, 0.08) 0%,
+      rgba(52, 211, 153, 0.03) 30%,
+      rgba(52, 211, 153, 0.02) 60%,
+      rgba(52, 211, 153, 0.1) 100%
+    );
+    z-index: 1;
+  }
+`
+
+const PlaceholderChartWrapper = styled.div`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  filter: blur(8px);
+  opacity: 0.3;
+  z-index: 0;
+`
+
+const PlaceholderText = styled.div`
+  position: relative;
+  z-index: 2;
+  color: ${props => props.$fontcolor || '#ffffff'};
+  font-size: 16px;
+  font-weight: 500;
+  text-align: center;
+  padding: 20px;
+  line-height: 1.5;
+
+  @media screen and (max-width: 992px) {
+    font-size: 14px;
+  }
+`
+
+export {
+  ChartWrapper,
+  LoadingDiv,
+  NoData,
+  FakeChartWrapper,
+  LoaderWrapper,
+  ChartPlaceholder,
+  PlaceholderChartWrapper,
+  PlaceholderText,
+}
