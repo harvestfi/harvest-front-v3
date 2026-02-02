@@ -1494,7 +1494,7 @@ const AdvancedFarm = () => {
                         <span>Autopilot</span>
                         <MorphoBadge>
                           <img src={MorphoIcon} width="12" height="12" alt="" />
-                          <span>{isSmallScreen ? 'Morpho' : 'Morpho-Only'}</span>
+                          <span>{isSmallScreen ? 'Morpho' : 'Morpho V1 & V2'}</span>
                           <PiQuestion
                             className="question"
                             data-tip

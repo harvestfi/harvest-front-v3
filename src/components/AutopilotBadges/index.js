@@ -34,7 +34,7 @@ const AutopilotBadges = ({
         <>
           <MorphoBadge $isPortfolio={isPortfolio}>
             <img src={MorphoIcon} width="12" height="12" alt="" />
-            <NewLabel $isPortfolio={isPortfolio}>{isMobile ? 'Morpho' : 'Morpho-Only'}</NewLabel>
+            <NewLabel $isPortfolio={isPortfolio}>{isMobile ? 'Morpho' : 'Morpho V1 & V2'}</NewLabel>
             <PiQuestion
               className="question"
               data-tip

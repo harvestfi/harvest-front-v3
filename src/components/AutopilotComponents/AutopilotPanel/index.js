@@ -210,7 +210,7 @@ const AutopilotPanel = ({
                   {isMorphoVault && (
                     <MorphoOnlyBadge>
                       <img src={MorphoIcon} width="12" height="12" alt="" />
-                      <NewLabel>Morpho-Only</NewLabel>
+                      <NewLabel>Morpho V1 & V2</NewLabel>
                       <PiQuestion
                         className="question"
                         data-tip

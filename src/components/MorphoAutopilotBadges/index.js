@@ -22,7 +22,7 @@ const MorphoAutopilotBadges = ({
       </Autopilot>
       <MorphoBadge $isPortfolio={isPortfolio}>
         <img src={MorphoIcon} width="12" height="12" alt="" />
-        <NewLabel $isPortfolio={isPortfolio}>Morpho-Only</NewLabel>
+        <NewLabel $isPortfolio={isPortfolio}>Morpho V1 & V2</NewLabel>
         <PiQuestion className="question" data-tip id={tooltipId} />
         <Tooltip
           id={tooltipId}
