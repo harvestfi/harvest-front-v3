@@ -52,35 +52,38 @@ const ApexChart = ({ chainName, token, loadComplete, aotData, dataKeys, iporHvau
             .filter(entry => entry.value !== 0 && entry.value !== null)
             .map((entry, index) => {
               const regex = /0x[a-fA-F0-9]{40}/ // Regular expression to match Ethereum address format
-              const address = entry.dataKey.match(regex)[0] ?? ''
+              const address = entry.dataKey.match(regex)?.[0] ?? ''
               const value = entry.value || 0
 
               if (value <= 0) return null
 
+              const dataKeyIndex =
+                dataKeys?.findIndex(dk => `markets.${dk.key}` === entry.dataKey) ?? index
               const vaultKey = Object.entries(vaultsData).find(
-                ([, vault]) => vault.vaultAddress.toLowerCase() === address.toLowerCase(),
+                ([, vault]) =>
+                  vault.chain === token.chain &&
+                  vault.vaultAddress.toLowerCase() === address.toLowerCase(),
               )?.[0]
 
-              if (!vaultKey) {
-                return null
+              const color = generateColor(iporHvaultsLFAPY, vaultKey, dataKeyIndex)
+
+              let vaultName
+              if (vaultKey) {
+                const vaultParts = vaultKey
+                  .split('_')
+                  .map(part => part.charAt(0).toUpperCase() + part.slice(1))
+                vaultName = vaultParts
+                  .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
+                  .join(' ')
+                if (vaultName === 'USDC' && chainName == 'base') vaultName = 'Compound V3 USDC'
+                if (vaultName === 'USDC' && chainName == 'eth') vaultName = 'Morpho GF USDC'
+                if (vaultName === 'WETH' && chainName == 'base') vaultName = 'Compound V3 WETH'
+              } else {
+                vaultName = address ? `${address.slice(0, 6)}...${address.slice(-4)}` : 'Unknown'
               }
 
-              const vaultParts = vaultKey
-                .split('_')
-                .map(part => part.charAt(0).toUpperCase() + part.slice(1))
-              let vaultName = vaultParts
-                .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
-                .join(' ')
-
-              if (vaultName === 'USDC' && chainName == 'base') vaultName = 'Compound V3 USDC'
-              if (vaultName === 'USDC' && chainName == 'eth') vaultName = 'Morpho GF USDC'
-              if (vaultName === 'WETH' && chainName == 'base') vaultName = 'Compound V3 WETH'
-
               return (
-                <ProtocolEntry
-                  key={`item-${index}`}
-                  color={generateColor(iporHvaultsLFAPY, vaultKey)}
-                >
+                <ProtocolEntry key={`item-${index}`} color={color}>
                   <DottedUnderline>{vaultName}</DottedUnderline>
                   &nbsp;&nbsp;
                   {entry.value.toFixed(2)}%
@@ -158,7 +161,7 @@ const ApexChart = ({ chainName, token, loadComplete, aotData, dataKeys, iporHvau
                 interval={0} // Show every tick (we are specifying the ticks array manually)
               />
               <Tooltip content={renderTooltipContent} />
-              {dataKeys?.map(dataKey => {
+              {dataKeys?.map((dataKey, index) => {
                 const vaultAddr = dataKey.marketId
                 const vaultKey = Object.entries(vaultsData).find(
                   ([, vault]) =>
@@ -166,14 +169,15 @@ const ApexChart = ({ chainName, token, loadComplete, aotData, dataKeys, iporHvau
                     vault.vaultAddress.toLowerCase() === vaultAddr.toLowerCase(),
                 )?.[0]
 
+                const color = generateColor(iporHvaultsLFAPY, vaultKey, index)
                 return (
                   <Area
                     key={dataKey.key}
                     type="monotone"
                     dataKey={`markets.${dataKey.key}`}
                     stackId="1"
-                    stroke={generateColor(iporHvaultsLFAPY, vaultKey)}
-                    fill={generateColor(iporHvaultsLFAPY, vaultKey)}
+                    stroke={color}
+                    fill={color}
                   />
                 )
               })}

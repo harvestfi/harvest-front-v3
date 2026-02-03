@@ -483,43 +483,43 @@ export const calculateApy = (vaultHData, latestSharePriceValue, vaultData, perio
   )}%`
 }
 
-export const generateColor = (vaultList, key) => {
-  const colorPalette = [
-    '#9b7ede', // Dusty Purple
-    '#d6a737', // Goldenrod
-    '#5f9ea0', // Teal Grey
-    '#8a9a5b', // Olive Green
-    '#b68f40', // Spicy Mustard
-    '#708090', // Slate
-    '#b491c8', // Soft Lilac
-    '#c4a000', // Mustard
-    '#a39887', // Taupe
-    '#556b2f', // Forest Moss
-    '#d0893d', // Muted Amber
-    '#77bfa3', // Seafoam
-    '#d08ca7', // Clay Pink
-    '#7a9e9f', // Dust Blue
-    '#b87333', // Copper
-    '#9b7ede', // Dusty Purple
-    '#d6a737', // Goldenrod
-    '#5f9ea0', // Teal Grey
-    '#8a9a5b', // Olive Green
-    '#b68f40', // Spicy Mustard
-    '#708090', // Slate
-    '#b491c8', // Soft Lilac
-    '#c4a000', // Mustard
-    '#a39887', // Taupe
-    '#556b2f', // Forest Moss
-    '#d0893d', // Muted Amber
-    '#77bfa3', // Seafoam
-    '#d08ca7', // Clay Pink
-    '#7a9e9f', // Dust Blue
-    '#b87333', // Copper
-  ]
-  const index = Object.keys(vaultList).indexOf(key)
-  const color = colorPalette[index]
+const COLOR_PALETTE = [
+  '#9b7ede', // Dusty Purple
+  '#d6a737', // Goldenrod
+  '#5f9ea0', // Teal Grey
+  '#8a9a5b', // Olive Green
+  '#b68f40', // Spicy Mustard
+  '#708090', // Slate
+  '#b491c8', // Soft Lilac
+  '#c4a000', // Mustard
+  '#a39887', // Taupe
+  '#556b2f', // Forest Moss
+  '#d0893d', // Muted Amber
+  '#77bfa3', // Seafoam
+  '#d08ca7', // Clay Pink
+  '#7a9e9f', // Dust Blue
+  '#b87333', // Copper
+  '#9b7ede', // Dusty Purple
+  '#d6a737', // Goldenrod
+  '#5f9ea0', // Teal Grey
+  '#8a9a5b', // Olive Green
+  '#b68f40', // Spicy Mustard
+  '#708090', // Slate
+  '#b491c8', // Soft Lilac
+  '#c4a000', // Mustard
+  '#a39887', // Taupe
+  '#556b2f', // Forest Moss
+  '#d0893d', // Muted Amber
+  '#77bfa3', // Seafoam
+  '#d08ca7', // Clay Pink
+  '#7a9e9f', // Dust Blue
+  '#b87333', // Copper
+]
 
-  return color
+export const generateColor = (vaultList, key, fallbackIndex = null) => {
+  const index = key != null ? Object.keys(vaultList || {}).indexOf(key) : -1
+  const resolvedIndex = index >= 0 ? index : fallbackIndex != null ? fallbackIndex : 0
+  return COLOR_PALETTE[resolvedIndex % COLOR_PALETTE.length]
 }
 
 export async function fetchAndParseVaultData({ account, groupOfVaults }) {
