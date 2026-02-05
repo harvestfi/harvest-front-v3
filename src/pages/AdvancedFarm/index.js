@@ -2234,22 +2234,8 @@ const AdvancedFarm = () => {
                       Object.keys(iporHvaultsLFAPY)
                         .filter(key => key !== token.id)
                         .map(apyKey => {
-                          const vaultParts = apyKey
-                            .split('_')
-                            .map((part, index) =>
-                              index === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
-                            )
                           let lifetimeApyValue = '-',
-                            vaultName = vaultParts
-                              .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
-                              .join(' ')
-                          if (vaultName === 'USDC' && chainName == 'base')
-                            vaultName = 'Compound V3 USDC'
-                          if (vaultName === 'USDC' && chainName == 'eth')
-                            vaultName = 'Morpho GF USDC'
-                          if (vaultName === 'WETH' && chainName == 'base')
-                            vaultName = 'Compound V3 WETH'
-
+                            vaultName = tokens[apyKey]?.platform[0]
                           lifetimeApyValue = `${iporHvaultsLFAPY[apyKey]}%`
                           return (
                             <FlexDiv
@@ -3064,20 +3050,7 @@ const AdvancedFarm = () => {
                           if (data.hVaultId === 'Not invested') {
                             vaultName = `Deployment Buffer`
                           } else {
-                            const vaultParts = data.hVaultId
-                              .split('_')
-                              .map((part, i) =>
-                                i === 0 ? part.charAt(0).toUpperCase() + part.slice(1) : part,
-                              )
-                            vaultName = vaultParts
-                              .filter(part => !part.toLowerCase().includes(chainName.toLowerCase()))
-                              .join(' ')
-                            if (vaultName === 'USDC' && chainName == 'base')
-                              vaultName = 'Compound V3 USDC'
-                            if (vaultName === 'USDC' && chainName == 'eth')
-                              vaultName = 'Morpho GF USDC'
-                            if (vaultName === 'WETH' && chainName == 'base')
-                              vaultName = 'Compound V3 WETH'
+                            vaultName = tokens[data.hVaultId]?.platform[0]
                           }
                           return (
                             <FlexDiv

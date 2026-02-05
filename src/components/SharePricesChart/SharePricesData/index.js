@@ -9,49 +9,49 @@ import { ChartDiv, Container, Header, Total, TokenSymbol, TooltipInfo, FlexDiv }
 const vaultAdded = {
   morphoMW_USDC: 1754956800,
   morphoGC_USDC: 1759881600,
-  morphoSE_USDC: 1760832000,
-  morphoGP_USDC: 1760832000,
+  morphoSE_USDC: 1762992000,
+  morphoGP_USDC: 1762387200,
   morphoSH_USDC: 1750723200,
   morphoSPK_USDC: 1750723200,
   euler_USDC_AR: 1746520200,
   arcadia_USDC: 1746520200,
   fortyAcres_USDC: 1748595000,
   morpho_AR_USDC: 1753228800,
-  morpho_UN_USDC: 1760313600,
-  morpho_GF_USDC: 1759795200,
-  morphoRE7_USDC: 1755648000,
+  morpho_UN_USDC: 1768867200,
+  morpho_GF_USDC: 1762992000,
+  morphoRE7_USDC: 1762992000,
   morpho_COE_USDC: 1759017600,
-  morpho_YOG_USDC: 1760832000,
+  morpho_YOG_USDC: 1762992000,
   morpho_CHY_USDC: 1760832000,
-  morpho_EF_USDC: 1760832000,
-  morpho_SHHY_USDC: 1760832000,
+  morpho_EF_USDC: 1764979200,
+  morpho_SHHY_USDC: 1762387200,
   morpho_SHP_USDC: 1759795200,
   arcadia_ETH: 1746520200,
   morphoSH_ETH: 1760745600,
-  morphoSE_ETH: 1756944000,
-  morphoMW_ETH: 1758758400,
-  morphoGC_ETH: 1758067200,
-  morpho_YOG_ETH: 1760918400,
+  morphoSE_ETH: 1763078400,
+  morphoMW_ETH: 1764028800,
+  morphoGC_ETH: 1769299200,
+  morpho_YOG_ETH: 1764028800,
   morphoION_ETH: 1758412800,
-  morpho_EF_ETH: 1760313600,
+  morpho_EF_ETH: 1769299200,
   morphoMW_cbBTC: 1753833600,
   arcadia_cbBTC: 1746520200,
   IPOR_USDC_base: 1746057600,
   IPOR_WETH_base: 1746057600,
   IPOR_cbBTC_base: 1746057600,
-  euler_EE_USDC: 1760400000,
+  euler_EE_USDC: 1770163200,
   silo_OP_USDC: 1758931200,
   silo_VM_USDC: 1760832000,
   silo_sUSDX_USDC: 1759276800,
   morpho_MEV_USDC_arbitrum: 1759190400,
-  morpho_GC_USDC_arbitrum: 1760313600,
+  morpho_GC_USDC_arbitrum: 1766016000,
   morpho_SHP_USDC_arbitrum: 1760486400,
   morpho_SHHY_USDC_arbitrum: 1758240000,
-  morpho_HY_USDC_arbitrum: 1760745600,
+  morpho_HY_USDC_arbitrum: 1770076800,
   morpho_YD_USDC_arbitrum: 1760745600,
   morpho_AC_USDC_arbitrum: 1760486400,
-  morpho_GP_USDC_arbitrum: 1760659200,
-  morpho_YOG_USDC_arbitrum: 1760486400,
+  morpho_GP_USDC_arbitrum: 1766016000,
+  morpho_YOG_USDC_arbitrum: 1763337600,
   morpho_CR_USDC: 1760400000,
   morpho_HY_USDC: 1757721600,
   morpho_RL_USDC: 1757721600,
@@ -62,8 +62,9 @@ const vaultAdded = {
   morpho_FX_USDC: 1757721600,
   euler_SM_USDC: 1754784000,
   euler_RE_USDC: 1754784000,
+  fluid_USDC_arbitrum: 1762905600,
   IPOR_USDC_ethereum: 1752105600,
-  IPOR_USDC_arbitrum: 1757422800,
+  IPOR_USDC_arbitrum: 1762473600,
   IPOR_WETH_arbitrum: 1743465600,
   IPOR_WBTC_arbitrum: 1743465600,
   IPOR_MORPHO_USDC_base: 1757422800,
@@ -148,7 +149,7 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
           })
         })
         // Remove outliers
-        if (adjustedEntries[0].sharePrice / targetFinalValue > 1.01) {
+        if (adjustedEntries[0].sharePrice / targetFinalValue > 1.1) {
           delete sharepriceData[key]
         } else {
           sharepriceData[key] = adjustedEntries
@@ -193,11 +194,12 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
               await getVaultHistories(token.vaultAddress.toLowerCase(), token.chain, true)
             sharePricesData[token.id] = {}
             if (vaultHIPORFlag) {
-              vaultHIPORData.forEach((obj, index) => {
-                const sharePriceDecimals = fromWei(obj.sharePrice, token.decimals, 5)
-                vaultHIPORData[index].sharePrice = sharePriceDecimals
-              })
               sharePricesData[token.id] = vaultHIPORData
+                .map(obj => ({
+                  ...obj,
+                  sharePrice: fromWei(obj.sharePrice, token.decimals, 5),
+                }))
+                .filter(obj => obj.sharePrice <= 1.45)
             }
             setSharePricesData(sharePricesData)
 
