@@ -199,7 +199,7 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
                   ...obj,
                   sharePrice: fromWei(obj.sharePrice, token.decimals, 5),
                 }))
-                .filter(obj => obj.sharePrice <= 1.45)
+                .filter(obj => obj.sharePrice <= 1.35)
             }
             setSharePricesData(sharePricesData)
 
