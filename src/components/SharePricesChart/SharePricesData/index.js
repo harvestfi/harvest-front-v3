@@ -149,7 +149,7 @@ const SharePricesData = ({ chainName, token, setSharePricesData, iporHvaultsLFAP
           })
         })
         // Remove outliers
-        if (adjustedEntries[0].sharePrice / targetFinalValue > 1.1) {
+        if (adjustedEntries[0].sharePrice / targetFinalValue > 1.01) {
           delete sharepriceData[key]
         } else {
           sharepriceData[key] = adjustedEntries
