@@ -16,6 +16,7 @@
     "@react-hook/window-size": "^3.1.1",
     "@safe-global/safe-apps-provider": "^0.18.6",
     "@safe-global/safe-apps-sdk": "^9.1.0",
+    "@web3-onboard/coinbase": "^2.4.2",
     "@web3-onboard/gnosis": "^2.1.9",
     "@web3-onboard/injected-wallets": "^2.8.3",
     "@web3-onboard/ledger": "2.4.3",
