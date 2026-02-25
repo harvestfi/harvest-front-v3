@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../providers/thirdweb'
 import { PiInfoBold, PiQuestion } from 'react-icons/pi'
 import 'react-loading-skeleton/dist/skeleton.css'
 import { toast } from 'react-toastify'
@@ -76,7 +76,7 @@ const AutopilotPanel = ({
   const [inputAmount, setInputAmount] = useState('')
   const [inputUSDAmount, setInputUSDAmount] = useState('-')
 
-  const { connected, account, connectAction, chainId, setChainId } = useWallet()
+  const { connected, account, connectAction, chainId } = useWallet()
   const { getPortalsToken } = usePortals()
 
   const [
@@ -168,7 +168,6 @@ const AutopilotPanel = ({
       const chainHex = `0x${Number(tokenChain).toString(16)}`
       if (!isSpecialApp) {
         await setChain({ chainId: chainHex })
-        setChainId(tokenChain)
       }
     } else if (Number(inputAmount) !== 0) {
       if (subscribe) {

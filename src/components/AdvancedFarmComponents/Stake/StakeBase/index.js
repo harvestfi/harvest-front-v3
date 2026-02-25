@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../../providers/thirdweb'
 import { useMediaQuery } from 'react-responsive'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
@@ -52,7 +52,7 @@ const StakeBase = ({
     btnHoverColor,
     btnActiveColor,
   } = useThemeContext()
-  const { connected, connectAction, account, chainId, setChainId } = useWallet()
+  const { connected, connectAction, account, chainId } = useWallet()
 
   const [
     {
@@ -269,7 +269,6 @@ const StakeBase = ({
               const chainHex = `0x${Number(tokenChain).toString(16)}`
               if (!isSpecialApp) {
                 await setChain({ chainId: chainHex })
-                setChainId(tokenChain)
               }
             } else {
               onClickStake()

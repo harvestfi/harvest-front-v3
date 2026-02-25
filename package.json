@@ -7,7 +7,6 @@
     "yarn": "1.22.x"
   },
   "dependencies": {
-    "@binance/w3w-blocknative-connector": "^1.1.8-alpha.0",
     "@fontsource/dm-sans": "^5.2.5",
     "@fontsource/manrope": "^5.2.5",
     "@fontsource/roboto-mono": "^5.2.5",
@@ -16,12 +15,6 @@
     "@react-hook/window-size": "^3.1.1",
     "@safe-global/safe-apps-provider": "^0.18.6",
     "@safe-global/safe-apps-sdk": "^9.1.0",
-    "@web3-onboard/coinbase": "^2.4.2",
-    "@web3-onboard/gnosis": "^2.1.9",
-    "@web3-onboard/injected-wallets": "^2.8.3",
-    "@web3-onboard/ledger": "2.4.3",
-    "@web3-onboard/react": "^2.7.2",
-    "@web3-onboard/walletconnect": "^2.3",
     "axios": "^1.5.0",
     "axios-retry": "^4.5.0",
     "bignumber.js": "^9.0.1",
@@ -60,6 +53,7 @@
     "react-uuid": "^2.0.0",
     "recharts": "^2.7.2",
     "styled-components": "^6.1.18",
+    "thirdweb": "^5.118.2",
     "use-deep-compare-effect": "^1.8.1",
     "use-effect-with-previous": "^1.0.7",
     "viem": "^2.38.5"
