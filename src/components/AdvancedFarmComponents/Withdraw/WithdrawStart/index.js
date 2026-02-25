@@ -242,12 +242,16 @@ const WithdrawStart = ({
             slippage: slippagePercentage,
           })
 
-          await mainViem.sendTransaction({
+          const txHash = await mainViem.sendTransaction({
             account,
             to: portalData.tx.to,
             data: portalData.tx.data,
             value: portalData.tx.value ? BigInt(portalData.tx.value) : undefined,
           })
+          const publicClient = await getViem(chainId, false, viem)
+          if (publicClient && typeof publicClient.waitForTransactionReceipt === 'function') {
+            await publicClient.waitForTransactionReceipt({ hash: txHash })
+          }
 
           const receiveString = portalData
             ? fromWei(

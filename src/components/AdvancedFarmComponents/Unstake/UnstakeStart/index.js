@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js'
 import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../../providers/thirdweb'
 import { Spinner } from 'react-bootstrap'
 import { isEmpty } from 'lodash'
 import { BiGift } from 'react-icons/bi'
@@ -47,7 +47,7 @@ const UnstakeStart = ({
   amountsToExecute,
 }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
-  const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
+  const { connected, connectAction, account, chainId, getWalletBalances } = useWallet()
 
   const [
     {
@@ -287,7 +287,6 @@ const UnstakeStart = ({
                   const chainHex = `0x${Number(tokenChain).toString(16)}`
                   if (!isSpecialApp) {
                     await setChain({ chainId: chainHex })
-                    setChainId(tokenChain)
                   }
                 } else {
                   onClickUnStake()

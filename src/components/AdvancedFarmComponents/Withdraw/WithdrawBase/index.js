@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useState, useEffect } from 'react'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../../providers/thirdweb'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
 import { useMediaQuery } from 'react-responsive'
