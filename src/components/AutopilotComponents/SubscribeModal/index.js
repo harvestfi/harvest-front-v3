@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
 import Modal from 'react-bootstrap/Modal'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../providers/thirdweb'
 import { Spinner } from 'react-bootstrap'
 import { useMediaQuery } from 'react-responsive'
 import Diamond from '../../../assets/images/logos/sidebar/diamond.svg'
@@ -36,15 +36,8 @@ import {
 
 const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModalShow }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
-  const {
-    connected,
-    connectAction,
-    account,
-    chainId,
-    setChainId,
-    approvedBalances,
-    getWalletBalances,
-  } = useWallet()
+  const { connected, connectAction, account, chainId, approvedBalances, getWalletBalances } =
+    useWallet()
 
   const [
     {
@@ -344,7 +337,6 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                   const chainHex = `0x${Number(tokenChain).toString(16)}`
                   if (!isSpecialApp) {
                     await setChain({ chainId: chainHex })
-                    setChainId(tokenChain)
                   }
                 } else {
                   onSubscribe()

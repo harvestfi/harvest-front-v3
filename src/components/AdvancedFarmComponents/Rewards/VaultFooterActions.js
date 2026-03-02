@@ -1,6 +1,6 @@
 import { get } from 'lodash'
 import React from 'react'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../providers/thirdweb'
 import { Tooltip } from 'react-tooltip'
 import { ACTIONS } from '../../../constants'
 import { useActions } from '../../../providers/Actions'

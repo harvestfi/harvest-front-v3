@@ -225,8 +225,57 @@ export const getChainObject = chainIdHex => {
   }
 }
 
+const normalizeProviderChainId = chainId => {
+  if (chainId === undefined || chainId === null) return null
+  if (typeof chainId === 'number') {
+    return `0x${chainId.toString(16)}`
+  }
+  if (typeof chainId === 'string') {
+    if (chainId.startsWith('0x')) return chainId
+    const chainIdNum = Number(chainId)
+    if (!Number.isNaN(chainIdNum)) {
+      return `0x${chainIdNum.toString(16)}`
+    }
+  }
+  return null
+}
+
+const getChainFromProvider = async provider => {
+  if (!provider) return mainnet
+
+  if (typeof provider.request === 'function') {
+    try {
+      const chainIdHex = await provider.request({ method: 'eth_chainId' })
+      return getChainObject(chainIdHex)
+    } catch (error) {
+      return mainnet
+    }
+  }
+
+  const chainFromField = normalizeProviderChainId(provider.chainId || provider.networkVersion)
+  if (chainFromField) {
+    return getChainObject(chainFromField)
+  }
+
+  return mainnet
+}
+
+const createWalletClientFromProvider = async provider => {
+  if (!provider) return null
+
+  const chain = await getChainFromProvider(provider)
+  return createWalletClient({
+    transport: custom(provider),
+    chain,
+  })
+}
+
 export const getViem = async (chainId, account, viem = null) => {
   if (account) {
+    if (viem?.walletClient || viem?.writeContract) {
+      return viem
+    }
+
     if (isSafeApp()) {
       const safeViem = await safeViem()
       return safeViem
@@ -236,19 +285,9 @@ export const getViem = async (chainId, account, viem = null) => {
     // }
 
     if (window.ethereum) {
-      try {
-        const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' })
-
-        const chain = getChainObject(chainIdHex)
-
-        const walletClient = createWalletClient({
-          transport: custom(window.ethereum),
-          chain,
-        })
-
+      const walletClient = await createWalletClientFromProvider(window.ethereum)
+      if (walletClient) {
         return walletClient
-      } catch (error) {
-        console.error('Error creating wallet client:', error)
       }
     }
 
@@ -293,18 +332,7 @@ export const newContractInstance = async (contractName, address, customAbi, publ
     const client = publicClient || mainViem
 
     if (window.ethereum) {
-      try {
-        const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' })
-
-        const chain = getChainObject(chainIdHex)
-
-        walletClient = createWalletClient({
-          transport: custom(window.ethereum),
-          chain,
-        })
-      } catch (error) {
-        console.error('Error creating wallet client:', error)
-      }
+      walletClient = await createWalletClientFromProvider(window.ethereum)
     }
 
     const contract = createViemContract({
@@ -322,18 +350,7 @@ export const newContractInstance = async (contractName, address, customAbi, publ
 export const newIPORContractInstance = async (address, abi, publicClient) => {
   let walletClient = null
   if (window.ethereum) {
-    try {
-      const chainIdHex = await window.ethereum.request({ method: 'eth_chainId' })
-
-      const chain = getChainObject(chainIdHex)
-
-      walletClient = createWalletClient({
-        transport: custom(window.ethereum),
-        chain,
-      })
-    } catch (error) {
-      console.error('Error creating wallet client:', error)
-    }
+    walletClient = await createWalletClientFromProvider(window.ethereum)
   }
   return createViemContract({
     address,

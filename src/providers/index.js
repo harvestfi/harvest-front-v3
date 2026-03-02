@@ -1,5 +1,6 @@
 import React from 'react'
-import { Web3OnboardProvider } from '@web3-onboard/react'
+// eslint-disable-next-line import/no-unresolved
+import { ThirdwebProvider } from 'thirdweb/react'
 
 import { ActionsProvider } from './Actions'
 import { ContractsProvider } from './Contracts'
@@ -10,11 +11,10 @@ import { ThemeProvider } from './useThemeContext'
 import { VaultsProvider } from './Vault'
 import { WalletProvider } from './Wallet'
 import { PortalsProvider } from './Portals'
-import { web3Onboard } from './web3Onboard'
 
 const Providers = ({ children }) => (
   <ContractsProvider>
-    <Web3OnboardProvider web3Onboard={web3Onboard}>
+    <ThirdwebProvider>
       <PortalsProvider>
         <WalletProvider>
           <PoolsProvider>
@@ -30,7 +30,7 @@ const Providers = ({ children }) => (
           </PoolsProvider>
         </WalletProvider>
       </PortalsProvider>
-    </Web3OnboardProvider>
+    </ThirdwebProvider>
   </ContractsProvider>
 )
 

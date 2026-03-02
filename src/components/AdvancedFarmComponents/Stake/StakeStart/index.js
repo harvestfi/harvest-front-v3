@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import Modal from 'react-bootstrap/Modal'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../../providers/thirdweb'
 import { Spinner } from 'react-bootstrap'
 import { BiGift } from 'react-icons/bi'
 import { useMediaQuery } from 'react-responsive'
@@ -50,7 +50,7 @@ const StakeStart = ({
   setLoadingDots,
 }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
-  const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
+  const { connected, connectAction, account, chainId, getWalletBalances } = useWallet()
 
   const [
     {
@@ -348,7 +348,6 @@ const StakeStart = ({
                   const chainHex = `0x${Number(tokenChain).toString(16)}`
                   if (!isSpecialApp) {
                     await setChain({ chainId: chainHex })
-                    setChainId(tokenChain)
                   }
                 } else {
                   onClickStake()

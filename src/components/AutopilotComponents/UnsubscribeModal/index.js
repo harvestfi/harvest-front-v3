@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import BigNumber from 'bignumber.js'
 import Modal from 'react-bootstrap/Modal'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../providers/thirdweb'
 import { Spinner } from 'react-bootstrap'
 import { useMediaQuery } from 'react-responsive'
 import Diamond from '../../../assets/images/logos/sidebar/diamond.svg'
@@ -34,7 +34,7 @@ import {
 
 const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModalShow }) => {
   const { fontColor1, fontColor2, btnColor, btnHoverColor, btnActiveColor } = useThemeContext()
-  const { connected, connectAction, account, chainId, setChainId, getWalletBalances } = useWallet()
+  const { connected, connectAction, account, chainId, getWalletBalances } = useWallet()
   const { contracts } = useContracts()
 
   const [
@@ -267,7 +267,6 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                   const chainHex = `0x${Number(tokenChain).toString(16)}`
                   if (!isSpecialApp) {
                     await setChain({ chainId: chainHex })
-                    setChainId(tokenChain)
                   }
                 } else {
                   onClickUnsubscrbie()

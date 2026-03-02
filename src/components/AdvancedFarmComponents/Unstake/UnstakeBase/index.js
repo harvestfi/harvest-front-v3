@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import React, { useEffect, useState } from 'react'
-import { useSetChain } from '@web3-onboard/react'
+import { useSetChain } from '../../../../providers/thirdweb'
 import { isEmpty } from 'lodash'
 import { useMediaQuery } from 'react-responsive'
 import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
@@ -61,7 +61,7 @@ const UnstakeBase = ({
     btnHoverColor,
     btnActiveColor,
   } = useThemeContext()
-  const { connected, connectAction, account, chainId, setChainId } = useWallet()
+  const { connected, connectAction, account, chainId } = useWallet()
 
   const [
     {
@@ -364,7 +364,6 @@ const UnstakeBase = ({
               const chainHex = `0x${Number(tokenChain).toString(16)}`
               if (!isSpecialApp) {
                 await setChain({ chainId: chainHex })
-                setChainId(tokenChain)
               }
             } else {
               onClickUnStake()
