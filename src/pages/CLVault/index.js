@@ -811,7 +811,7 @@ const CLVault = () => {
                           {depMode === 'quick' ? (
                             <>
                               <FieldLabel $fc={fontColor1} $muted={fontColor3}>
-                                <span>Pay with</span>
+                                <span>Enter with</span>
                               </FieldLabel>
                               <OutputGroup>
                                 <OutputOpt
