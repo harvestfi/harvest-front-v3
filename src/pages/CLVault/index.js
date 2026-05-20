@@ -75,15 +75,18 @@ import TickCross from '../../assets/images/logos/tick-cross.svg'
  * Tab content shape (matching classic page):
  *   activeMainTag === 0 (Manage):  InternalSection > full-width
  *                                  ManagePanelsRow (3 stats panels) +
- *                                  MainSection (USD/Underlying chart first,
- *                                  then Active Range + Composition) +
- *                                  RestContent (Supply/Revert form).
+ *                                  MainSection (USD/Underlying chart only) +
+ *                                  RestContent (Supply/Revert form). Manage
+ *                                  is intentionally lean so the deposit form
+ *                                  takes focus.
  *   activeMainTag === 1 (Details): InternalSection > full-width BoxCover
- *                                  (4 ValueBox) + MainSection (chart +
- *                                  mechanics + Source of Yield) + RestContent
- *                                  (RestInternal > LastHarvestInfo Info +
- *                                  MyBalance APY Breakdown + LastHarvestInfo
- *                                  Fees + LastHarvestInfo Range parameters
+ *                                  (4 ValueBox) + MainSection (Share Price
+ *                                  chart + Active Range + Position
+ *                                  Composition + mechanics + Source of
+ *                                  Yield) + RestContent (RestInternal >
+ *                                  LastHarvestInfo Info + MyBalance APY
+ *                                  Breakdown + LastHarvestInfo Fees +
+ *                                  LastHarvestInfo Range parameters
  *                                  collapsible).
  *   activeMainTag === 2 (History): placeholder HalfInfo card.
  * ========================================================================== */
@@ -672,83 +675,11 @@ const CLVault = () => {
               </ManagePanelsRow>
 
               <MainSection $height="100%">
-                {/* Performance chart — placed first per design (USD/Underlying balance) */}
+                {/* Performance chart — placed first per design (USD/Underlying balance).
+                    Active Range and Position Composition cards live on the Details tab
+                    (this column is intentionally lighter on Manage so the right-rail
+                    Supply/Revert form takes focus). */}
                     {balanceChart}
-
-                    {/* Active Range — CL-specific card, classic chrome */}
-                    <HalfInfo
-                      $backcolor={bgColorBox}
-                      $bordercolor={borderColorBox}
-                      $marginbottom="20px"
-                    >
-                      <FlexDiv
-                        $padding="10px 15px"
-                        style={{
-                          borderBottom: `1px solid ${borderColorBox}`,
-                          flexDirection: 'column',
-                          alignItems: 'flex-start',
-                          gap: 4,
-                        }}
-                      >
-                        <FlexDiv style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                          <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor={fontColor4}>
-                            Active Range
-                          </NewLabel>
-                          <Badge $ok={VAULT.inRange}>
-                            {VAULT.inRange ? 'in range' : 'out of range'}
-                          </Badge>
-                        </FlexDiv>
-                        <NewLabel $size="12px" $weight="500" $height="18px" $fontcolor={fontColor3}>
-                          Position is concentrated within these price bounds.
-                        </NewLabel>
-                      </FlexDiv>
-                      <div style={{ paddingTop: 18 }} />
-                      <RangeBarOuter $bg={bgColorChart}>
-                        <RangeBarInner $leftPct={0} $rightPct={100} />
-                        <RangeMarker $pct={rangeMarkerPct} $color={fontColor1} $bg={bgColorBox} />
-                      </RangeBarOuter>
-                      <RangeLabels $muted={fontColor3}>
-                        <span>{VAULT.range.lower.toFixed(3)}</span>
-                        <span>{VAULT.range.upper.toFixed(3)}</span>
-                      </RangeLabels>
-                      <RangeNumbers $fc={fontColor1} $muted={fontColor3}>
-                        <strong>
-                          {VAULT.range.lower.toFixed(3)} – {VAULT.range.upper.toFixed(3)}{' '}
-                          {VAULT.rangeUnit}
-                        </strong>
-                        <span className="muted">currently</span>
-                        <strong>{VAULT.range.current.toFixed(3)}</strong>
-                      </RangeNumbers>
-                      <Footnote $muted={fontColor3}>
-                        Last rebalance: {VAULT.lastRebalance}.
-                      </Footnote>
-                    </HalfInfo>
-
-                    {/* Position Composition — CL-specific card, classic chrome */}
-                    <HalfInfo
-                      $backcolor={bgColorBox}
-                      $bordercolor={borderColorBox}
-                      $marginbottom="25px"
-                    >
-                      {sectionTitle('Position Composition')}
-                      <CompositionRow $fc={fontColor1}>
-                        <span>{VAULT.composition.token0Pct}% {VAULT.pair.token0}</span>
-                        <span>{VAULT.composition.token1Pct}% {VAULT.pair.token1}</span>
-                      </CompositionRow>
-                      <CompositionBar $border={borderColorBox}>
-                        <CompositionFill $pct={VAULT.composition.token0Pct} $color="#7d68d3" />
-                        <CompositionFill $pct={VAULT.composition.token1Pct} $color="#1e5fd3" />
-                      </CompositionBar>
-                      {kvRow(`Vault holdings (${VAULT.pair.token0})`, VAULT.composition.token0Amount, 'h0')}
-                      {kvRow(`Vault holdings (${VAULT.pair.token1})`, VAULT.composition.token1Amount, 'h1')}
-                      {kvRow('Your slice (shares)', VAULT.userSlice.shares, 'us')}
-                      {kvRow(
-                        `Your slice (${VAULT.pair.token0} / ${VAULT.pair.token1})`,
-                        `${VAULT.userSlice.token0} / ${VAULT.userSlice.token1}`,
-                        'ut',
-                      )}
-                      <div style={{ height: 8 }} />
-                    </HalfInfo>
                   </MainSection>
 
                   <RestContent>
@@ -1386,6 +1317,81 @@ const CLVault = () => {
                         </RangeBtn>
                       ))}
                     </RangeBtnRow>
+                  </HalfInfo>
+
+                  {/* Active Range — CL-specific card, classic chrome */}
+                  <HalfInfo
+                    $backcolor={bgColorBox}
+                    $bordercolor={borderColorBox}
+                    $marginbottom="20px"
+                  >
+                    <FlexDiv
+                      $padding="10px 15px"
+                      style={{
+                        borderBottom: `1px solid ${borderColorBox}`,
+                        flexDirection: 'column',
+                        alignItems: 'flex-start',
+                        gap: 4,
+                      }}
+                    >
+                      <FlexDiv style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                        <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor={fontColor4}>
+                          Active Range
+                        </NewLabel>
+                        <Badge $ok={VAULT.inRange}>
+                          {VAULT.inRange ? 'in range' : 'out of range'}
+                        </Badge>
+                      </FlexDiv>
+                      <NewLabel $size="12px" $weight="500" $height="18px" $fontcolor={fontColor3}>
+                        Position is concentrated within these price bounds.
+                      </NewLabel>
+                    </FlexDiv>
+                    <div style={{ paddingTop: 18 }} />
+                    <RangeBarOuter $bg={bgColorChart}>
+                      <RangeBarInner $leftPct={0} $rightPct={100} />
+                      <RangeMarker $pct={rangeMarkerPct} $color={fontColor1} $bg={bgColorBox} />
+                    </RangeBarOuter>
+                    <RangeLabels $muted={fontColor3}>
+                      <span>{VAULT.range.lower.toFixed(3)}</span>
+                      <span>{VAULT.range.upper.toFixed(3)}</span>
+                    </RangeLabels>
+                    <RangeNumbers $fc={fontColor1} $muted={fontColor3}>
+                      <strong>
+                        {VAULT.range.lower.toFixed(3)} – {VAULT.range.upper.toFixed(3)}{' '}
+                        {VAULT.rangeUnit}
+                      </strong>
+                      <span className="muted">currently</span>
+                      <strong>{VAULT.range.current.toFixed(3)}</strong>
+                    </RangeNumbers>
+                    <Footnote $muted={fontColor3}>
+                      Last rebalance: {VAULT.lastRebalance}.
+                    </Footnote>
+                  </HalfInfo>
+
+                  {/* Position Composition — CL-specific card, classic chrome */}
+                  <HalfInfo
+                    $backcolor={bgColorBox}
+                    $bordercolor={borderColorBox}
+                    $marginbottom="25px"
+                  >
+                    {sectionTitle('Position Composition')}
+                    <CompositionRow $fc={fontColor1}>
+                      <span>{VAULT.composition.token0Pct}% {VAULT.pair.token0}</span>
+                      <span>{VAULT.composition.token1Pct}% {VAULT.pair.token1}</span>
+                    </CompositionRow>
+                    <CompositionBar $border={borderColorBox}>
+                      <CompositionFill $pct={VAULT.composition.token0Pct} $color="#7d68d3" />
+                      <CompositionFill $pct={VAULT.composition.token1Pct} $color="#1e5fd3" />
+                    </CompositionBar>
+                    {kvRow(`Vault holdings (${VAULT.pair.token0})`, VAULT.composition.token0Amount, 'h0')}
+                    {kvRow(`Vault holdings (${VAULT.pair.token1})`, VAULT.composition.token1Amount, 'h1')}
+                    {kvRow('Your slice (shares)', VAULT.userSlice.shares, 'us')}
+                    {kvRow(
+                      `Your slice (${VAULT.pair.token0} / ${VAULT.pair.token1})`,
+                      `${VAULT.userSlice.token0} / ${VAULT.userSlice.token1}`,
+                      'ut',
+                    )}
+                    <div style={{ height: 8 }} />
                   </HalfInfo>
 
                   {/* How this vault works — CL-specific mechanics card */}
