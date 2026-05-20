@@ -288,6 +288,13 @@ const CLVault = () => {
   const navigate = useNavigate()
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
+  // Two-sided deposit (Pro mode) is currently hidden from the UI — flip to
+  // true to surface the "Switch to two-sided deposit" / "Back to single-asset"
+  // link below the CTA. All Pro-mode state, validation, route logic, and form
+  // JSX remain in the file so flipping this flag re-enables the feature
+  // without any other change.
+  const SHOW_TWO_SIDED_TOGGLE = false
+
   const [activeMainTag, setActiveMainTag] = useState(0)
   const [activeDepoTab, setActiveDepoTab] = useState(0)
   const [depMode, setDepMode] = useState('quick') // 'quick' (single-asset via CLWrapper) | 'pro' (dual-input, spec)
@@ -1113,42 +1120,46 @@ const CLVault = () => {
 
                           {/* Opt-in to two-sided deposit. Quick (single asset) is the default
                               entry flow; two-sided is the spec-exact path, kept as an advanced
-                              option for users who already hold both assets. */}
-                          <NewLabel
-                            $size="12px"
-                            $weight="500"
-                            $height="18px"
-                            $fontcolor={fontColor3}
-                            $padding="10px 0 0"
-                            style={{ textAlign: 'center' }}
-                          >
-                            {depMode === 'quick' ? (
-                              <>
-                                Already hold both assets?{' '}
+                              option for users who already hold both assets. Currently hidden
+                              via SHOW_TWO_SIDED_TOGGLE — flip the flag at the top of the
+                              component to bring this link back. */}
+                          {SHOW_TWO_SIDED_TOGGLE && (
+                            <NewLabel
+                              $size="12px"
+                              $weight="500"
+                              $height="18px"
+                              $fontcolor={fontColor3}
+                              $padding="10px 0 0"
+                              style={{ textAlign: 'center' }}
+                            >
+                              {depMode === 'quick' ? (
+                                <>
+                                  Already hold both assets?{' '}
+                                  <a
+                                    href="#"
+                                    onClick={e => {
+                                      e.preventDefault()
+                                      setDepMode('pro')
+                                    }}
+                                    style={{ color: '#1da64a', fontWeight: 700 }}
+                                  >
+                                    Switch to two-sided deposit
+                                  </a>
+                                </>
+                              ) : (
                                 <a
                                   href="#"
                                   onClick={e => {
                                     e.preventDefault()
-                                    setDepMode('pro')
+                                    setDepMode('quick')
                                   }}
                                   style={{ color: '#1da64a', fontWeight: 700 }}
                                 >
-                                  Switch to two-sided deposit
+                                  ← Back to single-asset deposit
                                 </a>
-                              </>
-                            ) : (
-                              <a
-                                href="#"
-                                onClick={e => {
-                                  e.preventDefault()
-                                  setDepMode('quick')
-                                }}
-                                style={{ color: '#1da64a', fontWeight: 700 }}
-                              >
-                                ← Back to single-asset deposit
-                              </a>
-                            )}
-                          </NewLabel>
+                              )}
+                            </NewLabel>
+                          )}
                         </>
                       ) : (
                         <>
