@@ -216,29 +216,49 @@ const VAULT = {
   },
 }
 
-const TokenCircle = ({ children, bg, fc, border, overlap }) => (
-  <div
-    style={{
-      width: 69,
-      height: 69,
-      borderRadius: '50%',
-      background: bg,
-      border: `3px solid ${border}`,
-      color: fc,
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      fontWeight: 700,
-      fontSize: 18,
-      marginRight: overlap ? -20 : 0,
-      zIndex: overlap ? 1 : 2,
-      flexShrink: 0,
-      boxShadow: '0 1px 2px rgba(16,24,40,0.06)',
-    }}
-  >
-    {children}
-  </div>
-)
+const TokenCircle = ({ children, bg, fc, border, overlap, size = 69 }) => {
+  const borderWidth = size <= 24 ? 1 : 3
+  const fontSize = size <= 24 ? Math.round(size * 0.46) : 18
+  return (
+    <div
+      style={{
+        width: size,
+        height: size,
+        borderRadius: '50%',
+        background: bg,
+        border: `${borderWidth}px solid ${border}`,
+        color: fc,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 700,
+        fontSize,
+        lineHeight: 1,
+        marginRight: overlap ? -Math.round(size * 0.29) : 0,
+        zIndex: overlap ? 1 : 2,
+        flexShrink: 0,
+        boxShadow: '0 1px 2px rgba(16,24,40,0.06)',
+      }}
+    >
+      {children}
+    </div>
+  )
+}
+
+/* Mini token icon used inside TokenPill (input fields). Colors and glyphs
+   match the big header TokenLogo, just shrunk to fit the pill height. */
+const tokenIcon = (symbol, border) => {
+  const map = {
+    cbETH: { bg: '#1652f0', fc: '#fff', glyph: 'cb' },
+    WETH: { bg: '#627eea', fc: '#fff', glyph: 'Ξ' },
+  }
+  const t = map[symbol] || { bg: '#94a3b8', fc: '#fff', glyph: symbol.slice(0, 2) }
+  return (
+    <TokenCircle bg={t.bg} fc={t.fc} border={border} size={20}>
+      {t.glyph}
+    </TokenCircle>
+  )
+}
 
 const TAB_DEFS = [
   { name: 'Manage', img: Safe },
@@ -810,6 +830,10 @@ const CLVault = () => {
                                   $border={borderColorBox}
                                   $fc={fontColor1}
                                 >
+                                  {tokenIcon(
+                                    quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1,
+                                    bgColorBox,
+                                  )}
                                   {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
                                 </TokenPill>
                               </FieldBox>
@@ -863,6 +887,7 @@ const CLVault = () => {
                               onChange={e => setDep0(e.target.value)}
                             />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
+                              {tokenIcon(VAULT.pair.token0, bgColorBox)}
                               {VAULT.pair.token0}
                             </TokenPill>
                           </FieldBox>
@@ -887,6 +912,7 @@ const CLVault = () => {
                               onChange={e => setDep1(e.target.value)}
                             />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
+                              {tokenIcon(VAULT.pair.token1, bgColorBox)}
                               {VAULT.pair.token1}
                             </TokenPill>
                           </FieldBox>
@@ -954,7 +980,14 @@ const CLVault = () => {
                             $bg={bgColorChart}
                             $fc={fontColor1}
                           >
-                            <span>Slippage tolerance (_minOut)</span>
+                            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                              Max slippage
+                              <Question
+                                id="cl-tooltip-slippage-supply"
+                                dark={darkMode}
+                                content="Maximum price movement tolerated between quote and execution. Passed to the contract as the _minOut floor — the transaction reverts if you'd receive less than that."
+                              />
+                            </span>
                             <div>
                               {[0.1, 0.5, 1.0].map(s => (
                                 <button
@@ -1118,6 +1151,14 @@ const CLVault = () => {
                               onChange={e => setShares(e.target.value)}
                             />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
+                              <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                                <TokenCircle bg="#1652f0" fc="#fff" border={bgColorBox} size={20} overlap>
+                                  cb
+                                </TokenCircle>
+                                <TokenCircle bg="#627eea" fc="#fff" border={bgColorBox} size={20}>
+                                  Ξ
+                                </TokenCircle>
+                              </span>
                               fcl-{VAULT.pair.token0}-{VAULT.pair.token1}
                             </TokenPill>
                           </FieldBox>
@@ -1196,9 +1237,17 @@ const CLVault = () => {
                             $bg={bgColorChart}
                             $fc={fontColor1}
                           >
-                            <span>
-                              Slippage tolerance (
-                              {output === 'both' ? 'amount0OutMin / amount1OutMin' : '_minOut'})
+                            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                              Max slippage
+                              <Question
+                                id="cl-tooltip-slippage-withdraw"
+                                dark={darkMode}
+                                content={
+                                  output === 'both'
+                                    ? 'Maximum price movement tolerated between quote and execution. Passed to the contract as the amount0OutMin / amount1OutMin floors — the withdrawal reverts if either token comes out below the floor.'
+                                    : 'Maximum price movement tolerated between quote and execution. Passed to the contract as the _minOut floor — the withdrawal reverts if you would receive less than that.'
+                                }
+                              />
                             </span>
                             <div>
                               {[0.1, 0.5, 1.0].map(s => (
@@ -1347,7 +1396,7 @@ const CLVault = () => {
                       </NewLabel>
                     </FlexDiv>
                     <div style={{ paddingTop: 18 }} />
-                    <RangeBarOuter $bg={bgColorChart}>
+                    <RangeBarOuter $bg={bgColorChart} $border={borderColorBox}>
                       <RangeBarInner $leftPct={0} $rightPct={100} />
                       <RangeMarker $pct={rangeMarkerPct} $color={fontColor1} $bg={bgColorBox} />
                     </RangeBarOuter>
