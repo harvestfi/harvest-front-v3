@@ -59,10 +59,18 @@ import TickCross from '../../assets/images/logos/tick-cross.svg'
  *   $border, $borderbottom, $borderradius,
  *   $display, $items, $self, $align, $justifycontent, $width
  *
- * Deposit form: spec-exact dual-input — two amount fields, both available
- * at all times, no mode picker. Smart routing decides the contract entry
- * silently based on which fields are filled (CLWrapper for single-asset,
- * CLVault.deposit for both).
+ * Deviation from spec (intentional UX choice):
+ *   - Deposit form is single-asset-first. Quick (single asset, CLWrapper
+ *     auto-swap to optimal ratio) is the default entry flow because most
+ *     users only hold one of the two assets. Two-sided deposit (the
+ *     spec-exact dual-input with smart routing) is an opt-in advanced
+ *     option, surfaced via a subtle link under the CTA instead of an
+ *     equal-weight toggle. Spec wording: "two amount fields, both
+ *     available at all times, no mode picker" — we deviate here on
+ *     purpose to keep the primary surface simple. State machine still
+ *     tracks the two modes and the underlying contract routing
+ *     (CLWrapper for single-asset, CLVault.deposit for both) is
+ *     unchanged.
  *
  * Tab content shape (matching classic page):
  *   activeMainTag === 0 (Manage):  InternalSection > full-width
@@ -282,6 +290,9 @@ const CLVault = () => {
 
   const [activeMainTag, setActiveMainTag] = useState(0)
   const [activeDepoTab, setActiveDepoTab] = useState(0)
+  const [depMode, setDepMode] = useState('quick') // 'quick' (single-asset via CLWrapper) | 'pro' (dual-input, spec)
+  const [quickToken, setQuickToken] = useState('t0')
+  const [quickAmount, setQuickAmount] = useState('')
   const [paramsOpen, setParamsOpen] = useState(false)
   const [agreed, setAgreed] = useState(false)
   const [chartRange, setChartRange] = useState('LAST')
@@ -311,6 +322,12 @@ const CLVault = () => {
     return null
   }, [dep0, dep1])
 
+  const quickRoute = useMemo(() => {
+    if (!parseFloat(quickAmount)) return null
+    const sym = quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1
+    return { label: `Routed via CLWrapper(${sym}): single asset`, kind: quickToken, sym }
+  }, [quickAmount, quickToken])
+
   const wRoute = useMemo(() => {
     if (output === 'both')
       return `Routed via CLVault.withdraw: receive ${VAULT.pair.token0} + ${VAULT.pair.token1}`
@@ -331,7 +348,8 @@ const CLVault = () => {
     setDep1((max * r1).toFixed(4))
   }
 
-  const supplyDisabled = !depRoute || !agreed
+  const supplyDisabled =
+    (depMode === 'quick' ? !quickRoute : !depRoute) || !agreed
   const withdrawDisabled = !parseFloat(shares)
 
   const today = new Date().toLocaleDateString('en-US', {
@@ -785,11 +803,108 @@ const CLVault = () => {
                             $fontcolor={fontColor3}
                             $marginbottom="14px"
                           >
-                            Two amount fields, both available at all times. Fill both at the
-                            optimal ratio for a no-swap deposit, or fill one for the single-asset
-                            path. Smart routing picks the optimal contract entry point.
+                            {depMode === 'quick'
+                              ? 'Single-asset deposit. The token is auto-swapped on-chain to match the position’s ratio.'
+                              : 'Two-sided deposit (advanced). Fill both tokens at the optimal ratio for a no-swap deposit, or fill one for the single-asset path. Smart routing picks the optimal contract entry point.'}
                           </NewLabel>
 
+                          {depMode === 'quick' ? (
+                            <>
+                              <FieldLabel $fc={fontColor1} $muted={fontColor3}>
+                                <span>Pay with</span>
+                              </FieldLabel>
+                              <OutputGroup>
+                                <OutputOpt
+                                  $active={quickToken === 't0'}
+                                  $bg={bgColorChart}
+                                  $border={borderColorBox}
+                                  $fc={fontColor1}
+                                  onClick={() => setQuickToken('t0')}
+                                  type="button"
+                                >
+                                  {VAULT.pair.token0}
+                                </OutputOpt>
+                                <OutputOpt
+                                  $active={quickToken === 't1'}
+                                  $bg={bgColorChart}
+                                  $border={borderColorBox}
+                                  $fc={fontColor1}
+                                  onClick={() => setQuickToken('t1')}
+                                  type="button"
+                                >
+                                  {VAULT.pair.token1}
+                                </OutputOpt>
+                              </OutputGroup>
+
+                              <FieldLabel $fc={fontColor1} $muted={fontColor3}>
+                                <span>
+                                  Amount{' '}
+                                  {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
+                                </span>
+                                <span
+                                  className="bal"
+                                  onClick={() =>
+                                    setQuickAmount(
+                                      quickToken === 't0'
+                                        ? VAULT.walletBalances.token0
+                                        : VAULT.walletBalances.token1,
+                                    )
+                                  }
+                                  title="Click to use full balance"
+                                >
+                                  Balance:{' '}
+                                  {quickToken === 't0'
+                                    ? VAULT.walletBalances.token0
+                                    : VAULT.walletBalances.token1}
+                                </span>
+                              </FieldLabel>
+                              <FieldBox $bg={bgColorChart} $border={borderColorBox}>
+                                <Input
+                                  $fc={fontColor1}
+                                  $muted={fontColor8}
+                                  placeholder="0.0"
+                                  inputMode="decimal"
+                                  value={quickAmount}
+                                  onChange={e => setQuickAmount(e.target.value)}
+                                />
+                                <TokenPill
+                                  $bg={bgColorBox}
+                                  $border={borderColorBox}
+                                  $fc={fontColor1}
+                                >
+                                  {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
+                                </TokenPill>
+                              </FieldBox>
+
+                              {quickRoute && (
+                                <>
+                                  <RouteNote $muted={fontColor3}>{quickRoute.label}</RouteNote>
+                                  <Preview
+                                    $bg={bgColorChart}
+                                    $border={borderColorBox}
+                                    $fc={fontColor1}
+                                    $muted={fontColor3}
+                                  >
+                                    <div>
+                                      <span className="muted">Expected shares</span>
+                                      <span className="val">
+                                        ~ 0.0000 fcl-{VAULT.pair.token0}-{VAULT.pair.token1}
+                                      </span>
+                                    </div>
+                                    <div>
+                                      <span className="muted">Value (in {quickRoute.sym})</span>
+                                      <span className="val">~ 0.0000</span>
+                                    </div>
+                                    <div>
+                                      <span className="muted">Internal swap cost</span>
+                                      <span className="val">~ 22 bps</span>
+                                    </div>
+                                  </Preview>
+                                </>
+                              )}
+                            </>
+                          ) : (
+                            <>
                           <FieldLabel $fc={fontColor1} $muted={fontColor3}>
                             <span>Amount {VAULT.pair.token0}</span>
                             <span
@@ -892,6 +1007,8 @@ const CLVault = () => {
                               </Preview>
                             </>
                           )}
+                            </>
+                          )}
 
                           <Slippage
                             $muted={fontColor3}
@@ -987,12 +1104,51 @@ const CLVault = () => {
                           </label>
 
                           <Cta type="button" disabled={supplyDisabled}>
-                            {!depRoute
+                            {!(depMode === 'quick' ? quickRoute : depRoute)
                               ? 'Enter an amount'
                               : !agreed
                                 ? 'Agree to terms above'
                                 : 'Connect Wallet to Get Started'}
                           </Cta>
+
+                          {/* Opt-in to two-sided deposit. Quick (single asset) is the default
+                              entry flow; two-sided is the spec-exact path, kept as an advanced
+                              option for users who already hold both assets. */}
+                          <NewLabel
+                            $size="12px"
+                            $weight="500"
+                            $height="18px"
+                            $fontcolor={fontColor3}
+                            $padding="10px 0 0"
+                            style={{ textAlign: 'center' }}
+                          >
+                            {depMode === 'quick' ? (
+                              <>
+                                Already hold both assets?{' '}
+                                <a
+                                  href="#"
+                                  onClick={e => {
+                                    e.preventDefault()
+                                    setDepMode('pro')
+                                  }}
+                                  style={{ color: '#1da64a', fontWeight: 700 }}
+                                >
+                                  Switch to two-sided deposit
+                                </a>
+                              </>
+                            ) : (
+                              <a
+                                href="#"
+                                onClick={e => {
+                                  e.preventDefault()
+                                  setDepMode('quick')
+                                }}
+                                style={{ color: '#1da64a', fontWeight: 700 }}
+                              >
+                                ← Back to single-asset deposit
+                              </a>
+                            )}
+                          </NewLabel>
                         </>
                       ) : (
                         <>
