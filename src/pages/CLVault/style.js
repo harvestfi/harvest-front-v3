@@ -51,9 +51,9 @@ export const Badge = styled.span`
 
 export const RangeBarOuter = styled.div`
   position: relative;
-  height: 36px;
+  height: 18px;
   background: ${p => p.$bg};
-  border-radius: 10px;
+  border-radius: 6px;
   overflow: visible;
   margin: 0 15px 12px;
 `
@@ -65,7 +65,7 @@ export const RangeBarInner = styled.div`
   left: ${p => p.$leftPct}%;
   right: ${p => 100 - p.$rightPct}%;
   background: linear-gradient(90deg, #5dcf46 0%, #51e932 50%, #5dcf46 100%);
-  border-radius: 8px;
+  border-radius: 5px;
   opacity: 0.85;
 `
 
