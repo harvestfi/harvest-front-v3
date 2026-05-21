@@ -186,7 +186,8 @@ const VAULT = {
     eMode: true,
     fold: true,
   },
-  userSlice: { shares: '0.00', token0: '0.00', token1: '0.00' },
+  // Mock user position so the withdraw flow has something to display.
+  userSlice: { shares: '2.4567', token0: '0.00', token1: '7.2284' },
   walletBalances: { token0: '1.4382', token1: '12.7615' },
   // Looping doesn't have a 50/50 optimal — deposit is single-asset. The two-sided
   // form (hidden behind SHOW_TWO_SIDED_TOGGLE) still expects this field, so we
@@ -586,10 +587,30 @@ const LoopingVault = () => {
   const collateralUsd = 2189400
   const debtUsd = 2015650
   const projectedLtvAfterDeposit = depUsd => (debtUsd / (collateralUsd + depUsd)) * 100
-  const projectedLtvAfterWithdraw = wUsd => (debtUsd / Math.max(1, collateralUsd - wUsd)) * 100
   const sharePriceUsd = parseFloat(VAULT.details.sharePrice) * 2940 // approx in USD
   const withdrawalUsd = parseFloat(shares) * sharePriceUsd
   const largeWithdraw = withdrawalUsd > VAULT.vaultUsd * 0.05
+
+  // Compact USD label sitting inside a FieldBox between the Input and the
+  // TokenPill. Empty / zero amounts render nothing.
+  const fmtUsd = n =>
+    n >= 1000
+      ? `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+      : `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const InFieldUsd = ({ usd }) =>
+    usd > 0 ? (
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 600,
+          color: fontColor3,
+          marginRight: 8,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {fmtUsd(usd)}
+      </span>
+    ) : null
 
   /* ---------------- Looping-specific panels ---------------- */
 
@@ -1139,6 +1160,7 @@ const LoopingVault = () => {
                               value={quickAmount}
                               onChange={e => setQuickAmount(e.target.value)}
                             />
+                            <InFieldUsd usd={usdValueOf(entrySymbol, quickAmount)} />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                               {tokenIcon(entrySymbol, bgColorBox)}
                               {entrySymbol}
@@ -1210,6 +1232,7 @@ const LoopingVault = () => {
                               value={dep0}
                               onChange={e => setDep0(e.target.value)}
                             />
+                            <InFieldUsd usd={usdValueOf(VAULT.pair.token0, dep0)} />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                               {tokenIcon(VAULT.pair.token0, bgColorBox)}
                               {VAULT.pair.token0}
@@ -1235,6 +1258,7 @@ const LoopingVault = () => {
                               value={dep1}
                               onChange={e => setDep1(e.target.value)}
                             />
+                            <InFieldUsd usd={usdValueOf(VAULT.pair.token1, dep1)} />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                               {tokenIcon(VAULT.pair.token1, bgColorBox)}
                               {VAULT.pair.token1}
@@ -1473,12 +1497,19 @@ const LoopingVault = () => {
                         $fontcolor={fontColor3}
                         $marginbottom="14px"
                       >
-                        Withdraw your shares back to {VAULT.pair.token0} or {VAULT.pair.token1}.
+                        Single-asset withdrawal. The vault unwinds the loop and returns{' '}
+                        {VAULT.debtSymbol}.
                       </NewLabel>
 
                       <FieldLabel $fc={fontColor1} $muted={fontColor3}>
                         <span>Shares to withdraw</span>
-                        <span className="bal">Balance: {VAULT.userSlice.shares}</span>
+                        <span
+                          className="bal"
+                          onClick={() => setShares(VAULT.userSlice.shares)}
+                          title="Click to use full balance"
+                        >
+                          Balance: {VAULT.userSlice.shares}
+                        </span>
                       </FieldLabel>
                       <FieldBox $bg={bgColorChart} $border={borderColorBox}>
                         <Input
@@ -1489,6 +1520,7 @@ const LoopingVault = () => {
                           value={shares}
                           onChange={e => setShares(e.target.value)}
                         />
+                        <InFieldUsd usd={parseFloat(shares) * sharePriceUsd} />
                         <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                           <span style={{ display: 'inline-flex', alignItems: 'center' }}>
                             <TokenCircle
@@ -1519,8 +1551,11 @@ const LoopingVault = () => {
                           $fontcolor={fontColor1}
                           style={{ flex: 1 }}
                         >
-                          {entrySymbol}
+                          {parseFloat(shares) > 0
+                            ? `~ ${(parseFloat(shares) * 0.985).toFixed(4)}`
+                            : '0.0'}
                         </NewLabel>
+                        <InFieldUsd usd={usdValueOf(entrySymbol, parseFloat(shares) * 0.985)} />
                         <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                           {tokenIcon(entrySymbol, bgColorBox)}
                           {entrySymbol}
@@ -1543,13 +1578,6 @@ const LoopingVault = () => {
                         <div>
                           <span className="muted">Exit cost (median 30d)</span>
                           <span className="val">{VAULT.costs.typicalExitBps}</span>
-                        </div>
-                        <div>
-                          <span className="muted">Vault LTV after your withdrawal</span>
-                          <span className="val">
-                            {projectedLtvAfterWithdraw(withdrawalUsd).toFixed(2)}% (was{' '}
-                            {ltvCur.toFixed(2)}%)
-                          </span>
                         </div>
                       </Preview>
 

@@ -347,6 +347,37 @@ const CLVault = () => {
     return Math.max(0, Math.min(100, pct))
   }, [])
 
+  // Mock spot prices for the in-field USD label. Real impl reads from
+  // oracle / price feed.
+  const usdPrice = { cbETH: 2950, WETH: 2930 }
+  const usdValueOf = (sym, amt) => {
+    const n = parseFloat(amt) || 0
+    return n * (usdPrice[sym] || 0)
+  }
+  // fcl share value: rough USD of the underlying pair, weighted by ratio.
+  const sharePriceUsd =
+    VAULT.optimalRatio.token0 * usdPrice[VAULT.pair.token0] +
+    VAULT.optimalRatio.token1 * usdPrice[VAULT.pair.token1]
+
+  const fmtUsd = n =>
+    n >= 1000
+      ? `$${n.toLocaleString('en-US', { maximumFractionDigits: 0 })}`
+      : `$${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`
+  const InFieldUsd = ({ usd }) =>
+    usd > 0 ? (
+      <span
+        style={{
+          fontSize: 12,
+          fontWeight: 600,
+          color: fontColor3,
+          marginRight: 8,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {fmtUsd(usd)}
+      </span>
+    ) : null
+
   const depRoute = useMemo(() => {
     const a0 = parseFloat(dep0) > 0
     const a1 = parseFloat(dep1) > 0
@@ -842,6 +873,12 @@ const CLVault = () => {
                               value={quickAmount}
                               onChange={e => setQuickAmount(e.target.value)}
                             />
+                            <InFieldUsd
+                              usd={usdValueOf(
+                                quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1,
+                                quickAmount,
+                              )}
+                            />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                               {tokenIcon(
                                 quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1,
@@ -899,6 +936,7 @@ const CLVault = () => {
                               value={dep0}
                               onChange={e => setDep0(e.target.value)}
                             />
+                            <InFieldUsd usd={usdValueOf(VAULT.pair.token0, dep0)} />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                               {tokenIcon(VAULT.pair.token0, bgColorBox)}
                               {VAULT.pair.token0}
@@ -924,6 +962,7 @@ const CLVault = () => {
                               value={dep1}
                               onChange={e => setDep1(e.target.value)}
                             />
+                            <InFieldUsd usd={usdValueOf(VAULT.pair.token1, dep1)} />
                             <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                               {tokenIcon(VAULT.pair.token1, bgColorBox)}
                               {VAULT.pair.token1}
@@ -1178,6 +1217,7 @@ const CLVault = () => {
                           value={shares}
                           onChange={e => setShares(e.target.value)}
                         />
+                        <InFieldUsd usd={parseFloat(shares) * sharePriceUsd} />
                         <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                           <span style={{ display: 'inline-flex', alignItems: 'center' }}>
                             <TokenCircle
