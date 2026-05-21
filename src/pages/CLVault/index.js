@@ -135,10 +135,7 @@ import {
   NetDetailContent,
   NetDetailImg,
 } from '../AdvancedFarm/style'
-import {
-  DescInfo,
-  InfoLabel,
-} from '../../components/AdvancedFarmComponents/SourceOfYield/style'
+import { DescInfo, InfoLabel } from '../../components/AdvancedFarmComponents/SourceOfYield/style'
 import {
   Badge,
   RangeBarOuter,
@@ -212,7 +209,14 @@ const VAULT = {
     operatingSince: 'Mar 14 2025',
     operatingDays: 57,
     sharePrice: '1.00428',
-    apy: { live: '26.46%', d7: '24.91%', d30: '22.40%', d180: 'n/a', d365: 'n/a', lifetime: '23.85%' },
+    apy: {
+      live: '26.46%',
+      d7: '24.91%',
+      d30: '22.40%',
+      d180: 'n/a',
+      d365: 'n/a',
+      lifetime: '23.85%',
+    },
   },
 }
 
@@ -361,7 +365,8 @@ const CLVault = () => {
   const wRoute = useMemo(() => {
     if (output === 'both')
       return `Routed via CLVault.withdraw: receive ${VAULT.pair.token0} + ${VAULT.pair.token1}`
-    if (output === 't0') return `Routed via CLWrapper(${VAULT.pair.token0}): receive ${VAULT.pair.token0} only`
+    if (output === 't0')
+      return `Routed via CLWrapper(${VAULT.pair.token0}): receive ${VAULT.pair.token0} only`
     return `Routed via CLWrapper(${VAULT.pair.token1}): receive ${VAULT.pair.token1} only`
   }, [output])
 
@@ -378,8 +383,7 @@ const CLVault = () => {
     setDep1((max * r1).toFixed(4))
   }
 
-  const supplyDisabled =
-    (depMode === 'quick' ? !quickRoute : !depRoute) || !agreed
+  const supplyDisabled = (depMode === 'quick' ? !quickRoute : !depRoute) || !agreed
   const withdrawDisabled = !parseFloat(shares)
 
   const today = new Date().toLocaleDateString('en-US', {
@@ -444,7 +448,12 @@ const CLVault = () => {
         </FlexDiv>
       </NewLabel>
       {rows.map(([label, value, token], i) => (
-        <FlexDiv key={i} $justifycontent="space-between" $padding="5px 15px" style={{ alignItems: 'flex-start' }}>
+        <FlexDiv
+          key={i}
+          $justifycontent="space-between"
+          $padding="5px 15px"
+          style={{ alignItems: 'flex-start' }}
+        >
           <NewLabel $size="12px" $weight="500" $height="24px" $fontcolor={fontColor3}>
             {label}
           </NewLabel>
@@ -472,7 +481,10 @@ const CLVault = () => {
       $backcolor={bgColorBox}
       $bordercolor={borderColorBox}
     >
-      <FlexDiv $justifycontent="space-between" style={{ alignItems: 'flex-start', gap: 16, marginBottom: 14 }}>
+      <FlexDiv
+        $justifycontent="space-between"
+        style={{ alignItems: 'flex-start', gap: 16, marginBottom: 14 }}
+      >
         <FlexDiv style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
           <NewLabel $size="14px" $weight="700" $height="20px" $fontcolor="#5dcf46">
             USD Balance
@@ -699,174 +711,175 @@ const CLVault = () => {
                     Active Range and Position Composition cards live on the Details tab
                     (this column is intentionally lighter on Manage so the right-rail
                     Supply/Revert form takes focus). */}
-                    {balanceChart}
-                  </MainSection>
+                {balanceChart}
+              </MainSection>
 
-                  <RestContent>
-                    <HalfContent
-                      $backcolor={bgColorBox}
-                      $bordercolor={borderColorBox}
-                      $borderradius="12px"
-                      style={{ padding: 20 }}
+              <RestContent>
+                <HalfContent
+                  $backcolor={bgColorBox}
+                  $bordercolor={borderColorBox}
+                  $borderradius="12px"
+                  style={{ padding: 20 }}
+                >
+                  <NewLabel
+                    $size="16px"
+                    $height="24px"
+                    $weight="600"
+                    $fontcolor={fontColor1}
+                    style={{
+                      background: bgColorChart,
+                      border: `1.3px solid ${borderColorBox}`,
+                      borderRadius: 8,
+                      padding: 4,
+                      display: 'flex',
+                      justifyContent: 'center',
+                      marginBottom: 16,
+                    }}
+                  >
+                    <SwitchTabTag
+                      onClick={() => setActiveDepoTab(0)}
+                      $fontcolor={activeDepoTab === 0 ? fontColor4 : fontColor3}
+                      $backcolor={activeDepoTab === 0 ? activeColorNew : ''}
+                      $boxshadow={
+                        activeDepoTab === 0
+                          ? '0 1px 3px rgba(16, 24, 40, 0.18), 0 1px 2px rgba(16, 24, 40, 0.10)'
+                          : 'none'
+                      }
+                      style={{
+                        fontWeight: activeDepoTab === 0 ? 700 : 500,
+                        opacity: activeDepoTab === 0 ? 1 : 0.7,
+                      }}
                     >
+                      <p>↓ Supply</p>
+                    </SwitchTabTag>
+                    <SwitchTabTag
+                      onClick={() => setActiveDepoTab(1)}
+                      $fontcolor={activeDepoTab === 1 ? fontColor4 : fontColor3}
+                      $backcolor={activeDepoTab === 1 ? activeColorNew : ''}
+                      $boxshadow={
+                        activeDepoTab === 1
+                          ? '0 1px 3px rgba(16, 24, 40, 0.18), 0 1px 2px rgba(16, 24, 40, 0.10)'
+                          : 'none'
+                      }
+                      style={{
+                        fontWeight: activeDepoTab === 1 ? 700 : 500,
+                        opacity: activeDepoTab === 1 ? 1 : 0.7,
+                      }}
+                    >
+                      <p>↑ Revert</p>
+                    </SwitchTabTag>
+                  </NewLabel>
+
+                  {activeDepoTab === 0 ? (
+                    <>
                       <NewLabel
-                        $size="16px"
-                        $height="24px"
-                        $weight="600"
-                        $fontcolor={fontColor1}
-                        style={{
-                          background: bgColorChart,
-                          border: `1.3px solid ${borderColorBox}`,
-                          borderRadius: 8,
-                          padding: 4,
-                          display: 'flex',
-                          justifyContent: 'center',
-                          marginBottom: 16,
-                        }}
+                        $size="13px"
+                        $weight="500"
+                        $height="20px"
+                        $fontcolor={fontColor3}
+                        $marginbottom="14px"
                       >
-                        <SwitchTabTag
-                          onClick={() => setActiveDepoTab(0)}
-                          $fontcolor={activeDepoTab === 0 ? fontColor4 : fontColor3}
-                          $backcolor={activeDepoTab === 0 ? activeColorNew : ''}
-                          $boxshadow={
-                            activeDepoTab === 0
-                              ? '0 1px 3px rgba(16, 24, 40, 0.18), 0 1px 2px rgba(16, 24, 40, 0.10)'
-                              : 'none'
-                          }
-                          style={{ fontWeight: activeDepoTab === 0 ? 700 : 500, opacity: activeDepoTab === 0 ? 1 : 0.7 }}
-                        >
-                          <p>↓ Supply</p>
-                        </SwitchTabTag>
-                        <SwitchTabTag
-                          onClick={() => setActiveDepoTab(1)}
-                          $fontcolor={activeDepoTab === 1 ? fontColor4 : fontColor3}
-                          $backcolor={activeDepoTab === 1 ? activeColorNew : ''}
-                          $boxshadow={
-                            activeDepoTab === 1
-                              ? '0 1px 3px rgba(16, 24, 40, 0.18), 0 1px 2px rgba(16, 24, 40, 0.10)'
-                              : 'none'
-                          }
-                          style={{ fontWeight: activeDepoTab === 1 ? 700 : 500, opacity: activeDepoTab === 1 ? 1 : 0.7 }}
-                        >
-                          <p>↑ Revert</p>
-                        </SwitchTabTag>
+                        {depMode === 'quick'
+                          ? 'Single-asset deposit. The token is auto-swapped on-chain to match the position’s ratio.'
+                          : 'Two-sided deposit (advanced). Fill both tokens at the optimal ratio for a no-swap deposit, or fill one for the single-asset path. Smart routing picks the optimal contract entry point.'}
                       </NewLabel>
 
-                      {activeDepoTab === 0 ? (
+                      {depMode === 'quick' ? (
                         <>
-                          <NewLabel
-                            $size="13px"
-                            $weight="500"
-                            $height="20px"
-                            $fontcolor={fontColor3}
-                            $marginbottom="14px"
-                          >
-                            {depMode === 'quick'
-                              ? 'Single-asset deposit. The token is auto-swapped on-chain to match the position’s ratio.'
-                              : 'Two-sided deposit (advanced). Fill both tokens at the optimal ratio for a no-swap deposit, or fill one for the single-asset path. Smart routing picks the optimal contract entry point.'}
-                          </NewLabel>
+                          <FieldLabel $fc={fontColor1} $muted={fontColor3}>
+                            <span>Enter with</span>
+                          </FieldLabel>
+                          <OutputGroup>
+                            <OutputOpt
+                              $active={quickToken === 't0'}
+                              $bg={bgColorChart}
+                              $border={borderColorBox}
+                              $fc={fontColor1}
+                              onClick={() => setQuickToken('t0')}
+                              type="button"
+                            >
+                              {VAULT.pair.token0}
+                            </OutputOpt>
+                            <OutputOpt
+                              $active={quickToken === 't1'}
+                              $bg={bgColorChart}
+                              $border={borderColorBox}
+                              $fc={fontColor1}
+                              onClick={() => setQuickToken('t1')}
+                              type="button"
+                            >
+                              {VAULT.pair.token1}
+                            </OutputOpt>
+                          </OutputGroup>
 
-                          {depMode === 'quick' ? (
-                            <>
-                              <FieldLabel $fc={fontColor1} $muted={fontColor3}>
-                                <span>Enter with</span>
-                              </FieldLabel>
-                              <OutputGroup>
-                                <OutputOpt
-                                  $active={quickToken === 't0'}
-                                  $bg={bgColorChart}
-                                  $border={borderColorBox}
-                                  $fc={fontColor1}
-                                  onClick={() => setQuickToken('t0')}
-                                  type="button"
-                                >
-                                  {VAULT.pair.token0}
-                                </OutputOpt>
-                                <OutputOpt
-                                  $active={quickToken === 't1'}
-                                  $bg={bgColorChart}
-                                  $border={borderColorBox}
-                                  $fc={fontColor1}
-                                  onClick={() => setQuickToken('t1')}
-                                  type="button"
-                                >
-                                  {VAULT.pair.token1}
-                                </OutputOpt>
-                              </OutputGroup>
-
-                              <FieldLabel $fc={fontColor1} $muted={fontColor3}>
-                                <span>
-                                  Amount{' '}
-                                  {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
-                                </span>
-                                <span
-                                  className="bal"
-                                  onClick={() =>
-                                    setQuickAmount(
-                                      quickToken === 't0'
-                                        ? VAULT.walletBalances.token0
-                                        : VAULT.walletBalances.token1,
-                                    )
-                                  }
-                                  title="Click to use full balance"
-                                >
-                                  Balance:{' '}
-                                  {quickToken === 't0'
+                          <FieldLabel $fc={fontColor1} $muted={fontColor3}>
+                            <span>
+                              Amount {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
+                            </span>
+                            <span
+                              className="bal"
+                              onClick={() =>
+                                setQuickAmount(
+                                  quickToken === 't0'
                                     ? VAULT.walletBalances.token0
-                                    : VAULT.walletBalances.token1}
-                                </span>
-                              </FieldLabel>
-                              <FieldBox $bg={bgColorChart} $border={borderColorBox}>
-                                <Input
-                                  $fc={fontColor1}
-                                  $muted={fontColor8}
-                                  placeholder="0.0"
-                                  inputMode="decimal"
-                                  value={quickAmount}
-                                  onChange={e => setQuickAmount(e.target.value)}
-                                />
-                                <TokenPill
-                                  $bg={bgColorBox}
-                                  $border={borderColorBox}
-                                  $fc={fontColor1}
-                                >
-                                  {tokenIcon(
-                                    quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1,
-                                    bgColorBox,
-                                  )}
-                                  {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
-                                </TokenPill>
-                              </FieldBox>
-
-                              {quickRoute && (
-                                <>
-                                  <RouteNote $muted={fontColor3}>{quickRoute.label}</RouteNote>
-                                  <Preview
-                                    $bg={bgColorChart}
-                                    $border={borderColorBox}
-                                    $fc={fontColor1}
-                                    $muted={fontColor3}
-                                  >
-                                    <div>
-                                      <span className="muted">Expected shares</span>
-                                      <span className="val">
-                                        ~ 0.0000 fcl-{VAULT.pair.token0}-{VAULT.pair.token1}
-                                      </span>
-                                    </div>
-                                    <div>
-                                      <span className="muted">Value (in {quickRoute.sym})</span>
-                                      <span className="val">~ 0.0000</span>
-                                    </div>
-                                    <div>
-                                      <span className="muted">Internal swap cost</span>
-                                      <span className="val">~ 22 bps</span>
-                                    </div>
-                                  </Preview>
-                                </>
+                                    : VAULT.walletBalances.token1,
+                                )
+                              }
+                              title="Click to use full balance"
+                            >
+                              Balance:{' '}
+                              {quickToken === 't0'
+                                ? VAULT.walletBalances.token0
+                                : VAULT.walletBalances.token1}
+                            </span>
+                          </FieldLabel>
+                          <FieldBox $bg={bgColorChart} $border={borderColorBox}>
+                            <Input
+                              $fc={fontColor1}
+                              $muted={fontColor8}
+                              placeholder="0.0"
+                              inputMode="decimal"
+                              value={quickAmount}
+                              onChange={e => setQuickAmount(e.target.value)}
+                            />
+                            <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
+                              {tokenIcon(
+                                quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1,
+                                bgColorBox,
                               )}
-                            </>
-                          ) : (
+                              {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
+                            </TokenPill>
+                          </FieldBox>
+
+                          {quickRoute && (
                             <>
+                              <RouteNote $muted={fontColor3}>{quickRoute.label}</RouteNote>
+                              <Preview
+                                $bg={bgColorChart}
+                                $border={borderColorBox}
+                                $fc={fontColor1}
+                                $muted={fontColor3}
+                              >
+                                <div>
+                                  <span className="muted">Expected shares</span>
+                                  <span className="val">
+                                    ~ 0.0000 fcl-{VAULT.pair.token0}-{VAULT.pair.token1}
+                                  </span>
+                                </div>
+                                <div>
+                                  <span className="muted">Value (in {quickRoute.sym})</span>
+                                  <span className="val">~ 0.0000</span>
+                                </div>
+                                <div>
+                                  <span className="muted">Internal swap cost</span>
+                                  <span className="val">~ 22 bps</span>
+                                </div>
+                              </Preview>
+                            </>
+                          )}
+                        </>
+                      ) : (
+                        <>
                           <FieldLabel $fc={fontColor1} $muted={fontColor3}>
                             <span>Amount {VAULT.pair.token0}</span>
                             <span
@@ -951,7 +964,8 @@ const CLVault = () => {
                                 <div>
                                   <span className="muted">
                                     Value (in{' '}
-                                    {depRoute.kind === 't1' ? VAULT.pair.token1 : VAULT.pair.token0})
+                                    {depRoute.kind === 't1' ? VAULT.pair.token1 : VAULT.pair.token0}
+                                    )
                                   </span>
                                   <span className="val">~ 0.0000</span>
                                 </div>
@@ -971,303 +985,323 @@ const CLVault = () => {
                               </Preview>
                             </>
                           )}
-                            </>
-                          )}
+                        </>
+                      )}
 
-                          <Slippage
-                            $muted={fontColor3}
-                            $border={borderColorBox}
-                            $bg={bgColorChart}
-                            $fc={fontColor1}
+                      <Slippage
+                        $muted={fontColor3}
+                        $border={borderColorBox}
+                        $bg={bgColorChart}
+                        $fc={fontColor1}
+                      >
+                        <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          Max slippage
+                          <Question
+                            id="cl-tooltip-slippage-supply"
+                            dark={darkMode}
+                            content="Maximum price movement tolerated between quote and execution. Passed to the contract as the _minOut floor — the transaction reverts if you'd receive less than that."
+                          />
+                        </span>
+                        <div>
+                          {[0.1, 0.5, 1.0].map(s => (
+                            <button
+                              key={s}
+                              type="button"
+                              className={slip === s ? 'active' : ''}
+                              onClick={() => setSlip(s)}
+                            >
+                              {s}%
+                            </button>
+                          ))}
+                        </div>
+                      </Slippage>
+
+                      <FlexDiv $justifycontent="space-between" style={{ marginBottom: 8 }}>
+                        <NewLabel
+                          $size="13px"
+                          $weight="500"
+                          $height="20px"
+                          $fontcolor={fontColor3}
+                          $display="flex"
+                          $items="center"
+                        >
+                          Est. Yearly Yield
+                          <Question
+                            id="cl-tooltip-yearly"
+                            dark={darkMode}
+                            content="Estimated yield over a year, based on current APY."
+                          />
+                        </NewLabel>
+                        <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
+                          n/a
+                        </NewLabel>
+                      </FlexDiv>
+                      <FlexDiv $justifycontent="space-between" style={{ marginBottom: 14 }}>
+                        <NewLabel
+                          $size="13px"
+                          $weight="500"
+                          $height="20px"
+                          $fontcolor={fontColor3}
+                          $display="flex"
+                          $items="center"
+                        >
+                          Est. Received
+                          <Question
+                            id="cl-tooltip-received"
+                            dark={darkMode}
+                            content="Approximate fTokens you'd receive at the current share price."
+                          />
+                        </NewLabel>
+                        <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
+                          n/a
+                        </NewLabel>
+                      </FlexDiv>
+
+                      <label
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: 10,
+                          padding: '12px 14px',
+                          background: bgColorChart,
+                          border: `1px solid ${borderColorBox}`,
+                          borderRadius: 10,
+                          fontSize: 12,
+                          lineHeight: 1.45,
+                          color: fontColor3,
+                          marginBottom: 14,
+                          cursor: 'pointer',
+                        }}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={agreed}
+                          onChange={e => setAgreed(e.target.checked)}
+                          style={{ marginTop: 3, accentColor: '#5dcf46' }}
+                        />
+                        <span>
+                          I confirm that I have read and understand the product, have read the{' '}
+                          <a
+                            href="https://docs.harvest.finance/legal/risk-disclosures"
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ color: '#1da64a', fontWeight: 700 }}
                           >
-                            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                              Max slippage
-                              <Question
-                                id="cl-tooltip-slippage-supply"
-                                dark={darkMode}
-                                content="Maximum price movement tolerated between quote and execution. Passed to the contract as the _minOut floor — the transaction reverts if you'd receive less than that."
-                              />
-                            </span>
-                            <div>
-                              {[0.1, 0.5, 1.0].map(s => (
-                                <button
-                                  key={s}
-                                  type="button"
-                                  className={slip === s ? 'active' : ''}
-                                  onClick={() => setSlip(s)}
-                                >
-                                  {s}%
-                                </button>
-                              ))}
-                            </div>
-                          </Slippage>
-
-                          <FlexDiv $justifycontent="space-between" style={{ marginBottom: 8 }}>
-                            <NewLabel $size="13px" $weight="500" $height="20px" $fontcolor={fontColor3} $display="flex" $items="center">
-                              Est. Yearly Yield
-                              <Question
-                                id="cl-tooltip-yearly"
-                                dark={darkMode}
-                                content="Estimated yield over a year, based on current APY."
-                              />
-                            </NewLabel>
-                            <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
-                              n/a
-                            </NewLabel>
-                          </FlexDiv>
-                          <FlexDiv $justifycontent="space-between" style={{ marginBottom: 14 }}>
-                            <NewLabel $size="13px" $weight="500" $height="20px" $fontcolor={fontColor3} $display="flex" $items="center">
-                              Est. Received
-                              <Question
-                                id="cl-tooltip-received"
-                                dark={darkMode}
-                                content="Approximate fTokens you'd receive at the current share price."
-                              />
-                            </NewLabel>
-                            <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
-                              n/a
-                            </NewLabel>
-                          </FlexDiv>
-
-                          <label
-                            style={{
-                              display: 'flex',
-                              alignItems: 'flex-start',
-                              gap: 10,
-                              padding: '12px 14px',
-                              background: bgColorChart,
-                              border: `1px solid ${borderColorBox}`,
-                              borderRadius: 10,
-                              fontSize: 12,
-                              lineHeight: 1.45,
-                              color: fontColor3,
-                              marginBottom: 14,
-                              cursor: 'pointer',
-                            }}
+                            Risk Disclosures
+                          </a>
+                          , and agree to the{' '}
+                          <a
+                            href="https://docs.harvest.finance/legal/terms-and-conditions"
+                            target="_blank"
+                            rel="noreferrer"
+                            style={{ color: '#1da64a', fontWeight: 700 }}
                           >
-                            <input
-                              type="checkbox"
-                              checked={agreed}
-                              onChange={e => setAgreed(e.target.checked)}
-                              style={{ marginTop: 3, accentColor: '#5dcf46' }}
-                            />
-                            <span>
-                              I confirm that I have read and understand the product, have read the{' '}
-                              <a
-                                href="https://docs.harvest.finance/legal/risk-disclosures"
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ color: '#1da64a', fontWeight: 700 }}
-                              >
-                                Risk Disclosures
-                              </a>
-                              , and agree to the{' '}
-                              <a
-                                href="https://docs.harvest.finance/legal/terms-and-conditions"
-                                target="_blank"
-                                rel="noreferrer"
-                                style={{ color: '#1da64a', fontWeight: 700 }}
-                              >
-                                Terms and Conditions
-                              </a>
-                              .
-                            </span>
-                          </label>
+                            Terms and Conditions
+                          </a>
+                          .
+                        </span>
+                      </label>
 
-                          <Cta type="button" disabled={supplyDisabled}>
-                            {!(depMode === 'quick' ? quickRoute : depRoute)
-                              ? 'Enter an amount'
-                              : !agreed
-                                ? 'Agree to terms above'
-                                : 'Connect Wallet to Get Started'}
-                          </Cta>
+                      <Cta type="button" disabled={supplyDisabled}>
+                        {!(depMode === 'quick' ? quickRoute : depRoute)
+                          ? 'Enter an amount'
+                          : !agreed
+                            ? 'Agree to terms above'
+                            : 'Connect Wallet to Get Started'}
+                      </Cta>
 
-                          {/* Opt-in to two-sided deposit. Quick (single asset) is the default
+                      {/* Opt-in to two-sided deposit. Quick (single asset) is the default
                               entry flow; two-sided is the spec-exact path, kept as an advanced
                               option for users who already hold both assets. Currently hidden
                               via SHOW_TWO_SIDED_TOGGLE — flip the flag at the top of the
                               component to bring this link back. */}
-                          {SHOW_TWO_SIDED_TOGGLE && (
-                            <NewLabel
-                              $size="12px"
-                              $weight="500"
-                              $height="18px"
-                              $fontcolor={fontColor3}
-                              $padding="10px 0 0"
-                              style={{ textAlign: 'center' }}
+                      {SHOW_TWO_SIDED_TOGGLE && (
+                        <NewLabel
+                          $size="12px"
+                          $weight="500"
+                          $height="18px"
+                          $fontcolor={fontColor3}
+                          $padding="10px 0 0"
+                          style={{ textAlign: 'center' }}
+                        >
+                          {depMode === 'quick' ? (
+                            <>
+                              Already hold both assets?{' '}
+                              <a
+                                href="#"
+                                onClick={e => {
+                                  e.preventDefault()
+                                  setDepMode('pro')
+                                }}
+                                style={{ color: '#1da64a', fontWeight: 700 }}
+                              >
+                                Switch to two-sided deposit
+                              </a>
+                            </>
+                          ) : (
+                            <a
+                              href="#"
+                              onClick={e => {
+                                e.preventDefault()
+                                setDepMode('quick')
+                              }}
+                              style={{ color: '#1da64a', fontWeight: 700 }}
                             >
-                              {depMode === 'quick' ? (
-                                <>
-                                  Already hold both assets?{' '}
-                                  <a
-                                    href="#"
-                                    onClick={e => {
-                                      e.preventDefault()
-                                      setDepMode('pro')
-                                    }}
-                                    style={{ color: '#1da64a', fontWeight: 700 }}
-                                  >
-                                    Switch to two-sided deposit
-                                  </a>
-                                </>
-                              ) : (
-                                <a
-                                  href="#"
-                                  onClick={e => {
-                                    e.preventDefault()
-                                    setDepMode('quick')
-                                  }}
-                                  style={{ color: '#1da64a', fontWeight: 700 }}
-                                >
-                                  ← Back to single-asset deposit
-                                </a>
-                              )}
-                            </NewLabel>
+                              ← Back to single-asset deposit
+                            </a>
                           )}
-                        </>
-                      ) : (
-                        <>
-                          <NewLabel
-                            $size="13px"
-                            $weight="500"
-                            $height="20px"
-                            $fontcolor={fontColor3}
-                            $marginbottom="14px"
-                          >
-                            Withdraw your shares back to {VAULT.pair.token0} or {VAULT.pair.token1}.
-                          </NewLabel>
-
-                          <FieldLabel $fc={fontColor1} $muted={fontColor3}>
-                            <span>Shares to withdraw</span>
-                            <span className="bal">Balance: {VAULT.userSlice.shares}</span>
-                          </FieldLabel>
-                          <FieldBox $bg={bgColorChart} $border={borderColorBox}>
-                            <Input
-                              $fc={fontColor1}
-                              $muted={fontColor8}
-                              placeholder="0.0"
-                              inputMode="decimal"
-                              value={shares}
-                              onChange={e => setShares(e.target.value)}
-                            />
-                            <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
-                              <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                                <TokenCircle bg="#1652f0" fc="#fff" border={bgColorBox} size={20} overlap>
-                                  cb
-                                </TokenCircle>
-                                <TokenCircle bg="#627eea" fc="#fff" border={bgColorBox} size={20}>
-                                  Ξ
-                                </TokenCircle>
-                              </span>
-                              fcl-{VAULT.pair.token0}-{VAULT.pair.token1}
-                            </TokenPill>
-                          </FieldBox>
-
-                          <FieldLabel $fc={fontColor1} $muted={fontColor3}>
-                            <span>Receive</span>
-                          </FieldLabel>
-                          <OutputGroup>
-                            <OutputOpt
-                              $active={output === 't0'}
-                              $bg={bgColorChart}
-                              $border={borderColorBox}
-                              $fc={fontColor1}
-                              onClick={() => setOutput('t0')}
-                            >
-                              {VAULT.pair.token0} only
-                            </OutputOpt>
-                            <OutputOpt
-                              $active={output === 't1'}
-                              $bg={bgColorChart}
-                              $border={borderColorBox}
-                              $fc={fontColor1}
-                              onClick={() => setOutput('t1')}
-                            >
-                              {VAULT.pair.token1} only
-                            </OutputOpt>
-                            <OutputOpt
-                              $active={output === 'both'}
-                              $bg={bgColorChart}
-                              $border={borderColorBox}
-                              $fc={fontColor1}
-                              onClick={() => setOutput('both')}
-                            >
-                              Both
-                            </OutputOpt>
-                          </OutputGroup>
-
-                          <RouteNote $muted={fontColor3}>{wRoute}</RouteNote>
-                          <Preview
-                            $bg={bgColorChart}
-                            $border={borderColorBox}
-                            $fc={fontColor1}
-                            $muted={fontColor3}
-                          >
-                            {output === 'both' ? (
-                              <>
-                                <div>
-                                  <span className="muted">Predicted output ({VAULT.pair.token0})</span>
-                                  <span className="val">~ 0.0000</span>
-                                </div>
-                                <div>
-                                  <span className="muted">Predicted output ({VAULT.pair.token1})</span>
-                                  <span className="val">~ 0.0000</span>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <div>
-                                  <span className="muted">
-                                    Predicted output (
-                                    {output === 't0' ? VAULT.pair.token0 : VAULT.pair.token1})
-                                  </span>
-                                  <span className="val">~ 0.0000</span>
-                                </div>
-                                <div>
-                                  <span className="muted">Internal swap cost</span>
-                                  <span className="val">~ 22 bps</span>
-                                </div>
-                              </>
-                            )}
-                          </Preview>
-
-                          <Slippage
-                            $muted={fontColor3}
-                            $border={borderColorBox}
-                            $bg={bgColorChart}
-                            $fc={fontColor1}
-                          >
-                            <span style={{ display: 'inline-flex', alignItems: 'center' }}>
-                              Max slippage
-                              <Question
-                                id="cl-tooltip-slippage-withdraw"
-                                dark={darkMode}
-                                content={
-                                  output === 'both'
-                                    ? 'Maximum price movement tolerated between quote and execution. Passed to the contract as the amount0OutMin / amount1OutMin floors — the withdrawal reverts if either token comes out below the floor.'
-                                    : 'Maximum price movement tolerated between quote and execution. Passed to the contract as the _minOut floor — the withdrawal reverts if you would receive less than that.'
-                                }
-                              />
-                            </span>
-                            <div>
-                              {[0.1, 0.5, 1.0].map(s => (
-                                <button
-                                  key={s}
-                                  type="button"
-                                  className={slip === s ? 'active' : ''}
-                                  onClick={() => setSlip(s)}
-                                >
-                                  {s}%
-                                </button>
-                              ))}
-                            </div>
-                          </Slippage>
-
-                          <Cta type="button" disabled={withdrawDisabled}>
-                            {withdrawDisabled ? 'Enter share amount' : 'Connect Wallet to Withdraw'}
-                          </Cta>
-                        </>
+                        </NewLabel>
                       )}
+                    </>
+                  ) : (
+                    <>
+                      <NewLabel
+                        $size="13px"
+                        $weight="500"
+                        $height="20px"
+                        $fontcolor={fontColor3}
+                        $marginbottom="14px"
+                      >
+                        Withdraw your shares back to {VAULT.pair.token0} or {VAULT.pair.token1}.
+                      </NewLabel>
+
+                      <FieldLabel $fc={fontColor1} $muted={fontColor3}>
+                        <span>Shares to withdraw</span>
+                        <span className="bal">Balance: {VAULT.userSlice.shares}</span>
+                      </FieldLabel>
+                      <FieldBox $bg={bgColorChart} $border={borderColorBox}>
+                        <Input
+                          $fc={fontColor1}
+                          $muted={fontColor8}
+                          placeholder="0.0"
+                          inputMode="decimal"
+                          value={shares}
+                          onChange={e => setShares(e.target.value)}
+                        />
+                        <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
+                          <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                            <TokenCircle
+                              bg="#1652f0"
+                              fc="#fff"
+                              border={bgColorBox}
+                              size={20}
+                              overlap
+                            >
+                              cb
+                            </TokenCircle>
+                            <TokenCircle bg="#627eea" fc="#fff" border={bgColorBox} size={20}>
+                              Ξ
+                            </TokenCircle>
+                          </span>
+                          fcl-{VAULT.pair.token0}-{VAULT.pair.token1}
+                        </TokenPill>
+                      </FieldBox>
+
+                      <FieldLabel $fc={fontColor1} $muted={fontColor3}>
+                        <span>Receive</span>
+                      </FieldLabel>
+                      <OutputGroup>
+                        <OutputOpt
+                          $active={output === 't0'}
+                          $bg={bgColorChart}
+                          $border={borderColorBox}
+                          $fc={fontColor1}
+                          onClick={() => setOutput('t0')}
+                        >
+                          {VAULT.pair.token0} only
+                        </OutputOpt>
+                        <OutputOpt
+                          $active={output === 't1'}
+                          $bg={bgColorChart}
+                          $border={borderColorBox}
+                          $fc={fontColor1}
+                          onClick={() => setOutput('t1')}
+                        >
+                          {VAULT.pair.token1} only
+                        </OutputOpt>
+                        <OutputOpt
+                          $active={output === 'both'}
+                          $bg={bgColorChart}
+                          $border={borderColorBox}
+                          $fc={fontColor1}
+                          onClick={() => setOutput('both')}
+                        >
+                          Both
+                        </OutputOpt>
+                      </OutputGroup>
+
+                      <RouteNote $muted={fontColor3}>{wRoute}</RouteNote>
+                      <Preview
+                        $bg={bgColorChart}
+                        $border={borderColorBox}
+                        $fc={fontColor1}
+                        $muted={fontColor3}
+                      >
+                        {output === 'both' ? (
+                          <>
+                            <div>
+                              <span className="muted">Predicted output ({VAULT.pair.token0})</span>
+                              <span className="val">~ 0.0000</span>
+                            </div>
+                            <div>
+                              <span className="muted">Predicted output ({VAULT.pair.token1})</span>
+                              <span className="val">~ 0.0000</span>
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div>
+                              <span className="muted">
+                                Predicted output (
+                                {output === 't0' ? VAULT.pair.token0 : VAULT.pair.token1})
+                              </span>
+                              <span className="val">~ 0.0000</span>
+                            </div>
+                            <div>
+                              <span className="muted">Internal swap cost</span>
+                              <span className="val">~ 22 bps</span>
+                            </div>
+                          </>
+                        )}
+                      </Preview>
+
+                      <Slippage
+                        $muted={fontColor3}
+                        $border={borderColorBox}
+                        $bg={bgColorChart}
+                        $fc={fontColor1}
+                      >
+                        <span style={{ display: 'inline-flex', alignItems: 'center' }}>
+                          Max slippage
+                          <Question
+                            id="cl-tooltip-slippage-withdraw"
+                            dark={darkMode}
+                            content={
+                              output === 'both'
+                                ? 'Maximum price movement tolerated between quote and execution. Passed to the contract as the amount0OutMin / amount1OutMin floors — the withdrawal reverts if either token comes out below the floor.'
+                                : 'Maximum price movement tolerated between quote and execution. Passed to the contract as the _minOut floor — the withdrawal reverts if you would receive less than that.'
+                            }
+                          />
+                        </span>
+                        <div>
+                          {[0.1, 0.5, 1.0].map(s => (
+                            <button
+                              key={s}
+                              type="button"
+                              className={slip === s ? 'active' : ''}
+                              onClick={() => setSlip(s)}
+                            >
+                              {s}%
+                            </button>
+                          ))}
+                        </div>
+                      </Slippage>
+
+                      <Cta type="button" disabled={withdrawDisabled}>
+                        {withdrawDisabled ? 'Enter share amount' : 'Connect Wallet to Withdraw'}
+                      </Cta>
+                    </>
+                  )}
                 </HalfContent>
               </RestContent>
             </InternalSection>
@@ -1282,7 +1316,11 @@ const CLVault = () => {
                   { title: 'Live APY', value: VAULT.apy, className: 'balance-box' },
                   { title: 'Daily APY', value: '0.072%', className: 'daily-apy-box' },
                   { title: 'TVL', value: VAULT.tvl },
-                  { title: 'Last Rebalance', value: VAULT.lastRebalance, className: 'daily-yield-box' },
+                  {
+                    title: 'Last Rebalance',
+                    value: VAULT.lastRebalance,
+                    className: 'daily-yield-box',
+                  },
                 ].map((box, i) => (
                   <ValueBox
                     key={i}
@@ -1299,336 +1337,361 @@ const CLVault = () => {
 
               <MainSection $height="fit-content">
                 {/* Share Price chart placeholder */}
-                  <HalfInfo
-                    $padding={isMobile ? '12px' : '20px'}
-                    $marginbottom="25px"
-                    $backcolor={bgColorBox}
-                    $bordercolor={borderColorBox}
-                  >
-                    <FlexDiv $justifycontent="space-between" style={{ marginBottom: 12 }}>
-                      <FlexDiv style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
-                        <NewLabel $size="14px" $weight="700" $height="20px" $fontcolor={fontColor1}>
-                          Share Price
-                        </NewLabel>
-                        <NewLabel $size="12px" $weight="500" $height="18px" $fontcolor={fontColor3}>
-                          {today} | <span style={{ color: fontColor1, fontWeight: 700 }}>{VAULT.details.sharePrice}</span>
-                        </NewLabel>
-                      </FlexDiv>
-                    </FlexDiv>
-                    <ChartFrame $bg={bgColorBox}>
-                      <AxisYLeft $muted={fontColor3}>
-                        <span>1.012</span>
-                        <span>1.008</span>
-                        <span>1.004</span>
-                        <span>1.000</span>
-                      </AxisYLeft>
-                      <AxisX $muted={fontColor3}>
-                        <span>3/14</span>
-                        <span>4/4</span>
-                        <span>4/24</span>
-                        <span>5/10</span>
-                      </AxisX>
-                      <svg
-                        viewBox="0 0 200 100"
-                        preserveAspectRatio="none"
-                        style={{
-                          position: 'absolute',
-                          left: 38,
-                          right: 8,
-                          top: 12,
-                          bottom: 28,
-                          width: 'calc(100% - 46px)',
-                          height: 'calc(100% - 40px)',
-                          pointerEvents: 'none',
-                        }}
-                      >
-                        <polyline
-                          points="0,88 4,84 8,86 12,82 16,84 20,80 24,82 28,78 32,80 36,76 40,78 44,73 48,75 52,70 56,72 60,67 64,69 68,64 72,66 76,61 80,63 84,58 88,60 92,55 96,57 100,52 104,54 108,49 112,51 116,46 120,48 124,43 128,45 132,40 136,42 140,37 144,39 148,34 152,36 156,31 160,33 164,28 168,30 172,25 176,27 180,22 184,24 188,19 192,21 196,16 200,18"
-                          fill="none"
-                          stroke="#5dcf46"
-                          strokeWidth="1"
-                          strokeLinejoin="round"
-                          strokeLinecap="round"
-                        />
-                      </svg>
-                    </ChartFrame>
-                    <RangeBtnRow>
-                      {['Custom', '1W', '1M', '1Y', 'ALL'].map(r => (
-                        <RangeBtn
-                          key={r}
-                          type="button"
-                          $active={detailRange === r}
-                          $muted={fontColor3}
-                          $fc={fontColor1}
-                          onClick={() => setDetailRange(r)}
-                        >
-                          {r}
-                        </RangeBtn>
-                      ))}
-                    </RangeBtnRow>
-                  </HalfInfo>
-
-                  {/* Active Range — CL-specific card, classic chrome */}
-                  <HalfInfo
-                    $backcolor={bgColorBox}
-                    $bordercolor={borderColorBox}
-                    $marginbottom="20px"
-                  >
-                    <FlexDiv
-                      $padding="10px 15px"
-                      style={{
-                        borderBottom: `1px solid ${borderColorBox}`,
-                        flexDirection: 'column',
-                        alignItems: 'flex-start',
-                        gap: 4,
-                      }}
-                    >
-                      <FlexDiv style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-                        <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor={fontColor4}>
-                          Active Range
-                        </NewLabel>
-                        <Badge $ok={VAULT.inRange}>
-                          {VAULT.inRange ? 'in range' : 'out of range'}
-                        </Badge>
-                      </FlexDiv>
+                <HalfInfo
+                  $padding={isMobile ? '12px' : '20px'}
+                  $marginbottom="25px"
+                  $backcolor={bgColorBox}
+                  $bordercolor={borderColorBox}
+                >
+                  <FlexDiv $justifycontent="space-between" style={{ marginBottom: 12 }}>
+                    <FlexDiv style={{ flexDirection: 'column', alignItems: 'flex-start', gap: 2 }}>
+                      <NewLabel $size="14px" $weight="700" $height="20px" $fontcolor={fontColor1}>
+                        Share Price
+                      </NewLabel>
                       <NewLabel $size="12px" $weight="500" $height="18px" $fontcolor={fontColor3}>
-                        Position is concentrated within these price bounds.
+                        {today} |{' '}
+                        <span style={{ color: fontColor1, fontWeight: 700 }}>
+                          {VAULT.details.sharePrice}
+                        </span>
                       </NewLabel>
                     </FlexDiv>
-                    <div style={{ paddingTop: 18 }} />
-                    <RangeBarOuter $bg={bgColorChart} $border={borderColorBox}>
-                      <RangeBarInner $leftPct={0} $rightPct={100} />
-                      <RangeMarker $pct={rangeMarkerPct} $color={fontColor1} $bg={bgColorBox} />
-                    </RangeBarOuter>
-                    <RangeLabels $muted={fontColor3}>
-                      <span>{VAULT.range.lower.toFixed(3)}</span>
-                      <span>{VAULT.range.upper.toFixed(3)}</span>
-                    </RangeLabels>
-                    <RangeNumbers $fc={fontColor1} $muted={fontColor3}>
-                      <strong>
-                        {VAULT.range.lower.toFixed(3)} – {VAULT.range.upper.toFixed(3)}{' '}
-                        {VAULT.rangeUnit}
-                      </strong>
-                      <span className="muted">currently</span>
-                      <strong>{VAULT.range.current.toFixed(3)}</strong>
-                    </RangeNumbers>
-                    <Footnote $muted={fontColor3}>
-                      Last rebalance: {VAULT.lastRebalance}.
-                    </Footnote>
-                  </HalfInfo>
-
-                  {/* Position Composition — CL-specific card, classic chrome */}
-                  <HalfInfo
-                    $backcolor={bgColorBox}
-                    $bordercolor={borderColorBox}
-                    $marginbottom="25px"
-                  >
-                    {sectionTitle('Position Composition')}
-                    <CompositionRow $fc={fontColor1}>
-                      <span>{VAULT.composition.token0Pct}% {VAULT.pair.token0}</span>
-                      <span>{VAULT.composition.token1Pct}% {VAULT.pair.token1}</span>
-                    </CompositionRow>
-                    <CompositionBar $border={borderColorBox}>
-                      <CompositionFill $pct={VAULT.composition.token0Pct} $color="#7d68d3" />
-                      <CompositionFill $pct={VAULT.composition.token1Pct} $color="#1e5fd3" />
-                    </CompositionBar>
-                    {kvRow(`Vault holdings (${VAULT.pair.token0})`, VAULT.composition.token0Amount, 'h0')}
-                    {kvRow(`Vault holdings (${VAULT.pair.token1})`, VAULT.composition.token1Amount, 'h1')}
-                    {kvRow('Your slice (shares)', VAULT.userSlice.shares, 'us')}
-                    {kvRow(
-                      `Your slice (${VAULT.pair.token0} / ${VAULT.pair.token1})`,
-                      `${VAULT.userSlice.token0} / ${VAULT.userSlice.token1}`,
-                      'ut',
-                    )}
-                    <div style={{ height: 8 }} />
-                  </HalfInfo>
-
-                  {/* How this vault works — CL-specific mechanics card */}
-                  <HalfInfo
-                    $marginbottom="25px"
-                    $backcolor={bgColorBox}
-                    $bordercolor={borderColorBox}
-                  >
-                    {sectionTitle('How this vault works')}
-                    <NewLabel $padding="14px 15px 6px" $size="13.5px" $weight="400" $height="22px" $fontcolor={fontColor3}>
-                      Deposits are placed into a concentrated liquidity position sitting tightly
-                      around the current price. Trading fees and AERO emissions auto-compound back
-                      into the same range. No claim or restake action is required.
-                    </NewLabel>
-                    <NewLabel $padding="0 15px 12px" $size="13.5px" $weight="400" $height="22px" $fontcolor={fontColor3}>
-                      When price drifts beyond the deviation trigger, the vault re-centers the range
-                      around the new spot. Rebalances are TWAP-gated, so a single block of price
-                      manipulation cannot trick the contract into swapping at a bad price.
-                    </NewLabel>
-                    {kvRow('Fee tier', VAULT.feeTier, 'ft')}
-                    {kvRow('Rebalance cooldown', VAULT.params.rebalanceCooldown, 'rc')}
-                    <div style={{ height: 8 }} />
-                  </HalfInfo>
-
-                  {/* Source of Yield — clone using the same wrapper as classic */}
-                  <HalfInfo
-                    $marginbottom="0"
-                    $backcolor={bgColorBox}
-                    $bordercolor={borderColorBox}
-                  >
-                    {sectionTitle('Source of Yield')}
-                    <DescInfo $fontcolor6={fontColor6} $fontcolor3={fontColor3}>
-                      <p>
-                        The vault deploys{' '}
-                        <strong>
-                          {VAULT.pair.token0} / {VAULT.pair.token1}
-                        </strong>{' '}
-                        into a <strong>concentrated liquidity</strong> position on{' '}
-                        <strong>{VAULT.protocol}</strong>, earning swap fees and{' '}
-                        <strong>AERO emissions</strong>. The position is auto-re-centered when price
-                        drifts beyond the deviation trigger; rebalances are TWAP-gated. Earned
-                        rewards auto-compound back into the same range.
-                      </p>
-                    </DescInfo>
-                    <FlexDiv
-                      className="address"
-                      $padding="0 15px 20px"
-                      style={{ flexWrap: 'wrap', gap: 8 }}
+                  </FlexDiv>
+                  <ChartFrame $bg={bgColorBox}>
+                    <AxisYLeft $muted={fontColor3}>
+                      <span>1.012</span>
+                      <span>1.008</span>
+                      <span>1.004</span>
+                      <span>1.000</span>
+                    </AxisYLeft>
+                    <AxisX $muted={fontColor3}>
+                      <span>3/14</span>
+                      <span>4/4</span>
+                      <span>4/24</span>
+                      <span>5/10</span>
+                    </AxisX>
+                    <svg
+                      viewBox="0 0 200 100"
+                      preserveAspectRatio="none"
+                      style={{
+                        position: 'absolute',
+                        left: 38,
+                        right: 8,
+                        top: 12,
+                        bottom: 28,
+                        width: 'calc(100% - 46px)',
+                        height: 'calc(100% - 40px)',
+                        pointerEvents: 'none',
+                      }}
                     >
-                      {['Vault Address', 'Strategy Address', 'Pool Address', 'Add Liquidity'].map(
-                        label => (
-                          <InfoLabel
-                            key={label}
-                            $display="flex"
-                            href="#"
-                            onClick={e => e.preventDefault()}
-                            $bgcolor={bgColorBox}
-                            $hovercolor={hoverColor || hoverColorNew}
-                            $bordercolor={borderColorBox}
-                            $padding="9px 17px"
-                            style={{ flex: '1 1 140px', minWidth: 0, justifyContent: 'center' }}
-                          >
-                            <NewLabel
-                              $size="12px"
-                              $weight="600"
-                              $height="16px"
-                              $self="center"
-                              $fontcolor={fontColor1}
-                            >
-                              {label}
-                            </NewLabel>
-                          </InfoLabel>
-                        ),
-                      )}
-                    </FlexDiv>
-                  </HalfInfo>
-                </MainSection>
-
-                <RestContent>
-                  <RestInternal>
-                    {/* Info card */}
-                    <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
-                      {sectionTitle('Info')}
-                      {kvRow(
-                        'Operating since',
-                        `${VAULT.details.operatingSince} (${VAULT.details.operatingDays} days)`,
-                        'op',
-                      )}
-                      {kvRow('SharePrice', VAULT.details.sharePrice, 'sp')}
-                      {sectionTitle('APY: Live & Historical Average')}
-                      {kvRow('Live', VAULT.details.apy.live, 'apy-l')}
-                      {kvRow('7d', VAULT.details.apy.d7, 'apy-7')}
-                      {kvRow('30d', VAULT.details.apy.d30, 'apy-30')}
-                      {kvRow('180d', VAULT.details.apy.d180, 'apy-180')}
-                      {kvRow('365d', VAULT.details.apy.d365, 'apy-365')}
-                      {kvRow('Lifetime', VAULT.details.apy.lifetime, 'apy-lt')}
-                    </LastHarvestInfo>
-
-                    {/* APY Breakdown — same MyBalance + Tip structure as classic */}
-                    <MyBalance
-                      $marginbottom="25px"
-                      $backcolor={bgColorBox}
-                      $bordercolor={borderColorBox}
-                    >
-                      {sectionTitle('APY Breakdown')}
-                      {kvRow('Trading fees', '~ 18.20%', 'apy-tf')}
-                      {kvRow('AERO emissions (auto-compounded)', '~ 8.26%', 'apy-ae')}
-                      {kvRow('Net (auto-compounded)', '~ 26.46%', 'apy-net')}
-                      <Tip $display={showTip ? 'block' : 'none'}>
-                        <TipTop>
-                          <IconPart>
-                            <img src={TickIcon} alt="tip" style={{ marginRight: 5 }} />
-                            <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor="#027A48">
-                              Tip
-                            </NewLabel>
-                          </IconPart>
-                          <CrossDiv onClick={() => setShowTip(false)}>
-                            <img src={TickCross} alt="close" />
-                          </CrossDiv>
-                        </TipTop>
-                        <NewLabel $size="14px" $height="20px" $weight="400" $fontcolor="#027A48">
-                          For a quick guide on tracking yield sources in your Portfolio, check our
-                          5-minute article{' '}
-                          <a
-                            href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
-                            target="_blank"
-                            rel="noreferrer noopener"
-                            style={{ fontWeight: 600, color: '#027A48' }}
-                          >
-                            Yield Sources on Harvest – How to Track Them.
-                          </a>
-                        </NewLabel>
-                      </Tip>
-                    </MyBalance>
-
-                    {/* Fees card */}
-                    <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
-                      {sectionTitle('Fees')}
-                      {kvRow('Entry / Exit fee', `${VAULT.costs.entryFee} / ${VAULT.costs.exitFee}`, 'fe')}
-                      {kvRow('Profit share', VAULT.costs.profitShare, 'ps')}
-                      {kvRow('Typical interaction (both assets)', VAULT.costs.balanced, 'tb')}
-                      {kvRow('Typical interaction (single asset)', VAULT.costs.singleAsset, 'ts')}
-                      <FlexDiv $justifycontent="space-between" $padding="10px 15px">
-                        <NewLabel $size="13px" $weight="300" $height="normal" $fontcolor={fontColor3}>
-                          Per-rebalance swap slippage is borne by the vault and shows up as small
-                          share-price jitter, not as a per-user fee.
-                        </NewLabel>
-                        <NewLabel $display="flex" $self="center">
-                          <Question
-                            id="cl-tooltip-jitter"
-                            dark={darkMode}
-                            content="The vault pays its own swap costs during rebalances; this shows up as small share-price movement, not a fee on your deposit."
-                          />
-                        </NewLabel>
-                      </FlexDiv>
-                    </LastHarvestInfo>
-
-                    {/* Range parameters — CL-specific collapsible card */}
-                    <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
-                      <FlexDiv
-                        onClick={() => setParamsOpen(o => !o)}
-                        $justifycontent="space-between"
-                        $padding="10px 15px"
-                        style={{
-                          borderBottom: paramsOpen ? `1px solid ${borderColorBox}` : 'none',
-                          cursor: 'pointer',
-                          alignItems: 'center',
-                        }}
+                      <polyline
+                        points="0,88 4,84 8,86 12,82 16,84 20,80 24,82 28,78 32,80 36,76 40,78 44,73 48,75 52,70 56,72 60,67 64,69 68,64 72,66 76,61 80,63 84,58 88,60 92,55 96,57 100,52 104,54 108,49 112,51 116,46 120,48 124,43 128,45 132,40 136,42 140,37 144,39 148,34 152,36 156,31 160,33 164,28 168,30 172,25 176,27 180,22 184,24 188,19 192,21 196,16 200,18"
+                        fill="none"
+                        stroke="#5dcf46"
+                        strokeWidth="1"
+                        strokeLinejoin="round"
+                        strokeLinecap="round"
+                      />
+                    </svg>
+                  </ChartFrame>
+                  <RangeBtnRow>
+                    {['Custom', '1W', '1M', '1Y', 'ALL'].map(r => (
+                      <RangeBtn
+                        key={r}
+                        type="button"
+                        $active={detailRange === r}
+                        $muted={fontColor3}
+                        $fc={fontColor1}
+                        onClick={() => setDetailRange(r)}
                       >
-                        <NewLabel $size="14px" $weight="600" $height="24px" $fontcolor={fontColor4}>
-                          Range parameters
-                        </NewLabel>
-                        <Caret $muted={fontColor3} $open={paramsOpen}>
-                          ▼
-                        </Caret>
-                      </FlexDiv>
-                      {paramsOpen && (
-                        <>
-                          {kvRow('Target width', VAULT.params.targetWidth, 'tw')}
-                          {kvRow('Current width', VAULT.params.currentWidth, 'cw')}
-                          {kvRow('Rebalance cooldown', VAULT.params.rebalanceCooldown, 'rc2')}
-                          {kvRow('Deviation trigger', VAULT.params.deviationTrigger, 'dt')}
-                          {kvRow('TWAP window', VAULT.params.twapWindow, 'tw2')}
-                          {kvRow('Max swap per rebalance', VAULT.params.maxSwap, 'ms')}
-                          {kvRow('Internal slippage cap', VAULT.params.slippageBps, 'is')}
-                        </>
-                      )}
-                    </LastHarvestInfo>
+                        {r}
+                      </RangeBtn>
+                    ))}
+                  </RangeBtnRow>
+                </HalfInfo>
+
+                {/* Active Range — CL-specific card, classic chrome */}
+                <HalfInfo
+                  $backcolor={bgColorBox}
+                  $bordercolor={borderColorBox}
+                  $marginbottom="20px"
+                >
+                  <FlexDiv
+                    $padding="10px 15px"
+                    style={{
+                      borderBottom: `1px solid ${borderColorBox}`,
+                      flexDirection: 'column',
+                      alignItems: 'flex-start',
+                      gap: 4,
+                    }}
+                  >
+                    <FlexDiv style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
+                      <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor={fontColor4}>
+                        Active Range
+                      </NewLabel>
+                      <Badge $ok={VAULT.inRange}>
+                        {VAULT.inRange ? 'in range' : 'out of range'}
+                      </Badge>
+                    </FlexDiv>
+                    <NewLabel $size="12px" $weight="500" $height="18px" $fontcolor={fontColor3}>
+                      Position is concentrated within these price bounds.
+                    </NewLabel>
+                  </FlexDiv>
+                  <div style={{ paddingTop: 18 }} />
+                  <RangeBarOuter $bg={bgColorChart} $border={borderColorBox}>
+                    <RangeBarInner $leftPct={0} $rightPct={100} />
+                    <RangeMarker $pct={rangeMarkerPct} $color={fontColor1} $bg={bgColorBox} />
+                  </RangeBarOuter>
+                  <RangeLabels $muted={fontColor3}>
+                    <span>{VAULT.range.lower.toFixed(3)}</span>
+                    <span>{VAULT.range.upper.toFixed(3)}</span>
+                  </RangeLabels>
+                  <RangeNumbers $fc={fontColor1} $muted={fontColor3}>
+                    <strong>
+                      {VAULT.range.lower.toFixed(3)} – {VAULT.range.upper.toFixed(3)}{' '}
+                      {VAULT.rangeUnit}
+                    </strong>
+                    <span className="muted">currently</span>
+                    <strong>{VAULT.range.current.toFixed(3)}</strong>
+                  </RangeNumbers>
+                  <Footnote $muted={fontColor3}>Last rebalance: {VAULT.lastRebalance}.</Footnote>
+                </HalfInfo>
+
+                {/* Position Composition — CL-specific card, classic chrome */}
+                <HalfInfo
+                  $backcolor={bgColorBox}
+                  $bordercolor={borderColorBox}
+                  $marginbottom="25px"
+                >
+                  {sectionTitle('Position Composition')}
+                  <CompositionRow $fc={fontColor1}>
+                    <span>
+                      {VAULT.composition.token0Pct}% {VAULT.pair.token0}
+                    </span>
+                    <span>
+                      {VAULT.composition.token1Pct}% {VAULT.pair.token1}
+                    </span>
+                  </CompositionRow>
+                  <CompositionBar $border={borderColorBox}>
+                    <CompositionFill $pct={VAULT.composition.token0Pct} $color="#7d68d3" />
+                    <CompositionFill $pct={VAULT.composition.token1Pct} $color="#1e5fd3" />
+                  </CompositionBar>
+                  {kvRow(
+                    `Vault holdings (${VAULT.pair.token0})`,
+                    VAULT.composition.token0Amount,
+                    'h0',
+                  )}
+                  {kvRow(
+                    `Vault holdings (${VAULT.pair.token1})`,
+                    VAULT.composition.token1Amount,
+                    'h1',
+                  )}
+                  {kvRow('Your slice (shares)', VAULT.userSlice.shares, 'us')}
+                  {kvRow(
+                    `Your slice (${VAULT.pair.token0} / ${VAULT.pair.token1})`,
+                    `${VAULT.userSlice.token0} / ${VAULT.userSlice.token1}`,
+                    'ut',
+                  )}
+                  <div style={{ height: 8 }} />
+                </HalfInfo>
+
+                {/* How this vault works — CL-specific mechanics card */}
+                <HalfInfo
+                  $marginbottom="25px"
+                  $backcolor={bgColorBox}
+                  $bordercolor={borderColorBox}
+                >
+                  {sectionTitle('How this vault works')}
+                  <NewLabel
+                    $padding="14px 15px 6px"
+                    $size="13.5px"
+                    $weight="400"
+                    $height="22px"
+                    $fontcolor={fontColor3}
+                  >
+                    Deposits are placed into a concentrated liquidity position sitting tightly
+                    around the current price. Trading fees and AERO emissions auto-compound back
+                    into the same range. No claim or restake action is required.
+                  </NewLabel>
+                  <NewLabel
+                    $padding="0 15px 12px"
+                    $size="13.5px"
+                    $weight="400"
+                    $height="22px"
+                    $fontcolor={fontColor3}
+                  >
+                    When price drifts beyond the deviation trigger, the vault re-centers the range
+                    around the new spot. Rebalances are TWAP-gated, so a single block of price
+                    manipulation cannot trick the contract into swapping at a bad price.
+                  </NewLabel>
+                  {kvRow('Fee tier', VAULT.feeTier, 'ft')}
+                  {kvRow('Rebalance cooldown', VAULT.params.rebalanceCooldown, 'rc')}
+                  <div style={{ height: 8 }} />
+                </HalfInfo>
+
+                {/* Source of Yield — clone using the same wrapper as classic */}
+                <HalfInfo $marginbottom="0" $backcolor={bgColorBox} $bordercolor={borderColorBox}>
+                  {sectionTitle('Source of Yield')}
+                  <DescInfo $fontcolor6={fontColor6} $fontcolor3={fontColor3}>
+                    <p>
+                      The vault deploys{' '}
+                      <strong>
+                        {VAULT.pair.token0} / {VAULT.pair.token1}
+                      </strong>{' '}
+                      into a <strong>concentrated liquidity</strong> position on{' '}
+                      <strong>{VAULT.protocol}</strong>, earning swap fees and{' '}
+                      <strong>AERO emissions</strong>. The position is auto-re-centered when price
+                      drifts beyond the deviation trigger; rebalances are TWAP-gated. Earned rewards
+                      auto-compound back into the same range.
+                    </p>
+                  </DescInfo>
+                  <FlexDiv
+                    className="address"
+                    $padding="0 15px 20px"
+                    style={{ flexWrap: 'wrap', gap: 8 }}
+                  >
+                    {['Vault Address', 'Strategy Address', 'Pool Address', 'Add Liquidity'].map(
+                      label => (
+                        <InfoLabel
+                          key={label}
+                          $display="flex"
+                          href="#"
+                          onClick={e => e.preventDefault()}
+                          $bgcolor={bgColorBox}
+                          $hovercolor={hoverColor || hoverColorNew}
+                          $bordercolor={borderColorBox}
+                          $padding="9px 17px"
+                          style={{ flex: '1 1 140px', minWidth: 0, justifyContent: 'center' }}
+                        >
+                          <NewLabel
+                            $size="12px"
+                            $weight="600"
+                            $height="16px"
+                            $self="center"
+                            $fontcolor={fontColor1}
+                          >
+                            {label}
+                          </NewLabel>
+                        </InfoLabel>
+                      ),
+                    )}
+                  </FlexDiv>
+                </HalfInfo>
+              </MainSection>
+
+              <RestContent>
+                <RestInternal>
+                  {/* Info card */}
+                  <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
+                    {sectionTitle('Info')}
+                    {kvRow(
+                      'Operating since',
+                      `${VAULT.details.operatingSince} (${VAULT.details.operatingDays} days)`,
+                      'op',
+                    )}
+                    {kvRow('SharePrice', VAULT.details.sharePrice, 'sp')}
+                    {sectionTitle('APY: Live & Historical Average')}
+                    {kvRow('Live', VAULT.details.apy.live, 'apy-l')}
+                    {kvRow('7d', VAULT.details.apy.d7, 'apy-7')}
+                    {kvRow('30d', VAULT.details.apy.d30, 'apy-30')}
+                    {kvRow('180d', VAULT.details.apy.d180, 'apy-180')}
+                    {kvRow('365d', VAULT.details.apy.d365, 'apy-365')}
+                    {kvRow('Lifetime', VAULT.details.apy.lifetime, 'apy-lt')}
+                  </LastHarvestInfo>
+
+                  {/* APY Breakdown — same MyBalance + Tip structure as classic */}
+                  <MyBalance
+                    $marginbottom="25px"
+                    $backcolor={bgColorBox}
+                    $bordercolor={borderColorBox}
+                  >
+                    {sectionTitle('APY Breakdown')}
+                    {kvRow('Trading fees', '~ 18.20%', 'apy-tf')}
+                    {kvRow('AERO emissions (auto-compounded)', '~ 8.26%', 'apy-ae')}
+                    {kvRow('Net (auto-compounded)', '~ 26.46%', 'apy-net')}
+                    <Tip $display={showTip ? 'block' : 'none'}>
+                      <TipTop>
+                        <IconPart>
+                          <img src={TickIcon} alt="tip" style={{ marginRight: 5 }} />
+                          <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor="#027A48">
+                            Tip
+                          </NewLabel>
+                        </IconPart>
+                        <CrossDiv onClick={() => setShowTip(false)}>
+                          <img src={TickCross} alt="close" />
+                        </CrossDiv>
+                      </TipTop>
+                      <NewLabel $size="14px" $height="20px" $weight="400" $fontcolor="#027A48">
+                        For a quick guide on tracking yield sources in your Portfolio, check our
+                        5-minute article{' '}
+                        <a
+                          href="https://docs.harvest.finance/general-info/yield-sources-on-harvest-how-to-get-and-track-them"
+                          target="_blank"
+                          rel="noreferrer noopener"
+                          style={{ fontWeight: 600, color: '#027A48' }}
+                        >
+                          Yield Sources on Harvest – How to Track Them.
+                        </a>
+                      </NewLabel>
+                    </Tip>
+                  </MyBalance>
+
+                  {/* Fees card */}
+                  <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
+                    {sectionTitle('Fees')}
+                    {kvRow(
+                      'Entry / Exit fee',
+                      `${VAULT.costs.entryFee} / ${VAULT.costs.exitFee}`,
+                      'fe',
+                    )}
+                    {kvRow('Profit share', VAULT.costs.profitShare, 'ps')}
+                    {kvRow('Typical interaction (both assets)', VAULT.costs.balanced, 'tb')}
+                    {kvRow('Typical interaction (single asset)', VAULT.costs.singleAsset, 'ts')}
+                    <FlexDiv $justifycontent="space-between" $padding="10px 15px">
+                      <NewLabel $size="13px" $weight="300" $height="normal" $fontcolor={fontColor3}>
+                        Per-rebalance swap slippage is borne by the vault and shows up as small
+                        share-price jitter, not as a per-user fee.
+                      </NewLabel>
+                      <NewLabel $display="flex" $self="center">
+                        <Question
+                          id="cl-tooltip-jitter"
+                          dark={darkMode}
+                          content="The vault pays its own swap costs during rebalances; this shows up as small share-price movement, not a fee on your deposit."
+                        />
+                      </NewLabel>
+                    </FlexDiv>
+                  </LastHarvestInfo>
+
+                  {/* Range parameters — CL-specific collapsible card */}
+                  <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
+                    <FlexDiv
+                      onClick={() => setParamsOpen(o => !o)}
+                      $justifycontent="space-between"
+                      $padding="10px 15px"
+                      style={{
+                        borderBottom: paramsOpen ? `1px solid ${borderColorBox}` : 'none',
+                        cursor: 'pointer',
+                        alignItems: 'center',
+                      }}
+                    >
+                      <NewLabel $size="14px" $weight="600" $height="24px" $fontcolor={fontColor4}>
+                        Range parameters
+                      </NewLabel>
+                      <Caret $muted={fontColor3} $open={paramsOpen}>
+                        ▼
+                      </Caret>
+                    </FlexDiv>
+                    {paramsOpen && (
+                      <>
+                        {kvRow('Target width', VAULT.params.targetWidth, 'tw')}
+                        {kvRow('Current width', VAULT.params.currentWidth, 'cw')}
+                        {kvRow('Rebalance cooldown', VAULT.params.rebalanceCooldown, 'rc2')}
+                        {kvRow('Deviation trigger', VAULT.params.deviationTrigger, 'dt')}
+                        {kvRow('TWAP window', VAULT.params.twapWindow, 'tw2')}
+                        {kvRow('Max swap per rebalance', VAULT.params.maxSwap, 'ms')}
+                        {kvRow('Internal slippage cap', VAULT.params.slippageBps, 'is')}
+                      </>
+                    )}
+                  </LastHarvestInfo>
                 </RestInternal>
               </RestContent>
             </InternalSection>
