@@ -158,8 +158,6 @@ import {
   Hint,
   Preview,
   RouteNote,
-  OutputGroup,
-  OutputOpt,
   Cta,
   Slippage,
   ChartFrame,
@@ -339,7 +337,11 @@ const LoopingVault = () => {
   const [activeMainTag, setActiveMainTag] = useState(0)
   const [activeDepoTab, setActiveDepoTab] = useState(0)
   const [depMode, setDepMode] = useState('quick') // 'quick' (single-asset via CLWrapper) | 'pro' (dual-input, spec)
-  const [quickToken, setQuickToken] = useState('t0')
+  // Looping vault is a single-asset entry — the user always deposits the
+  // debt asset (WETH) and withdraws the debt asset. No token picker.
+  const [quickToken] = useState('t1')
+  // Helper for the form: resolved entry/exit symbol.
+  const entrySymbol = VAULT.debtSymbol
   const [quickAmount, setQuickAmount] = useState('')
   const [paramsOpen, setParamsOpen] = useState(false)
   const [agreed, setAgreed] = useState(false)
@@ -351,7 +353,8 @@ const LoopingVault = () => {
   const [dep1, setDep1] = useState('')
 
   const [shares, setShares] = useState('')
-  const [output, setOutput] = useState('both')
+  // Looping vault withdraws back to the debt asset only — no token picker.
+  const [output] = useState('t1')
 
   const [slip, setSlip] = useState(0.5)
 
@@ -370,12 +373,7 @@ const LoopingVault = () => {
     return { label: `Routed via LoopWrapper(${sym}): zaps into collateral`, kind: quickToken, sym }
   }, [quickAmount, quickToken])
 
-  const wRoute = useMemo(() => {
-    if (output === 'both')
-      return `Routed via LoopVault.withdraw: receive ${VAULT.pair.token0} + ${VAULT.pair.token1}`
-    if (output === 't0') return `Routed via LoopWrapper(${VAULT.pair.token0}): receive ${VAULT.pair.token0} only`
-    return `Routed via LoopWrapper(${VAULT.pair.token1}): receive ${VAULT.pair.token1} only`
-  }, [output])
+  const wRoute = `Routed via LoopWrapper(${VAULT.debtSymbol}): vault unwinds the loop and returns ${VAULT.debtSymbol}`
 
   // Maximize-at-optimal-ratio. Given the user's wallet balances, picks the largest deposit
   // pair that respects VAULT.optimalRatio without exceeding either balance. Uses up the
@@ -797,48 +795,6 @@ const LoopingVault = () => {
     </HalfInfo>
   )
 
-  // Tiny inline flow diagram.
-  const FlowStep = ({ children }) => (
-    <span
-      style={{
-        display: 'inline-flex',
-        alignItems: 'center',
-        padding: '6px 10px',
-        borderRadius: 6,
-        background: bgColorChart,
-        border: `1px solid ${borderColorBox}`,
-        fontSize: 11,
-        fontWeight: 700,
-        color: fontColor1,
-        whiteSpace: 'nowrap',
-      }}
-    >
-      {children}
-    </span>
-  )
-  const flowDiagram = (
-    <div
-      style={{
-        display: 'flex',
-        flexWrap: 'wrap',
-        alignItems: 'center',
-        gap: 6,
-        padding: '12px 15px',
-        color: fontColor3,
-        fontWeight: 700,
-      }}
-    >
-      <FlowStep>Deposit {VAULT.collateralSymbol}</FlowStep>
-      <span>→</span>
-      <FlowStep>Supply to {VAULT.protocol}</FlowStep>
-      <span>→</span>
-      <FlowStep>Borrow {VAULT.debtSymbol}</FlowStep>
-      <span>→</span>
-      <FlowStep>Swap to {VAULT.collateralSymbol}</FlowStep>
-      <span>↻ loop until target LTV</span>
-    </div>
-  )
-
   const mechanicsPanel = (
     <HalfInfo
       $marginbottom="25px"
@@ -858,7 +814,11 @@ const LoopingVault = () => {
         selling collateral, repaying debt, and reverting to target LTV. Swaps are
         TWAP-gated and capped per cycle to limit price impact.
       </NewLabel>
-      {flowDiagram}
+      <NewLabel $padding="0 15px 12px" $size="13.5px" $weight="400" $height="22px" $fontcolor={fontColor3}>
+        Steps: deposit {VAULT.debtSymbol}, swap into {VAULT.collateralSymbol}, supply to
+        {' '}{VAULT.protocol}, borrow {VAULT.debtSymbol}, swap again — folded until the
+        target LTV is reached.
+      </NewLabel>
       {kvRow('Target LTV', VAULT.params.targetLtv, 'mtl')}
       {kvRow('Rebalance trigger (HF)', VAULT.params.rebalanceTriggerHF, 'mrt')}
       {kvRow('Forced deleverage (HF)', VAULT.params.deLeverageHF, 'mdl')}
@@ -901,6 +861,7 @@ const LoopingVault = () => {
                 >
                   {VAULT.pair.token0}/{VAULT.pair.token1}
                   <span
+                    id="loop-badge-target-tip"
                     style={{
                       fontSize: 11,
                       fontWeight: 700,
@@ -912,21 +873,22 @@ const LoopingVault = () => {
                       color: '#7d68d3',
                       marginLeft: 10,
                       verticalAlign: 'middle',
+                      cursor: 'help',
                     }}
                   >
-                    LOOP
+                    {VAULT.position.leverage.toFixed(1)}× LOOP
                   </span>
+                  <Tooltip
+                    anchorSelect="#loop-badge-target-tip"
+                    backgroundColor={darkMode ? 'white' : '#101828'}
+                    borderColor={darkMode ? 'white' : 'black'}
+                    textColor={darkMode ? 'black' : 'white'}
+                    style={{ maxWidth: 280, fontSize: 12, lineHeight: 1.45, fontWeight: 500 }}
+                  >
+                    Target loop multiple for this vault. The live leverage moves with price
+                    and is shown under the Details tab → Position panel.
+                  </Tooltip>
                 </TopDesc>
-                {/* Structure line under the headline, names the strategy shape. */}
-                <NewLabel
-                  $size="12px"
-                  $weight="500"
-                  $height="18px"
-                  $fontcolor={fontColor3}
-                  style={{ marginTop: -4 }}
-                >
-                  {VAULT.structure}
-                </NewLabel>
               </TopDescOverride>
             </FlexDiv>
 
@@ -1081,58 +1043,22 @@ const LoopingVault = () => {
                             $marginbottom="14px"
                           >
                             {depMode === 'quick'
-                              ? 'Single-asset deposit. The token is auto-swapped on-chain to match the position’s ratio.'
+                              ? `Single-asset deposit. ${entrySymbol} is zapped into collateral and folded by the vault to the target leverage.`
                               : 'Two-sided deposit (advanced). Fill both tokens at the optimal ratio for a no-swap deposit, or fill one for the single-asset path. Smart routing picks the optimal contract entry point.'}
                           </NewLabel>
 
                           {depMode === 'quick' ? (
                             <>
                               <FieldLabel $fc={fontColor1} $muted={fontColor3}>
-                                <span>Enter with</span>
-                              </FieldLabel>
-                              <OutputGroup>
-                                <OutputOpt
-                                  $active={quickToken === 't0'}
-                                  $bg={bgColorChart}
-                                  $border={borderColorBox}
-                                  $fc={fontColor1}
-                                  onClick={() => setQuickToken('t0')}
-                                  type="button"
-                                >
-                                  {VAULT.pair.token0}
-                                </OutputOpt>
-                                <OutputOpt
-                                  $active={quickToken === 't1'}
-                                  $bg={bgColorChart}
-                                  $border={borderColorBox}
-                                  $fc={fontColor1}
-                                  onClick={() => setQuickToken('t1')}
-                                  type="button"
-                                >
-                                  {VAULT.pair.token1}
-                                </OutputOpt>
-                              </OutputGroup>
-
-                              <FieldLabel $fc={fontColor1} $muted={fontColor3}>
-                                <span>
-                                  Amount{' '}
-                                  {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
-                                </span>
+                                <span>Amount {entrySymbol}</span>
                                 <span
                                   className="bal"
                                   onClick={() =>
-                                    setQuickAmount(
-                                      quickToken === 't0'
-                                        ? VAULT.walletBalances.token0
-                                        : VAULT.walletBalances.token1,
-                                    )
+                                    setQuickAmount(VAULT.walletBalances.token1)
                                   }
                                   title="Click to use full balance"
                                 >
-                                  Balance:{' '}
-                                  {quickToken === 't0'
-                                    ? VAULT.walletBalances.token0
-                                    : VAULT.walletBalances.token1}
+                                  Balance: {VAULT.walletBalances.token1}
                                 </span>
                               </FieldLabel>
                               <FieldBox $bg={bgColorChart} $border={borderColorBox}>
@@ -1149,11 +1075,8 @@ const LoopingVault = () => {
                                   $border={borderColorBox}
                                   $fc={fontColor1}
                                 >
-                                  {tokenIcon(
-                                    quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1,
-                                    bgColorBox,
-                                  )}
-                                  {quickToken === 't0' ? VAULT.pair.token0 : VAULT.pair.token1}
+                                  {tokenIcon(entrySymbol, bgColorBox)}
+                                  {entrySymbol}
                                 </TokenPill>
                               </FieldBox>
 
@@ -1496,35 +1419,21 @@ const LoopingVault = () => {
                           <FieldLabel $fc={fontColor1} $muted={fontColor3}>
                             <span>Receive</span>
                           </FieldLabel>
-                          <OutputGroup>
-                            <OutputOpt
-                              $active={output === 't0'}
-                              $bg={bgColorChart}
-                              $border={borderColorBox}
-                              $fc={fontColor1}
-                              onClick={() => setOutput('t0')}
+                          <FieldBox $bg={bgColorChart} $border={borderColorBox}>
+                            <NewLabel
+                              $size="13px"
+                              $weight="600"
+                              $height="20px"
+                              $fontcolor={fontColor1}
+                              style={{ flex: 1 }}
                             >
-                              {VAULT.pair.token0} only
-                            </OutputOpt>
-                            <OutputOpt
-                              $active={output === 't1'}
-                              $bg={bgColorChart}
-                              $border={borderColorBox}
-                              $fc={fontColor1}
-                              onClick={() => setOutput('t1')}
-                            >
-                              {VAULT.pair.token1} only
-                            </OutputOpt>
-                            <OutputOpt
-                              $active={output === 'both'}
-                              $bg={bgColorChart}
-                              $border={borderColorBox}
-                              $fc={fontColor1}
-                              onClick={() => setOutput('both')}
-                            >
-                              Both
-                            </OutputOpt>
-                          </OutputGroup>
+                              {entrySymbol}
+                            </NewLabel>
+                            <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
+                              {tokenIcon(entrySymbol, bgColorBox)}
+                              {entrySymbol}
+                            </TokenPill>
+                          </FieldBox>
 
                           <RouteNote $muted={fontColor3}>{wRoute}</RouteNote>
                           <Preview
@@ -1533,32 +1442,16 @@ const LoopingVault = () => {
                             $fc={fontColor1}
                             $muted={fontColor3}
                           >
-                            {output === 'both' ? (
-                              <>
-                                <div>
-                                  <span className="muted">Predicted output ({VAULT.pair.token0})</span>
-                                  <span className="val">~ 0.0000</span>
-                                </div>
-                                <div>
-                                  <span className="muted">Predicted output ({VAULT.pair.token1})</span>
-                                  <span className="val">~ 0.0000</span>
-                                </div>
-                              </>
-                            ) : (
-                              <>
-                                <div>
-                                  <span className="muted">
-                                    Predicted output (
-                                    {output === 't0' ? VAULT.pair.token0 : VAULT.pair.token1})
-                                  </span>
-                                  <span className="val">~ 0.0000</span>
-                                </div>
-                                <div>
-                                  <span className="muted">Exit cost (median 30d)</span>
-                                  <span className="val">{VAULT.costs.typicalExitBps}</span>
-                                </div>
-                              </>
-                            )}
+                            <div>
+                              <span className="muted">Predicted output ({entrySymbol})</span>
+                              <span className="val">
+                                ~ {(parseFloat(shares) * 0.985).toFixed(4)} {entrySymbol}
+                              </span>
+                            </div>
+                            <div>
+                              <span className="muted">Exit cost (median 30d)</span>
+                              <span className="val">{VAULT.costs.typicalExitBps}</span>
+                            </div>
                             <div>
                               <span className="muted">Vault LTV after your withdrawal</span>
                               <span className="val">
@@ -1606,11 +1499,7 @@ const LoopingVault = () => {
                               <Question
                                 id="cl-tooltip-slippage-withdraw"
                                 dark={darkMode}
-                                content={
-                                  output === 'both'
-                                    ? 'Maximum price movement tolerated between quote and execution. Passed to the contract as the amount0OutMin / amount1OutMin floors — the withdrawal reverts if either token comes out below the floor.'
-                                    : 'Maximum price movement tolerated between quote and execution. Passed to the contract as the _minOut floor — the withdrawal reverts if you would receive less than that.'
-                                }
+                                content="Maximum price movement tolerated between quote and execution. Passed to the contract as the _minOut floor — the withdrawal reverts if less than that comes out."
                               />
                             </span>
                             <div>
@@ -1847,47 +1736,24 @@ const LoopingVault = () => {
                       </Tip>
                     </MyBalance>
 
-                    {/* Vault fees — protocol-set, deterministic */}
+                    {/* Fees card — same shape as CL Vault, plus a "Typical interaction
+                        cost" row sourced from rolling 30d on-chain medians. */}
                     <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
-                      {sectionTitle('Vault fees')}
-                      {kvRow('Entry fee', VAULT.costs.entryFee, 'fe-in')}
-                      {kvRow('Exit fee', VAULT.costs.exitFee, 'fe-out')}
+                      {sectionTitle('Fees')}
+                      {kvRow('Entry / Exit fee', `${VAULT.costs.entryFee} / ${VAULT.costs.exitFee}`, 'fe')}
                       {kvRow('Profit share', VAULT.costs.profitShare, 'ps')}
-                      <FlexDiv $justifycontent="space-between" $padding="10px 15px">
-                        <NewLabel $size="13px" $weight="300" $height="normal" $fontcolor={fontColor3}>
-                          Profit share is charged on harvested carry, not on principal. No
-                          fee is taken when a deposit or withdrawal is processed.
-                        </NewLabel>
-                      </FlexDiv>
-                    </LastHarvestInfo>
-
-                    {/* Typical interaction cost — observed from real on-chain interactions */}
-                    <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
-                      <FlexDiv
-                        $padding="10px 15px"
-                        style={{
-                          borderBottom: `1px solid ${borderColorBox}`,
-                          flexDirection: 'column',
-                          alignItems: 'flex-start',
-                          gap: 4,
-                        }}
-                      >
+                      {kvRow(
                         <FlexDiv style={{ alignItems: 'center', gap: 6 }}>
-                          <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor={fontColor4}>
-                            Typical interaction cost
-                          </NewLabel>
+                          <span>Typical interaction cost</span>
                           <Question
                             id="loop-tooltip-interaction-cost"
                             dark={darkMode}
-                            content="Rolling 30-day median of real on-chain entry / exit costs, expressed in basis points of position size and in USD per $1k. Includes Aave fees, the loop's internal swap slippage and gas. Updates as new interactions come in."
+                            content="Rolling 30-day median of real on-chain entry / exit costs in basis points (Aave fees + internal swap slippage + gas). Updates as new interactions come in."
                           />
-                        </FlexDiv>
-                        <NewLabel $size="12px" $weight="500" $height="18px" $fontcolor={fontColor3}>
-                          Rolling 30-day median from on-chain data. Real, not estimated.
-                        </NewLabel>
-                      </FlexDiv>
-                      {kvRow('Entry (median, 30d)', `${VAULT.costs.typicalEntryBps} (${VAULT.costs.typicalEntryUsd})`, 'tic-in')}
-                      {kvRow('Exit (median, 30d)', `${VAULT.costs.typicalExitBps} (${VAULT.costs.typicalExitUsd})`, 'tic-out')}
+                        </FlexDiv>,
+                        `${VAULT.costs.typicalEntryBps} entry / ${VAULT.costs.typicalExitBps} exit`,
+                        'tic',
+                      )}
                       <FlexDiv $justifycontent="space-between" $padding="10px 15px">
                         <NewLabel $size="13px" $weight="300" $height="normal" $fontcolor={fontColor3}>
                           Per-rebalance swap slippage is borne by the vault and shows up as
