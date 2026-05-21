@@ -48,6 +48,7 @@ export const ROUTES = {
   LEADERBOARD: '/leaderboard',
   MIGRATE: '/migrate',
   CLVAULT: '/cl-vault',
+  LOOPING: '/looping-vault',
 }
 
 export const KEY_CODES = {
