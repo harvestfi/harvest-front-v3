@@ -1686,19 +1686,6 @@ const CLVault = () => {
                     {kvRow('Profit share', VAULT.costs.profitShare, 'ps')}
                     {kvRow('Typical interaction (both assets)', VAULT.costs.balanced, 'tb')}
                     {kvRow('Typical interaction (single asset)', VAULT.costs.singleAsset, 'ts')}
-                    <FlexDiv $justifycontent="space-between" $padding="10px 15px">
-                      <NewLabel $size="13px" $weight="300" $height="normal" $fontcolor={fontColor3}>
-                        Per-rebalance swap slippage is borne by the vault and shows up as small
-                        share-price jitter, not as a per-user fee.
-                      </NewLabel>
-                      <NewLabel $display="flex" $self="center">
-                        <Question
-                          id="cl-tooltip-jitter"
-                          dark={darkMode}
-                          content="The vault pays its own swap costs during rebalances; this shows up as small share-price movement, not a fee on your deposit."
-                        />
-                      </NewLabel>
-                    </FlexDiv>
                   </LastHarvestInfo>
 
                   {/* Range parameters — CL-specific collapsible card */}

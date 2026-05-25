@@ -419,6 +419,14 @@ const LoopingVault = () => {
     </FlexDiv>
   )
 
+  // Row label with a small (?) explainer tooltip next to it.
+  const labelTip = (text, id, content) => (
+    <FlexDiv style={{ alignItems: 'center', gap: 6 }}>
+      <span>{text}</span>
+      <Question id={id} dark={darkMode} content={content} />
+    </FlexDiv>
+  )
+
   /* CL-specific top-3 panel for Manage. Mirrors the classic Lifetime Yield
      panel structure exactly: MyBalance > NewLabel header (with PiQuestion) >
      FlexDiv value rows. */
@@ -595,6 +603,7 @@ const LoopingVault = () => {
   // yearly yield = net value * APY.
   const entryCostRate = parseFloat(VAULT.costs.typicalEntryBps.replace(/[^\d.]/g, '')) / 10000
   const grossWeth = parseFloat(quickAmount) || 0
+  const entryCostWeth = grossWeth * entryCostRate
   const netWethEquiv = grossWeth * (1 - entryCostRate)
   const sharesReceived = sharePriceNum > 0 ? netWethEquiv / sharePriceNum : 0
   const apyRate = parseFloat(VAULT.apy) / 100 // "8.74%" -> 0.0874
@@ -629,24 +638,6 @@ const LoopingVault = () => {
     ) : null
 
   /* ---------------- Looping-specific panels ---------------- */
-
-  // Pill used inside the Position header for E-mode / Fold badges.
-  const Pill = ({ children, $color = '#7d68d3' }) => (
-    <span
-      style={{
-        fontSize: 11,
-        fontWeight: 700,
-        letterSpacing: 0.3,
-        padding: '3px 8px',
-        borderRadius: 4,
-        background: bgColorBox,
-        border: `1px solid ${borderColorBox}`,
-        color: $color,
-      }}
-    >
-      {children}
-    </span>
-  )
 
   // Renders a horizontal gauge with a "warn" zone, an optional "danger" zone
   // at the right edge, and up to three markers (current / target / liquidation).
@@ -743,9 +734,6 @@ const LoopingVault = () => {
           <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor={fontColor4}>
             Position
           </NewLabel>
-          {VAULT.position.eMode && <Pill $color="#137a3a">E-mode</Pill>}
-          {VAULT.position.fold && <Pill $color="#7d68d3">Fold</Pill>}
-          <Pill $color={fontColor3}>{VAULT.position.leverage.toFixed(1)}× leverage</Pill>
         </FlexDiv>
         <NewLabel $size="12px" $weight="500" $height="18px" $fontcolor={fontColor3}>
           Looped collateral on {VAULT.protocol}. Net equity grows from the carry between staking
@@ -754,21 +742,52 @@ const LoopingVault = () => {
       </FlexDiv>
 
       {kvRow(
-        `Collateral (${VAULT.collateralSymbol})`,
+        labelTip(
+          `Collateral (${VAULT.collateralSymbol})`,
+          'tip-collateral',
+          `Total ${VAULT.collateralSymbol} the vault holds as collateral on ${VAULT.protocol}, including the looped amount. Shown in token and USD.`,
+        ),
         `${VAULT.position.collateralAmount} (${VAULT.position.collateralUsd})`,
         'col',
       )}
       {kvRow(
-        `Debt (${VAULT.debtSymbol})`,
+        labelTip(
+          `Debt (${VAULT.debtSymbol})`,
+          'tip-debt',
+          `Total ${VAULT.debtSymbol} the vault has borrowed against the collateral. Shown in token and USD.`,
+        ),
         `${VAULT.position.debtAmount} (${VAULT.position.debtUsd})`,
         'debt',
       )}
-      {kvRow('Net equity', VAULT.position.netUsd, 'net')}
+      {kvRow(
+        labelTip(
+          'Net equity',
+          'tip-net',
+          'Collateral value minus debt — the vault’s own capital. This is what your shares represent.',
+        ),
+        VAULT.position.netUsd,
+        'net',
+      )}
 
       <div style={{ height: 10 }} />
-      <FlexDiv $justifycontent="space-between" $padding="0 15px 4px">
-        <NewLabel $size="12px" $weight="600" $height="18px" $fontcolor={fontColor4}>
-          LTV (loan-to-value)
+      <FlexDiv
+        $justifycontent="space-between"
+        $padding="0 15px 4px"
+        style={{ alignItems: 'center' }}
+      >
+        <NewLabel
+          $size="12px"
+          $weight="600"
+          $height="18px"
+          $fontcolor={fontColor4}
+          $display="flex"
+          $items="center"
+        >
+          {labelTip(
+            'LTV (loan-to-value)',
+            'tip-ltv',
+            'Debt divided by collateral value. Higher LTV means more leverage and a thinner buffer before liquidation.',
+          )}
         </NewLabel>
         <NewLabel $size="12px" $weight="700" $height="18px" $fontcolor={fontColor1}>
           {ltvCur.toFixed(1)}%
@@ -805,8 +824,24 @@ const LoopingVault = () => {
           },
         ],
       })}
-      {kvRow('Target LTV', `${ltvTarget.toFixed(1)}%`, 'tltv')}
-      {kvRow('Liquidation LTV', `${ltvLiq.toFixed(1)}%`, 'lltv')}
+      {kvRow(
+        labelTip(
+          'Target LTV',
+          'tip-target-ltv',
+          'The LTV the vault rebalances toward — it sets the steady-state leverage.',
+        ),
+        `${ltvTarget.toFixed(1)}%`,
+        'tltv',
+      )}
+      {kvRow(
+        labelTip(
+          'Liquidation LTV',
+          'tip-liq-ltv',
+          `The LTV at which ${VAULT.protocol} can liquidate the position. The vault stays well below it.`,
+        ),
+        `${ltvLiq.toFixed(1)}%`,
+        'lltv',
+      )}
       <div style={{ height: 8 }} />
     </HalfInfo>
   )
@@ -823,8 +858,19 @@ const LoopingVault = () => {
         }}
       >
         <FlexDiv style={{ alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <NewLabel $size="14px" $weight="600" $height="20px" $fontcolor={fontColor4}>
-            Health Factor
+          <NewLabel
+            $size="14px"
+            $weight="600"
+            $height="20px"
+            $fontcolor={fontColor4}
+            $display="flex"
+            $items="center"
+          >
+            {labelTip(
+              'Health Factor',
+              'tip-hf-header',
+              `${VAULT.protocol}'s safety ratio: (collateral × liquidation threshold) ÷ debt. Liquidation at 1.000; higher is safer.`,
+            )}
           </NewLabel>
           <Badge $ok={hfPos > hfTrigger}>HF {hfPos.toFixed(3)}</Badge>
         </FlexDiv>
@@ -875,10 +921,38 @@ const LoopingVault = () => {
         ],
       })}
       <div style={{ height: 8 }} />
-      {kvRow('Current HF', hfPos.toFixed(3), 'chf')}
-      {kvRow('Target HF', hfTarget.toFixed(3), 'thf')}
-      {kvRow('Rebalance trigger', `< ${hfTrigger.toFixed(3)}`, 'rt')}
-      {kvRow('Forced deleverage', `< ${hfDeleverage.toFixed(3)}`, 'dl')}
+      {kvRow(
+        labelTip('Current HF', 'tip-cur-hf', 'The position’s live health factor right now.'),
+        hfPos.toFixed(3),
+        'chf',
+      )}
+      {kvRow(
+        labelTip(
+          'Target HF',
+          'tip-tgt-hf',
+          'The health factor the vault aims to restore after a rebalance.',
+        ),
+        hfTarget.toFixed(3),
+        'thf',
+      )}
+      {kvRow(
+        labelTip(
+          'Rebalance trigger',
+          'tip-trg-hf',
+          'When HF drops below this, the vault deleverages to bring the position back to the target.',
+        ),
+        `< ${hfTrigger.toFixed(3)}`,
+        'rt',
+      )}
+      {kvRow(
+        labelTip(
+          'Forced deleverage',
+          'tip-dl-hf',
+          'A harder floor — below this, a more aggressive unwind kicks in to protect against liquidation.',
+        ),
+        `< ${hfDeleverage.toFixed(3)}`,
+        'dl',
+      )}
       <Footnote $muted={fontColor3}>Last rebalance: {VAULT.lastRebalance}.</Footnote>
     </HalfInfo>
   )
@@ -1408,7 +1482,10 @@ const LoopingVault = () => {
                           </div>
                           <div>
                             <span className="muted">Entry cost (median 30d)</span>
-                            <span className="val">{VAULT.costs.typicalEntryBps}</span>
+                            <span className="val">
+                              {VAULT.costs.typicalEntryBps} (~ {entryCostWeth.toFixed(4)}{' '}
+                              {VAULT.debtSymbol})
+                            </span>
                           </div>
                           <div>
                             <span className="muted">Vault LTV after your entry</span>
@@ -1937,12 +2014,6 @@ const LoopingVault = () => {
                       `${VAULT.costs.typicalEntryBps} entry / ${VAULT.costs.typicalExitBps} exit`,
                       'tic',
                     )}
-                    <FlexDiv $justifycontent="space-between" $padding="10px 15px">
-                      <NewLabel $size="13px" $weight="300" $height="normal" $fontcolor={fontColor3}>
-                        Per-rebalance swap slippage is borne by the vault and shows up as small
-                        share-price jitter, not as a per-user fee.
-                      </NewLabel>
-                    </FlexDiv>
                   </LastHarvestInfo>
                 </RestInternal>
               </RestContent>
