@@ -369,8 +369,6 @@ const LoopingVault = () => {
     return { label: `Routed via LoopWrapper(${sym}): zaps into collateral`, kind: quickToken, sym }
   }, [quickAmount, quickToken])
 
-  const wRoute = `Routed via LoopWrapper(${VAULT.debtSymbol}): vault unwinds the loop and returns ${VAULT.debtSymbol}`
-
   // Maximize-at-optimal-ratio. Given the user's wallet balances, picks the largest deposit
   // pair that respects VAULT.optimalRatio without exceeding either balance. Uses up the
   // smaller side fully and leaves the difference on the larger side.
@@ -1033,7 +1031,7 @@ const LoopingVault = () => {
                   badge: 'Beta',
                   rows: [
                     ['in USD', '$0'],
-                    ['Underlying', '0', 'SHARES'],
+                    ['Underlying', '0', VAULT.debtSymbol],
                   ],
                 })}
                 {managePanel({
@@ -1161,47 +1159,6 @@ const LoopingVault = () => {
                               {entrySymbol}
                             </TokenPill>
                           </FieldBox>
-
-                          {quickRoute && (
-                            <>
-                              <RouteNote $muted={fontColor3}>Output</RouteNote>
-                              <Preview
-                                $bg={bgColorChart}
-                                $border={borderColorBox}
-                                $fc={fontColor1}
-                                $muted={fontColor3}
-                              >
-                                <div>
-                                  <span className="muted">Expected shares</span>
-                                  <span className="val">
-                                    ~ {sharesReceived.toFixed(4)} fcl-loop-
-                                    {VAULT.collateralSymbol}
-                                  </span>
-                                </div>
-                                <div>
-                                  <span className="muted">
-                                    {VAULT.debtSymbol}-equivalent value (after entry cost)
-                                  </span>
-                                  <span className="val">
-                                    ~ {netWethEquiv.toFixed(4)} {VAULT.debtSymbol}
-                                  </span>
-                                </div>
-                                <div>
-                                  <span className="muted">Entry cost (median 30d)</span>
-                                  <span className="val">{VAULT.costs.typicalEntryBps}</span>
-                                </div>
-                                <div>
-                                  <span className="muted">Vault LTV after your entry</span>
-                                  <span className="val">
-                                    {projectedLtvAfterDeposit(
-                                      usdValueOf(quickRoute.sym, quickAmount),
-                                    ).toFixed(2)}
-                                    % (was {ltvCur.toFixed(2)}%)
-                                  </span>
-                                </div>
-                              </Preview>
-                            </>
-                          )}
                         </>
                       ) : (
                         <>
@@ -1315,6 +1272,114 @@ const LoopingVault = () => {
                         </>
                       )}
 
+                      {/* OUTPUT — what the entry returns */}
+                      <RouteNote $muted={fontColor3}>Output</RouteNote>
+                      <FlexDiv
+                        $justifycontent="space-between"
+                        style={{ marginBottom: 8, alignItems: 'flex-start' }}
+                      >
+                        <NewLabel
+                          $size="13px"
+                          $weight="500"
+                          $height="20px"
+                          $fontcolor={fontColor3}
+                          $display="flex"
+                          $items="center"
+                        >
+                          Est. Received
+                          <Question
+                            id="cl-tooltip-received"
+                            dark={darkMode}
+                            content="Approximate fcl-loop shares minted at the current share price, net of entry cost."
+                          />
+                        </NewLabel>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-end',
+                            gap: 1,
+                          }}
+                        >
+                          <NewLabel
+                            $size="13px"
+                            $weight="600"
+                            $height="20px"
+                            $fontcolor={fontColor1}
+                          >
+                            {grossWeth > 0
+                              ? `~ ${sharesReceived.toFixed(4)} fcl-loop-${VAULT.collateralSymbol}`
+                              : 'n/a'}
+                          </NewLabel>
+                          {grossWeth > 0 && (
+                            <NewLabel
+                              $size="11px"
+                              $weight="500"
+                              $height="14px"
+                              $fontcolor={fontColor3}
+                            >
+                              {fmtUsd(usdValueOf(VAULT.debtSymbol, netWethEquiv))}
+                            </NewLabel>
+                          )}
+                        </div>
+                      </FlexDiv>
+                      <FlexDiv $justifycontent="space-between" style={{ marginBottom: 14 }}>
+                        <NewLabel
+                          $size="13px"
+                          $weight="500"
+                          $height="20px"
+                          $fontcolor={fontColor3}
+                          $display="flex"
+                          $items="center"
+                        >
+                          Est. Yearly Yield
+                          <Question
+                            id="cl-tooltip-yearly"
+                            dark={darkMode}
+                            content={`Net ${VAULT.debtSymbol}-equivalent value times the live APY (${VAULT.apy}).`}
+                          />
+                        </NewLabel>
+                        <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
+                          {grossWeth > 0
+                            ? `~ ${yearlyYieldWeth.toFixed(4)} ${VAULT.debtSymbol} (${fmtUsd(
+                                usdValueOf(VAULT.debtSymbol, yearlyYieldWeth),
+                              )})`
+                            : 'n/a'}
+                        </NewLabel>
+                      </FlexDiv>
+
+                      {/* COST AND DETAILS */}
+                      <RouteNote $muted={fontColor3}>Details</RouteNote>
+                      {grossWeth > 0 && (
+                        <Preview
+                          $bg={bgColorChart}
+                          $border={borderColorBox}
+                          $fc={fontColor1}
+                          $muted={fontColor3}
+                        >
+                          <div>
+                            <span className="muted">
+                              {VAULT.debtSymbol}-equivalent value (after entry cost)
+                            </span>
+                            <span className="val">
+                              ~ {netWethEquiv.toFixed(4)} {VAULT.debtSymbol}
+                            </span>
+                          </div>
+                          <div>
+                            <span className="muted">Entry cost (median 30d)</span>
+                            <span className="val">{VAULT.costs.typicalEntryBps}</span>
+                          </div>
+                          <div>
+                            <span className="muted">Vault LTV after your entry</span>
+                            <span className="val">
+                              {projectedLtvAfterDeposit(
+                                usdValueOf(entrySymbol, quickAmount),
+                              ).toFixed(2)}
+                              % (was {ltvCur.toFixed(2)}%)
+                            </span>
+                          </div>
+                        </Preview>
+                      )}
                       <Slippage
                         $muted={fontColor3}
                         $border={borderColorBox}
@@ -1342,53 +1407,6 @@ const LoopingVault = () => {
                           ))}
                         </div>
                       </Slippage>
-
-                      <FlexDiv $justifycontent="space-between" style={{ marginBottom: 8 }}>
-                        <NewLabel
-                          $size="13px"
-                          $weight="500"
-                          $height="20px"
-                          $fontcolor={fontColor3}
-                          $display="flex"
-                          $items="center"
-                        >
-                          Est. Yearly Yield
-                          <Question
-                            id="cl-tooltip-yearly"
-                            dark={darkMode}
-                            content={`Net ${VAULT.debtSymbol}-equivalent value times the live APY (${VAULT.apy}).`}
-                          />
-                        </NewLabel>
-                        <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
-                          {grossWeth > 0
-                            ? `~ ${yearlyYieldWeth.toFixed(4)} ${VAULT.debtSymbol} (${fmtUsd(
-                                usdValueOf(VAULT.debtSymbol, yearlyYieldWeth),
-                              )})`
-                            : 'n/a'}
-                        </NewLabel>
-                      </FlexDiv>
-                      <FlexDiv $justifycontent="space-between" style={{ marginBottom: 14 }}>
-                        <NewLabel
-                          $size="13px"
-                          $weight="500"
-                          $height="20px"
-                          $fontcolor={fontColor3}
-                          $display="flex"
-                          $items="center"
-                        >
-                          Est. Received
-                          <Question
-                            id="cl-tooltip-received"
-                            dark={darkMode}
-                            content="Approximate fcl-loop shares minted at the current share price, net of entry cost."
-                          />
-                        </NewLabel>
-                        <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
-                          {grossWeth > 0
-                            ? `~ ${sharesReceived.toFixed(4)} fcl-loop-${VAULT.collateralSymbol}`
-                            : 'n/a'}
-                        </NewLabel>
-                      </FlexDiv>
 
                       <label
                         style={{
@@ -1560,7 +1578,7 @@ const LoopingVault = () => {
                         </TokenPill>
                       </FieldBox>
 
-                      <RouteNote $muted={fontColor3}>{wRoute}</RouteNote>
+                      <RouteNote $muted={fontColor3}>Details</RouteNote>
                       <Preview
                         $bg={bgColorChart}
                         $border={borderColorBox}
