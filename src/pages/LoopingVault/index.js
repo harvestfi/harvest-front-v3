@@ -583,7 +583,10 @@ const LoopingVault = () => {
   const collateralUsd = 2189400
   const debtUsd = 2015650
   const projectedLtvAfterDeposit = depUsd => (debtUsd / (collateralUsd + depUsd)) * 100
-  const sharePriceUsd = parseFloat(VAULT.details.sharePrice) * 2940 // approx in USD
+  // Share price denominated in WETH; USD uses the same WETH spot so the only
+  // spread between "shares in" and "WETH out" is the exit cost.
+  const sharePriceNum = parseFloat(VAULT.details.sharePrice)
+  const sharePriceUsd = sharePriceNum * usdPrice.WETH
   const withdrawalUsd = parseFloat(shares) * sharePriceUsd
   const largeWithdraw = withdrawalUsd > VAULT.vaultUsd * 0.05
 
@@ -593,10 +596,16 @@ const LoopingVault = () => {
   const entryCostRate = parseFloat(VAULT.costs.typicalEntryBps.replace(/[^\d.]/g, '')) / 10000
   const grossWeth = parseFloat(quickAmount) || 0
   const netWethEquiv = grossWeth * (1 - entryCostRate)
-  const sharePriceNum = parseFloat(VAULT.details.sharePrice)
   const sharesReceived = sharePriceNum > 0 ? netWethEquiv / sharePriceNum : 0
   const apyRate = parseFloat(VAULT.apy) / 100 // "8.74%" -> 0.0874
   const yearlyYieldWeth = netWethEquiv * apyRate
+
+  // Withdraw math. WETH out = shares * share price, minus the median exit cost.
+  const exitCostRate = parseFloat(VAULT.costs.typicalExitBps.replace(/[^\d.]/g, '')) / 10000
+  const sharesIn = parseFloat(shares) || 0
+  const grossWethOut = sharesIn * sharePriceNum
+  const receiveWeth = grossWethOut * (1 - exitCostRate)
+  const exitCostWeth = grossWethOut * exitCostRate
 
   // Compact USD label sitting inside a FieldBox between the Input and the
   // TokenPill. Empty / zero amounts render nothing.
@@ -642,44 +651,36 @@ const LoopingVault = () => {
   // Renders a horizontal gauge with a "warn" zone, an optional "danger" zone
   // at the right edge, and up to three markers (current / target / liquidation).
   // Used for both LTV and Health Factor.
-  const gauge = ({ leftLabel, rightLabel, warnFromPct, dangerFromPct, markers }) => (
+  // Horizontal gauge. `zones` is a list of { from, to, color } colored bands
+  // (percent of the track); `markers` are vertical ticks that poke above/below.
+  const gauge = ({ leftLabel, rightLabel, zones = [], markers }) => (
     <div style={{ margin: '0 15px 6px' }}>
-      <div
-        style={{
-          position: 'relative',
-          height: 14,
-          background: bgColorChart,
-          border: `1px solid ${borderColorBox}`,
-          borderRadius: 8,
-          overflow: 'visible',
-        }}
-      >
-        {warnFromPct != null && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: `${warnFromPct}%`,
-              right: `${100 - (dangerFromPct ?? 100)}%`,
-              background: 'rgba(245, 158, 11, 0.25)',
-              borderRadius: 7,
-            }}
-          />
-        )}
-        {dangerFromPct != null && (
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              bottom: 0,
-              left: `${dangerFromPct}%`,
-              right: 0,
-              background: 'rgba(214, 52, 47, 0.35)',
-              borderRadius: '0 7px 7px 0',
-            }}
-          />
-        )}
+      <div style={{ position: 'relative', height: 14 }}>
+        {/* rounded, clipped track holding the colored zones */}
+        <div
+          style={{
+            position: 'absolute',
+            inset: 0,
+            background: bgColorChart,
+            border: `1px solid ${borderColorBox}`,
+            borderRadius: 8,
+            overflow: 'hidden',
+          }}
+        >
+          {zones.map((z, i) => (
+            <div
+              key={i}
+              style={{
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: `${z.from}%`,
+                right: `${100 - z.to}%`,
+                background: z.color,
+              }}
+            />
+          ))}
+        </div>
         {markers.map((m, i) => (
           <div
             key={i}
@@ -692,6 +693,7 @@ const LoopingVault = () => {
               background: m.color,
               transform: 'translateX(-50%)',
               borderRadius: 2,
+              zIndex: 1,
             }}
             title={`${m.label}: ${m.valueLabel}`}
           />
@@ -775,8 +777,10 @@ const LoopingVault = () => {
       {gauge({
         leftLabel: '80%',
         rightLabel: '95%',
-        warnFromPct: ltvPct(ltvTarget),
-        dangerFromPct: ltvPct(ltvLiq),
+        zones: [
+          { from: ltvPct(ltvTarget), to: ltvPct(ltvLiq), color: 'rgba(249, 115, 22, 0.30)' },
+          { from: ltvPct(ltvLiq), to: 100, color: 'rgba(214, 52, 47, 0.38)' },
+        ],
         markers: [
           {
             pct: ltvPct(ltvCur),
@@ -833,8 +837,12 @@ const LoopingVault = () => {
       {gauge({
         leftLabel: '1.00 (liquidation)',
         rightLabel: '1.20',
-        warnFromPct: 0,
-        dangerFromPct: hfPct(hfTrigger),
+        // Near liquidation (left, up to forced deleverage) = orange; the safe
+        // zone above forced deleverage runs green to the right edge.
+        zones: [
+          { from: 0, to: hfPct(hfDeleverage), color: 'rgba(249, 115, 22, 0.38)' },
+          { from: hfPct(hfDeleverage), to: 100, color: 'rgba(93, 207, 70, 0.30)' },
+        ],
         markers: [
           {
             pct: hfPct(hfPos),
@@ -1307,23 +1315,34 @@ const LoopingVault = () => {
                             $height="20px"
                             $fontcolor={fontColor1}
                           >
-                            {grossWeth > 0
-                              ? `~ ${sharesReceived.toFixed(4)} fcl-loop-${VAULT.collateralSymbol}`
-                              : 'n/a'}
+                            {grossWeth > 0 ? `~ ${sharesReceived.toFixed(4)}` : 'n/a'}
                           </NewLabel>
                           {grossWeth > 0 && (
-                            <NewLabel
-                              $size="11px"
-                              $weight="500"
-                              $height="14px"
-                              $fontcolor={fontColor3}
-                            >
-                              {fmtUsd(usdValueOf(VAULT.debtSymbol, netWethEquiv))}
-                            </NewLabel>
+                            <>
+                              <NewLabel
+                                $size="12px"
+                                $weight="600"
+                                $height="16px"
+                                $fontcolor={fontColor3}
+                              >
+                                {fmtUsd(usdValueOf(VAULT.debtSymbol, netWethEquiv))}
+                              </NewLabel>
+                              <NewLabel
+                                $size="10px"
+                                $weight="500"
+                                $height="13px"
+                                $fontcolor={fontColor3}
+                              >
+                                fcl-loop-{VAULT.collateralSymbol}
+                              </NewLabel>
+                            </>
                           )}
                         </div>
                       </FlexDiv>
-                      <FlexDiv $justifycontent="space-between" style={{ marginBottom: 14 }}>
+                      <FlexDiv
+                        $justifycontent="space-between"
+                        style={{ marginBottom: 14, alignItems: 'flex-start' }}
+                      >
                         <NewLabel
                           $size="13px"
                           $weight="500"
@@ -1339,13 +1358,35 @@ const LoopingVault = () => {
                             content={`Net ${VAULT.debtSymbol}-equivalent value times the live APY (${VAULT.apy}).`}
                           />
                         </NewLabel>
-                        <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
-                          {grossWeth > 0
-                            ? `~ ${yearlyYieldWeth.toFixed(4)} ${VAULT.debtSymbol} (${fmtUsd(
-                                usdValueOf(VAULT.debtSymbol, yearlyYieldWeth),
-                              )})`
-                            : 'n/a'}
-                        </NewLabel>
+                        <div
+                          style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'flex-end',
+                            gap: 1,
+                          }}
+                        >
+                          <NewLabel
+                            $size="13px"
+                            $weight="600"
+                            $height="20px"
+                            $fontcolor={fontColor1}
+                          >
+                            {grossWeth > 0
+                              ? `~ ${yearlyYieldWeth.toFixed(4)} ${VAULT.debtSymbol}`
+                              : 'n/a'}
+                          </NewLabel>
+                          {grossWeth > 0 && (
+                            <NewLabel
+                              $size="12px"
+                              $weight="600"
+                              $height="16px"
+                              $fontcolor={fontColor3}
+                            >
+                              {fmtUsd(usdValueOf(VAULT.debtSymbol, yearlyYieldWeth))}
+                            </NewLabel>
+                          )}
+                        </div>
                       </FlexDiv>
 
                       {/* COST AND DETAILS */}
@@ -1567,11 +1608,9 @@ const LoopingVault = () => {
                           $fontcolor={fontColor1}
                           style={{ flex: 1 }}
                         >
-                          {parseFloat(shares) > 0
-                            ? `~ ${(parseFloat(shares) * 0.985).toFixed(4)}`
-                            : '0.0'}
+                          {sharesIn > 0 ? `~ ${receiveWeth.toFixed(4)}` : '0.0'}
                         </NewLabel>
-                        <InFieldUsd usd={usdValueOf(entrySymbol, parseFloat(shares) * 0.985)} />
+                        <InFieldUsd usd={usdValueOf(entrySymbol, receiveWeth)} />
                         <TokenPill $bg={bgColorBox} $border={borderColorBox} $fc={fontColor1}>
                           {tokenIcon(entrySymbol, bgColorBox)}
                           {entrySymbol}
@@ -1586,14 +1625,10 @@ const LoopingVault = () => {
                         $muted={fontColor3}
                       >
                         <div>
-                          <span className="muted">Predicted output ({entrySymbol})</span>
-                          <span className="val">
-                            ~ {(parseFloat(shares) * 0.985).toFixed(4)} {entrySymbol}
-                          </span>
-                        </div>
-                        <div>
                           <span className="muted">Exit cost (median 30d)</span>
-                          <span className="val">{VAULT.costs.typicalExitBps}</span>
+                          <span className="val">
+                            {VAULT.costs.typicalExitBps} (~ {exitCostWeth.toFixed(4)} {entrySymbol})
+                          </span>
                         </div>
                       </Preview>
 
@@ -1670,7 +1705,7 @@ const LoopingVault = () => {
                 {[
                   { title: 'Live APY', value: VAULT.apy, className: 'balance-box' },
                   {
-                    title: 'Leverage',
+                    title: 'Live Leverage',
                     value: `${VAULT.position.leverage.toFixed(1)}×`,
                     className: 'daily-apy-box',
                   },
