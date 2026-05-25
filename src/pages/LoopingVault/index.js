@@ -139,7 +139,6 @@ import { DescInfo, InfoLabel } from '../../components/AdvancedFarmComponents/Sou
 import {
   Badge,
   Footnote,
-  Caret,
   FieldLabel,
   FieldBox,
   Input,
@@ -209,7 +208,7 @@ const VAULT = {
     // Rolling median, real interactions over the last 30d.
     typicalEntryBps: '~34 bps',
     typicalExitBps: '~38 bps',
-    typicalEntryUsd: '~$0.74 / $1k deposited',
+    typicalEntryUsd: '~$0.74 / $1k supplied',
     typicalExitUsd: '~$0.86 / $1k withdrawn',
   },
   details: {
@@ -333,7 +332,6 @@ const LoopingVault = () => {
   // Helper for the form: resolved entry/exit symbol.
   const entrySymbol = VAULT.debtSymbol
   const [quickAmount, setQuickAmount] = useState('')
-  const [paramsOpen, setParamsOpen] = useState(false)
   const [agreed, setAgreed] = useState(false)
   const [chartRange, setChartRange] = useState('LAST')
   const [detailRange, setDetailRange] = useState('1Y')
@@ -590,6 +588,17 @@ const LoopingVault = () => {
   const sharePriceUsd = parseFloat(VAULT.details.sharePrice) * 2940 // approx in USD
   const withdrawalUsd = parseFloat(shares) * sharePriceUsd
   const largeWithdraw = withdrawalUsd > VAULT.vaultUsd * 0.05
+
+  // Deposit math (single-asset WETH in). WETH-equivalent value is the gross
+  // input minus the median entry cost; shares = net value / share price;
+  // yearly yield = net value * APY.
+  const entryCostRate = parseFloat(VAULT.costs.typicalEntryBps.replace(/[^\d.]/g, '')) / 10000
+  const grossWeth = parseFloat(quickAmount) || 0
+  const netWethEquiv = grossWeth * (1 - entryCostRate)
+  const sharePriceNum = parseFloat(VAULT.details.sharePrice)
+  const sharesReceived = sharePriceNum > 0 ? netWethEquiv / sharePriceNum : 0
+  const apyRate = parseFloat(VAULT.apy) / 100 // "8.74%" -> 0.0874
+  const yearlyYieldWeth = netWethEquiv * apyRate
 
   // Compact USD label sitting inside a FieldBox between the Input and the
   // TokenPill. Empty / zero amounts render nothing.
@@ -878,21 +887,11 @@ const LoopingVault = () => {
         $height="22px"
         $fontcolor={fontColor3}
       >
-        Deposited {VAULT.collateralSymbol} is supplied as collateral to {VAULT.protocol} in E-mode.
-        The vault borrows {VAULT.debtSymbol}, swaps it back into more {VAULT.collateralSymbol}, and
-        folds the loop until the target LTV is reached. The carry between staking yield and borrow
-        APR auto-compounds into share price. No claim or restake action is required.
-      </NewLabel>
-      <NewLabel
-        $padding="0 15px 6px"
-        $size="13.5px"
-        $weight="400"
-        $height="22px"
-        $fontcolor={fontColor3}
-      >
-        When the health factor approaches the rebalance trigger, the vault deleverages by selling
-        collateral, repaying debt, and reverting to target LTV. Swaps are TWAP-gated and capped per
-        cycle to limit price impact.
+        Incoming {VAULT.debtSymbol} is routed into {VAULT.collateralSymbol} and supplied as
+        collateral to {VAULT.protocol} in E-mode. The vault borrows {VAULT.debtSymbol}, re-supplies
+        it as more {VAULT.collateralSymbol}, and folds the loop until the target LTV is reached. The
+        carry between staking yield and borrow APR compounds into share price. No claim or re-supply
+        action is required.
       </NewLabel>
       <NewLabel
         $padding="0 15px 12px"
@@ -901,17 +900,13 @@ const LoopingVault = () => {
         $height="22px"
         $fontcolor={fontColor3}
       >
-        Steps: deposit {VAULT.debtSymbol}, swap into {VAULT.collateralSymbol}, supply to{' '}
-        {VAULT.protocol}, borrow {VAULT.debtSymbol}, swap again — folded until the target LTV is
-        reached.
+        When the health factor approaches the rebalance trigger, the vault deleverages by selling
+        collateral, repaying debt, and reverting to target LTV. Swaps are TWAP-gated and capped to
+        limit price impact.
       </NewLabel>
       {kvRow('Target LTV', VAULT.params.targetLtv, 'mtl')}
       {kvRow('Rebalance trigger (HF)', VAULT.params.rebalanceTriggerHF, 'mrt')}
-      {kvRow('Forced deleverage (HF)', VAULT.params.deLeverageHF, 'mdl')}
       {kvRow('Slippage cap', VAULT.params.slippageBps, 'msc')}
-      {kvRow('Swap venue', VAULT.params.swapVenue, 'msv')}
-      {kvRow('Max swap / cycle', VAULT.params.maxSwapPct, 'msw')}
-      {kvRow('Rebalance cooldown', VAULT.params.rebalanceCooldown, 'mrc')}
       <div style={{ height: 8 }} />
     </HalfInfo>
   )
@@ -1008,7 +1003,7 @@ const LoopingVault = () => {
               <NetDetail>
                 <NetDetailItem>
                   <NetDetailContent $fontcolor={fontColor}>
-                    Leveraged Carry - {VAULT.protocol} | E-mode
+                    Leveraged Loop - {VAULT.protocol}
                   </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
@@ -1135,7 +1130,7 @@ const LoopingVault = () => {
                         $marginbottom="14px"
                       >
                         {depMode === 'quick'
-                          ? `Single-asset deposit. ${entrySymbol} is zapped into collateral and folded by the vault to the target leverage.`
+                          ? `Single-asset entry. ${entrySymbol} is zapped into collateral and folded by the vault to the target leverage.`
                           : 'Two-sided deposit (advanced). Fill both tokens at the optimal ratio for a no-swap deposit, or fill one for the single-asset path. Smart routing picks the optimal contract entry point.'}
                       </NewLabel>
 
@@ -1169,7 +1164,7 @@ const LoopingVault = () => {
 
                           {quickRoute && (
                             <>
-                              <RouteNote $muted={fontColor3}>{quickRoute.label}</RouteNote>
+                              <RouteNote $muted={fontColor3}>Output</RouteNote>
                               <Preview
                                 $bg={bgColorChart}
                                 $border={borderColorBox}
@@ -1179,19 +1174,16 @@ const LoopingVault = () => {
                                 <div>
                                   <span className="muted">Expected shares</span>
                                   <span className="val">
-                                    ~ {(parseFloat(quickAmount) * 0.985).toFixed(4)} fcl-loop-
+                                    ~ {sharesReceived.toFixed(4)} fcl-loop-
                                     {VAULT.collateralSymbol}
                                   </span>
                                 </div>
                                 <div>
-                                  <span className="muted">{VAULT.debtSymbol}-equivalent value</span>
+                                  <span className="muted">
+                                    {VAULT.debtSymbol}-equivalent value (after entry cost)
+                                  </span>
                                   <span className="val">
-                                    ~{' '}
-                                    {(
-                                      parseFloat(quickAmount) *
-                                      (quickRoute.sym === VAULT.collateralSymbol ? 1.012 : 1.0)
-                                    ).toFixed(4)}{' '}
-                                    {VAULT.debtSymbol}
+                                    ~ {netWethEquiv.toFixed(4)} {VAULT.debtSymbol}
                                   </span>
                                 </div>
                                 <div>
@@ -1199,7 +1191,7 @@ const LoopingVault = () => {
                                   <span className="val">{VAULT.costs.typicalEntryBps}</span>
                                 </div>
                                 <div>
-                                  <span className="muted">Vault LTV after your deposit</span>
+                                  <span className="muted">Vault LTV after your entry</span>
                                   <span className="val">
                                     {projectedLtvAfterDeposit(
                                       usdValueOf(quickRoute.sym, quickAmount),
@@ -1364,11 +1356,15 @@ const LoopingVault = () => {
                           <Question
                             id="cl-tooltip-yearly"
                             dark={darkMode}
-                            content="Estimated yield over a year, based on current APY."
+                            content={`Net ${VAULT.debtSymbol}-equivalent value times the live APY (${VAULT.apy}).`}
                           />
                         </NewLabel>
                         <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
-                          n/a
+                          {grossWeth > 0
+                            ? `~ ${yearlyYieldWeth.toFixed(4)} ${VAULT.debtSymbol} (${fmtUsd(
+                                usdValueOf(VAULT.debtSymbol, yearlyYieldWeth),
+                              )})`
+                            : 'n/a'}
                         </NewLabel>
                       </FlexDiv>
                       <FlexDiv $justifycontent="space-between" style={{ marginBottom: 14 }}>
@@ -1384,11 +1380,13 @@ const LoopingVault = () => {
                           <Question
                             id="cl-tooltip-received"
                             dark={darkMode}
-                            content="Approximate fTokens you'd receive at the current share price."
+                            content="Approximate fcl-loop shares minted at the current share price, net of entry cost."
                           />
                         </NewLabel>
                         <NewLabel $size="13px" $weight="600" $height="20px" $fontcolor={fontColor1}>
-                          n/a
+                          {grossWeth > 0
+                            ? `~ ${sharesReceived.toFixed(4)} fcl-loop-${VAULT.collateralSymbol}`
+                            : 'n/a'}
                         </NewLabel>
                       </FlexDiv>
 
@@ -1482,7 +1480,7 @@ const LoopingVault = () => {
                               }}
                               style={{ color: '#1da64a', fontWeight: 700 }}
                             >
-                              ← Back to single-asset deposit
+                              ← Back to single-asset entry
                             </a>
                           )}
                         </NewLabel>
@@ -1776,31 +1774,29 @@ const LoopingVault = () => {
                     $padding="0 15px 20px"
                     style={{ flexWrap: 'wrap', gap: 8 }}
                   >
-                    {['Vault Address', 'Strategy Address', 'Pool Address', 'Add Liquidity'].map(
-                      label => (
-                        <InfoLabel
-                          key={label}
-                          $display="flex"
-                          href="#"
-                          onClick={e => e.preventDefault()}
-                          $bgcolor={bgColorBox}
-                          $hovercolor={hoverColor || hoverColorNew}
-                          $bordercolor={borderColorBox}
-                          $padding="9px 17px"
-                          style={{ flex: '1 1 140px', minWidth: 0, justifyContent: 'center' }}
+                    {['Vault Address', 'Strategy Address', 'Aave Market'].map(label => (
+                      <InfoLabel
+                        key={label}
+                        $display="flex"
+                        href="#"
+                        onClick={e => e.preventDefault()}
+                        $bgcolor={bgColorBox}
+                        $hovercolor={hoverColor || hoverColorNew}
+                        $bordercolor={borderColorBox}
+                        $padding="9px 17px"
+                        style={{ flex: '1 1 140px', minWidth: 0, justifyContent: 'center' }}
+                      >
+                        <NewLabel
+                          $size="12px"
+                          $weight="600"
+                          $height="16px"
+                          $self="center"
+                          $fontcolor={fontColor1}
                         >
-                          <NewLabel
-                            $size="12px"
-                            $weight="600"
-                            $height="16px"
-                            $self="center"
-                            $fontcolor={fontColor1}
-                          >
-                            {label}
-                          </NewLabel>
-                        </InfoLabel>
-                      ),
-                    )}
+                          {label}
+                        </NewLabel>
+                      </InfoLabel>
+                    ))}
                   </FlexDiv>
                 </HalfInfo>
               </MainSection>
@@ -1832,9 +1828,13 @@ const LoopingVault = () => {
                     $bordercolor={borderColorBox}
                   >
                     {sectionTitle('APY Breakdown')}
-                    {kvRow('Trading fees', '~ 18.20%', 'apy-tf')}
-                    {kvRow('AERO emissions (auto-compounded)', '~ 8.26%', 'apy-ae')}
-                    {kvRow('Net (auto-compounded)', '~ 26.46%', 'apy-net')}
+                    {kvRow(`${VAULT.collateralSymbol} staking yield`, '~ 3.05%', 'apy-st')}
+                    {kvRow(`${VAULT.debtSymbol} borrow APR`, '~ -2.38%', 'apy-bo')}
+                    {kvRow(
+                      `Net spread × ${VAULT.position.leverage.toFixed(1)}× leverage`,
+                      '~ 8.74%',
+                      'apy-net',
+                    )}
                     <Tip $display={showTip ? 'block' : 'none'}>
                       <TipTop>
                         <IconPart>
@@ -1890,38 +1890,6 @@ const LoopingVault = () => {
                         share-price jitter, not as a per-user fee.
                       </NewLabel>
                     </FlexDiv>
-                  </LastHarvestInfo>
-
-                  {/* Loop parameters — collapsible advanced card */}
-                  <LastHarvestInfo $backcolor={bgColorBox} $bordercolor={borderColorBox}>
-                    <FlexDiv
-                      onClick={() => setParamsOpen(o => !o)}
-                      $justifycontent="space-between"
-                      $padding="10px 15px"
-                      style={{
-                        borderBottom: paramsOpen ? `1px solid ${borderColorBox}` : 'none',
-                        cursor: 'pointer',
-                        alignItems: 'center',
-                      }}
-                    >
-                      <NewLabel $size="14px" $weight="600" $height="24px" $fontcolor={fontColor4}>
-                        Loop parameters
-                      </NewLabel>
-                      <Caret $muted={fontColor3} $open={paramsOpen}>
-                        ▼
-                      </Caret>
-                    </FlexDiv>
-                    {paramsOpen && (
-                      <>
-                        {kvRow('Target LTV', VAULT.params.targetLtv, 'tl')}
-                        {kvRow('Rebalance trigger (HF)', VAULT.params.rebalanceTriggerHF, 'rt2')}
-                        {kvRow('Forced deleverage (HF)', VAULT.params.deLeverageHF, 'dl2')}
-                        {kvRow('Rebalance cooldown', VAULT.params.rebalanceCooldown, 'rc2')}
-                        {kvRow('Internal slippage cap', VAULT.params.slippageBps, 'is')}
-                        {kvRow('Swap venue', VAULT.params.swapVenue, 'sv2')}
-                        {kvRow('Max swap per cycle', VAULT.params.maxSwapPct, 'ms2')}
-                      </>
-                    )}
                   </LastHarvestInfo>
                 </RestInternal>
               </RestContent>

@@ -16,8 +16,7 @@ import BlackLeader from '../../assets/images/logos/sidebar/leader_icon_black.svg
 import BlackMigrate from '../../assets/images/logos/sidebar/Migrate_black.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
 import CLVaultIcon from '../../assets/images/logos/sidebar/cl-vault.svg'
-// Looping vault reuses the CL icon until a dedicated SVG is designed.
-const LoopingIcon = CLVaultIcon
+import LoopingIcon from '../../assets/images/logos/sidebar/grain.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import logoNewDark from '../../assets/images/logos/sidebar/ifarm_dark.svg'
 import Toggle from '../../assets/images/logos/sidebar/dots-grid.svg'
