@@ -1821,12 +1821,15 @@ export const sendWalletConnection = async walletAddress => {
   }
 
   // Create the request promise
+  const sessionId = localStorage.getItem('hsid') || null
+
   const requestPromise = (async () => {
     try {
       const response = await axios.post(
         WALLET_CONNECTION_API_ENDPOINT,
         {
           walletAddress: normalizedAddress,
+          ...(sessionId ? { sessionId } : {}),
         },
         {
           headers: {
