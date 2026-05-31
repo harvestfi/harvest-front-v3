@@ -15,6 +15,8 @@ import Analytics from '../../assets/images/logos/sidebar/pie-chart.svg'
 import BlackLeader from '../../assets/images/logos/sidebar/leader_icon_black.svg'
 import BlackMigrate from '../../assets/images/logos/sidebar/Migrate_black.svg'
 import Advanced from '../../assets/images/logos/sidebar/advanced.svg'
+import CLVaultIcon from '../../assets/images/logos/sidebar/cl-vault.svg'
+import LoopingIcon from '../../assets/images/logos/sidebar/grain.svg'
 import logoNew from '../../assets/images/logos/sidebar/ifarm.svg'
 import logoNewDark from '../../assets/images/logos/sidebar/ifarm_dark.svg'
 import Toggle from '../../assets/images/logos/sidebar/dots-grid.svg'
@@ -83,6 +85,18 @@ const sideLinksTop = [
     path: ROUTES.ADVANCED,
     name: 'All Vaults',
     imgPath: Advanced,
+  },
+  {
+    path: ROUTES.CLVAULT,
+    name: 'CL Vault',
+    imgPath: CLVaultIcon,
+    new: true,
+  },
+  {
+    path: ROUTES.LOOPING,
+    name: 'Looping',
+    imgPath: LoopingIcon,
+    new: true,
   },
   {
     category: true,
@@ -163,6 +177,18 @@ const sideLinksMobile = [
     imgPath: Advanced,
     isFarms: true,
     linkName: 'All Vaults',
+  },
+  {
+    path: ROUTES.CLVAULT,
+    name: 'CL Vault',
+    imgPath: CLVaultIcon,
+    linkName: 'CL Vault',
+  },
+  {
+    path: ROUTES.LOOPING,
+    name: 'Looping',
+    imgPath: LoopingIcon,
+    linkName: 'Looping',
   },
 ]
 
