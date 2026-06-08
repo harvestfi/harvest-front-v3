@@ -250,15 +250,15 @@ const ApexChart = ({
       if (!connected) {
         setIsDataReady('false')
       } else if (lpTokenBalance === 0 && !token.isIPORVault && showRewardsTab) {
-        setIsDataReady('loading')
+        setIsDataReady(loadComplete ? 'false' : 'loading')
       } else if (lpTokenBalance === '0' && totalValue !== 0 && dl === 0) {
-        setIsDataReady('loading')
+        setIsDataReady(loadComplete ? 'true' : 'loading')
       } else if ((lpTokenBalance === '0' || lpTokenBalance === 0) && totalValue === 0 && dl === 0) {
         setIsDataReady('false')
       } else if (lpTokenBalance === 0 && dl !== 0 && dl1 !== 0 && token.isIPORVault) {
         setIsDataReady('true')
       } else if (totalValue !== '0' && totalValue !== 0 && dl === 0) {
-        setIsDataReady('loading')
+        setIsDataReady(loadComplete ? 'true' : 'loading')
       } else if (dl !== 0 && dl1 !== 0) {
         setIsDataReady('true')
       }

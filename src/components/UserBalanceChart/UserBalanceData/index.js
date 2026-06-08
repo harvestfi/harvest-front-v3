@@ -390,11 +390,16 @@ const UserBalanceData = ({
             }
           }
           if (isMounted) {
-            setLoadComplete(balanceFlag && priceFeedFlag)
+            setLoadComplete(token.isCLVault ? true : Boolean(balanceFlag && priceFeedFlag))
           }
         } catch (error) {
           console.log('An error ocurred', error)
+          if (isMounted) {
+            setLoadComplete(true)
+          }
         }
+      } else if (isMounted && token.isCLVault) {
+        setLoadComplete(true)
       }
     }
 

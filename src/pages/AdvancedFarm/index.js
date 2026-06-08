@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { find, get, isEqual, isArray, isNaN } from 'lodash'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useMediaQuery } from 'react-responsive'
 import { Tooltip } from 'react-tooltip'
 import { RxCross2 } from 'react-icons/rx'
@@ -36,6 +36,14 @@ import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/Withd
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
+import {
+  CLInteract,
+  CLDetailsMain,
+  buildCLData,
+  fetchCLChainData,
+  fetchCLWalletBalances,
+  fetchCLPosition,
+} from '../../components/CLVault'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import SharePricesData from '../../components/SharePricesChart/SharePricesData'
 import AOTData from '../../components/AOTChart/AOTData'
@@ -89,6 +97,7 @@ import {
   getTokenPriceFromApi,
   initBalanceAndDetailData,
   getIPORLastHarvestInfo,
+  getCLVaultRebalances,
 } from '../../utilities/apiCalls'
 import {
   BackBtnRect,
@@ -360,6 +369,110 @@ const AdvancedFarm = () => {
   const tokenSym = token.isIPORVault ? token.vaultSymbol : id
   const fTokenName = token.isIPORVault ? tokenSym : `f${tokenSym}`
 
+  const isCLVault = Boolean(token.isCLVault)
+  const [clChainData, setClChainData] = useState(null)
+  const [clRebalances, setClRebalances] = useState(null)
+
+  useEffect(() => {
+    let active = true
+    if (isCLVault && token.vaultAddress) {
+      fetchCLChainData(token.vaultAddress)
+        .then(d => {
+          if (active) setClChainData(d)
+        })
+        .catch(() => {})
+      getCLVaultRebalances(token.vaultAddress, CHAIN_IDS.BASE)
+        .then(r => {
+          if (active) setClRebalances(r)
+        })
+        .catch(() => {})
+    }
+    return () => {
+      active = false
+    }
+  }, [isCLVault, token.vaultAddress])
+
+  const clData = useMemo(
+    () => (isCLVault ? buildCLData(token, id, clChainData, clRebalances) : null),
+    [
+      isCLVault,
+      id,
+      clChainData,
+      clRebalances,
+      token.estimatedApy,
+      token.totalValueLocked,
+      token.pricePerFullShare,
+    ],
+  )
+
+  const [clWalletBalances, setClWalletBalances] = useState({ token0: 0, token1: 0 })
+  const [clPosition, setClPosition] = useState({
+    vaultShares: 0,
+    underlying0: 0,
+    underlying1: 0,
+    usdValue: 0,
+  })
+
+  const refreshCL = useCallback(async () => {
+    if (!isCLVault || !token.vaultAddress) return
+    const chain = await fetchCLChainData(token.vaultAddress).catch(() => null)
+    if (chain) setClChainData(chain)
+    getCLVaultRebalances(token.vaultAddress, CHAIN_IDS.BASE)
+      .then(r => setClRebalances(r))
+      .catch(() => {})
+    if (account && clData) {
+      const wait = ms => new Promise(r => setTimeout(r, ms))
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        const [balances, position] = await Promise.all([
+          fetchCLWalletBalances(account, clData.token0, clData.token1).catch(() => null),
+          fetchCLPosition({
+            vaultAddress: token.vaultAddress,
+            token0: clData.token0,
+            token1: clData.token1,
+            account,
+            usdPrice: clData.underlyingUsdPrice,
+            pricePerShare: clData.sharePrice,
+          }).catch(() => null),
+        ])
+        if (balances) setClWalletBalances(balances)
+        if (position) setClPosition(position)
+        if (position) break
+        await wait(1500)
+      }
+    }
+  }, [isCLVault, token.vaultAddress, account, clData])
+
+  useEffect(() => {
+    let active = true
+    if (isCLVault && account && clData) {
+      fetchCLWalletBalances(account, clData.token0, clData.token1)
+        .then(b => {
+          if (active) setClWalletBalances(b)
+        })
+        .catch(() => {})
+      fetchCLPosition({
+        vaultAddress: token.vaultAddress,
+        token0: clData.token0,
+        token1: clData.token1,
+        account,
+        usdPrice: clData.underlyingUsdPrice,
+        pricePerShare: clData.sharePrice,
+      })
+        .then(p => {
+          if (active) setClPosition(p)
+        })
+        .catch(() => {})
+    }
+    return () => {
+      active = false
+    }
+  }, [isCLVault, account, clData, token.vaultAddress])
+
+  const clDataView = useMemo(
+    () => (clData ? { ...clData, walletBalances: clWalletBalances, position: clPosition } : null),
+    [clData, clWalletBalances, clPosition],
+  )
+
   const { logoUrl } = token
 
   const vaultPool = find(pools, pool => pool.collateralAddress === get(token, `vaultAddress`))
@@ -501,6 +614,20 @@ const AdvancedFarm = () => {
   }, [token, tokenChain])
 
   useEffect(() => {
+    if (isCLVault) {
+      const { vaultShares = 0, usdValue = 0 } = clPosition || {}
+      const usd = usdValue * Number(currencyRate)
+      const aprPct = estimatedApy || (clData && clData.apy ? clData.apy.total : 0) || 0
+      const apr = aprPct / 100
+      setStakedAmount(vaultShares)
+      setUnstakedAmount(0)
+      setTotalValue(vaultShares)
+      setBalanceAmount(usd)
+      setYieldDaily(usd * (apr / 365))
+      setYieldMonthly(usd * (apr / 12))
+      return
+    }
+
     let staked, unstaked, total, amountBalanceUSD
     staked =
       totalStaked && fromWei(totalStaked, token.vaultDecimals || token.decimals, MAX_DECIMALS, true)
@@ -567,6 +694,9 @@ const AdvancedFarm = () => {
     estimatedApy,
     rewardApy,
     tradingApy,
+    isCLVault,
+    clPosition,
+    clData,
   ])
 
   useEffect(() => {
@@ -2364,6 +2494,7 @@ const AdvancedFarm = () => {
                       setHarvestFrequency={setHarvestFrequency}
                     />
                   </HalfInfo>
+                  {isCLVault && clDataView && <CLDetailsMain data={clDataView} />}
                   {!isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
                 </>
               ) : (
@@ -2379,138 +2510,144 @@ const AdvancedFarm = () => {
                     $marginbottom={isMobile ? '20px' : '0px'}
                     $borderradius={isMobile ? '12px' : '12px'}
                   >
-                    <DepositSection $isshow={activeDepo}>
-                      <DepositBase
-                        setSelectToken={setSelectTokenDepo}
-                        deposit={depositStart}
-                        setDeposit={setDepositStart}
-                        balance={balanceDepo}
-                        pickedToken={pickedTokenDepo}
-                        defaultToken={defaultToken}
-                        inputAmount={inputAmountDepo}
-                        pricePerFullShare={pricePerFullShare}
-                        setInputAmount={setInputAmountDepo}
-                        token={token}
-                        supTokenList={supTokenList}
-                        switchMethod={handleToggle(setActiveDepo)}
-                        tokenSymbol={tokenSym}
-                        activeDepo={activeDepo}
-                        balanceList={balanceList}
-                        setFromInfoAmount={setFromInfoAmount}
-                        setFromInfoUsdAmount={setFromInfoUsdAmount}
-                        fromInfoUsdAmount={fromInfoUsdAmount}
-                        convertYearlyYieldUSD={convertYearlyYieldUSD}
-                        convertMonthlyYieldUSD={convertMonthlyYieldUSD}
-                        convertDailyYieldUSD={convertDailyYieldUSD}
-                        minReceiveAmountString={minReceiveAmountString}
-                        setMinReceiveAmountString={setMinReceiveAmountString}
-                        minReceiveUsdAmount={minReceiveUsdAmount}
-                        setMinReceiveUsdAmount={setMinReceiveUsdAmount}
-                        setConvertYearlyYieldUSD={setConvertYearlyYieldUSD}
-                        setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
-                        setConvertDailyYieldUSD={setConvertDailyYieldUSD}
-                        hasErrorOccurred={hasErrorOccurredConvert}
-                        setHasErrorOccurred={setHasErrorOccurredConvert}
-                        failureCount={failureCountConvert}
-                        setFailureCount={setFailureCountConvert}
-                        supportedVault={supportedVault}
-                        setSupportedVault={setSupportedVault}
-                      />
-                      <DepositSelectToken
-                        selectToken={selectTokenDepo}
-                        setSelectToken={setSelectTokenDepo}
-                        setPickedToken={setPickedTokenDepo}
-                        setBalance={setBalanceDepo}
-                        supTokenNoBalanceList={supTokenNoBalanceList}
-                        balanceList={balanceList}
-                        defaultToken={defaultToken}
-                        soonToSupList={soonToSupList}
-                        supportedVault={supportedVault}
-                        hasPortalsError={hasPortalsError}
-                        setFromTokenList={setFromTokenList}
-                      />
-                      <DepositStart
-                        pickedToken={pickedTokenDepo}
-                        deposit={depositStart}
-                        setDeposit={setDepositStart}
-                        defaultToken={defaultToken}
-                        inputAmount={inputAmountDepo}
-                        setInputAmount={setInputAmountDepo}
-                        token={token}
-                        tokenSymbol={tokenSym}
-                        vaultPool={vaultPool}
-                        multipleAssets={multipleAssets}
-                        fromInfoAmount={fromInfoAmount}
-                        fromInfoUsdAmount={fromInfoUsdAmount}
-                        minReceiveAmountString={minReceiveAmountString}
-                        minReceiveUsdAmount={minReceiveUsdAmount}
-                        setSelectToken={setSelectTokenDepo}
-                        setConvertSuccess={setConvertSuccess}
-                      />
-                    </DepositSection>
-                    <WithdrawSection $isshow={!activeDepo}>
-                      <WithdrawBase
-                        unstakeInputValue={unstakeInputValue}
-                        setUnstakeInputValue={setUnstakeInputValue}
-                        setSelectToken={setSelectTokenWith}
-                        setWithdrawStart={setWithdrawStart}
-                        defaultToken={defaultToken}
-                        pricePerFullShare={pricePerFullShare}
-                        pickedToken={pickedTokenWith}
-                        unstakeBalance={unstakeBalance}
-                        setUnstakeBalance={setUnstakeBalance}
-                        balanceList={balanceList}
-                        tokenSymbol={tokenSym}
-                        vaultPool={vaultPool}
-                        lpTokenBalance={lpTokenBalance}
-                        stakedAmount={stakedAmount}
-                        token={token}
-                        supTokenList={supTokenList}
-                        switchMethod={handleToggle(setActiveDepo)}
-                        setRevertFromInfoAmount={setRevertFromInfoAmount}
-                        revertFromInfoUsdAmount={revertFromInfoUsdAmount}
-                        setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
-                        setRevertMinReceivedAmount={setRevertMinReceivedAmount}
-                        revertMinReceivedAmount={revertMinReceivedAmount}
-                        revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
-                        setRevertMinReceivedUsdAmount={setRevertMinReceivedUsdAmount}
-                        hasErrorOccurred={hasErrorOccurredRevert}
-                        setHasErrorOccurred={setHasErrorOccurredRevert}
-                      />
-                      <WithdrawSelectToken
-                        selectToken={selectTokenWith}
-                        setSelectToken={setSelectTokenWith}
-                        setPickedToken={setPickedTokenWith}
-                        supTokenNoBalanceList={supTokenNoBalanceList}
-                        balanceList={balanceList}
-                        defaultToken={defaultToken}
-                        soonToSupList={soonToSupList}
-                        supportedVault={supportedVault}
-                        hasPortalsError={hasPortalsError}
-                      />
-                      <WithdrawStart
-                        groupOfVaults={groupOfVaults}
-                        unstakeInputValue={unstakeInputValue}
-                        withdrawStart={withdrawStart}
-                        setWithdrawStart={setWithdrawStart}
-                        defaultToken={defaultToken}
-                        pickedToken={pickedTokenWith}
-                        setPickedToken={setPickedTokenWith}
-                        token={token}
-                        unstakeBalance={unstakeBalance}
-                        tokenSymbol={tokenSym}
-                        vaultPool={vaultPool}
-                        multipleAssets={multipleAssets}
-                        depositedValueUSD={depositedValueUSD}
-                        setRevertFromInfoAmount={setRevertFromInfoAmount}
-                        revertFromInfoAmount={revertFromInfoAmount}
-                        revertFromInfoUsdAmount={revertFromInfoUsdAmount}
-                        revertMinReceivedAmount={revertMinReceivedAmount}
-                        revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
-                        setUnstakeInputValue={setUnstakeInputValue}
-                        setRevertSuccess={setRevertSuccess}
-                      />
-                    </WithdrawSection>
+                    {isCLVault ? (
+                      <CLInteract data={clDataView} connected={connected} onRefresh={refreshCL} />
+                    ) : (
+                      <>
+                        <DepositSection $isshow={activeDepo}>
+                          <DepositBase
+                            setSelectToken={setSelectTokenDepo}
+                            deposit={depositStart}
+                            setDeposit={setDepositStart}
+                            balance={balanceDepo}
+                            pickedToken={pickedTokenDepo}
+                            defaultToken={defaultToken}
+                            inputAmount={inputAmountDepo}
+                            pricePerFullShare={pricePerFullShare}
+                            setInputAmount={setInputAmountDepo}
+                            token={token}
+                            supTokenList={supTokenList}
+                            switchMethod={handleToggle(setActiveDepo)}
+                            tokenSymbol={tokenSym}
+                            activeDepo={activeDepo}
+                            balanceList={balanceList}
+                            setFromInfoAmount={setFromInfoAmount}
+                            setFromInfoUsdAmount={setFromInfoUsdAmount}
+                            fromInfoUsdAmount={fromInfoUsdAmount}
+                            convertYearlyYieldUSD={convertYearlyYieldUSD}
+                            convertMonthlyYieldUSD={convertMonthlyYieldUSD}
+                            convertDailyYieldUSD={convertDailyYieldUSD}
+                            minReceiveAmountString={minReceiveAmountString}
+                            setMinReceiveAmountString={setMinReceiveAmountString}
+                            minReceiveUsdAmount={minReceiveUsdAmount}
+                            setMinReceiveUsdAmount={setMinReceiveUsdAmount}
+                            setConvertYearlyYieldUSD={setConvertYearlyYieldUSD}
+                            setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
+                            setConvertDailyYieldUSD={setConvertDailyYieldUSD}
+                            hasErrorOccurred={hasErrorOccurredConvert}
+                            setHasErrorOccurred={setHasErrorOccurredConvert}
+                            failureCount={failureCountConvert}
+                            setFailureCount={setFailureCountConvert}
+                            supportedVault={supportedVault}
+                            setSupportedVault={setSupportedVault}
+                          />
+                          <DepositSelectToken
+                            selectToken={selectTokenDepo}
+                            setSelectToken={setSelectTokenDepo}
+                            setPickedToken={setPickedTokenDepo}
+                            setBalance={setBalanceDepo}
+                            supTokenNoBalanceList={supTokenNoBalanceList}
+                            balanceList={balanceList}
+                            defaultToken={defaultToken}
+                            soonToSupList={soonToSupList}
+                            supportedVault={supportedVault}
+                            hasPortalsError={hasPortalsError}
+                            setFromTokenList={setFromTokenList}
+                          />
+                          <DepositStart
+                            pickedToken={pickedTokenDepo}
+                            deposit={depositStart}
+                            setDeposit={setDepositStart}
+                            defaultToken={defaultToken}
+                            inputAmount={inputAmountDepo}
+                            setInputAmount={setInputAmountDepo}
+                            token={token}
+                            tokenSymbol={tokenSym}
+                            vaultPool={vaultPool}
+                            multipleAssets={multipleAssets}
+                            fromInfoAmount={fromInfoAmount}
+                            fromInfoUsdAmount={fromInfoUsdAmount}
+                            minReceiveAmountString={minReceiveAmountString}
+                            minReceiveUsdAmount={minReceiveUsdAmount}
+                            setSelectToken={setSelectTokenDepo}
+                            setConvertSuccess={setConvertSuccess}
+                          />
+                        </DepositSection>
+                        <WithdrawSection $isshow={!activeDepo}>
+                          <WithdrawBase
+                            unstakeInputValue={unstakeInputValue}
+                            setUnstakeInputValue={setUnstakeInputValue}
+                            setSelectToken={setSelectTokenWith}
+                            setWithdrawStart={setWithdrawStart}
+                            defaultToken={defaultToken}
+                            pricePerFullShare={pricePerFullShare}
+                            pickedToken={pickedTokenWith}
+                            unstakeBalance={unstakeBalance}
+                            setUnstakeBalance={setUnstakeBalance}
+                            balanceList={balanceList}
+                            tokenSymbol={tokenSym}
+                            vaultPool={vaultPool}
+                            lpTokenBalance={lpTokenBalance}
+                            stakedAmount={stakedAmount}
+                            token={token}
+                            supTokenList={supTokenList}
+                            switchMethod={handleToggle(setActiveDepo)}
+                            setRevertFromInfoAmount={setRevertFromInfoAmount}
+                            revertFromInfoUsdAmount={revertFromInfoUsdAmount}
+                            setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
+                            setRevertMinReceivedAmount={setRevertMinReceivedAmount}
+                            revertMinReceivedAmount={revertMinReceivedAmount}
+                            revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
+                            setRevertMinReceivedUsdAmount={setRevertMinReceivedUsdAmount}
+                            hasErrorOccurred={hasErrorOccurredRevert}
+                            setHasErrorOccurred={setHasErrorOccurredRevert}
+                          />
+                          <WithdrawSelectToken
+                            selectToken={selectTokenWith}
+                            setSelectToken={setSelectTokenWith}
+                            setPickedToken={setPickedTokenWith}
+                            supTokenNoBalanceList={supTokenNoBalanceList}
+                            balanceList={balanceList}
+                            defaultToken={defaultToken}
+                            soonToSupList={soonToSupList}
+                            supportedVault={supportedVault}
+                            hasPortalsError={hasPortalsError}
+                          />
+                          <WithdrawStart
+                            groupOfVaults={groupOfVaults}
+                            unstakeInputValue={unstakeInputValue}
+                            withdrawStart={withdrawStart}
+                            setWithdrawStart={setWithdrawStart}
+                            defaultToken={defaultToken}
+                            pickedToken={pickedTokenWith}
+                            setPickedToken={setPickedTokenWith}
+                            token={token}
+                            unstakeBalance={unstakeBalance}
+                            tokenSymbol={tokenSym}
+                            vaultPool={vaultPool}
+                            multipleAssets={multipleAssets}
+                            depositedValueUSD={depositedValueUSD}
+                            setRevertFromInfoAmount={setRevertFromInfoAmount}
+                            revertFromInfoAmount={revertFromInfoAmount}
+                            revertFromInfoUsdAmount={revertFromInfoUsdAmount}
+                            revertMinReceivedAmount={revertMinReceivedAmount}
+                            revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
+                            setUnstakeInputValue={setUnstakeInputValue}
+                            setRevertSuccess={setRevertSuccess}
+                          />
+                        </WithdrawSection>
+                      </>
+                    )}
                   </HalfContent>
                   {isMobile ? (
                     <PerformanceChart
