@@ -29,6 +29,12 @@ import ReaderHyperevmMethods from './reader-hyperevm/methods'
 import IporVaultContract from './ipor-vault/contract.json'
 import IporVaultMethods from './ipor-vault/methods'
 
+import ClVaultContract from './cl-vault/contract.json'
+import ClVaultMethods from './cl-vault/methods'
+
+import ClWrapperContract from './cl-wrapper/contract.json'
+import ClWrapperMethods from './cl-wrapper/methods'
+
 import { CHAIN_IDS } from '../../../data/constants'
 
 const { tokens } = require('../../../data')
@@ -116,6 +122,18 @@ export default {
     contract: ReaderHyperevmContract,
     methods: ReaderHyperevmMethods,
     chain: CHAIN_IDS.HYPEREVM,
+  },
+
+  clVault: {
+    contract: ClVaultContract,
+    methods: ClVaultMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  clWrapper: {
+    contract: ClWrapperContract,
+    methods: ClWrapperMethods,
+    chain: CHAIN_IDS.BASE,
   },
 
   ...getTokensContracts(),

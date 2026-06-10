@@ -103,6 +103,83 @@ export const getLastHarvestInfo = async (address, chainId) => {
   return result
 }
 
+export const getCLVaultRebalances = async (vault, chainId, sample = 100) => {
+  const empty = {
+    lastRebalanceTs: null,
+    lastRebalanceLabel: '',
+    avgIntervalSec: null,
+    frequencyLabel: '',
+    count: 0,
+  }
+  if (!vault) return empty
+
+  const query = `
+    query getCLVaultRebalances($vault: String!, $first: Int!) {
+      vaultRebalances(
+        first: $first,
+        where: { vault: $vault },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        id
+        oldPosId
+        newPosId
+        oldLiquidity
+        newLiquidity
+        timestamp
+      }
+    }
+  `
+  const url = GRAPH_URLS[chainId]
+  const data = await executeGraphCall(url, query, {
+    vault: String(vault).toLowerCase(),
+    first: sample,
+  })
+  const rows = data?.vaultRebalances || []
+  if (rows.length === 0) return empty
+
+  const stamps = rows.map(r => Number(r.timestamp)).sort((a, b) => b - a)
+  const lastRebalanceTs = stamps[0]
+
+  const nowSec = Math.floor(Date.now() / 1000)
+  let diff = Math.max(0, nowSec - lastRebalanceTs)
+  const d = Math.floor(diff / 86400)
+  diff -= d * 86400
+  const h = Math.floor(diff / 3600)
+  diff -= h * 3600
+  const m = Math.floor(diff / 60)
+  const parts = [d ? `${d}d` : '', h ? `${h}h` : '', m ? `${m}m` : ''].filter(Boolean)
+  const lastRebalanceLabel = parts.length ? `${parts.join(' ')} ago` : 'just now'
+
+  // eslint-disable-next-line one-var
+  let avgIntervalSec = null,
+    frequencyLabel = ''
+  if (stamps.length >= 2) {
+    const span = stamps[0] - stamps[stamps.length - 1]
+    const gaps = stamps.length - 1
+    if (span > 0 && gaps > 0) {
+      avgIntervalSec = Math.round(span / gaps)
+      if (avgIntervalSec >= 86400) {
+        frequencyLabel = `~every ${(avgIntervalSec / 86400).toFixed(1)}d`
+      } else if (avgIntervalSec >= 3600) {
+        frequencyLabel = `~every ${(avgIntervalSec / 3600).toFixed(1)}h`
+      } else if (avgIntervalSec >= 60) {
+        frequencyLabel = `~every ${Math.round(avgIntervalSec / 60)}m`
+      } else {
+        frequencyLabel = `~every ${avgIntervalSec}s`
+      }
+    }
+  }
+
+  return {
+    lastRebalanceTs,
+    lastRebalanceLabel,
+    avgIntervalSec,
+    frequencyLabel,
+    count: rows.length,
+  }
+}
+
 export const getPublishDate = async () => {
   const allData = [],
     allFlags = []
