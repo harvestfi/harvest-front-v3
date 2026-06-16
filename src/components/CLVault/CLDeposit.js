@@ -5,7 +5,9 @@ import { PiQuestion } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
+import { getTokenPricesByAddresses } from '../../utilities/apiCalls'
 import { clDepositSingle, clPreviewDepositShares } from './clActions'
+import { resolveTokenUsdPrice } from './clData'
 import Button from '../Button'
 import {
   FieldTitle,
@@ -51,6 +53,16 @@ const fmtUsd = n => {
   return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
 }
 
+const AmountWithUsd = ({ amount, usd, decimals = 4, mutedColor }) => {
+  if (amount == null) return <b>~0.0000</b>
+  return (
+    <>
+      <b>~{fmt(amount, decimals)}</b>
+      {usd != null && usd > 0 && <InputUsd $muted={mutedColor}> ({fmtUsd(usd)})</InputUsd>}
+    </>
+  )
+}
+
 const HelpTip = ({ id, tip, darkMode, children }) => (
   <SettingLabel>
     {children}
@@ -85,9 +97,8 @@ const DepositModule = ({ data, connected, onRefresh }) => {
     linkColor,
   } = useThemeContext()
 
-  const { token0, token1, underlyingUsdPrice, sharePrice, walletBalances, apy, id } = data
+  const { token0, token1, price, underlyingUsdPrice, sharePrice, walletBalances, apy } = data
   const tokens = [token0, token1]
-  const fTokenName = id ? `f${id}` : 'shares'
 
   const perShareUsd =
     Number(underlyingUsdPrice) > 0 && Number(sharePrice) > 0
@@ -116,6 +127,34 @@ const DepositModule = ({ data, connected, onRefresh }) => {
     )
 
   const [estShares, setEstShares] = useState(null)
+  const [spotByAddress, setSpotByAddress] = useState({})
+
+  useEffect(() => {
+    const addresses = tokens.map(t => t.address).filter(Boolean)
+    if (addresses.length === 0) return undefined
+
+    let active = true
+    getTokenPricesByAddresses(addresses, 'base')
+      .then(prices => {
+        if (active) setSpotByAddress(prices)
+      })
+      .catch(() => {})
+
+    return () => {
+      active = false
+    }
+  }, [token0.address, token1.address])
+
+  const singleUsdPrice = useMemo(
+    () =>
+      resolveTokenUsdPrice(single, {
+        spotByAddress,
+        price,
+        tokens,
+        tokenIndex: singleIdx,
+      }),
+    [single, spotByAddress, price, tokens, singleIdx],
+  )
 
   useEffect(() => {
     const a = num(singleAmount)
@@ -134,31 +173,29 @@ const DepositModule = ({ data, connected, onRefresh }) => {
     }
   }, [singleAmount, singleIdx])
 
+  const depositValueUsd = useMemo(() => {
+    const a = num(singleAmount)
+    if (!a || !(singleUsdPrice > 0)) return null
+    return a * singleUsdPrice
+  }, [singleAmount, singleUsdPrice])
+
   const preview = useMemo(() => {
     const a = num(singleAmount)
     if (!a) return null
-    const tokenUsd = Number(single.priceUsd)
-    let shares = estShares,
-      usd = estShares != null && perShareUsd > 0 ? estShares * perShareUsd : null
-    if (usd == null && Number.isFinite(tokenUsd) && tokenUsd > 0) {
-      usd = a * tokenUsd
-      shares = perShareUsd > 0 ? usd / perShareUsd : null
+    let shares = estShares
+    if (shares == null && depositValueUsd != null && perShareUsd > 0) {
+      shares = depositValueUsd / perShareUsd
     }
     return {
       route: `CLWrapper(${single.symbol})`,
       shares,
-      valueUsd: usd,
+      valueUsd: depositValueUsd,
       valueToken: a,
       swapBps: 14,
     }
-  }, [singleAmount, singleIdx, estShares, perShareUsd, single])
+  }, [singleAmount, singleIdx, estShares, perShareUsd, depositValueUsd, single.symbol])
 
-  const inputUsd = useMemo(() => {
-    const a = num(singleAmount)
-    const p = Number(single.priceUsd)
-    if (!a || !Number.isFinite(p) || p <= 0) return null
-    return a * p
-  }, [singleAmount, single])
+  const inputUsd = depositValueUsd
 
   const hasInput = num(singleAmount) > 0
   const yearlyYield =
@@ -259,15 +296,33 @@ const DepositModule = ({ data, connected, onRefresh }) => {
       <PreviewBox $bg={previewBg}>
         <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
           <span>Expected shares</span>
-          <b>
-            {preview && preview.shares != null
-              ? `~ ${fmt(preview.shares, 4)} ${fTokenName}`
-              : '~ 0.0000'}
-          </b>
+          <span>
+            {preview && preview.shares != null ? (
+              <AmountWithUsd
+                amount={preview.shares}
+                usd={preview.valueUsd}
+                decimals={4}
+                mutedColor={fontColor3}
+              />
+            ) : (
+              <b>~0.0000</b>
+            )}
+          </span>
         </Row>
         <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
           <span>Value (in {single.symbol})</span>
-          <b>{preview ? `~ ${fmt(preview.valueToken, 4)}` : '~ 0.0000'}</b>
+          <span>
+            {preview ? (
+              <AmountWithUsd
+                amount={preview.valueToken}
+                usd={preview.valueUsd}
+                decimals={4}
+                mutedColor={fontColor3}
+              />
+            ) : (
+              <b>~0.0000</b>
+            )}
+          </span>
         </Row>
         <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
           <span>Internal swap cost</span>
@@ -321,9 +376,18 @@ const DepositModule = ({ data, connected, onRefresh }) => {
         >
           Est. Received
         </HelpTip>
-        <b style={{ color: fontColor1, fontWeight: 600 }}>
-          {preview && preview.shares != null ? `${fmt(preview.shares, 2)} ${fTokenName}` : 'n/a'}
-        </b>
+        <span style={{ color: fontColor1 }}>
+          {preview && preview.shares != null ? (
+            <AmountWithUsd
+              amount={preview.shares}
+              usd={preview.valueUsd}
+              decimals={2}
+              mutedColor={fontColor3}
+            />
+          ) : (
+            'n/a'
+          )}
+        </span>
       </SettingRow>
 
       <CheckboxContainer

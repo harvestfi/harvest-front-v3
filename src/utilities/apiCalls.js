@@ -1761,6 +1761,35 @@ export const getTokenPriceFromApi = async tokenID => {
   }
 }
 
+export const getTokenPricesByAddresses = async (addresses, platform = 'base') => {
+  const unique = [...new Set(addresses.map(a => String(a || '').toLowerCase()).filter(Boolean))]
+  if (unique.length === 0) return {}
+
+  try {
+    const response = await axios.get(`${GECKO_URL}simple/token_price/${platform}`, {
+      params: {
+        // eslint-disable-next-line camelcase
+        contract_addresses: unique.join(','),
+        // eslint-disable-next-line camelcase
+        vs_currencies: 'usd',
+      },
+      headers: {
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    })
+    const data = response.data || {}
+    const prices = {}
+    Object.entries(data).forEach(([addr, quote]) => {
+      const p = Number(quote?.usd)
+      if (p > 0) prices[addr.toLowerCase()] = p
+    })
+    return prices
+  } catch (err) {
+    console.log('Fetch token prices by address error: ', err)
+    return {}
+  }
+}
+
 export const fetchLeaderboardData = async () => {
   try {
     const response = await axios.get(LEADERBOARD_API_ENDPOINT)
