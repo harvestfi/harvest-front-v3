@@ -18,6 +18,26 @@ const num = (v, fallback = 0) => {
 
 export const isCLVault = token => Boolean(token && token.isCLVault)
 
+export const resolveTokenUsdPrice = (token, { spotByAddress, price, tokens, tokenIndex } = {}) => {
+  const direct = Number(token?.priceUsd)
+  if (Number.isFinite(direct) && direct > 0) return direct
+
+  const addr = String(token?.address || '').toLowerCase()
+  const spot = spotByAddress?.[addr]
+  if (Number.isFinite(spot) && spot > 0) return spot
+
+  if (!price?.current || !(price.current > 0) || !Array.isArray(tokens) || tokenIndex == null) {
+    return undefined
+  }
+
+  const other = tokens[1 - tokenIndex]
+  const otherUsd = resolveTokenUsdPrice(other, { spotByAddress })
+  if (!(otherUsd > 0)) return undefined
+
+  // Pool unit is token0/token1; current is token0 priced in token1.
+  return tokenIndex === 0 ? price.current * otherUsd : otherUsd / price.current
+}
+
 const tickToPrice = (tick, dec0, dec1) => Number(1.0001 ** tick) * 10 ** (dec0 - dec1)
 
 const FALLBACK_COLORS = ['#1652f0', '#627eea', '#f2a900', '#f0883e', '#26a17b', '#8247e5']

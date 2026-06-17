@@ -408,6 +408,8 @@ export const RoutingHint = styled.div`
 `
 
 export const InputUsd = styled.span`
+  flex-shrink: 0;
+  margin-left: auto;
   font-size: 14px;
   font-weight: 500;
   color: ${props => props.$muted};
