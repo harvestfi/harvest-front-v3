@@ -106,6 +106,7 @@ const ApexChart = ({
   isInactive,
   showRewardsTab = false,
   harvestEventCount = 0,
+  historyDataLoaded = true,
 }) => {
   const { fontColor, fontColor5, bgColorChart, darkMode, bgColorNew } = useThemeContext()
   const { connected } = useWallet()
@@ -114,7 +115,6 @@ const ApexChart = ({
   const [mainSeries, setMainSeries] = useState([])
   const [allMainSeries, setAllMainSeries] = useState([])
   const [isDataReady, setIsDataReady] = useState('false')
-  const [loading, setLoading] = useState(false)
   const [roundedDecimal, setRoundedDecimal] = useState(2)
   const [roundedDecimalUnderlying, setRoundedDecimalUnderlying] = useState(2)
   const [hourUnit, setHourUnit] = useState(false)
@@ -252,13 +252,13 @@ const ApexChart = ({
       } else if (lpTokenBalance === 0 && !token.isIPORVault && showRewardsTab) {
         setIsDataReady(loadComplete ? 'false' : 'loading')
       } else if (lpTokenBalance === '0' && totalValue !== 0 && dl === 0) {
-        setIsDataReady(loadComplete ? 'true' : 'loading')
+        setIsDataReady('loading')
       } else if ((lpTokenBalance === '0' || lpTokenBalance === 0) && totalValue === 0 && dl === 0) {
         setIsDataReady('false')
       } else if (lpTokenBalance === 0 && dl !== 0 && dl1 !== 0 && token.isIPORVault) {
         setIsDataReady('true')
       } else if (totalValue !== '0' && totalValue !== 0 && dl === 0) {
-        setIsDataReady(loadComplete ? 'true' : 'loading')
+        setIsDataReady('loading')
       } else if (dl !== 0 && dl1 !== 0) {
         setIsDataReady('true')
       }
@@ -540,9 +540,6 @@ const ApexChart = ({
     }
 
     init()
-
-    // Update loading state based on loadComplete
-    setLoading(!loadComplete)
   }, [
     connected,
     range,
@@ -567,12 +564,34 @@ const ApexChart = ({
     setEndPoint(value[1])
   }
 
-  // Show placeholder if we have less than 5 harvest events and data has finished loading
-  const showPlaceholder = harvestEventCount < 5 && !loading && isDataReady === 'true'
+  const hasPosition = totalValue !== '0' && totalValue !== 0
+  const chartSeriesReady = mainSeries.length > 0
+  const isCLVault = Boolean(token.isCLVault)
+  const isLoading =
+    connected &&
+    hasPosition &&
+    (isCLVault
+      ? !historyDataLoaded ||
+        !loadComplete ||
+        isDataReady === 'loading' ||
+        (harvestEventCount >= 5 && loadComplete && historyDataLoaded && !chartSeriesReady)
+      : !loadComplete ||
+        isDataReady === 'loading' ||
+        (harvestEventCount >= 5 && loadComplete && !chartSeriesReady && isDataReady === 'true'))
+  const showPlaceholder =
+    loadComplete &&
+    harvestEventCount < 5 &&
+    isDataReady === 'true' &&
+    !isLoading &&
+    (!isCLVault || historyDataLoaded)
 
   return (
     <>
-      {isDataReady === 'true' && !showPlaceholder ? (
+      {!isLoading &&
+      isDataReady === 'true' &&
+      loadComplete &&
+      harvestEventCount >= 5 &&
+      chartSeriesReady ? (
         <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
             <ComposedChart
@@ -731,6 +750,12 @@ const ApexChart = ({
             </>
           )}
         </ChartWrapper>
+      ) : isLoading ? (
+        <LoadingDiv>
+          <LoaderWrapper $height={onlyWidth > 1291 ? '346px' : '365px'}>
+            <ClipLoader size={30} margin={2} color={fontColor} />
+          </LoaderWrapper>
+        </LoadingDiv>
       ) : showPlaceholder ? (
         <ChartPlaceholder
           $height={
@@ -811,90 +836,79 @@ const ApexChart = ({
         </ChartPlaceholder>
       ) : (
         <LoadingDiv>
-          {isDataReady === 'loading' ? (
-            <LoaderWrapper $height={onlyWidth > 1291 ? '346px' : '365px'}>
-              <ClipLoader size={30} margin={2} color={fontColor} />
-            </LoaderWrapper>
-          ) : (
-            <>
-              {connected ? (
-                <NoData $fontcolor={fontColor}>
-                  No activity found for this wallet. Convert any token to start farming!
-                </NoData>
-              ) : (
-                <NoData $fontcolor={fontColor}>Connect wallet to see your balance chart</NoData>
-              )}
-              <FakeChartWrapper>
-                <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
-                  <ComposedChart
-                    data={fakeChartData}
-                    margin={{
-                      top: 20,
-                      right: 0,
-                      bottom: 0,
-                      left: 0,
-                    }}
-                  >
-                    <defs>
-                      <linearGradient id="colorUvPrice" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
-                        <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid
-                      strokeDasharray="0"
-                      strokeLinecap="butt"
-                      stroke="rgba(228, 228, 228, 0.2)"
-                      vertical={false}
-                    />
-                    <Line
-                      dataKey="y"
-                      type="monotone"
-                      unit="$"
-                      strokeLinecap="round"
-                      strokeWidth={2}
-                      stroke="#00D26B"
-                      dot={false}
-                      legendType="none"
-                      yAxisId="left"
-                    />
-                    <Line
-                      dataKey="z"
-                      type="monotone"
-                      strokeLinecap="round"
-                      strokeWidth={2}
-                      stroke="#8884d8"
-                      dot={false}
-                      legendType="none"
-                      yAxisId="right"
-                    />
-                    <XAxis
-                      dataKey="x"
-                      tickLine={false}
-                      tickCount={5}
-                      tick={renderCustomXAxisTick}
-                    />
-                    <YAxis
-                      dataKey="y"
-                      tickCount={5}
-                      stroke="#00D26B"
-                      yAxisId="left"
-                      orientation="left"
-                      mirror
-                    />
-                    <YAxis
-                      dataKey="z"
-                      tickCount={5}
-                      yAxisId="right"
-                      orientation="right"
-                      stroke="#8884d8"
-                      mirror
-                    />
-                  </ComposedChart>
-                </ResponsiveContainer>
-              </FakeChartWrapper>
-            </>
-          )}
+          <>
+            {connected ? (
+              <NoData $fontcolor={fontColor}>
+                No activity found for this wallet. Convert any token to start farming!
+              </NoData>
+            ) : (
+              <NoData $fontcolor={fontColor}>Connect wallet to see your balance chart</NoData>
+            )}
+            <FakeChartWrapper>
+              <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>
+                <ComposedChart
+                  data={fakeChartData}
+                  margin={{
+                    top: 20,
+                    right: 0,
+                    bottom: 0,
+                    left: 0,
+                  }}
+                >
+                  <defs>
+                    <linearGradient id="colorUvPrice" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#00D26B" stopOpacity={0.1} />
+                      <stop offset="95%" stopColor="#FFFFFF" stopOpacity={0.1} />
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid
+                    strokeDasharray="0"
+                    strokeLinecap="butt"
+                    stroke="rgba(228, 228, 228, 0.2)"
+                    vertical={false}
+                  />
+                  <Line
+                    dataKey="y"
+                    type="monotone"
+                    unit="$"
+                    strokeLinecap="round"
+                    strokeWidth={2}
+                    stroke="#00D26B"
+                    dot={false}
+                    legendType="none"
+                    yAxisId="left"
+                  />
+                  <Line
+                    dataKey="z"
+                    type="monotone"
+                    strokeLinecap="round"
+                    strokeWidth={2}
+                    stroke="#8884d8"
+                    dot={false}
+                    legendType="none"
+                    yAxisId="right"
+                  />
+                  <XAxis dataKey="x" tickLine={false} tickCount={5} tick={renderCustomXAxisTick} />
+                  <YAxis
+                    dataKey="y"
+                    tickCount={5}
+                    stroke="#00D26B"
+                    yAxisId="left"
+                    orientation="left"
+                    mirror
+                  />
+                  <YAxis
+                    dataKey="z"
+                    tickCount={5}
+                    yAxisId="right"
+                    orientation="right"
+                    stroke="#8884d8"
+                    mirror
+                  />
+                </ComposedChart>
+              </ResponsiveContainer>
+            </FakeChartWrapper>
+          </>
         </LoadingDiv>
       )}
     </>
