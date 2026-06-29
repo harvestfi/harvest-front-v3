@@ -215,6 +215,31 @@ export const fetchLoopChainData = async ({
     liquidationLtv = Math.max(borrowTarget + 0.02, liquidationLtv)
   }
 
+  const supplyRate = new BigNumber(
+    supplyReserve.currentLiquidityRate?.toString() || supplyReserve[2]?.toString() || '0',
+  )
+    .div(1e27)
+    .times(100)
+    .toNumber()
+  const borrowRate = new BigNumber(
+    borrowReserve.currentVariableBorrowRate?.toString() ||
+      borrowReserve[4]?.toString() ||
+      '0',
+  )
+    .div(1e27)
+    .times(100)
+    .toNumber()
+
+  let suppliedMul = 1
+  let borrowedMul = 0
+  if (netValue.gt(0)) {
+    suppliedMul = collateralValue.div(netValue).toNumber()
+    borrowedMul = debtValue.div(netValue).toNumber()
+  } else if (leverage > 1) {
+    suppliedMul = leverage
+    borrowedMul = leverage - 1
+  }
+
   return {
     collateral: collateral.toNumber(),
     debt: debtInBorrow.toNumber(),
@@ -234,6 +259,10 @@ export const fetchLoopChainData = async ({
     profitSharePct,
     supplyPrice: supplyPrice.toNumber(),
     borrowPriceInSupply: borrowPriceInSupply.toNumber(),
+    supplyRate,
+    borrowRate,
+    suppliedMul,
+    borrowedMul,
     chainId: CHAIN_IDS.BASE,
   }
 }

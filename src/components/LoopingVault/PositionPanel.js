@@ -10,7 +10,7 @@ import {
   BandEdges,
 } from '../CLVault/style'
 import HelpTip from './HelpTip'
-import { LTVGaugeWrap, LTVGaugeTrack, LTVGaugeWarn, LTVTick } from './style'
+import { LTVGaugeWrap, LTVGaugeTrack, LTVGaugeWarn, LTVTick, TagRow, TagBadge } from './style'
 
 const fmtAmt = (n, d = 2) => {
   if (!n || n === 0) return '0'
@@ -70,6 +70,16 @@ const PositionPanel = ({ data }) => {
       </PanelHead>
 
       <PanelSection>
+        <TagRow>
+          <TagBadge>E-mode</TagBadge>
+          <TagBadge>Fold</TagBadge>
+          {pos.leverage > 0 && (
+            <TagBadge $bg="rgba(22, 82, 240, 0.1)" $color="#1652f0">
+              {pos.leverage.toFixed(1)}× leverage
+            </TagBadge>
+          )}
+        </TagRow>
+
         <RangeDesc $muted={fontColor3}>
           Looped collateral on {protocol}. Net equity grows from the carry between staking yield and
           borrow APR.

@@ -13,15 +13,32 @@ import {
   Row,
   SettingRow,
   SettingLabel,
-  PreviewBox,
+  SlipOption,
+  SlipPills,
   RoutingHint,
   InputWithChip,
   TokenChip,
   TokenMonogram,
   TokenIcon,
+  InputUsd,
   CTAWrap,
 } from '../CLVault/style'
+import {
+  SectionLabel,
+  OutputCard,
+  OutputTitle,
+  OutputValue,
+  OutputSub,
+  DetailsBox,
+  DetailsTitle,
+} from './style'
+import { fmtBps } from './loopHelpers'
+import {
+  projectLtvAfterWithdraw,
+  computeExitCostBps,
+} from './loopLtvSim'
 
+const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
 const num = v => {
   const n = parseFloat(v)
   return Number.isFinite(n) && n > 0 ? n : 0
@@ -29,6 +46,11 @@ const num = v => {
 const fmt = (n, d = 4) => {
   if (!n || n === 0) return '0'
   return n.toLocaleString(undefined, { maximumFractionDigits: d })
+}
+const fmtUsd = n => {
+  if (!n || n === 0) return '$0'
+  if (n >= 1000) return `$${Math.round(n).toLocaleString()}`
+  return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
 }
 
 const HelpTip = ({ id, tip, darkMode, children }) => (
@@ -64,18 +86,33 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     bgColorButton,
   } = useThemeContext()
 
-  const { underlying, vaultAddress, userPosition, id, tvlUsd, position } = data
+  const {
+    underlying,
+    vaultAddress,
+    userPosition,
+    id,
+    tvlUsd,
+    position,
+    sharePrice,
+    underlyingUsdPrice,
+    fees = {},
+  } = data
   const fTokenName = id ? `f${id}` : 'shares'
   const availableShares = userPosition?.vaultShares || 0
+  const perShareUsd =
+    Number(underlyingUsdPrice) > 0 && Number(sharePrice) > 0
+      ? Number(underlyingUsdPrice) * Number(sharePrice)
+      : 0
 
   const [shares, setShares] = useState('')
+  const [slippage, setSlippage] = useState(0.5)
   const [pending, setPending] = useState(false)
   const [estUnderlying, setEstUnderlying] = useState(null)
-  const [costExpanded, setCostExpanded] = useState(false)
 
   const inputBg = darkMode ? bgColorButton : '#F0F4FF'
   const pillBg = darkMode ? bgColorButton : '#fff'
-  const previewBg = darkMode ? bgColorButton : '#F0F4FF'
+  const cardBg = darkMode ? bgColorButton : '#F0F4FF'
+  const slipInactiveBg = darkMode ? bgColorButton : '#F0F4FF'
 
   const tokenIcon = tk =>
     tk.logo ? (
@@ -106,8 +143,35 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
   const preview = useMemo(() => {
     const s = num(shares)
     if (!s) return null
-    return { shares: s, underlying: estUnderlying }
-  }, [shares, estUnderlying])
+    const sharesUsd = perShareUsd > 0 ? s * perShareUsd : null
+    return { shares: s, underlying: estUnderlying, sharesUsd }
+  }, [shares, estUnderlying, perShareUsd])
+
+  const exitCostBps = useMemo(() => {
+    if (!preview || preview.underlying == null) return fees.exitCostBps30d
+    const sharesValue =
+      preview.sharesUsd != null && preview.sharesUsd > 0
+        ? preview.sharesUsd / (Number(underlyingUsdPrice) || 1)
+        : preview.shares * (sharePrice || 1)
+    const live = computeExitCostBps(sharesValue, preview.underlying)
+    return live ?? fees.exitCostBps30d
+  }, [preview, fees.exitCostBps30d, underlyingUsdPrice, sharePrice])
+
+  const exitCostToken = useMemo(() => {
+    if (!preview || preview.underlying == null || exitCostBps == null) return null
+    return preview.underlying * (exitCostBps / 10000)
+  }, [preview, exitCostBps])
+
+  const projectedLtv = useMemo(() => {
+    if (!position || !preview?.underlying) return null
+    return projectLtvAfterWithdraw(position, preview.underlying, exitCostBps || 0)
+  }, [position, preview, exitCostBps])
+
+  const inputUsd = useMemo(() => {
+    const s = num(shares)
+    if (!s || !(perShareUsd > 0)) return null
+    return s * perShareUsd
+  }, [shares, perShareUsd])
 
   const withdrawFraction =
     num(shares) > 0 && availableShares > 0 ? num(shares) / availableShares : 0
@@ -115,6 +179,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
   const largeWithdraw = withdrawFraction > 0.25 || tvlFraction > 0.1
 
   const hasInput = num(shares) > 0 && num(shares) <= availableShares
+  const hasPreview = num(shares) > 0
 
   const handleWithdraw = async () => {
     if (!connected || !hasInput || pending) return
@@ -132,10 +197,19 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     }
   }
 
+  const ctaLabel = () => {
+    if (!connected) return 'Connect Wallet to Withdraw'
+    if (pending) return 'Confirming...'
+    if (!hasInput) {
+      return num(shares) > availableShares ? 'Insufficient shares' : 'Enter an amount'
+    }
+    return 'Revert'
+  }
+
   return (
     <div>
       <RoutingHint $muted={fontColor3} style={{ marginBottom: 12 }}>
-        Revert shares back to {underlying.symbol}. The vault unwinds leverage before sending funds.
+        Single-asset withdrawal. The vault unwinds the loop and returns {underlying.symbol}.
       </RoutingHint>
 
       <div
@@ -147,7 +221,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
         }}
       >
         <FieldTitle $fontcolor={fontColor2} style={{ margin: 0 }}>
-          Shares {fTokenName}
+          Shares to withdraw
         </FieldTitle>
         <BalanceInfo
           $fontcolor={fontColor}
@@ -170,6 +244,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
           value={shares}
           onChange={e => setShares(e.target.value)}
         />
+        {inputUsd != null && <InputUsd $muted={fontColor3}>{fmtUsd(inputUsd)}</InputUsd>}
         <TokenChip $bg={pillBg} $border={inputBorderColor} $fontcolor={fontColor1}>
           {fTokenName}
         </TokenChip>
@@ -192,56 +267,83 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
         </div>
       )}
 
-      <PreviewBox $bg={previewBg}>
-        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-          <span>{underlying.symbol} received</span>
-          <b>
-            {preview && preview.underlying != null
-              ? `~ ${fmt(preview.underlying, 4)} ${underlying.symbol}`
-              : 'n/a'}
-          </b>
-        </Row>
-        <Row
-          $muted={fontColor3}
-          $fontcolor={fontColor1}
-          $pad="4px 0"
-          style={{ cursor: 'pointer' }}
-          onClick={() => setCostExpanded(v => !v)}
-        >
-          <span>Cost breakdown {costExpanded ? '▾' : '▸'}</span>
-          <b>~ n/a bps</b>
-        </Row>
-        {costExpanded && (
-          <Row
-            $muted={fontColor3}
-            $fontcolor={fontColor1}
-            $pad="4px 0 4px 12px"
-            style={{ fontSize: 12 }}
-          >
-            <span>Unwind + swap overhead (median from on-chain interactions)</span>
-          </Row>
-        )}
-        {position && (
-          <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-            <span>Vault LTV after withdraw</span>
-            <b>~ {(position.ltv * 100).toFixed(1)}%</b>
-          </Row>
-        )}
-      </PreviewBox>
+      {hasPreview && (
+        <>
+          <SectionLabel $fontcolor={fontColor2}>Receive</SectionLabel>
+          <OutputCard $bg={cardBg} style={{ marginBottom: 12 }}>
+            <OutputValue $fontcolor={fontColor1}>
+              {preview && preview.underlying != null
+                ? `~ ${fmt(preview.underlying, 4)}`
+                : 'n/a'}
+            </OutputValue>
+            {preview?.underlying != null && underlyingUsdPrice > 0 && (
+              <OutputSub $muted={fontColor3}>
+                {fmtUsd(preview.underlying * Number(underlyingUsdPrice))}
+              </OutputSub>
+            )}
+            <OutputSub $muted={fontColor3}>
+              <TokenChip
+                $bg={pillBg}
+                $border={inputBorderColor}
+                $fontcolor={fontColor1}
+                style={{ display: 'inline-flex', marginTop: 4 }}
+              >
+                {tokenIcon(underlying)}
+                {underlying.symbol}
+              </TokenChip>
+            </OutputSub>
+          </OutputCard>
+
+          <DetailsBox $bg={cardBg}>
+            <DetailsTitle $muted={fontColor3}>Details</DetailsTitle>
+            <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+              <span>Exit cost (median 30d)</span>
+              <b>
+                {fmtBps(exitCostBps)}
+                {exitCostToken != null && (
+                  <span style={{ fontWeight: 500 }}>
+                    {' '}
+                    (~ {fmt(exitCostToken, 4)} {underlying.symbol})
+                  </span>
+                )}
+              </b>
+            </Row>
+            {position && projectedLtv != null && (
+              <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+                <span>Vault LTV after your withdraw</span>
+                <b>
+                  {(projectedLtv * 100).toFixed(2)}%{' '}
+                  <span style={{ fontWeight: 500 }}>(was {(position.ltv * 100).toFixed(2)}%)</span>
+                </b>
+              </Row>
+            )}
+          </DetailsBox>
+        </>
+      )}
 
       <SettingRow $muted={fontColor3}>
         <HelpTip
-          id="loop-withdraw-out"
+          id="loop-withdraw-slippage"
           darkMode={darkMode}
-          tip="Estimated underlying received after unwinding leverage."
+          tip="Maximum price movement allowed during the unwind and swap."
         >
-          Est. {underlying.symbol} out
+          Max slippage
         </HelpTip>
-        <b style={{ color: fontColor1, fontWeight: 600 }}>
-          {preview && preview.underlying != null
-            ? `${fmt(preview.underlying, 4)} ${underlying.symbol}`
-            : 'n/a'}
-        </b>
+        <SlipPills>
+          {SLIPPAGE_OPTIONS.map(s => (
+            <SlipOption
+              key={s}
+              $active={slippage === s}
+              $accent={btnColor}
+              $border={inputBorderColor}
+              $fontcolor={fontColor1}
+              $inactivebg={slipInactiveBg}
+              onClick={() => setSlippage(s)}
+            >
+              {s}%
+            </SlipOption>
+          ))}
+        </SlipPills>
       </SettingRow>
 
       <CTAWrap $disabled={!connected || !hasInput || pending}>
@@ -255,15 +357,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
           disabled={!connected || !hasInput || pending}
           onClick={handleWithdraw}
         >
-          {!connected
-            ? 'Connect Wallet to Get Started'
-            : pending
-              ? 'Confirming...'
-              : !hasInput
-                ? num(shares) > availableShares
-                  ? 'Insufficient shares'
-                  : 'Enter an amount'
-                : 'Revert'}
+          {ctaLabel()}
         </Button>
       </CTAWrap>
     </div>

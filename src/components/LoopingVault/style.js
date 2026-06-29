@@ -216,3 +216,108 @@ export const MetricValue = styled.div`
     line-height: 22px;
   }
 `
+
+export const TagRow = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 14px;
+`
+
+export const TagBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: ${props => props.$bg || 'rgba(93, 207, 70, 0.12)'};
+  color: ${props => props.$color || '#2f9e2f'};
+`
+
+export const FlowDiagram = styled.div`
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin: 12px 0 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: ${props => props.$muted};
+
+  span.node {
+    padding: 6px 10px;
+    border-radius: 8px;
+    background: ${props => props.$nodebg || '#f0f4ff'};
+    color: ${props => props.$fontcolor};
+  }
+
+  span.arrow {
+    opacity: 0.6;
+  }
+`
+
+export const SectionLabel = styled.div`
+  font-size: 13px;
+  font-weight: 600;
+  color: ${props => props.$fontcolor};
+  margin: 16px 0 8px;
+`
+
+export const OutputGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  @media screen and (max-width: 480px) {
+    grid-template-columns: 1fr;
+  }
+`
+
+export const OutputCard = styled.div`
+  padding: 12px;
+  border-radius: 10px;
+  background: ${props => props.$bg};
+`
+
+export const OutputTitle = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  color: ${props => props.$muted};
+  margin-bottom: 6px;
+`
+
+export const OutputValue = styled.div`
+  font-size: 18px;
+  font-weight: 600;
+  color: ${props => props.$fontcolor};
+  line-height: 1.2;
+`
+
+export const OutputSub = styled.div`
+  font-size: 12px;
+  font-weight: 500;
+  color: ${props => props.$muted};
+  margin-top: 4px;
+`
+
+export const DetailsBox = styled.div`
+  margin-top: 12px;
+  padding: 12px 14px;
+  border-radius: 10px;
+  background: ${props => props.$bg};
+`
+
+export const DetailsTitle = styled.div`
+  font-size: 12px;
+  font-weight: 600;
+  color: ${props => props.$muted};
+  margin-bottom: 8px;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+`
+

@@ -48,7 +48,10 @@ import {
   LoopInteract,
   LoopDetailsMain,
   LoopMetricsStrip,
+  LoopFeesPanel,
+  LoopApyBreakdown,
   buildLoopData,
+  enrichLoopToken,
   fetchLoopChainData,
   fetchLoopWalletBalance,
   fetchLoopPosition,
@@ -107,6 +110,7 @@ import {
   initBalanceAndDetailData,
   getIPORLastHarvestInfo,
   getCLVaultRebalances,
+  getLoopVaultInteractionCosts,
 } from '../../utilities/apiCalls'
 import {
   BackBtnRect,
@@ -381,10 +385,13 @@ const AdvancedFarm = () => {
   const fTokenName = token.isIPORVault ? tokenSym : `f${tokenSym}`
 
   const isCLVault = Boolean(token.isCLVault)
-  const isLoopingVault = Boolean(token.isLoopingVault)
+  const loopToken = useMemo(() => enrichLoopToken(token, id), [token, id])
+  const isLoopingVault = Boolean(loopToken.isLoopingVault)
   const [clChainData, setClChainData] = useState(null)
   const [clRebalances, setClRebalances] = useState(null)
   const [loopChainData, setLoopChainData] = useState(null)
+  const [loopInteractionCosts, setLoopInteractionCosts] = useState(null)
+  const [loopRebalances, setLoopRebalances] = useState(null)
 
   useEffect(() => {
     let active = true
@@ -407,22 +414,39 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     let active = true
-    if (isLoopingVault && token.strategyAddress && token.loopConfig) {
+    if (isLoopingVault && loopToken.strategyAddress && loopToken.loopConfig) {
       fetchLoopChainData({
-        strategyAddress: token.strategyAddress,
-        supplyAsset: token.loopConfig.supplyAsset,
-        borrowAsset: token.loopConfig.borrowAsset,
-        aavePool: token.loopConfig.aavePool,
+        strategyAddress: loopToken.strategyAddress,
+        supplyAsset: loopToken.loopConfig.supplyAsset,
+        borrowAsset: loopToken.loopConfig.borrowAsset,
+        aavePool: loopToken.loopConfig.aavePool,
       })
         .then(d => {
           if (active) setLoopChainData(d)
+        })
+        .catch(() => {})
+      getLoopVaultInteractionCosts(loopToken.vaultAddress, loopToken.chain || token.chain)
+        .then(costs => {
+          if (active) setLoopInteractionCosts(costs)
+        })
+        .catch(() => {})
+      getCLVaultRebalances(loopToken.vaultAddress, loopToken.chain || token.chain)
+        .then(r => {
+          if (active) setLoopRebalances(r)
         })
         .catch(() => {})
     }
     return () => {
       active = false
     }
-  }, [isLoopingVault, token.strategyAddress, token.loopConfig])
+  }, [
+    isLoopingVault,
+    loopToken.strategyAddress,
+    loopToken.loopConfig,
+    loopToken.vaultAddress,
+    loopToken.chain,
+    token.chain,
+  ])
 
   const clData = useMemo(
     () => (isCLVault ? buildCLData(token, id, clChainData, clRebalances) : null),
@@ -506,14 +530,23 @@ const AdvancedFarm = () => {
   )
 
   const loopData = useMemo(
-    () => (isLoopingVault ? buildLoopData(token, id, loopChainData) : null),
+    () =>
+      isLoopingVault
+        ? buildLoopData(loopToken, id, loopChainData, {
+            interactionCosts: loopInteractionCosts,
+            lastRebalanceLabel: loopRebalances?.lastRebalanceLabel || '',
+          })
+        : null,
     [
       isLoopingVault,
+      loopToken,
       id,
       loopChainData,
-      token.estimatedApy,
-      token.totalValueLocked,
-      token.pricePerFullShare,
+      loopInteractionCosts,
+      loopRebalances,
+      loopToken.estimatedApy,
+      loopToken.totalValueLocked,
+      loopToken.pricePerFullShare,
     ],
   )
 
@@ -521,43 +554,45 @@ const AdvancedFarm = () => {
   const [loopUserPosition, setLoopUserPosition] = useState({ vaultShares: 0, usdValue: 0 })
 
   const refreshLoop = useCallback(async () => {
-    if (!isLoopingVault || !token.strategyAddress || !token.loopConfig) return
+    if (!isLoopingVault || !loopToken.strategyAddress || !loopToken.loopConfig) return
     const chain = await fetchLoopChainData({
-      strategyAddress: token.strategyAddress,
-      supplyAsset: token.loopConfig.supplyAsset,
-      borrowAsset: token.loopConfig.borrowAsset,
-      aavePool: token.loopConfig.aavePool,
+      strategyAddress: loopToken.strategyAddress,
+      supplyAsset: loopToken.loopConfig.supplyAsset,
+      borrowAsset: loopToken.loopConfig.borrowAsset,
+      aavePool: loopToken.loopConfig.aavePool,
     }).catch(() => null)
     if (chain) setLoopChainData(chain)
-    if (account && token.vaultAddress) {
+    if (account && loopToken.vaultAddress) {
       const [balance, position] = await Promise.all([
-        fetchLoopWalletBalance(account, token.tokenAddress, Number(token.decimals) || 18).catch(
-          () => 0,
-        ),
-        fetchLoopPosition({
-          vaultAddress: token.vaultAddress,
+        fetchLoopWalletBalance(
           account,
-          usdPrice: token.usdPrice,
+          loopToken.tokenAddress,
+          Number(loopToken.decimals) || 18,
+        ).catch(() => 0),
+        fetchLoopPosition({
+          vaultAddress: loopToken.vaultAddress,
+          account,
+          usdPrice: loopToken.usdPrice,
           pricePerShare: loopData?.sharePrice,
         }).catch(() => null),
       ])
       setLoopWalletBalance(balance)
       if (position) setLoopUserPosition(position)
     }
-  }, [isLoopingVault, token, account, loopData?.sharePrice])
+  }, [isLoopingVault, loopToken, account, loopData?.sharePrice])
 
   useEffect(() => {
     let active = true
-    if (isLoopingVault && account && token.vaultAddress) {
-      fetchLoopWalletBalance(account, token.tokenAddress, Number(token.decimals) || 18)
+    if (isLoopingVault && account && loopToken.vaultAddress) {
+      fetchLoopWalletBalance(account, loopToken.tokenAddress, Number(loopToken.decimals) || 18)
         .then(b => {
           if (active) setLoopWalletBalance(b)
         })
         .catch(() => {})
       fetchLoopPosition({
-        vaultAddress: token.vaultAddress,
+        vaultAddress: loopToken.vaultAddress,
         account,
-        usdPrice: token.usdPrice,
+        usdPrice: loopToken.usdPrice,
         pricePerShare: loopData?.sharePrice,
       })
         .then(p => {
@@ -571,9 +606,9 @@ const AdvancedFarm = () => {
   }, [
     isLoopingVault,
     account,
-    token.vaultAddress,
-    token.tokenAddress,
-    token.usdPrice,
+    loopToken.vaultAddress,
+    loopToken.tokenAddress,
+    loopToken.usdPrice,
     loopData?.sharePrice,
   ])
 
@@ -1551,7 +1586,12 @@ const AdvancedFarm = () => {
     return lev > 0 ? `${lev.toFixed(1)}x` : '—'
   }
 
-  const showLastRebalance = () => (lastHarvest !== '' ? `${lastHarvest} ago` : '—')
+  const showLastRebalance = () => {
+    if (isLoopingVault && loopRebalances?.lastRebalanceLabel) {
+      return loopRebalances.lastRebalanceLabel
+    }
+    return lastHarvest !== '' ? `${lastHarvest} ago` : '—'
+  }
 
   const loopMetricItems = [
     { title: 'Live APY', value: showAPY() },
@@ -1694,6 +1734,14 @@ const AdvancedFarm = () => {
                             </Tooltip>
                           </MorphoBadge>
                         </BadgeRow>
+                      ) : isLoopingVault ? (
+                        loopDataView?.type ? (
+                          <span>
+                            {loopDataView.type} - {loopDataView.protocol}
+                          </span>
+                        ) : (
+                          token.platform && token.platform[0]
+                        )
                       ) : (
                         token.platform && token.platform[0]
                       )}
@@ -1801,6 +1849,14 @@ const AdvancedFarm = () => {
                           </Tooltip>
                         </MorphoBadge>
                       </BadgeRow>
+                    ) : isLoopingVault ? (
+                      loopDataView?.type ? (
+                        <span>
+                          {loopDataView.type} - {loopDataView.protocol}
+                        </span>
+                      ) : (
+                        token.platform && token.platform[0]
+                      )
                     ) : (
                       token.platform && token.platform[0]
                     )}
@@ -3206,7 +3262,14 @@ const AdvancedFarm = () => {
                           </FlexDiv>
                         ))}
                   </LastHarvestInfo>
-                  {
+                  {isLoopingVault && loopDataView ? (
+                    <LoopApyBreakdown
+                      data={loopDataView}
+                      isMobile={isMobile}
+                      showTip={showTip}
+                      onCloseTip={() => setShowTip(false)}
+                    />
+                  ) : (
                     <MyBalance
                       $marginbottom={isMobile ? '20px' : '25px'}
                       $backcolor={bgColorNew}
@@ -3261,8 +3324,10 @@ const AdvancedFarm = () => {
                         </NewLabel>
                       </Tip>
                     </MyBalance>
-                  }
-                  {!isLoopingVault && (
+                  )}
+                  {isLoopingVault && loopDataView ? (
+                    <LoopFeesPanel data={loopDataView} isMobile={isMobile} />
+                  ) : (
                     <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
                       <NewLabel
                         $size={isMobile ? '12px' : '14px'}

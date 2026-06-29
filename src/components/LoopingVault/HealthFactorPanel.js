@@ -13,7 +13,7 @@ import {
   BandEdges,
 } from '../CLVault/style'
 import HelpTip from './HelpTip'
-import { HFGaugeWrap, HFGaugeTrack, HFGaugeDanger, HFTick } from './style'
+import { HFGaugeWrap, HFGaugeTrack, HFGaugeDanger, HFTick, HFFooter } from './style'
 
 const LIQUIDATION_HF = 1.0
 const GAUGE_MAX_HF = 1.2
@@ -32,7 +32,7 @@ const hfToPos = (hf, min = LIQUIDATION_HF, max = GAUGE_MAX_HF) => {
 
 const HealthFactorPanel = ({ data }) => {
   const { darkMode, bgColorNew, borderColorBox, fontColor1, fontColor3 } = useThemeContext()
-  const { position } = data
+  const { position, lastRebalance } = data
   const pos = position
 
   if (!pos) {
@@ -152,6 +152,9 @@ const HealthFactorPanel = ({ data }) => {
           </HelpTip>
           <b>{forcedDeleverage != null ? `< ${fmtHf(forcedDeleverage)}` : '—'}</b>
         </Row>
+        {lastRebalance && lastRebalance !== '—' && (
+          <HFFooter $muted={fontColor3}>Last rebalance: {lastRebalance}.</HFFooter>
+        )}
       </PanelSection>
     </Panel>
   )

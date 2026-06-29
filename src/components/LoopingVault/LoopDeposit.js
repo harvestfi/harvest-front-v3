@@ -19,7 +19,6 @@ import {
   SettingRow,
   SettingLabel,
   SlipPills,
-  PreviewBox,
   RoutingHint,
   InputUsd,
   CheckboxContainer,
@@ -27,6 +26,21 @@ import {
   CheckboxLabel,
   CTAWrap,
 } from '../CLVault/style'
+import {
+  SectionLabel,
+  OutputGrid,
+  OutputCard,
+  OutputTitle,
+  OutputValue,
+  OutputSub,
+  DetailsBox,
+  DetailsTitle,
+} from './style'
+import { fmtBps } from './loopHelpers'
+import {
+  projectLtvAfterDeposit,
+  computeEntryCostBps,
+} from './loopLtvSim'
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
 const num = v => {
@@ -39,6 +53,7 @@ const fmt = (n, d = 4) => {
 }
 const fmtUsd = n => {
   if (!n || n === 0) return '$0'
+  if (n >= 1000) return `$${Math.round(n).toLocaleString()}`
   return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
 }
 
@@ -85,6 +100,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     sharePrice,
     underlyingUsdPrice,
     position,
+    fees = {},
   } = data
   const fTokenName = id ? `f${id}` : 'shares'
   const perShareUsd =
@@ -97,11 +113,10 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   const [checked, setChecked] = useState(false)
   const [pending, setPending] = useState(false)
   const [estShares, setEstShares] = useState(null)
-  const [costExpanded, setCostExpanded] = useState(false)
 
   const inputBg = darkMode ? bgColorButton : '#F0F4FF'
   const pillBg = darkMode ? bgColorButton : '#fff'
-  const previewBg = darkMode ? bgColorButton : '#F0F4FF'
+  const cardBg = darkMode ? bgColorButton : '#F0F4FF'
   const slipInactiveBg = darkMode ? bgColorButton : '#F0F4FF'
 
   const tokenIcon = tk =>
@@ -144,8 +159,27 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
       usd = a * tokenUsd
       shares = perShareUsd > 0 ? usd / perShareUsd : null
     }
-    return { shares, valueUsd: usd, valueToken: a }
-  }, [amount, estShares, perShareUsd, underlying])
+    const valueToken =
+      shares != null && sharePrice > 0 ? shares * sharePrice : a
+    return { shares, valueUsd: usd, valueToken, inputAmount: a }
+  }, [amount, estShares, perShareUsd, underlying, sharePrice])
+
+  const entryCostBps = useMemo(() => {
+    if (!preview) return fees.entryCostBps30d
+    const live = computeEntryCostBps(preview.inputAmount, preview.valueToken)
+    return live ?? fees.entryCostBps30d
+  }, [preview, fees.entryCostBps30d])
+
+  const wethAfterCost = useMemo(() => {
+    if (!preview) return null
+    const cost = (entryCostBps || 0) / 10000
+    return preview.inputAmount * (1 - cost)
+  }, [preview, entryCostBps])
+
+  const projectedLtv = useMemo(() => {
+    if (!position || !preview) return null
+    return projectLtvAfterDeposit(position, preview.inputAmount, entryCostBps || 0)
+  }, [position, preview, entryCostBps])
 
   const inputUsd = useMemo(() => {
     const a = num(amount)
@@ -155,7 +189,9 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   }, [amount, underlying.priceUsd])
 
   const hasInput = num(amount) > 0
-  const yearlyYield =
+  const yearlyYieldToken =
+    preview && preview.valueToken != null ? preview.valueToken * (apy.total / 100) : null
+  const yearlyYieldUsd =
     preview && preview.valueUsd != null ? preview.valueUsd * (apy.total / 100) : null
 
   const handleSupply = async () => {
@@ -172,6 +208,14 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     } finally {
       setPending(false)
     }
+  }
+
+  const ctaLabel = () => {
+    if (!connected) return 'Connect Wallet to Get Started'
+    if (pending) return 'Confirming...'
+    if (!hasInput) return 'Enter an amount'
+    if (!checked) return 'Agree to terms above'
+    return 'Supply'
   }
 
   return (
@@ -220,50 +264,76 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
         </TokenChip>
       </InputWithChip>
 
-      <PreviewBox $bg={previewBg}>
-        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-          <span>Est. shares received</span>
-          <b>
-            {preview && preview.shares != null ? `${fmt(preview.shares, 4)} ${fTokenName}` : 'n/a'}
-          </b>
-        </Row>
-        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-          <span>{underlying.symbol}-equivalent value</span>
-          <b>
-            {preview
-              ? preview.valueToken != null
-                ? `~ ${fmt(preview.valueToken, 4)} ${underlying.symbol}`
-                : 'n/a'
-              : 'n/a'}
-          </b>
-        </Row>
-        <Row
-          $muted={fontColor3}
-          $fontcolor={fontColor1}
-          $pad="4px 0"
-          style={{ cursor: 'pointer' }}
-          onClick={() => setCostExpanded(v => !v)}
-        >
-          <span>Cost breakdown {costExpanded ? '▾' : '▸'}</span>
-          <b>~ n/a bps</b>
-        </Row>
-        {costExpanded && (
-          <Row
-            $muted={fontColor3}
-            $fontcolor={fontColor1}
-            $pad="4px 0 4px 12px"
-            style={{ fontSize: 12 }}
-          >
-            <span>Swap + fold overhead (median from on-chain interactions)</span>
-          </Row>
-        )}
-        {position && (
-          <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-            <span>Vault LTV after deposit</span>
-            <b>~ {(position.ltv * 100).toFixed(1)}%</b>
-          </Row>
-        )}
-      </PreviewBox>
+      {hasInput && (
+        <>
+          <SectionLabel $fontcolor={fontColor2}>Output</SectionLabel>
+          <OutputGrid>
+            <OutputCard $bg={cardBg}>
+              <OutputTitle $muted={fontColor3}>
+                <HelpTip
+                  id="loop-est-received"
+                  darkMode={darkMode}
+                  tip="Estimated vault shares you will receive."
+                >
+                  Est. Received
+                </HelpTip>
+              </OutputTitle>
+              <OutputValue $fontcolor={fontColor1}>
+                {preview && preview.shares != null ? `~ ${fmt(preview.shares, 4)}` : 'n/a'}
+              </OutputValue>
+              {preview?.valueUsd != null && (
+                <OutputSub $muted={fontColor3}>{fmtUsd(preview.valueUsd)}</OutputSub>
+              )}
+              <OutputSub $muted={fontColor3}>{fTokenName}</OutputSub>
+            </OutputCard>
+
+            <OutputCard $bg={cardBg}>
+              <OutputTitle $muted={fontColor3}>
+                <HelpTip
+                  id="loop-yearly-yield-out"
+                  darkMode={darkMode}
+                  tip="Estimated yearly yield at live APY."
+                >
+                  Est. Yearly Yield
+                </HelpTip>
+              </OutputTitle>
+              <OutputValue $fontcolor={fontColor1}>
+                {yearlyYieldToken != null
+                  ? `~ ${fmt(yearlyYieldToken, 4)} ${underlying.symbol}`
+                  : 'n/a'}
+              </OutputValue>
+              {yearlyYieldUsd != null && (
+                <OutputSub $muted={fontColor3}>{fmtUsd(yearlyYieldUsd)}</OutputSub>
+              )}
+            </OutputCard>
+          </OutputGrid>
+
+          <DetailsBox $bg={cardBg}>
+            <DetailsTitle $muted={fontColor3}>Details</DetailsTitle>
+            <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+              <span>{underlying.symbol}-equivalent value (after entry cost)</span>
+              <b>
+                {wethAfterCost != null
+                  ? `~ ${fmt(wethAfterCost, 4)} ${underlying.symbol}`
+                  : 'n/a'}
+              </b>
+            </Row>
+            <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+              <span>Entry cost (median 30d)</span>
+              <b>{fmtBps(entryCostBps)}</b>
+            </Row>
+            {position && projectedLtv != null && (
+              <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+                <span>Vault LTV after your entry</span>
+                <b>
+                  {(projectedLtv * 100).toFixed(2)}%{' '}
+                  <span style={{ fontWeight: 500 }}>(was {(position.ltv * 100).toFixed(2)}%)</span>
+                </b>
+              </Row>
+            )}
+          </DetailsBox>
+        </>
+      )}
 
       <SettingRow $muted={fontColor3}>
         <HelpTip
@@ -288,19 +358,6 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
             </SlipOption>
           ))}
         </SlipPills>
-      </SettingRow>
-
-      <SettingRow $muted={fontColor3}>
-        <HelpTip
-          id="loop-yearly-yield"
-          darkMode={darkMode}
-          tip="Estimated yearly yield at live APY."
-        >
-          Est. Yearly Yield
-        </HelpTip>
-        <b style={{ color: fontColor1, fontWeight: 600 }}>
-          {yearlyYield != null ? fmtUsd(yearlyYield) : 'n/a'}
-        </b>
       </SettingRow>
 
       <CheckboxContainer
@@ -347,13 +404,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
           disabled={!connected || !hasInput || !checked || pending}
           onClick={handleSupply}
         >
-          {!connected
-            ? 'Connect Wallet to Get Started'
-            : pending
-              ? 'Confirming...'
-              : !hasInput
-                ? 'Enter an amount'
-                : 'Supply'}
+          {ctaLabel()}
         </Button>
       </CTAWrap>
     </div>

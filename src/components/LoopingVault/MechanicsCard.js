@@ -1,10 +1,10 @@
 import React from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { Panel, PanelSection, PanelHead, PanelTitle, Row } from '../CLVault/style'
-import { ProseDesc } from './style'
+import { ProseDesc, FlowDiagram } from './style'
 
 const MechanicsCard = ({ data }) => {
-  const { bgColorNew, borderColorBox, fontColor1, fontColor3 } = useThemeContext()
+  const { darkMode, bgColorNew, borderColorBox, fontColor1, fontColor3 } = useThemeContext()
   const { collateral, debt, protocol, mechanics } = data
 
   return (
@@ -27,6 +27,17 @@ const MechanicsCard = ({ data }) => {
             capped to limit price impact.
           </p>
         </ProseDesc>
+
+        <FlowDiagram $muted={fontColor3} $fontcolor={fontColor1} $nodebg={darkMode ? '#1a2035' : '#f0f4ff'}>
+          <span className="node">{debt.symbol}</span>
+          <span className="arrow">→</span>
+          <span className="node">{collateral.symbol}</span>
+          <span className="arrow">→</span>
+          <span className="node">Supply</span>
+          <span className="arrow">→</span>
+          <span className="node">Borrow</span>
+          <span className="arrow">↻</span>
+        </FlowDiagram>
       </PanelSection>
 
       <PanelSection $divider $border={borderColorBox}>
