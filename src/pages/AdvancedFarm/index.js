@@ -299,6 +299,7 @@ const AdvancedFarm = () => {
   // Chart & Table API data
   const [activeHarvests, setActiveHarvests] = useState(true)
   const [historyData, setHistoryData] = useState([])
+  const [historyDataLoaded, setHistoryDataLoaded] = useState(false)
   const [sevenDApy, setSevenDApy] = useState('')
   const [thirtyDApy, setThirtyDApy] = useState('')
   const [oneEightyDApy, setOneEightyDApy] = useState('')
@@ -1334,9 +1335,17 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     const initData = async () => {
-      if (account && token && id) {
-        const address = token.vaultAddress
-        const iporVFlag = token.isIPORVault ?? false
+      if (!account || !token || !id) {
+        setHistoryDataLoaded(false)
+        return
+      }
+
+      if (loadingVaults) return
+
+      const address = token.vaultAddress
+      const iporVFlag = token.isIPORVault ?? false
+
+      try {
         const {
           bFlag,
           vHFlag,
@@ -1355,7 +1364,7 @@ const AdvancedFarm = () => {
           token.vaultDecimals,
         )
 
-        if (bFlag && vHFlag && !loadingVaults) {
+        if (bFlag && vHFlag) {
           setUnderlyingEarnings(sumNetChange)
           setUsdEarnings(sumNetChangeUsd)
           setUnderlyingEarningsLatest(sumLatestNetChange)
@@ -1367,14 +1376,16 @@ const AdvancedFarm = () => {
           setHistoryData(enrichedDataWithSymbol)
           setChartData(uniqueVaultHData)
         }
-        if (token.isIPORVault && vHFlag && !loadingVaults) {
+        if (token.isIPORVault && vHFlag) {
           setChartData(uniqueVaultHData)
         }
+      } finally {
+        setHistoryDataLoaded(true)
       }
     }
 
     initData()
-  }, [account, loadingVaults])
+  }, [account, loadingVaults, token, id])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
@@ -2421,6 +2432,8 @@ const AdvancedFarm = () => {
                     underlyingPrice={underlyingPrice}
                     lpTokenBalance={lpTokenBalance}
                     chartData={chartData}
+                    historyData={historyData}
+                    historyDataLoaded={historyDataLoaded}
                     showRewardsTab={showRewardsTab}
                   />
                 )

@@ -39,12 +39,34 @@ const recommendLinks = [
   { name: 'LAST', type: 4, state: 'LAST' },
 ]
 
+const countHarvestEvents = data => data?.filter(item => item.event === 'Harvest').length ?? 0
+
+const bootstrapCLChartSeries = (historyData, totalValue, underlyingPrice) => {
+  if (!historyData?.length) return null
+
+  const nowDate = new Date()
+  const currentTimeStamp = Math.floor(nowDate.getTime() / 1000)
+  const resolvedPrice =
+    underlyingPrice > 0 ? underlyingPrice : Number(historyData[0]?.priceUnderlying) || 0
+
+  const firstObject = {
+    priceUnderlying: resolvedPrice,
+    sharePrice: historyData[0]?.sharePrice,
+    timestamp: currentTimeStamp.toString(),
+    value: totalValue,
+  }
+
+  return [firstObject, ...historyData]
+}
+
 const UserBalanceData = ({
   token,
   totalValue,
   underlyingPrice,
   lpTokenBalance,
   chartData,
+  historyData,
+  historyDataLoaded = false,
   showRewardsTab,
 }) => {
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
@@ -126,6 +148,8 @@ const UserBalanceData = ({
   useEffect(() => {
     let isMounted = true
     const initData = async () => {
+      if (token.isCLVault) return
+
       if (account && address && chainId && usdPriceRef.current > 0) {
         try {
           const uniqueData2 = []
@@ -389,17 +413,16 @@ const UserBalanceData = ({
               setHarvestEventCount(harvestCount)
             }
           }
-          if (isMounted) {
-            setLoadComplete(token.isCLVault ? true : Boolean(balanceFlag && priceFeedFlag))
+
+          if (isMounted && !token.isCLVault) {
+            setLoadComplete(Boolean(balanceFlag && priceFeedFlag))
           }
         } catch (error) {
           console.log('An error ocurred', error)
-          if (isMounted) {
+          if (isMounted && !token.isCLVault) {
             setLoadComplete(true)
           }
         }
-      } else if (isMounted && token.isCLVault) {
-        setLoadComplete(true)
       }
     }
 
@@ -408,7 +431,41 @@ const UserBalanceData = ({
     return () => {
       isMounted = false
     }
-  }, [address, chainId, account, totalValue, underlyingPrice, chartData, token])
+  }, [address, chainId, account, underlyingPrice, chartData, token])
+
+  useEffect(() => {
+    if (!token.isCLVault) return
+
+    if (!historyDataLoaded) {
+      setLoadComplete(false)
+      return
+    }
+
+    if (historyData?.length > 0) {
+      const harvestCount = countHarvestEvents(historyData)
+      setHarvestEventCount(harvestCount)
+
+      const clSeries = bootstrapCLChartSeries(
+        historyData,
+        totalValueRef.current,
+        usdPriceRef.current,
+      )
+      if (clSeries?.length > 1) {
+        setApiData(clSeries)
+        setApiData1(clSeries)
+        setLastFarmingTimeStamp(findLastMatchingTimestamp(historyData))
+      }
+    }
+
+    setLoadComplete(true)
+  }, [historyData, historyDataLoaded, token.isCLVault])
+
+  useEffect(() => {
+    if (token.isCLVault || !historyData?.length) return
+
+    const harvestCount = countHarvestEvents(historyData)
+    setHarvestEventCount(prev => Math.max(prev, harvestCount))
+  }, [historyData, token.isCLVault])
 
   return (
     <Container $backcolor={bgColorNew} $bordercolor={borderColorBox}>
@@ -486,6 +543,7 @@ const UserBalanceData = ({
           isInactive={token.inactive}
           showRewardsTab={showRewardsTab}
           harvestEventCount={harvestEventCount}
+          historyDataLoaded={historyDataLoaded}
         />
       </ChartDiv>
       <ButtonGroup>
