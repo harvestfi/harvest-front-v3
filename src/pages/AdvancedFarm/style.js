@@ -560,6 +560,48 @@ const TopDesc = styled(NewLabel)`
   }
 `
 
+const StructureLine = styled.div`
+  font-size: ${props => props.$size || '13px'};
+  font-weight: 500;
+  color: ${props => props.$fontcolor};
+  margin: -4px 0 0 35px;
+  line-height: 1.4;
+  @media screen and (max-width: 992px) {
+    margin: 2px auto 0;
+    text-align: center;
+  }
+`
+
+const LeverageBadge = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 700;
+  background: rgba(93, 207, 70, 0.14);
+  color: #2f9e2f;
+  vertical-align: middle;
+`
+
+const LeverageSpinner = styled.span`
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  animation: leverage-badge-spin 0.7s linear infinite;
+  flex-shrink: 0;
+
+  @keyframes leverage-badge-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`
+
 const TopLogo = styled.div`
   display: flex;
   @media screen and (max-width: 992px) {
@@ -1590,6 +1632,9 @@ export {
   TopPart,
   TopButton,
   TopDesc,
+  StructureLine,
+  LeverageBadge,
+  LeverageSpinner,
   TopLogo,
   Button,
   HalfContent,

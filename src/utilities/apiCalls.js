@@ -180,6 +180,78 @@ export const getCLVaultRebalances = async (vault, chainId, sample = 100) => {
   }
 }
 
+export const getLoopVaultInteractionCosts = async (vaultAddress, chainId) => {
+  const empty = { entryBps30d: null, exitBps30d: null }
+  if (!vaultAddress) return empty
+
+  const url = GRAPH_URLS[chainId]
+  if (!url) return empty
+
+  const since = Math.floor(Date.now() / 1000) - 30 * 86400
+  const query = `
+    query getLoopVaultInteractionCosts($vault: String!, $finishTime: BigInt!) {
+      vaultHistories(
+        first: 1000,
+        where: { vault: $vault, timestamp_lt: $finishTime },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        sharePrice
+        timestamp
+      }
+    }
+  `
+
+  const normalizePrice = raw => {
+    const n = Number(raw)
+    if (!Number.isFinite(n) || n <= 0) return null
+    return n > 1e6 ? n / 1e18 : n
+  }
+
+  try {
+    let finishTime = Math.ceil(Date.now() / 1000),
+      rows = []
+    for (let page = 0; page < 3; page += 1) {
+      const data = await executeGraphCall(url, query, {
+        vault: String(vaultAddress).toLowerCase(),
+        finishTime: String(finishTime),
+      })
+      const batch = data?.vaultHistories || []
+      if (!batch.length) break
+      rows = rows.concat(batch)
+      const oldest = Number(batch[batch.length - 1].timestamp)
+      if (!oldest || oldest < since) break
+      finishTime = oldest
+      if (batch.length < 1000) break
+    }
+
+    const recent = rows.filter(r => Number(r.timestamp) >= since)
+    const sample = recent.length >= 2 ? recent : rows
+    if (sample.length < 2) return empty
+
+    const deltas = []
+    for (let i = 0; i < sample.length - 1; i += 1) {
+      const cur = normalizePrice(sample[i].sharePrice)
+      const prev = normalizePrice(sample[i + 1].sharePrice)
+      if (cur != null && prev != null && prev > 0) {
+        const bps = Math.abs((cur - prev) / prev) * 10000
+        if (bps > 0 && bps < 500) deltas.push(bps)
+      }
+    }
+    if (!deltas.length) return empty
+
+    const sorted = [...deltas].sort((a, b) => a - b)
+    const mid = Math.floor(sorted.length / 2)
+    const medianBps = sorted.length % 2 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2
+    return {
+      entryBps30d: Math.round(Math.min(200, Math.max(5, medianBps * 0.89))),
+      exitBps30d: Math.round(Math.min(200, Math.max(5, medianBps * 1.12))),
+    }
+  } catch (e) {
+    return empty
+  }
+}
+
 export const getPublishDate = async () => {
   const allData = [],
     allFlags = []

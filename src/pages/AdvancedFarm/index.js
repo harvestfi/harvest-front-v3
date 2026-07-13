@@ -44,6 +44,20 @@ import {
   fetchCLWalletBalances,
   fetchCLPosition,
 } from '../../components/CLVault'
+import {
+  LoopInteract,
+  LoopDetailsMain,
+  LoopMetricsStrip,
+  LoopFeesPanel,
+  LoopApyBreakdown,
+  buildLoopData,
+  enrichLoopToken,
+  fetchLoopChainData,
+  fetchLoopWalletBalance,
+  pollLoopWalletBalance,
+  fetchLoopPosition,
+  pollLoopPosition,
+} from '../../components/LoopingVault'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import SharePricesData from '../../components/SharePricesChart/SharePricesData'
 import AOTData from '../../components/AOTChart/AOTData'
@@ -98,6 +112,7 @@ import {
   initBalanceAndDetailData,
   getIPORLastHarvestInfo,
   getCLVaultRebalances,
+  getLoopVaultInteractionCosts,
 } from '../../utilities/apiCalls'
 import {
   BackBtnRect,
@@ -114,6 +129,8 @@ import {
   NewLabel,
   RestContent,
   TopDesc,
+  LeverageBadge,
+  LeverageSpinner,
   TopLogo,
   TopPart,
   MyBalance,
@@ -371,8 +388,13 @@ const AdvancedFarm = () => {
   const fTokenName = token.isIPORVault ? tokenSym : `f${tokenSym}`
 
   const isCLVault = Boolean(token.isCLVault)
+  const loopToken = useMemo(() => enrichLoopToken(token, id), [token, id])
+  const isLoopingVault = Boolean(loopToken.isLoopingVault)
   const [clChainData, setClChainData] = useState(null)
   const [clRebalances, setClRebalances] = useState(null)
+  const [loopChainData, setLoopChainData] = useState(null)
+  const [loopInteractionCosts, setLoopInteractionCosts] = useState(null)
+  const [loopRebalances, setLoopRebalances] = useState(null)
 
   useEffect(() => {
     let active = true
@@ -392,6 +414,42 @@ const AdvancedFarm = () => {
       active = false
     }
   }, [isCLVault, token.vaultAddress])
+
+  useEffect(() => {
+    let active = true
+    if (isLoopingVault && loopToken.strategyAddress && loopToken.loopConfig) {
+      fetchLoopChainData({
+        strategyAddress: loopToken.strategyAddress,
+        supplyAsset: loopToken.loopConfig.supplyAsset,
+        borrowAsset: loopToken.loopConfig.borrowAsset,
+        aavePool: loopToken.loopConfig.aavePool,
+      })
+        .then(d => {
+          if (active) setLoopChainData(d)
+        })
+        .catch(() => {})
+      getLoopVaultInteractionCosts(loopToken.vaultAddress, loopToken.chain || token.chain)
+        .then(costs => {
+          if (active) setLoopInteractionCosts(costs)
+        })
+        .catch(() => {})
+      getCLVaultRebalances(loopToken.vaultAddress, loopToken.chain || token.chain)
+        .then(r => {
+          if (active) setLoopRebalances(r)
+        })
+        .catch(() => {})
+    }
+    return () => {
+      active = false
+    }
+  }, [
+    isLoopingVault,
+    loopToken.strategyAddress,
+    loopToken.loopConfig,
+    loopToken.vaultAddress,
+    loopToken.chain,
+    token.chain,
+  ])
 
   const clData = useMemo(
     () => (isCLVault ? buildCLData(token, id, clChainData, clRebalances) : null),
@@ -474,6 +532,99 @@ const AdvancedFarm = () => {
     [clData, clWalletBalances, clPosition],
   )
 
+  const loopData = useMemo(
+    () =>
+      isLoopingVault
+        ? buildLoopData(loopToken, id, loopChainData, {
+            interactionCosts: loopInteractionCosts,
+            lastRebalanceLabel: loopRebalances?.lastRebalanceLabel || '',
+          })
+        : null,
+    [
+      isLoopingVault,
+      loopToken,
+      id,
+      loopChainData,
+      loopInteractionCosts,
+      loopRebalances,
+      loopToken.estimatedApy,
+      loopToken.totalValueLocked,
+      loopToken.pricePerFullShare,
+    ],
+  )
+
+  const [loopWalletBalance, setLoopWalletBalance] = useState(0)
+  const [loopUserPosition, setLoopUserPosition] = useState({ vaultShares: 0, usdValue: 0 })
+
+  const refreshLoop = useCallback(async () => {
+    if (!isLoopingVault || !loopToken.strategyAddress || !loopToken.loopConfig) return
+    const chain = await fetchLoopChainData({
+      strategyAddress: loopToken.strategyAddress,
+      supplyAsset: loopToken.loopConfig.supplyAsset,
+      borrowAsset: loopToken.loopConfig.borrowAsset,
+      aavePool: loopToken.loopConfig.aavePool,
+    }).catch(() => null)
+    if (chain) setLoopChainData(chain)
+    if (account && loopToken.vaultAddress) {
+      const previousShares = loopUserPosition?.vaultShares || 0
+      const previousWallet = loopWalletBalance || 0
+      const [balance, position] = await Promise.all([
+        pollLoopWalletBalance(account, loopToken.tokenAddress, Number(loopToken.decimals) || 18, {
+          previousBalance: previousWallet,
+        }).catch(() => previousWallet),
+        pollLoopPosition(
+          {
+            vaultAddress: loopToken.vaultAddress,
+            account,
+            usdPrice: loopToken.usdPrice,
+            pricePerShare: loopData?.sharePrice,
+          },
+          { previousShares },
+        ).catch(() => null),
+      ])
+      setLoopWalletBalance(balance)
+      if (position) setLoopUserPosition(position)
+    }
+  }, [
+    isLoopingVault,
+    loopToken,
+    account,
+    loopData?.sharePrice,
+    loopUserPosition?.vaultShares,
+    loopWalletBalance,
+  ])
+
+  useEffect(() => {
+    let active = true
+    if (isLoopingVault && account && loopToken.vaultAddress) {
+      fetchLoopWalletBalance(account, loopToken.tokenAddress, Number(loopToken.decimals) || 18)
+        .then(b => {
+          if (active) setLoopWalletBalance(b)
+        })
+        .catch(() => {})
+      fetchLoopPosition({
+        vaultAddress: loopToken.vaultAddress,
+        account,
+        usdPrice: loopToken.usdPrice,
+        pricePerShare: loopData?.sharePrice,
+      })
+        .then(p => {
+          if (active) setLoopUserPosition(p)
+        })
+        .catch(() => {})
+    }
+    return () => {
+      active = false
+    }
+  }, [
+    isLoopingVault,
+    account,
+    loopToken.vaultAddress,
+    loopToken.tokenAddress,
+    loopToken.usdPrice,
+    loopData?.sharePrice,
+  ])
+
   const { logoUrl } = token
 
   const vaultPool = find(pools, pool => pool.collateralAddress === get(token, `vaultAddress`))
@@ -534,6 +685,15 @@ const AdvancedFarm = () => {
   const lpTokenApprovedBalance = token.id
     ? 0
     : get(userStats, `[${vaultPool.id}]['lpTokenApprovedBalance']`, 0)
+
+  const loopDataView = useMemo(() => {
+    if (!loopData) return null
+    return {
+      ...loopData,
+      walletBalance: loopWalletBalance,
+      userPosition: loopUserPosition,
+    }
+  }, [loopData, loopWalletBalance, loopUserPosition])
 
   const tempPricePerFullShare = get(token, `pricePerFullShare`, 0)
   const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
@@ -629,6 +789,20 @@ const AdvancedFarm = () => {
       return
     }
 
+    if (isLoopingVault) {
+      const { vaultShares = 0, usdValue = 0 } = loopUserPosition || {}
+      const usd = usdValue * Number(currencyRate)
+      const aprPct = estimatedApy || (loopData && loopData.apy ? loopData.apy.total : 0) || 0
+      const apr = aprPct / 100
+      setStakedAmount(vaultShares)
+      setUnstakedAmount(0)
+      setTotalValue(vaultShares)
+      setBalanceAmount(usd)
+      setYieldDaily(usd * (apr / 365))
+      setYieldMonthly(usd * (apr / 12))
+      return
+    }
+
     let staked, unstaked, total, amountBalanceUSD
     staked =
       totalStaked && fromWei(totalStaked, token.vaultDecimals || token.decimals, MAX_DECIMALS, true)
@@ -698,6 +872,9 @@ const AdvancedFarm = () => {
     isCLVault,
     clPosition,
     clData,
+    isLoopingVault,
+    loopUserPosition,
+    loopData,
   ])
 
   useEffect(() => {
@@ -1425,6 +1602,28 @@ const AdvancedFarm = () => {
     )
   }
 
+  const showLeverage = () => {
+    if (!loopDataView || loopChainData === null) {
+      return <AnimatedDots />
+    }
+    const lev = loopDataView.leverage ?? loopDataView.position?.leverage
+    return lev > 0 ? `${lev.toFixed(1)}x` : '—'
+  }
+
+  const showLastRebalance = () => {
+    if (isLoopingVault && loopRebalances?.lastRebalanceLabel) {
+      return loopRebalances.lastRebalanceLabel
+    }
+    return lastHarvest !== '' ? `${lastHarvest} ago` : '—'
+  }
+
+  const loopMetricItems = [
+    { title: 'Live APY', value: showAPY() },
+    { title: 'Live Leverage', value: showLeverage() },
+    { title: 'TVL', value: showTVL() },
+    { title: 'Last Rebalance', value: showLastRebalance() },
+  ]
+
   const showApyDaily = () => {
     return (
       <>
@@ -1559,6 +1758,14 @@ const AdvancedFarm = () => {
                             </Tooltip>
                           </MorphoBadge>
                         </BadgeRow>
+                      ) : isLoopingVault ? (
+                        loopDataView?.type ? (
+                          <span>
+                            {loopDataView.type} - {loopDataView.protocol}
+                          </span>
+                        ) : (
+                          token.platform && token.platform[0]
+                        )
                       ) : (
                         token.platform && token.platform[0]
                       )}
@@ -1576,15 +1783,29 @@ const AdvancedFarm = () => {
                   <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
                 ))}
               </TopLogo>
-              <TopDesc
-                $weight={600}
-                $fontcolor2={fontColor2}
-                $size={isMobile ? '19.7px' : '25px'}
-                $height={isMobile ? '45px' : '82px'}
-                $marginbottom={isMobile ? '5px' : '10px'}
-              >
-                {token.tokenNames.join(' • ')}
-              </TopDesc>
+              <div>
+                <TopDesc
+                  $weight={600}
+                  $fontcolor2={fontColor2}
+                  $size={isMobile ? '19.7px' : '25px'}
+                  $height={isMobile ? '45px' : 'auto'}
+                  $marginbottom={isMobile ? '5px' : '4px'}
+                >
+                  {token.tokenNames.join('/')}
+                  {isLoopingVault && (
+                    <LeverageBadge>
+                      {loopDataView?.leverageLabel ? (
+                        <>{loopDataView.leverageLabel} LOOP</>
+                      ) : (
+                        <>
+                          <LeverageSpinner aria-label="Loading leverage" />
+                          LOOP
+                        </>
+                      )}
+                    </LeverageBadge>
+                  )}
+                </TopDesc>
+              </div>
             </FlexDiv>
             <GuideSection>
               <GuidePart $fontcolor4={fontColor4}>
@@ -1656,6 +1877,14 @@ const AdvancedFarm = () => {
                           </Tooltip>
                         </MorphoBadge>
                       </BadgeRow>
+                    ) : isLoopingVault ? (
+                      loopDataView?.type ? (
+                        <span>
+                          {loopDataView.type} - {loopDataView.protocol}
+                        </span>
+                      ) : (
+                        token.platform && token.platform[0]
+                      )
                     ) : (
                       token.platform && token.platform[0]
                     )}
@@ -2252,20 +2481,30 @@ const AdvancedFarm = () => {
                 </ManageBoxWrapper>
               </>
             ) : activeMainTag === 2 ? (
-              <BoxCover $bordercolor={borderColorBox}>
-                {detailBoxes.map(({ title, showValue, className }, index) => (
-                  <ValueBox
-                    key={index}
-                    $width="24%"
-                    className={className}
-                    $backcolor={bgColorNew}
-                    $bordercolor={borderColorBox}
-                  >
-                    <BoxTitle $fontcolor3={fontColor3}>{title}</BoxTitle>
-                    <BoxValue $fontcolor1={fontColor1}>{showValue()}</BoxValue>
-                  </ValueBox>
-                ))}
-              </BoxCover>
+              isLoopingVault ? (
+                <LoopMetricsStrip
+                  items={loopMetricItems}
+                  bgColor={bgColorNew}
+                  borderColor={borderColorBox}
+                  fontColor1={fontColor1}
+                  fontColor3={fontColor3}
+                />
+              ) : (
+                <BoxCover $bordercolor={borderColorBox}>
+                  {detailBoxes.map(({ title, showValue, className }, index) => (
+                    <ValueBox
+                      key={index}
+                      $width="24%"
+                      className={className}
+                      $backcolor={bgColorNew}
+                      $bordercolor={borderColorBox}
+                    >
+                      <BoxTitle $fontcolor3={fontColor3}>{title}</BoxTitle>
+                      <BoxValue $fontcolor1={fontColor1}>{showValue()}</BoxValue>
+                    </ValueBox>
+                  ))}
+                </BoxCover>
+              )
             ) : activeMainTag === 3 ? (
               <>
                 <NewLabel
@@ -2508,7 +2747,10 @@ const AdvancedFarm = () => {
                     />
                   </HalfInfo>
                   {isCLVault && clDataView && <CLDetailsMain data={clDataView} />}
-                  {!isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
+                  {isLoopingVault && loopDataView && <LoopDetailsMain data={loopDataView} />}
+                  {!isMobile && !isLoopingVault && (
+                    <SourceOfYield token={token} vaultPool={vaultPool} />
+                  )}
                 </>
               ) : (
                 <></>
@@ -2525,6 +2767,12 @@ const AdvancedFarm = () => {
                   >
                     {isCLVault ? (
                       <CLInteract data={clDataView} connected={connected} onRefresh={refreshCL} />
+                    ) : isLoopingVault ? (
+                      <LoopInteract
+                        data={loopDataView}
+                        connected={connected}
+                        onRefresh={refreshLoop}
+                      />
                     ) : (
                       <>
                         <DepositSection $isshow={activeDepo}>
@@ -3044,7 +3292,14 @@ const AdvancedFarm = () => {
                           </FlexDiv>
                         ))}
                   </LastHarvestInfo>
-                  {
+                  {isLoopingVault && loopDataView ? (
+                    <LoopApyBreakdown
+                      data={loopDataView}
+                      isMobile={isMobile}
+                      showTip={showTip}
+                      onCloseTip={() => setShowTip(false)}
+                    />
+                  ) : (
                     <MyBalance
                       $marginbottom={isMobile ? '20px' : '25px'}
                       $backcolor={bgColorNew}
@@ -3099,89 +3354,93 @@ const AdvancedFarm = () => {
                         </NewLabel>
                       </Tip>
                     </MyBalance>
-                  }
-                  <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
-                    <NewLabel
-                      $size={isMobile ? '12px' : '14px'}
-                      $weight={isMobile ? '600' : '600'}
-                      $height={isMobile ? '20px' : '24px'}
-                      $fontcolor={fontColor4}
-                      $padding={isMobile ? '10px 15px' : '10px 15px'}
-                      $borderbottom={`1px solid ${borderColorBox}`}
-                    >
-                      Fees
-                    </NewLabel>
-                    {feeList.map((feeItem, index) => (
-                      <FlexDiv
-                        key={index}
-                        $justifycontent="space-between"
+                  )}
+                  {isLoopingVault && loopDataView ? (
+                    <LoopFeesPanel data={loopDataView} isMobile={isMobile} />
+                  ) : (
+                    <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
+                      <NewLabel
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight={isMobile ? '600' : '600'}
+                        $height={isMobile ? '20px' : '24px'}
+                        $fontcolor={fontColor4}
                         $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom={`1px solid ${borderColorBox}`}
                       >
-                        <NewLabel
-                          $size={isMobile ? '12px' : '14px'}
-                          $weight="500"
-                          $height={isMobile ? '24px' : '24px'}
-                          $fontcolor={fontColor3}
+                        Fees
+                      </NewLabel>
+                      {feeList.map((feeItem, index) => (
+                        <FlexDiv
+                          key={index}
+                          $justifycontent="space-between"
+                          $padding={isMobile ? '10px 15px' : '10px 15px'}
                         >
-                          {feeItem.label}
-                        </NewLabel>
-                        <NewLabel
-                          $size={isMobile ? '12px' : '14px'}
-                          $weight="600"
-                          $height={isMobile ? '24px' : '24px'}
-                          $fontcolor={fontColor1}
-                        >
-                          {feeItem.value}
-                        </NewLabel>
-                      </FlexDiv>
-                    ))}
-                    {
-                      <FlexDiv
-                        $justifycontent="space-between"
-                        $padding={isMobile ? '10px 15px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          $size={isMobile ? '13px' : '13px'}
-                          $weight="300"
-                          $height="normal"
-                          $fontcolor={fontColor3}
-                        >
-                          The APY shown already considers the performance fee taken only from
-                          generated yield and not deposits.
-                        </NewLabel>
-                        <NewLabel $display="flex" $self="center">
-                          <PiQuestion className="question" data-tip id="tooltip-last-harvest" />
-                          <Tooltip
-                            id="tooltip-last-harvest"
-                            anchorSelect="#tooltip-last-harvest"
-                            backgroundColor={darkMode ? 'white' : '#101828'}
-                            borderColor={darkMode ? 'white' : 'black'}
-                            textColor={darkMode ? 'black' : 'white'}
-                            place={isMobile ? 'left' : 'top'}
+                          <NewLabel
+                            $size={isMobile ? '12px' : '14px'}
+                            $weight="500"
+                            $height={isMobile ? '24px' : '24px'}
+                            $fontcolor={fontColor3}
                           >
-                            <NewLabel
-                              $weight="500"
-                              $size={isMobile ? '13px' : '13px'}
-                              $height={isMobile ? '16px' : '16px'}
+                            {feeItem.label}
+                          </NewLabel>
+                          <NewLabel
+                            $size={isMobile ? '12px' : '14px'}
+                            $weight="600"
+                            $height={isMobile ? '24px' : '24px'}
+                            $fontcolor={fontColor1}
+                          >
+                            {feeItem.value}
+                          </NewLabel>
+                        </FlexDiv>
+                      ))}
+                      {
+                        <FlexDiv
+                          $justifycontent="space-between"
+                          $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        >
+                          <NewLabel
+                            $size={isMobile ? '13px' : '13px'}
+                            $weight="300"
+                            $height="normal"
+                            $fontcolor={fontColor3}
+                          >
+                            The APY shown already considers the performance fee taken only from
+                            generated yield and not deposits.
+                          </NewLabel>
+                          <NewLabel $display="flex" $self="center">
+                            <PiQuestion className="question" data-tip id="tooltip-last-harvest" />
+                            <Tooltip
+                              id="tooltip-last-harvest"
+                              anchorSelect="#tooltip-last-harvest"
+                              backgroundColor={darkMode ? 'white' : '#101828'}
+                              borderColor={darkMode ? 'white' : 'black'}
+                              textColor={darkMode ? 'black' : 'white'}
+                              place={isMobile ? 'left' : 'top'}
                             >
-                              <FlexDiv $gap="15px" $justifycontent="space-between">
-                                <div>Harvest Treasury</div>
-                                <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
-                              </FlexDiv>
-                              <FlexDiv
-                                $gap="15px"
-                                $justifycontent="space-between"
-                                $margintop="12px"
+                              <NewLabel
+                                $weight="500"
+                                $size={isMobile ? '13px' : '13px'}
+                                $height={isMobile ? '16px' : '16px'}
                               >
-                                <div>Profit Sharing</div>
-                                <div>{token.isIPORVault ? '0' : profitShare}%</div>
-                              </FlexDiv>
-                            </NewLabel>
-                          </Tooltip>
-                        </NewLabel>
-                      </FlexDiv>
-                    }
-                  </LastHarvestInfo>
+                                <FlexDiv $gap="15px" $justifycontent="space-between">
+                                  <div>Harvest Treasury</div>
+                                  <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
+                                </FlexDiv>
+                                <FlexDiv
+                                  $gap="15px"
+                                  $justifycontent="space-between"
+                                  $margintop="12px"
+                                >
+                                  <div>Profit Sharing</div>
+                                  <div>{token.isIPORVault ? '0' : profitShare}%</div>
+                                </FlexDiv>
+                              </NewLabel>
+                            </Tooltip>
+                          </NewLabel>
+                        </FlexDiv>
+                      }
+                    </LastHarvestInfo>
+                  )}
                   {token.isIPORVault && (
                     <LastHarvestInfo $backcolor={backColor} $bordercolor={borderColor}>
                       <NewLabel
@@ -3239,7 +3498,9 @@ const AdvancedFarm = () => {
                       )}
                     </LastHarvestInfo>
                   )}
-                  {isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
+                  {isMobile && !isLoopingVault && (
+                    <SourceOfYield token={token} vaultPool={vaultPool} />
+                  )}
                 </RestInternal>
               ) : (
                 <></>
