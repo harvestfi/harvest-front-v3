@@ -1,105 +1,19 @@
 import BigNumber from 'bignumber.js'
 import { baseViem, newContractInstance, handleViemReadMethod } from '../../services/viem'
 import TokenContract from '../../services/viem/contracts/token/contract.json'
+import AavePoolContract from '../../services/viem/contracts/aave-pool/contract.json'
+import AaveViewerContract from '../../services/viem/contracts/aave-viewer/contract.json'
+import LoopStrategyContract from '../../services/viem/contracts/loop-strategy/contract.json'
 import { CHAIN_IDS } from '../../data/constants'
 
-const AAVE_VIEWER = '0x1e51654aB193bA165b7F7715C734dAF454f08148'
-
-const POOL_ABI = [
-  {
-    inputs: [{ name: 'asset', type: 'address' }],
-    name: 'getReserveData',
-    outputs: [
-      {
-        components: [
-          { name: 'configuration', type: 'uint256' },
-          { name: 'liquidityIndex', type: 'uint128' },
-          { name: 'currentLiquidityRate', type: 'uint128' },
-          { name: 'variableBorrowIndex', type: 'uint128' },
-          { name: 'currentVariableBorrowRate', type: 'uint128' },
-          { name: 'currentStableBorrowRate', type: 'uint128' },
-          { name: 'lastUpdateTimestamp', type: 'uint40' },
-          { name: 'id', type: 'uint16' },
-          { name: 'aTokenAddress', type: 'address' },
-          { name: 'stableDebtTokenAddress', type: 'address' },
-          { name: 'variableDebtTokenAddress', type: 'address' },
-          { name: 'interestRateStrategyAddress', type: 'address' },
-          { name: 'accruedToTreasury', type: 'uint128' },
-          { name: 'unbacked', type: 'uint128' },
-          { name: 'isolationModeTotalDebt', type: 'uint128' },
-        ],
-        type: 'tuple',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
-
-const STRATEGY_ABI = [
-  {
-    inputs: [],
-    name: 'positionHealth',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'targetHealth',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'collateralFactorNumerator',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'borrowTargetFactorNumerator',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'profitSharingNumerator',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'feeDenominator',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [],
-    name: 'getBorrowPriceInSupply',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
-
-const VIEWER_ABI = [
-  {
-    inputs: [
-      { name: 'assetToken', type: 'address' },
-      { name: 'quoteToken', type: 'address' },
-    ],
-    name: 'getPrice',
-    outputs: [{ type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
+/** Aave returns type(uint256).max when there is no debt. */
+const parseHealthFactor = raw => {
+  if (raw == null) return null
+  const bn = new BigNumber(raw.toString())
+  if (!bn.isFinite() || bn.lte(0) || bn.gte('1e40')) return null
+  const n = bn.div(1e18).toNumber()
+  return Number.isFinite(n) && n > 0 ? n : null
+}
 
 const settle = promise => promise.then(v => v).catch(() => null)
 
@@ -115,15 +29,7 @@ export const fetchLoopWalletBalance = async (account, tokenAddress, decimals = 1
     const raw = await settle(
       baseViem.readContract({
         address: tokenAddress,
-        abi: [
-          {
-            inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
-            name: 'balanceOf',
-            outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-            stateMutability: 'view',
-            type: 'function',
-          },
-        ],
+        abi: TokenContract.abi,
         functionName: 'balanceOf',
         args: [account],
       }),
@@ -159,28 +65,35 @@ export const fetchLoopChainData = async ({
 }) => {
   if (!strategyAddress || !supplyAsset || !borrowAsset || !aavePool) return null
 
+  const poolAbi = AavePoolContract.abi
+  const strategyAbi = LoopStrategyContract.abi
+  const viewerAddress = AaveViewerContract.address
+  const viewerAbi = AaveViewerContract.abi
+
   const [
     supplyReserve,
     borrowReserve,
     supplyPriceRaw,
     borrowPriceRaw,
     healthRaw,
+    aaveAccount,
     targetHealthRaw,
     collFactorRaw,
     borrowTargetRaw,
     profitShareRaw,
     feeDenomRaw,
   ] = await Promise.all([
-    read(aavePool, POOL_ABI, 'getReserveData', [supplyAsset]),
-    read(aavePool, POOL_ABI, 'getReserveData', [borrowAsset]),
-    read(AAVE_VIEWER, VIEWER_ABI, 'getPrice', [supplyAsset, borrowAsset]),
-    read(strategyAddress, STRATEGY_ABI, 'getBorrowPriceInSupply'),
-    read(strategyAddress, STRATEGY_ABI, 'positionHealth'),
-    read(strategyAddress, STRATEGY_ABI, 'targetHealth'),
-    read(strategyAddress, STRATEGY_ABI, 'collateralFactorNumerator'),
-    read(strategyAddress, STRATEGY_ABI, 'borrowTargetFactorNumerator'),
-    read(strategyAddress, STRATEGY_ABI, 'profitSharingNumerator'),
-    read(strategyAddress, STRATEGY_ABI, 'feeDenominator'),
+    read(aavePool, poolAbi, 'getReserveData', [supplyAsset]),
+    read(aavePool, poolAbi, 'getReserveData', [borrowAsset]),
+    read(viewerAddress, viewerAbi, 'getPrice', [supplyAsset, borrowAsset]),
+    read(strategyAddress, strategyAbi, 'getBorrowPriceInSupply'),
+    read(strategyAddress, strategyAbi, 'positionHealth'),
+    read(aavePool, poolAbi, 'getUserAccountData', [strategyAddress]),
+    read(strategyAddress, strategyAbi, 'targetHealth'),
+    read(strategyAddress, strategyAbi, 'collateralFactorNumerator'),
+    read(strategyAddress, strategyAbi, 'borrowTargetFactorNumerator'),
+    read(strategyAddress, strategyAbi, 'profitSharingNumerator'),
+    read(strategyAddress, strategyAbi, 'feeDenominator'),
   ])
 
   if (!supplyReserve || !borrowReserve) return null
@@ -229,10 +142,15 @@ export const fetchLoopChainData = async ({
       ? new BigNumber(profitShareRaw.toString()).div(feeDenom).times(100).toNumber()
       : 10
 
-  const healthFactor =
-    healthRaw != null ? new BigNumber(healthRaw.toString()).div(1e18).toNumber() : null
-  const targetHealth =
-    targetHealthRaw != null ? new BigNumber(targetHealthRaw.toString()).div(1e18).toNumber() : null
+  // Strategy positionHealth() currently reverts; fall back to Aave, then LTV math.
+  const aaveHfRaw = aaveAccount?.healthFactor ?? aaveAccount?.[5]
+  // eslint-disable-next-line one-var
+  let healthFactor = parseHealthFactor(healthRaw) ?? parseHealthFactor(aaveHfRaw)
+  if (healthFactor == null && ltv > 0 && collFactor > 0) {
+    healthFactor = collFactor / ltv
+  }
+
+  const targetHealth = parseHealthFactor(targetHealthRaw)
 
   const rebalanceTrigger =
     targetHealth != null ? Math.max(1.001, Number((targetHealth - 0.035).toFixed(3))) : 1.025

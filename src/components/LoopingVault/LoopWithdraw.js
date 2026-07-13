@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
-import { PiQuestion } from 'react-icons/pi'
+import { PiQuestion, PiCaretDown } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
@@ -23,7 +23,15 @@ import {
   InputUsd,
   CTAWrap,
 } from '../CLVault/style'
-import { SectionLabel, OutputCard, OutputValue, OutputSub, DetailsBox, DetailsTitle } from './style'
+import {
+  SectionLabel,
+  OutputCard,
+  OutputValue,
+  OutputSub,
+  DetailsBox,
+  DetailsTitle,
+  DetailsBody,
+} from './style'
 import { fmtBps } from './loopHelpers'
 import { projectLtvAfterWithdraw, computeExitCostBps } from './loopLtvSim'
 
@@ -97,6 +105,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
   const [slippage, setSlippage] = useState(0.5)
   const [pending, setPending] = useState(false)
   const [estUnderlying, setEstUnderlying] = useState(null)
+  const [detailsOpen, setDetailsOpen] = useState(false)
 
   const inputBg = darkMode ? bgColorButton : '#F0F4FF'
   const pillBg = darkMode ? bgColorButton : '#fff'
@@ -285,28 +294,41 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
           </OutputCard>
 
           <DetailsBox $bg={cardBg}>
-            <DetailsTitle $muted={fontColor3}>Details</DetailsTitle>
-            <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-              <span>Exit cost (median 30d)</span>
-              <b>
-                {fmtBps(exitCostBps)}
-                {exitCostToken != null && (
-                  <span style={{ fontWeight: 500 }}>
-                    {' '}
-                    (~ {fmt(exitCostToken, 4)} {underlying.symbol})
-                  </span>
-                )}
-              </b>
-            </Row>
-            {position && projectedLtv != null && (
+            <DetailsTitle
+              type="button"
+              $muted={fontColor3}
+              $open={detailsOpen}
+              onClick={() => setDetailsOpen(open => !open)}
+              aria-expanded={detailsOpen}
+            >
+              Details
+              <PiCaretDown />
+            </DetailsTitle>
+            <DetailsBody $open={detailsOpen}>
               <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-                <span>Vault LTV after your withdraw</span>
+                <span>Exit cost (median 30d)</span>
                 <b>
-                  {(projectedLtv * 100).toFixed(2)}%{' '}
-                  <span style={{ fontWeight: 500 }}>(was {(position.ltv * 100).toFixed(2)}%)</span>
+                  {fmtBps(exitCostBps)}
+                  {exitCostToken != null && (
+                    <span style={{ fontWeight: 500 }}>
+                      {' '}
+                      (~ {fmt(exitCostToken, 4)} {underlying.symbol})
+                    </span>
+                  )}
                 </b>
               </Row>
-            )}
+              {position && projectedLtv != null && (
+                <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+                  <span>Vault LTV after your withdraw</span>
+                  <b>
+                    {(projectedLtv * 100).toFixed(2)}%{' '}
+                    <span style={{ fontWeight: 500 }}>
+                      (was {(position.ltv * 100).toFixed(2)}%)
+                    </span>
+                  </b>
+                </Row>
+              )}
+            </DetailsBody>
           </DetailsBox>
         </>
       )}

@@ -38,6 +38,15 @@ import ClWrapperMethods from './cl-wrapper/methods'
 import LoopVaultContract from './loop-vault/contract.json'
 import LoopVaultMethods from './loop-vault/methods'
 
+import AavePoolContract from './aave-pool/contract.json'
+import AavePoolMethods from './aave-pool/methods'
+
+import AaveViewerContract from './aave-viewer/contract.json'
+import AaveViewerMethods from './aave-viewer/methods'
+
+import LoopStrategyContract from './loop-strategy/contract.json'
+import LoopStrategyMethods from './loop-strategy/methods'
+
 import { CHAIN_IDS } from '../../../data/constants'
 
 const { tokens } = require('../../../data')
@@ -142,6 +151,24 @@ export default {
   loopVault: {
     contract: LoopVaultContract,
     methods: LoopVaultMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  aavePool: {
+    contract: AavePoolContract,
+    methods: AavePoolMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  aaveViewer: {
+    contract: AaveViewerContract,
+    methods: AaveViewerMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  loopStrategy: {
+    contract: LoopStrategyContract,
+    methods: LoopStrategyMethods,
     chain: CHAIN_IDS.BASE,
   },
 

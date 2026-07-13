@@ -1,7 +1,7 @@
 import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
-import { PiQuestion } from 'react-icons/pi'
+import { PiQuestion, PiCaretDown } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
@@ -35,6 +35,7 @@ import {
   OutputSub,
   DetailsBox,
   DetailsTitle,
+  DetailsBody,
 } from './style'
 import { fmtBps } from './loopHelpers'
 import { projectLtvAfterDeposit, computeEntryCostBps } from './loopLtvSim'
@@ -110,6 +111,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   const [checked, setChecked] = useState(false)
   const [pending, setPending] = useState(false)
   const [estShares, setEstShares] = useState(null)
+  const [detailsOpen, setDetailsOpen] = useState(false)
 
   const inputBg = darkMode ? bgColorButton : '#F0F4FF'
   const pillBg = darkMode ? bgColorButton : '#fff'
@@ -307,26 +309,41 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
           </OutputGrid>
 
           <DetailsBox $bg={cardBg}>
-            <DetailsTitle $muted={fontColor3}>Details</DetailsTitle>
-            <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-              <span>{underlying.symbol}-equivalent value (after entry cost)</span>
-              <b>
-                {wethAfterCost != null ? `~ ${fmt(wethAfterCost, 4)} ${underlying.symbol}` : 'n/a'}
-              </b>
-            </Row>
-            <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-              <span>Entry cost (median 30d)</span>
-              <b>{fmtBps(entryCostBps)}</b>
-            </Row>
-            {position && projectedLtv != null && (
+            <DetailsTitle
+              type="button"
+              $muted={fontColor3}
+              $open={detailsOpen}
+              onClick={() => setDetailsOpen(open => !open)}
+              aria-expanded={detailsOpen}
+            >
+              Details
+              <PiCaretDown />
+            </DetailsTitle>
+            <DetailsBody $open={detailsOpen}>
               <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-                <span>Vault LTV after your entry</span>
+                <span>{underlying.symbol}-equivalent value (after entry cost)</span>
                 <b>
-                  {(projectedLtv * 100).toFixed(2)}%{' '}
-                  <span style={{ fontWeight: 500 }}>(was {(position.ltv * 100).toFixed(2)}%)</span>
+                  {wethAfterCost != null
+                    ? `~ ${fmt(wethAfterCost, 4)} ${underlying.symbol}`
+                    : 'n/a'}
                 </b>
               </Row>
-            )}
+              <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+                <span>Entry cost (median 30d)</span>
+                <b>{fmtBps(entryCostBps)}</b>
+              </Row>
+              {position && projectedLtv != null && (
+                <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+                  <span>Vault LTV after your entry</span>
+                  <b>
+                    {(projectedLtv * 100).toFixed(2)}%{' '}
+                    <span style={{ fontWeight: 500 }}>
+                      (was {(position.ltv * 100).toFixed(2)}%)
+                    </span>
+                  </b>
+                </Row>
+              )}
+            </DetailsBody>
           </DetailsBox>
         </>
       )}
