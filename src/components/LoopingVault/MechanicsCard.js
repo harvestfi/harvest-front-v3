@@ -1,11 +1,22 @@
 import React from 'react'
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { Panel, PanelSection, PanelHead, PanelTitle, Row } from '../CLVault/style'
 import { ProseDesc, FlowDiagram } from './style'
 
+const ValueOrSkeleton = ({ value, loading }) => {
+  if (value != null && value !== '—') return <b>{value}</b>
+  if (loading) return <Skeleton height={12} width={56} />
+  return <b>—</b>
+}
+
 const MechanicsCard = ({ data }) => {
-  const { darkMode, bgColorNew, borderColorBox, fontColor1, fontColor3 } = useThemeContext()
+  const { darkMode, bgColorNew, borderColorBox, fontColor1, fontColor3, highlightColor } =
+    useThemeContext()
   const { collateral, debt, protocol, mechanics } = data
+  const loading = !data?.live
+  const baseColor = darkMode ? '#2a2f36' : '#ECECEC'
 
   return (
     <Panel $cardbg={bgColorNew} $border={borderColorBox}>
@@ -28,7 +39,11 @@ const MechanicsCard = ({ data }) => {
           </p>
         </ProseDesc>
 
-        <FlowDiagram $muted={fontColor3} $fontcolor={fontColor1} $nodebg={darkMode ? '#1a2035' : '#f0f4ff'}>
+        <FlowDiagram
+          $muted={fontColor3}
+          $fontcolor={fontColor1}
+          $nodebg={darkMode ? '#1a2035' : '#f0f4ff'}
+        >
           <span className="node">{debt.symbol}</span>
           <span className="arrow">→</span>
           <span className="node">{collateral.symbol}</span>
@@ -41,18 +56,20 @@ const MechanicsCard = ({ data }) => {
       </PanelSection>
 
       <PanelSection $divider $border={borderColorBox}>
-        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="6px 0">
-          <span>Target LTV</span>
-          <b>{mechanics.targetLtv}</b>
-        </Row>
-        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="6px 0">
-          <span>Rebalance trigger (HF)</span>
-          <b>{mechanics.rebalanceTrigger}</b>
-        </Row>
-        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="6px 0">
-          <span>Slippage cap</span>
-          <b>{mechanics.slippageCap}</b>
-        </Row>
+        <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>
+          <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="6px 0">
+            <span>Target LTV</span>
+            <ValueOrSkeleton value={mechanics.targetLtv} loading={loading} />
+          </Row>
+          <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="6px 0">
+            <span>Rebalance trigger (HF)</span>
+            <ValueOrSkeleton value={mechanics.rebalanceTrigger} loading={loading} />
+          </Row>
+          <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="6px 0">
+            <span>Slippage cap</span>
+            <b>{mechanics.slippageCap}</b>
+          </Row>
+        </SkeletonTheme>
       </PanelSection>
     </Panel>
   )

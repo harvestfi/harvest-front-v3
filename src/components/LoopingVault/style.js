@@ -56,37 +56,36 @@ export const AddressLink = styled.a`
 export const HFGaugeWrap = styled.div`
   position: relative;
   margin: 8px 0 6px;
-  padding-top: 4px;
+  overflow: visible;
 `
 
 export const HFGaugeTrack = styled.div`
   position: relative;
-  height: 10px;
+  height: 16px;
   border-radius: 999px;
-  overflow: hidden;
-  background: #e8f5e4;
-`
-
-export const HFGaugeDanger = styled.div`
-  position: absolute;
-  left: 0;
-  top: 0;
-  height: 100%;
-  width: ${props => props.$pct}%;
-  border-radius: 999px 0 0 999px;
-  background: linear-gradient(90deg, #fca5a5 0%, #fdba74 100%);
+  /* left = liquidation risk, right = safer HF */
+  background: linear-gradient(
+    90deg,
+    #ef4444 0%,
+    #f97316 18%,
+    #fbbf24 38%,
+    #7ee06a 62%,
+    #5dcf46 82%,
+    #2f9e2f 100%
+  );
 `
 
 export const HFTick = styled.div`
   position: absolute;
-  top: -2px;
+  top: 50%;
   left: ${props => props.$pos}%;
   width: 2px;
-  height: 16px;
+  height: ${props => (props.$primary ? '24px' : '22px')};
   border-radius: 1px;
   background: ${props => props.$color || '#101828'};
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: ${props => props.$z || 1};
+  pointer-events: none;
 `
 
 export const HFEdges = styled.div`
@@ -108,36 +107,36 @@ export const HFFooter = styled.div`
 export const LTVGaugeWrap = styled.div`
   position: relative;
   margin: 8px 0 6px;
-  padding-top: 4px;
+  overflow: visible;
 `
 
 export const LTVGaugeTrack = styled.div`
   position: relative;
-  height: 10px;
+  height: 16px;
   border-radius: 999px;
-  overflow: hidden;
-  background: #e8edf5;
-`
-
-export const LTVGaugeWarn = styled.div`
-  position: absolute;
-  left: ${props => props.$left}%;
-  top: 0;
-  height: 100%;
-  width: ${props => props.$width}%;
-  background: linear-gradient(90deg, #fde8d8 0%, #fecaca 100%);
+  /* left = safer lower LTV, right = liquidation risk */
+  background: linear-gradient(
+    90deg,
+    #2f9e2f 0%,
+    #5dcf46 22%,
+    #7ee06a 42%,
+    #fbbf24 68%,
+    #f97316 84%,
+    #ef4444 100%
+  );
 `
 
 export const LTVTick = styled.div`
   position: absolute;
-  top: -2px;
+  top: 50%;
   left: ${props => props.$pos}%;
   width: 2px;
-  height: 16px;
+  height: ${props => (props.$primary ? '24px' : '22px')};
   border-radius: 1px;
   background: ${props => props.$color || '#101828'};
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   z-index: ${props => props.$z || 1};
+  pointer-events: none;
 `
 
 export const MetricsCover = styled.div`
@@ -321,3 +320,34 @@ export const DetailsTitle = styled.div`
   letter-spacing: 0.02em;
 `
 
+export const LoadingSpinner = styled.div`
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid ${props => props.$color || '#6F78AA'};
+  border-top-color: transparent;
+  animation: loop-panel-spin 0.7s linear infinite;
+  flex-shrink: 0;
+
+  @keyframes loop-panel-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`
+
+export const SkeletonRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+`
+
+export const SkeletonGauge = styled.div`
+  margin: 8px 0 6px;
+`

@@ -1,4 +1,6 @@
 import React from 'react'
+import Skeleton, { SkeletonTheme } from 'react-loading-skeleton'
+import 'react-loading-skeleton/dist/skeleton.css'
 import { useThemeContext } from '../../providers/useThemeContext'
 import {
   MyBalance,
@@ -14,8 +16,18 @@ import TickCross from '../../assets/images/logos/tick-cross.svg'
 import { fmtPct } from './loopHelpers'
 
 const LoopApyBreakdown = ({ data, isMobile, showTip, onCloseTip }) => {
-  const { bgColorNew, borderColorBox, fontColor1, fontColor3, fontColor4 } = useThemeContext()
+  const {
+    bgColorNew,
+    borderColorBox,
+    fontColor1,
+    fontColor3,
+    fontColor4,
+    darkMode,
+    highlightColor,
+  } = useThemeContext()
   const rows = data?.apy?.breakdown || []
+  const loading = !data?.live
+  const baseColor = darkMode ? '#2a2f36' : '#ECECEC'
 
   return (
     <MyBalance
@@ -34,21 +46,29 @@ const LoopApyBreakdown = ({ data, isMobile, showTip, onCloseTip }) => {
         APY Breakdown
       </NewLabel>
 
-      {rows.map((row, index) => (
-        <FlexDiv
-          key={row.label}
-          $justifycontent="space-between"
-          $padding={isMobile ? '10px 15px' : '10px 15px'}
-          style={index < rows.length - 1 ? { borderBottom: `1px solid ${borderColorBox}` } : {}}
-        >
-          <NewLabel $size={isMobile ? '12px' : '14px'} $weight="500" $fontcolor={fontColor3}>
-            {row.label}
-          </NewLabel>
-          <NewLabel $size={isMobile ? '12px' : '14px'} $weight="600" $fontcolor={fontColor1}>
-            {row.value != null ? fmtPct(row.value) : '—'}
-          </NewLabel>
-        </FlexDiv>
-      ))}
+      <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>
+        {rows.map((row, index) => (
+          <FlexDiv
+            key={row.label}
+            $justifycontent="space-between"
+            $padding={isMobile ? '10px 15px' : '10px 15px'}
+            style={index < rows.length - 1 ? { borderBottom: `1px solid ${borderColorBox}` } : {}}
+          >
+            <NewLabel $size={isMobile ? '12px' : '14px'} $weight="500" $fontcolor={fontColor3}>
+              {row.label}
+            </NewLabel>
+            <NewLabel $size={isMobile ? '12px' : '14px'} $weight="600" $fontcolor={fontColor1}>
+              {row.value != null ? (
+                fmtPct(row.value)
+              ) : loading ? (
+                <Skeleton height={12} width={56} />
+              ) : (
+                '—'
+              )}
+            </NewLabel>
+          </FlexDiv>
+        ))}
+      </SkeletonTheme>
 
       <Tip $display={showTip ? 'block' : 'none'}>
         <TipTop>

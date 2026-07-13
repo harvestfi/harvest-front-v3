@@ -54,7 +54,9 @@ import {
   enrichLoopToken,
   fetchLoopChainData,
   fetchLoopWalletBalance,
+  pollLoopWalletBalance,
   fetchLoopPosition,
+  pollLoopPosition,
 } from '../../components/LoopingVault'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import SharePricesData from '../../components/SharePricesChart/SharePricesData'
@@ -127,8 +129,8 @@ import {
   NewLabel,
   RestContent,
   TopDesc,
-  StructureLine,
   LeverageBadge,
+  LeverageSpinner,
   TopLogo,
   TopPart,
   MyBalance,
@@ -563,23 +565,33 @@ const AdvancedFarm = () => {
     }).catch(() => null)
     if (chain) setLoopChainData(chain)
     if (account && loopToken.vaultAddress) {
+      const previousShares = loopUserPosition?.vaultShares || 0
+      const previousWallet = loopWalletBalance || 0
       const [balance, position] = await Promise.all([
-        fetchLoopWalletBalance(
-          account,
-          loopToken.tokenAddress,
-          Number(loopToken.decimals) || 18,
-        ).catch(() => 0),
-        fetchLoopPosition({
-          vaultAddress: loopToken.vaultAddress,
-          account,
-          usdPrice: loopToken.usdPrice,
-          pricePerShare: loopData?.sharePrice,
-        }).catch(() => null),
+        pollLoopWalletBalance(account, loopToken.tokenAddress, Number(loopToken.decimals) || 18, {
+          previousBalance: previousWallet,
+        }).catch(() => previousWallet),
+        pollLoopPosition(
+          {
+            vaultAddress: loopToken.vaultAddress,
+            account,
+            usdPrice: loopToken.usdPrice,
+            pricePerShare: loopData?.sharePrice,
+          },
+          { previousShares },
+        ).catch(() => null),
       ])
       setLoopWalletBalance(balance)
       if (position) setLoopUserPosition(position)
     }
-  }, [isLoopingVault, loopToken, account, loopData?.sharePrice])
+  }, [
+    isLoopingVault,
+    loopToken,
+    account,
+    loopData?.sharePrice,
+    loopUserPosition?.vaultShares,
+    loopWalletBalance,
+  ])
 
   useEffect(() => {
     let active = true
@@ -611,14 +623,6 @@ const AdvancedFarm = () => {
     loopToken.usdPrice,
     loopData?.sharePrice,
   ])
-
-  const loopDataView = useMemo(
-    () =>
-      loopData
-        ? { ...loopData, walletBalance: loopWalletBalance, userPosition: loopUserPosition }
-        : null,
-    [loopData, loopWalletBalance, loopUserPosition],
-  )
 
   const { logoUrl } = token
 
@@ -680,6 +684,15 @@ const AdvancedFarm = () => {
   const lpTokenApprovedBalance = token.id
     ? 0
     : get(userStats, `[${vaultPool.id}]['lpTokenApprovedBalance']`, 0)
+
+  const loopDataView = useMemo(() => {
+    if (!loopData) return null
+    return {
+      ...loopData,
+      walletBalance: loopWalletBalance,
+      userPosition: loopUserPosition,
+    }
+  }, [loopData, loopWalletBalance, loopUserPosition])
 
   const tempPricePerFullShare = get(token, `pricePerFullShare`, 0)
   const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
@@ -1768,15 +1781,19 @@ const AdvancedFarm = () => {
                   $marginbottom={isMobile ? '5px' : '4px'}
                 >
                   {token.tokenNames.join('/')}
-                  {isLoopingVault && loopDataView?.leverageLabel && (
-                    <LeverageBadge>{loopDataView.leverageLabel} LOOP</LeverageBadge>
+                  {isLoopingVault && (
+                    <LeverageBadge>
+                      {loopDataView?.leverageLabel ? (
+                        <>{loopDataView.leverageLabel} LOOP</>
+                      ) : (
+                        <>
+                          <LeverageSpinner aria-label="Loading leverage" />
+                          LOOP
+                        </>
+                      )}
+                    </LeverageBadge>
                   )}
                 </TopDesc>
-                {isLoopingVault && loopDataView?.structureLine && (
-                  <StructureLine $fontcolor={fontColor3} $size={isMobile ? '12px' : '13px'}>
-                    {loopDataView.structureLine}
-                  </StructureLine>
-                )}
               </div>
             </FlexDiv>
             <GuideSection>

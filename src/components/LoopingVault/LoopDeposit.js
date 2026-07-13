@@ -37,10 +37,7 @@ import {
   DetailsTitle,
 } from './style'
 import { fmtBps } from './loopHelpers'
-import {
-  projectLtvAfterDeposit,
-  computeEntryCostBps,
-} from './loopLtvSim'
+import { projectLtvAfterDeposit, computeEntryCostBps } from './loopLtvSim'
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
 const num = v => {
@@ -153,21 +150,21 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     const a = num(amount)
     if (!a) return null
     const tokenUsd = Number(underlying.priceUsd)
-    let shares = estShares
-    let usd = estShares != null && perShareUsd > 0 ? estShares * perShareUsd : null
-    if (usd == null && Number.isFinite(tokenUsd) && tokenUsd > 0) {
+    let shares = estShares != null && estShares > 0 ? estShares : null,
+      usd = shares != null && perShareUsd > 0 ? shares * perShareUsd : null
+    if (shares == null && Number.isFinite(tokenUsd) && tokenUsd > 0) {
       usd = a * tokenUsd
       shares = perShareUsd > 0 ? usd / perShareUsd : null
     }
-    const valueToken =
-      shares != null && sharePrice > 0 ? shares * sharePrice : a
+    const valueToken = shares != null && sharePrice > 0 ? shares * sharePrice : a
     return { shares, valueUsd: usd, valueToken, inputAmount: a }
   }, [amount, estShares, perShareUsd, underlying, sharePrice])
 
   const entryCostBps = useMemo(() => {
-    if (!preview) return fees.entryCostBps30d
-    const live = computeEntryCostBps(preview.inputAmount, preview.valueToken)
-    return live ?? fees.entryCostBps30d
+    // UI labels this as median 30d; prefer that over live share-math (usually ~0)
+    if (fees.entryCostBps30d != null) return fees.entryCostBps30d
+    if (!preview) return null
+    return computeEntryCostBps(preview.inputAmount, preview.valueToken)
   }, [preview, fees.entryCostBps30d])
 
   const wethAfterCost = useMemo(() => {
@@ -196,9 +193,10 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
 
   const handleSupply = async () => {
     if (!connected || !hasInput || !checked || pending) return
+    const deposited = num(amount)
     setPending(true)
     try {
-      await loopDeposit({ vaultAddress, underlying, amount: num(amount), account, viem })
+      await loopDeposit({ vaultAddress, underlying, amount: deposited, account, viem })
       toast.success('Deposit completed')
       setAmount('')
       if (onRefresh) await onRefresh().catch(() => {})
@@ -313,9 +311,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
             <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
               <span>{underlying.symbol}-equivalent value (after entry cost)</span>
               <b>
-                {wethAfterCost != null
-                  ? `~ ${fmt(wethAfterCost, 4)} ${underlying.symbol}`
-                  : 'n/a'}
+                {wethAfterCost != null ? `~ ${fmt(wethAfterCost, 4)} ${underlying.symbol}` : 'n/a'}
               </b>
             </Row>
             <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">

@@ -1,18 +1,12 @@
 import BigNumber from 'bignumber.js'
 import { toWei, getViem, newContractInstance, baseViem } from '../../services/viem'
 import { CHAIN_IDS } from '../../data/constants'
-import VaultContract from '../../services/viem/contracts/vault/contract.json'
-import VaultMethods from '../../services/viem/contracts/vault/methods'
+import LoopVaultContract from '../../services/viem/contracts/loop-vault/contract.json'
+import LoopVaultMethods from '../../services/viem/contracts/loop-vault/methods'
 import TokenContract from '../../services/viem/contracts/token/contract.json'
 import TokenMethods from '../../services/viem/contracts/token/methods'
 
 const VAULT_DECIMALS = 18
-
-const WETH_ABI = [
-  { inputs: [], name: 'deposit', outputs: [], stateMutability: 'payable', type: 'function' },
-]
-
-const isNativeEth = symbol => typeof symbol === 'string' && symbol.toUpperCase() === 'ETH'
 
 const settle = promise => promise.then(v => v).catch(() => null)
 
@@ -21,9 +15,13 @@ const awaitReceipt = async hash => {
   return hash
 }
 
-const writeInstance = async (address, abi, account, viem) => {
+const writeInstance = async (address, account, viem) => {
   const client = await getViem(CHAIN_IDS.BASE, account, viem)
-  return newContractInstance(null, address, abi, client)
+  return newContractInstance(null, address, LoopVaultContract.abi, client)
+}
+
+const readInstance = async address => {
+  return newContractInstance(null, address, LoopVaultContract.abi, baseViem)
 }
 
 const ensureApproval = async ({ tokenAddress, spender, amountWei, account, viem }) => {
@@ -31,19 +29,35 @@ const ensureApproval = async ({ tokenAddress, spender, amountWei, account, viem 
   const current = await TokenMethods.getApprovedAmount(account, spender, readTok)
   if (new BigNumber(current.toString()).gte(new BigNumber(amountWei))) return
 
-  const writeTok = await writeInstance(tokenAddress, TokenContract.abi, account, viem)
+  const writeTok = await newContractInstance(
+    null,
+    tokenAddress,
+    TokenContract.abi,
+    await getViem(CHAIN_IDS.BASE, account, viem),
+  )
   const hash = await TokenMethods.approve(spender, account, amountWei, writeTok)
   if (hash) await baseViem.waitForTransactionReceipt({ hash })
+}
+
+const toTokenAmount = (raw, decimals = VAULT_DECIMALS) => {
+  if (raw == null) return 0
+  return new BigNumber(raw.toString()).div(new BigNumber(10).pow(decimals)).toNumber()
 }
 
 export const loopPreviewDepositShares = async ({ vaultAddress, amount, decimals = 18 }) => {
   if (!vaultAddress || !(Number(amount) > 0)) return null
   try {
-    const vaultRead = await newContractInstance(null, vaultAddress, VaultContract.abi, baseViem)
-    const pps = await VaultMethods.getPricePerFullShare(vaultRead)
+    const amountWei = toWei(amount, decimals, 0)
+    const vault = await readInstance(vaultAddress)
+    try {
+      const preview = await LoopVaultMethods.previewDeposit(BigInt(amountWei), vault)
+      if (preview != null) return Number(preview.toString()) / 10 ** VAULT_DECIMALS
+    } catch (e) {
+      // fall through to PPS estimate
+    }
+    const pps = await LoopVaultMethods.getPricePerFullShare(vault)
     if (!pps || new BigNumber(pps.toString()).lte(0)) return null
-    const amountWei = new BigNumber(toWei(amount, decimals, 0))
-    return amountWei.div(new BigNumber(pps.toString())).div(1e18).toNumber()
+    return new BigNumber(amountWei).div(new BigNumber(pps.toString())).toNumber()
   } catch (e) {
     return null
   }
@@ -52,8 +66,8 @@ export const loopPreviewDepositShares = async ({ vaultAddress, amount, decimals 
 export const loopPreviewWithdrawUnderlying = async ({ vaultAddress, shares }) => {
   if (!vaultAddress || !(Number(shares) > 0)) return null
   try {
-    const vaultRead = await newContractInstance(null, vaultAddress, VaultContract.abi, baseViem)
-    const pps = await VaultMethods.getPricePerFullShare(vaultRead)
+    const vault = await readInstance(vaultAddress)
+    const pps = await LoopVaultMethods.getPricePerFullShare(vault)
     if (!pps) return null
     return new BigNumber(shares).times(new BigNumber(pps.toString()).div(1e18)).toNumber()
   } catch (e) {
@@ -61,28 +75,10 @@ export const loopPreviewWithdrawUnderlying = async ({ vaultAddress, shares }) =>
   }
 }
 
-const wrapNativeIfNeeded = async ({ underlying, amountWei, account, viem }) => {
-  if (!isNativeEth(underlying.symbol) || new BigNumber(amountWei).lte(0)) return
-  const client = await getViem(CHAIN_IDS.BASE, account, viem)
-  const instance = await newContractInstance(null, underlying.address, WETH_ABI, client)
-  const { walletClient } = instance
-  const hash = await walletClient.writeContract({
-    address: underlying.address,
-    abi: WETH_ABI,
-    functionName: 'deposit',
-    args: [],
-    value: BigInt(amountWei),
-    account,
-    chain: walletClient.chain,
-  })
-  if (hash) await baseViem.waitForTransactionReceipt({ hash })
-}
-
 export const loopDeposit = async ({ vaultAddress, underlying, amount, account, viem }) => {
   const amountWei = toWei(amount, underlying.decimals, 0)
 
-  await wrapNativeIfNeeded({ underlying, amountWei, account, viem })
-
+  // Vault underlying is WETH — deposit the ERC-20 directly (no native ETH wrap).
   await ensureApproval({
     tokenAddress: underlying.address,
     spender: vaultAddress,
@@ -91,14 +87,14 @@ export const loopDeposit = async ({ vaultAddress, underlying, amount, account, v
     viem,
   })
 
-  const vault = await writeInstance(vaultAddress, VaultContract.abi, account, viem)
-  return awaitReceipt(await VaultMethods.deposit(amountWei, account, vault))
+  const vault = await writeInstance(vaultAddress, account, viem)
+  return awaitReceipt(await LoopVaultMethods.deposit(BigInt(amountWei), account, account, vault))
 }
 
 export const loopWithdraw = async ({ vaultAddress, shares, account, viem }) => {
   const sharesWei = toWei(shares, VAULT_DECIMALS, 0)
-  const vault = await writeInstance(vaultAddress, VaultContract.abi, account, viem)
-  return awaitReceipt(await VaultMethods.withdraw(sharesWei, account, vault))
+  const vault = await writeInstance(vaultAddress, account, viem)
+  return awaitReceipt(await LoopVaultMethods.withdraw(BigInt(sharesWei), account, vault))
 }
 
 export const fetchLoopPosition = async ({
@@ -107,21 +103,43 @@ export const fetchLoopPosition = async ({
   usdPrice = 0,
   pricePerShare = 0,
 }) => {
-  const empty = { vaultShares: 0, usdValue: 0 }
+  const empty = { vaultShares: 0, usdValue: 0, assets: 0 }
   if (!account || !vaultAddress) return empty
 
-  const vaultRead = await newContractInstance(null, vaultAddress, VaultContract.abi, baseViem)
-  const [vsRaw, ppsRaw] = await Promise.all([
-    settle(TokenMethods.getBalance(account, vaultRead)),
-    settle(VaultMethods.getPricePerFullShare(vaultRead)),
-  ])
+  try {
+    const vault = await readInstance(vaultAddress)
+    const [vsRaw, ppsRaw, assetsRaw] = await Promise.all([
+      settle(LoopVaultMethods.getBalanceOf(account, vault)),
+      settle(LoopVaultMethods.getPricePerFullShare(vault)),
+      settle(LoopVaultMethods.getAssetsOf(account, vault)),
+    ])
 
-  const vaultShares = vsRaw == null ? 0 : Number(vsRaw) / 10 ** VAULT_DECIMALS
-  const pps =
-    ppsRaw != null && Number(ppsRaw) > 0
-      ? Number(ppsRaw) / 10 ** VAULT_DECIMALS
-      : Number(pricePerShare) || 1
-  const usdValue = Number(usdPrice) > 0 ? vaultShares * pps * Number(usdPrice) : 0
+    const vaultShares = toTokenAmount(vsRaw)
+    const assets = toTokenAmount(assetsRaw)
+    const pps =
+      ppsRaw != null && new BigNumber(ppsRaw.toString()).gt(0)
+        ? toTokenAmount(ppsRaw)
+        : Number(pricePerShare) || 1
+    const usdValue =
+      Number(usdPrice) > 0 ? (assets > 0 ? assets : vaultShares * pps) * Number(usdPrice) : 0
 
-  return { vaultShares, usdValue }
+    return { vaultShares, usdValue, assets }
+  } catch (e) {
+    return empty
+  }
+}
+
+/** Poll until vault share balance changes from `previousShares` (deposit or withdraw). */
+export const pollLoopPosition = async (
+  params,
+  { retries = 5, delayMs = 1200, previousShares = 0 } = {},
+) => {
+  let last = await fetchLoopPosition(params)
+  for (let i = 0; i < retries; i += 1) {
+    const next = last.vaultShares || 0
+    if (Math.abs(next - (previousShares || 0)) > 1e-14) return last
+    await new Promise(r => setTimeout(r, delayMs))
+    last = await fetchLoopPosition(params)
+  }
+  return last
 }

@@ -10,7 +10,8 @@ import {
   BandEdges,
 } from '../CLVault/style'
 import HelpTip from './HelpTip'
-import { LTVGaugeWrap, LTVGaugeTrack, LTVGaugeWarn, LTVTick, TagRow, TagBadge } from './style'
+import PanelLoading from './PanelLoading'
+import { LTVGaugeWrap, LTVGaugeTrack, LTVTick, TagRow, TagBadge } from './style'
 
 const fmtAmt = (n, d = 2) => {
   if (!n || n === 0) return '0'
@@ -42,16 +43,7 @@ const PositionPanel = ({ data }) => {
   const pos = position
 
   if (!pos) {
-    return (
-      <Panel $cardbg={bgColorNew} $border={borderColorBox}>
-        <PanelHead $border={borderColorBox}>
-          <PanelTitle $fontcolor={fontColor1}>Position</PanelTitle>
-        </PanelHead>
-        <PanelSection>
-          <RangeDesc $muted={fontColor3}>Loading position…</RangeDesc>
-        </PanelSection>
-      </Panel>
-    )
+    return <PanelLoading title="Position" rows={6} />
   }
 
   const collateralUsd = pos.collateralUsd ?? 0
@@ -59,9 +51,6 @@ const PositionPanel = ({ data }) => {
   const netEquity = pos.netUsd ?? collateralUsd - debtUsd
 
   const { min: scaleMin, max: scaleMax } = scaleBounds(pos.ltv, pos.targetLtv, pos.liquidationLtv)
-
-  const warnLeft = ltvToPos(pos.targetLtv, scaleMin, scaleMax)
-  const warnWidth = Math.max(0, ltvToPos(pos.liquidationLtv, scaleMin, scaleMax) - warnLeft)
 
   return (
     <Panel $cardbg={bgColorNew} $border={borderColorBox}>
@@ -135,13 +124,18 @@ const PositionPanel = ({ data }) => {
 
         <LTVGaugeWrap>
           <LTVGaugeTrack>
-            <LTVGaugeWarn $left={warnLeft} $width={warnWidth} />
-            <LTVTick $pos={ltvToPos(pos.ltv, scaleMin, scaleMax)} $color="#101828" $z={3} />
-            <LTVTick $pos={ltvToPos(pos.targetLtv, scaleMin, scaleMax)} $color="#16a34a" $z={2} />
+            <LTVTick $pos={ltvToPos(pos.targetLtv, scaleMin, scaleMax)} $color="#7c3aed" $z={2} />
             <LTVTick
               $pos={ltvToPos(pos.liquidationLtv, scaleMin, scaleMax)}
-              $color="#ef4444"
+              $color="#22d3ee"
               $z={2}
+            />
+            <LTVTick
+              $primary
+              $pos={ltvToPos(pos.ltv, scaleMin, scaleMax)}
+              $color={fontColor1}
+              $cardbg={bgColorNew}
+              $z={3}
             />
           </LTVGaugeTrack>
         </LTVGaugeWrap>

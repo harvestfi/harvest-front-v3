@@ -53,12 +53,16 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
     color: colorFor(collateralSymbol, 0),
     priceUsd: num(token.usdPrice),
   }
+  const debtLogo =
+    debtDisplaySymbol === 'WETH'
+      ? '/icons/weth.svg'
+      : logos[1] || (debtDisplaySymbol ? `/icons/${debtDisplaySymbol.toLowerCase()}.svg` : null)
   const debt = {
-    symbol: debtSymbol,
+    symbol: debtDisplaySymbol,
     address: token.tokenAddress || loopCfg.borrowAsset,
     decimals: num(token.decimals, 18),
-    logo: logos[1],
-    color: colorFor(debtSymbol, 1),
+    logo: debtLogo,
+    color: colorFor(debtDisplaySymbol, 1),
     priceUsd: num(token.usdPrice),
   }
 
@@ -72,27 +76,22 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
   const tvlUsd = num(token.totalValueLocked)
 
   const leverage = chain?.leverage > 0 ? chain.leverage : null
-  const leverageLabel = leverage ? `${leverage.toFixed(1)}×` : '—'
-
-  const structureLine = `Leveraged ${collateralSymbol}/${debtSymbol} carry on ${protocol}, ~${leverageLabel}`
+  const leverageLabel = leverage ? `${leverage.toFixed(1)}×` : null
 
   const stakingYield = stakingYieldForSupply(loopCfg.supplyAsset)
   const borrowRate = chain?.borrowRate
   const borrowApr = borrowRate != null && borrowRate > 0 ? -borrowRate : null
-  const spread =
-    stakingYield > 0 && borrowRate != null ? stakingYield - borrowRate : null
+  const spread = stakingYield > 0 && borrowRate != null ? stakingYield - borrowRate : null
   const profitFactor = chain?.profitSharePct != null ? (100 - chain.profitSharePct) / 100 : 0.9
   const calculatedLeveredApy =
     spread != null && leverage > 0 ? spread * leverage * profitFactor : null
-  const leveredApy =
-    liveApy > 0 ? liveApy : calculatedLeveredApy
+  const leveredApy = liveApy > 0 ? liveApy : calculatedLeveredApy
 
   const interactionCosts = extras.interactionCosts || {}
 
   return {
     protocol,
     type: 'Leveraged Loop',
-    structureLine,
     leverage,
     leverageLabel,
     network: 'base',
@@ -164,7 +163,7 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
           value: borrowApr,
         },
         {
-          label: `Net spread × ${leverageLabel} leverage`,
+          label: `Net spread × ${leverageLabel || '—'} leverage`,
           value: leveredApy,
         },
       ],

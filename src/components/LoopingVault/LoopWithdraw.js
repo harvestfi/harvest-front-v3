@@ -23,20 +23,9 @@ import {
   InputUsd,
   CTAWrap,
 } from '../CLVault/style'
-import {
-  SectionLabel,
-  OutputCard,
-  OutputTitle,
-  OutputValue,
-  OutputSub,
-  DetailsBox,
-  DetailsTitle,
-} from './style'
+import { SectionLabel, OutputCard, OutputValue, OutputSub, DetailsBox, DetailsTitle } from './style'
 import { fmtBps } from './loopHelpers'
-import {
-  projectLtvAfterWithdraw,
-  computeExitCostBps,
-} from './loopLtvSim'
+import { projectLtvAfterWithdraw, computeExitCostBps } from './loopLtvSim'
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
 const num = v => {
@@ -175,8 +164,11 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
 
   const withdrawFraction =
     num(shares) > 0 && availableShares > 0 ? num(shares) / availableShares : 0
-  const tvlFraction = tvlUsd > 0 && userPosition?.usdValue > 0 ? userPosition.usdValue / tvlUsd : 0
-  const largeWithdraw = withdrawFraction > 0.25 || tvlFraction > 0.1
+  const withdrawUsd = inputUsd || 0
+  // Warn only when the exit is large vs vault TVL (or a big personal exit with material USD).
+  // Tiny dust amounts should never trigger this even if they are a high % of a small balance.
+  const vaultImpact = tvlUsd > 0 && withdrawUsd > 0 ? withdrawUsd / tvlUsd : 0
+  const largeWithdraw = withdrawUsd >= 25 && (vaultImpact > 0.05 || withdrawFraction > 0.25)
 
   const hasInput = num(shares) > 0 && num(shares) <= availableShares
   const hasPreview = num(shares) > 0
@@ -272,9 +264,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
           <SectionLabel $fontcolor={fontColor2}>Receive</SectionLabel>
           <OutputCard $bg={cardBg} style={{ marginBottom: 12 }}>
             <OutputValue $fontcolor={fontColor1}>
-              {preview && preview.underlying != null
-                ? `~ ${fmt(preview.underlying, 4)}`
-                : 'n/a'}
+              {preview && preview.underlying != null ? `~ ${fmt(preview.underlying, 4)}` : 'n/a'}
             </OutputValue>
             {preview?.underlying != null && underlyingUsdPrice > 0 && (
               <OutputSub $muted={fontColor3}>

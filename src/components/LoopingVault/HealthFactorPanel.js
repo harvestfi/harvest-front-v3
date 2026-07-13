@@ -13,7 +13,8 @@ import {
   BandEdges,
 } from '../CLVault/style'
 import HelpTip from './HelpTip'
-import { HFGaugeWrap, HFGaugeTrack, HFGaugeDanger, HFTick, HFFooter } from './style'
+import PanelLoading from './PanelLoading'
+import { HFGaugeWrap, HFGaugeTrack, HFTick, HFFooter } from './style'
 
 const LIQUIDATION_HF = 1.0
 const GAUGE_MAX_HF = 1.2
@@ -36,16 +37,7 @@ const HealthFactorPanel = ({ data }) => {
   const pos = position
 
   if (!pos) {
-    return (
-      <Panel $cardbg={bgColorNew} $border={borderColorBox}>
-        <PanelHead $border={borderColorBox}>
-          <PanelTitle $fontcolor={fontColor1}>Health Factor</PanelTitle>
-        </PanelHead>
-        <PanelSection>
-          <RangeDesc $muted={fontColor3}>Loading health factor…</RangeDesc>
-        </PanelSection>
-      </Panel>
-    )
+    return <PanelLoading title="Health Factor" rows={4} />
   }
 
   const currentHf = pos.healthFactor
@@ -54,8 +46,6 @@ const HealthFactorPanel = ({ data }) => {
   const forcedDeleverage = pos.forcedDeleverage
 
   const healthOk = currentHf != null && rebalanceTrigger != null && currentHf >= rebalanceTrigger
-
-  const dangerPct = hfToPos(forcedDeleverage ?? 1.015)
 
   return (
     <Panel $cardbg={bgColorNew} $border={borderColorBox}>
@@ -95,15 +85,22 @@ const HealthFactorPanel = ({ data }) => {
 
         <HFGaugeWrap>
           <HFGaugeTrack>
-            <HFGaugeDanger $pct={dangerPct} />
             {forcedDeleverage != null && (
-              <HFTick $pos={hfToPos(forcedDeleverage)} $color="#ef4444" $z={2} />
+              <HFTick $pos={hfToPos(forcedDeleverage)} $color="#22d3ee" $z={2} />
             )}
             {rebalanceTrigger != null && (
-              <HFTick $pos={hfToPos(rebalanceTrigger)} $color="#f97316" $z={2} />
+              <HFTick $pos={hfToPos(rebalanceTrigger)} $color="#2563eb" $z={2} />
             )}
-            {currentHf != null && <HFTick $pos={hfToPos(currentHf)} $color="#101828" $z={3} />}
-            {targetHf != null && <HFTick $pos={hfToPos(targetHf)} $color="#16a34a" $z={2} />}
+            {targetHf != null && <HFTick $pos={hfToPos(targetHf)} $color="#7c3aed" $z={2} />}
+            {currentHf != null && (
+              <HFTick
+                $primary
+                $pos={hfToPos(currentHf)}
+                $color={fontColor1}
+                $cardbg={bgColorNew}
+                $z={3}
+              />
+            )}
           </HFGaugeTrack>
         </HFGaugeWrap>
 

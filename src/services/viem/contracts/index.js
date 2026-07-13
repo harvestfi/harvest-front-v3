@@ -35,6 +35,9 @@ import ClVaultMethods from './cl-vault/methods'
 import ClWrapperContract from './cl-wrapper/contract.json'
 import ClWrapperMethods from './cl-wrapper/methods'
 
+import LoopVaultContract from './loop-vault/contract.json'
+import LoopVaultMethods from './loop-vault/methods'
+
 import { CHAIN_IDS } from '../../../data/constants'
 
 const { tokens } = require('../../../data')
@@ -133,6 +136,12 @@ export default {
   clWrapper: {
     contract: ClWrapperContract,
     methods: ClWrapperMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  loopVault: {
+    contract: LoopVaultContract,
+    methods: LoopVaultMethods,
     chain: CHAIN_IDS.BASE,
   },
 

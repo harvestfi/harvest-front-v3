@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { baseViem, newContractInstance, handleViemReadMethod } from '../../services/viem'
 import TokenContract from '../../services/viem/contracts/token/contract.json'
-import TokenMethods from '../../services/viem/contracts/token/methods'
 import { CHAIN_IDS } from '../../data/constants'
 
 const AAVE_VIEWER = '0x1e51654aB193bA165b7F7715C734dAF454f08148'
@@ -113,14 +112,43 @@ const read = async (address, abi, fn, args = []) => {
 export const fetchLoopWalletBalance = async (account, tokenAddress, decimals = 18) => {
   if (!account || !tokenAddress) return 0
   try {
-    const nativeBal = await baseViem.getBalance({ address: account })
-    const instance = await newContractInstance(null, tokenAddress, TokenContract.abi, baseViem)
-    if (!instance) return Number(nativeBal) / 10 ** decimals
-    const raw = await settle(TokenMethods.getBalance(account, instance))
-    return raw == null ? Number(nativeBal) / 10 ** decimals : Number(raw) / 10 ** decimals
+    const raw = await settle(
+      baseViem.readContract({
+        address: tokenAddress,
+        abi: [
+          {
+            inputs: [{ internalType: 'address', name: 'account', type: 'address' }],
+            name: 'balanceOf',
+            outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
+            stateMutability: 'view',
+            type: 'function',
+          },
+        ],
+        functionName: 'balanceOf',
+        args: [account],
+      }),
+    )
+    if (raw == null) return 0
+    return new BigNumber(raw.toString()).div(new BigNumber(10).pow(decimals)).toNumber()
   } catch (e) {
     return 0
   }
+}
+
+/** Poll until ERC-20 wallet balance changes from `previousBalance`. */
+export const pollLoopWalletBalance = async (
+  account,
+  tokenAddress,
+  decimals = 18,
+  { retries = 5, delayMs = 1200, previousBalance = 0 } = {},
+) => {
+  let last = await fetchLoopWalletBalance(account, tokenAddress, decimals)
+  for (let i = 0; i < retries; i += 1) {
+    if (Math.abs((last || 0) - (previousBalance || 0)) > 1e-14) return last
+    await new Promise(r => setTimeout(r, delayMs))
+    last = await fetchLoopWalletBalance(account, tokenAddress, decimals)
+  }
+  return last
 }
 
 export const fetchLoopChainData = async ({
@@ -177,8 +205,11 @@ export const fetchLoopChainData = async ({
   const debtValue = debtInBorrow
   const netValue = collateralValue.minus(debtValue)
 
-  let leverage = 1
-  let ltv = 0
+  let leverage = 1,
+    ltv = 0,
+    liquidationLtv = 0.95,
+    suppliedMul = 1,
+    borrowedMul = 0
   if (collateralValue.gt(0)) {
     ltv = debtValue.div(collateralValue).toNumber()
     if (netValue.gt(0)) {
@@ -208,7 +239,7 @@ export const fetchLoopChainData = async ({
   const forcedDeleverage =
     targetHealth != null ? Math.max(1.001, Number((targetHealth - 0.045).toFixed(3))) : 1.015
 
-  let liquidationLtv = collFactor > 0 ? collFactor : 0.95
+  liquidationLtv = collFactor > 0 ? collFactor : 0.95
   if (healthFactor != null && healthFactor > 0 && ltv > 0) {
     liquidationLtv = Math.min(0.99, ltv * healthFactor)
   } else if (borrowTarget > 0) {
@@ -222,16 +253,12 @@ export const fetchLoopChainData = async ({
     .times(100)
     .toNumber()
   const borrowRate = new BigNumber(
-    borrowReserve.currentVariableBorrowRate?.toString() ||
-      borrowReserve[4]?.toString() ||
-      '0',
+    borrowReserve.currentVariableBorrowRate?.toString() || borrowReserve[4]?.toString() || '0',
   )
     .div(1e27)
     .times(100)
     .toNumber()
 
-  let suppliedMul = 1
-  let borrowedMul = 0
   if (netValue.gt(0)) {
     suppliedMul = collateralValue.div(netValue).toNumber()
     borrowedMul = debtValue.div(netValue).toNumber()
