@@ -2,76 +2,37 @@ import React from 'react'
 import { Tooltip } from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
-import { MyBalance, NewLabel, FlexDiv } from '../../pages/AdvancedFarm/style'
+import { MyBalance, NewLabel } from '../../pages/AdvancedFarm/style'
+import { BreakdownRow } from './style'
 import { fmtInteractionCosts } from './loopHelpers'
 
 const LoopFeesPanel = ({ data, isMobile }) => {
   const { darkMode, bgColorNew, borderColorBox, fontColor1, fontColor3, fontColor4 } =
     useThemeContext()
   const fees = data?.fees || {}
-
   const entryExit = fmtInteractionCosts(fees.entryCostBps30d, fees.exitCostBps30d)
+  const size = isMobile ? '12px' : '14px'
+  const pad = isMobile ? '10px 15px' : '10px 15px'
 
-  const rowStyle = index => ({
-    borderBottom: index < 2 ? `1px solid ${borderColorBox}` : undefined,
-  })
-
-  return (
-    <MyBalance
-      $marginbottom={isMobile ? '20px' : '25px'}
-      $backcolor={bgColorNew}
-      $bordercolor={borderColorBox}
-    >
-      <NewLabel
-        $size={isMobile ? '12px' : '14px'}
-        $weight="600"
-        $height={isMobile ? '20px' : '24px'}
-        $fontcolor={fontColor4}
-        $padding={isMobile ? '10px 15px' : '10px 15px'}
-        $borderbottom={`1px solid ${borderColorBox}`}
-      >
-        Fees
-      </NewLabel>
-
-      <FlexDiv
-        $justifycontent="space-between"
-        $padding={isMobile ? '10px 15px' : '10px 15px'}
-        style={rowStyle(0)}
-      >
-        <NewLabel $size={isMobile ? '12px' : '14px'} $weight="500" $fontcolor={fontColor3}>
-          Entry / Exit fee
-        </NewLabel>
-        <NewLabel $size={isMobile ? '12px' : '14px'} $weight="600" $fontcolor={fontColor1}>
-          {fees.entryFee || '0%'} / {fees.exitFee || '0%'}
-        </NewLabel>
-      </FlexDiv>
-
-      <FlexDiv
-        $justifycontent="space-between"
-        $padding={isMobile ? '10px 15px' : '10px 15px'}
-        style={rowStyle(1)}
-      >
-        <NewLabel $size={isMobile ? '12px' : '14px'} $weight="500" $fontcolor={fontColor3}>
-          Profit share
-        </NewLabel>
-        <NewLabel $size={isMobile ? '12px' : '14px'} $weight="600" $fontcolor={fontColor1}>
-          {fees.profitSharePct != null ? `${fees.profitSharePct}%` : '10%'}
-        </NewLabel>
-      </FlexDiv>
-
-      <FlexDiv
-        $justifycontent="space-between"
-        $padding={isMobile ? '10px 15px' : '10px 15px'}
-        style={rowStyle(2)}
-      >
-        <NewLabel
-          $size={isMobile ? '12px' : '14px'}
-          $weight="500"
-          $fontcolor={fontColor3}
-          style={{ display: 'flex', alignItems: 'center', gap: 4 }}
-        >
+  const rows = [
+    {
+      label: 'Entry / Exit fee',
+      value: `${fees.entryFee || '0%'} / ${fees.exitFee || '0%'}`,
+    },
+    {
+      label: 'Profit share',
+      value: fees.profitSharePct != null ? `${fees.profitSharePct}%` : '10%',
+    },
+    {
+      label: (
+        <>
           Typical interaction cost
-          <PiQuestion className="question" data-tip id="loop-typical-interaction-cost" />
+          <PiQuestion
+            className="question"
+            data-tip
+            id="loop-typical-interaction-cost"
+            style={{ marginLeft: 4, flexShrink: 0 }}
+          />
           <Tooltip
             id="loop-typical-interaction-cost"
             anchorSelect="#loop-typical-interaction-cost"
@@ -84,16 +45,44 @@ const LoopFeesPanel = ({ data, isMobile }) => {
             Rolling 30-day median swap and fold overhead from real deposits and withdrawals — not
             gas fees.
           </Tooltip>
-        </NewLabel>
-        <NewLabel
-          $size={isMobile ? '12px' : '14px'}
-          $weight="600"
+        </>
+      ),
+      value: entryExit,
+    },
+  ]
+
+  return (
+    <MyBalance
+      $marginbottom={isMobile ? '28px' : '40px'}
+      $backcolor={bgColorNew}
+      $bordercolor={borderColorBox}
+    >
+      <NewLabel
+        $size={size}
+        $weight="600"
+        $height={isMobile ? '20px' : '24px'}
+        $fontcolor={fontColor4}
+        $padding={pad}
+        $borderbottom={`1px solid ${borderColorBox}`}
+      >
+        Fees
+      </NewLabel>
+
+      {rows.map((row, index) => (
+        <BreakdownRow
+          key={index}
+          $size={size}
+          $muted={fontColor3}
           $fontcolor={fontColor1}
-          style={{ textAlign: 'right', maxWidth: '55%' }}
+          $padding={pad}
+          $border={index < rows.length - 1 ? `1px solid ${borderColorBox}` : 'none'}
         >
-          {entryExit}
-        </NewLabel>
-      </FlexDiv>
+          <div className="breakdown-label" style={{ display: 'inline-flex', alignItems: 'center' }}>
+            {row.label}
+          </div>
+          <div className="breakdown-value">{row.value}</div>
+        </BreakdownRow>
+      ))}
     </MyBalance>
   )
 }

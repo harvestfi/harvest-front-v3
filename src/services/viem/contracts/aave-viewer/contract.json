@@ -1,0 +1,15 @@
+{
+  "address": "0x1e51654aB193bA165b7F7715C734dAF454f08148",
+  "abi": [
+    {
+      "inputs": [
+        { "name": "assetToken", "type": "address" },
+        { "name": "quoteToken", "type": "address" }
+      ],
+      "name": "getPrice",
+      "outputs": [{ "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

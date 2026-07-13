@@ -305,19 +305,70 @@ export const OutputSub = styled.div`
 `
 
 export const DetailsBox = styled.div`
-  margin-top: 12px;
+  margin-top: 16px;
   padding: 12px 14px;
   border-radius: 10px;
   background: ${props => props.$bg};
 `
 
-export const DetailsTitle = styled.div`
+export const DetailsTitle = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
   font-size: 12px;
   font-weight: 600;
   color: ${props => props.$muted};
-  margin-bottom: 8px;
   text-transform: uppercase;
   letter-spacing: 0.02em;
+  margin-bottom: ${props => (props.$open ? '8px' : '0')};
+
+  svg {
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+    transition: transform 0.2s ease;
+    transform: rotate(${props => (props.$open ? '180deg' : '0deg')});
+  }
+`
+
+export const DetailsBody = styled.div`
+  display: ${props => (props.$open ? 'block' : 'none')};
+`
+
+export const BreakdownRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  padding: ${props => props.$padding || '10px 15px'};
+  border-bottom: ${props => props.$border || 'none'};
+
+  .breakdown-label {
+    flex: 1 1 auto;
+    min-width: 0;
+    font-size: ${props => props.$size || '14px'};
+    font-weight: 500;
+    line-height: 1.45;
+    color: ${props => props.$muted};
+    word-break: break-word;
+  }
+
+  .breakdown-value {
+    flex: 0 1 auto;
+    max-width: 48%;
+    text-align: right;
+    font-size: ${props => props.$size || '14px'};
+    font-weight: 600;
+    line-height: 1.45;
+    color: ${props => props.$fontcolor};
+    word-break: break-word;
+  }
 `
 
 export const LoadingSpinner = styled.div`

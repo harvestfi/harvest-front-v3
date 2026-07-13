@@ -47,6 +47,28 @@ const recommendLinks = [
   { name: 'ALL', type: 4, state: 'ALL' },
 ]
 
+// aaveLoop_ETH_cbETH2 — drop leading zeros and seed the real APY start.
+const LOOP_APY_CHART_VAULT = '0xe78285a51f51916f2311b7017db036d8351f3cf9'
+const LOOP_APY_CHART_START_TS = 1778371200
+const LOOP_APY_CHART_START_APY = '1.16'
+
+const applyLoopApyChartStart = generalApies => {
+  const filtered = (generalApies || []).filter(
+    entry => Number(entry.timestamp) >= LOOP_APY_CHART_START_TS,
+  )
+  const withSeed = filtered.map(entry =>
+    Number(entry.timestamp) === LOOP_APY_CHART_START_TS
+      ? { ...entry, apy: LOOP_APY_CHART_START_APY }
+      : entry,
+  )
+  const hasSeed = withSeed.some(entry => Number(entry.timestamp) === LOOP_APY_CHART_START_TS)
+  const seeded = hasSeed
+    ? withSeed
+    : [...withSeed, { timestamp: String(LOOP_APY_CHART_START_TS), apy: LOOP_APY_CHART_START_APY }]
+  // Newest-first, matching subgraph order used by ApexChart.
+  return seeded.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
+}
+
 const FarmDetailChart = ({
   token,
   vaultPool,
@@ -123,9 +145,14 @@ const FarmDetailChart = ({
           const data = token.isIPORVault
             ? await getIPORDataQuery(address.toLowerCase(), chainId, vaultTVLCount, false)
             : await getDataQuery(address, chainId, vaultTVLCount, false)
+          const cappedApies = data.generalApies.filter(entry => parseFloat(entry.apy) <= 10000)
+          const generalApies =
+            address?.toLowerCase() === LOOP_APY_CHART_VAULT
+              ? applyLoopApyChartStart(cappedApies)
+              : cappedApies
           const filteredData = {
             ...data,
-            generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 10000),
+            generalApies,
           }
           const updatedData = { ...filteredData }
           updatedData.vaultHistories = updatedData.vaultHistories.filter(

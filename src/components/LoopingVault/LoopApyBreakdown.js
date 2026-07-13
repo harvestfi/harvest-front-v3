@@ -5,7 +5,6 @@ import { useThemeContext } from '../../providers/useThemeContext'
 import {
   MyBalance,
   NewLabel,
-  FlexDiv,
   Tip,
   TipTop,
   IconPart,
@@ -13,6 +12,7 @@ import {
 } from '../../pages/AdvancedFarm/style'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
+import { BreakdownRow } from './style'
 import { fmtPct } from './loopHelpers'
 
 const LoopApyBreakdown = ({ data, isMobile, showTip, onCloseTip }) => {
@@ -28,15 +28,16 @@ const LoopApyBreakdown = ({ data, isMobile, showTip, onCloseTip }) => {
   const rows = data?.apy?.breakdown || []
   const loading = !data?.live
   const baseColor = darkMode ? '#2a2f36' : '#ECECEC'
+  const size = isMobile ? '12px' : '14px'
 
   return (
     <MyBalance
-      $marginbottom={isMobile ? '20px' : '25px'}
+      $marginbottom={isMobile ? '28px' : '40px'}
       $backcolor={bgColorNew}
       $bordercolor={borderColorBox}
     >
       <NewLabel
-        $size={isMobile ? '12px' : '14px'}
+        $size={size}
         $weight="600"
         $height={isMobile ? '20px' : '24px'}
         $fontcolor={fontColor4}
@@ -48,16 +49,16 @@ const LoopApyBreakdown = ({ data, isMobile, showTip, onCloseTip }) => {
 
       <SkeletonTheme baseColor={baseColor} highlightColor={highlightColor}>
         {rows.map((row, index) => (
-          <FlexDiv
+          <BreakdownRow
             key={row.label}
-            $justifycontent="space-between"
+            $size={size}
+            $muted={fontColor3}
+            $fontcolor={fontColor1}
             $padding={isMobile ? '10px 15px' : '10px 15px'}
-            style={index < rows.length - 1 ? { borderBottom: `1px solid ${borderColorBox}` } : {}}
+            $border={index < rows.length - 1 ? `1px solid ${borderColorBox}` : 'none'}
           >
-            <NewLabel $size={isMobile ? '12px' : '14px'} $weight="500" $fontcolor={fontColor3}>
-              {row.label}
-            </NewLabel>
-            <NewLabel $size={isMobile ? '12px' : '14px'} $weight="600" $fontcolor={fontColor1}>
+            <div className="breakdown-label">{row.label}</div>
+            <div className="breakdown-value">
               {row.value != null ? (
                 fmtPct(row.value)
               ) : loading ? (
@@ -65,8 +66,8 @@ const LoopApyBreakdown = ({ data, isMobile, showTip, onCloseTip }) => {
               ) : (
                 '—'
               )}
-            </NewLabel>
-          </FlexDiv>
+            </div>
+          </BreakdownRow>
         ))}
       </SkeletonTheme>
 
