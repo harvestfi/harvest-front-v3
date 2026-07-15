@@ -135,11 +135,13 @@ export const loopSimulateDeposit = async ({ vaultAddress, underlying, amount, ac
       try {
         return await runSim(null)
       } catch (e) {
+        // fall through to the next resolution strategy
       }
     }
     try {
       return await runSim(overrides)
     } catch (e) {
+      // fall through to the on-chain preview
     }
     const previewShares = await loopPreviewDepositShares({ vaultAddress, amount, decimals })
     if (previewShares == null) return null
