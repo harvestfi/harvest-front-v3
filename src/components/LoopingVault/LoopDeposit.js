@@ -5,8 +5,9 @@ import { PiQuestion, PiCaretDown } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
-import { loopDeposit, loopPreviewDepositShares } from './loopActions'
+import { loopDeposit, loopPreviewDepositShares, loopSimulateDeposit } from './loopActions'
 import Button from '../Button'
+import InfoIcon from '../../assets/images/logos/beginners/info-circle.svg'
 import {
   FieldTitle,
   InputWithChip,
@@ -38,7 +39,7 @@ import {
   DetailsBody,
 } from './style'
 import { fmtBps } from './loopHelpers'
-import { projectLtvAfterDeposit, computeEntryCostBps } from './loopLtvSim'
+import { computeEntryCostBps } from './loopLtvSim'
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
 const num = v => {
@@ -89,17 +90,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     linkColor,
   } = useThemeContext()
 
-  const {
-    underlying,
-    vaultAddress,
-    walletBalance,
-    apy,
-    id,
-    sharePrice,
-    underlyingUsdPrice,
-    position,
-    fees = {},
-  } = data
+  const { underlying, vaultAddress, walletBalance, apy, id, sharePrice, underlyingUsdPrice } = data
   const fTokenName = id ? `f${id}` : 'shares'
   const perShareUsd =
     Number(underlyingUsdPrice) > 0 && Number(sharePrice) > 0
@@ -111,6 +102,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   const [checked, setChecked] = useState(false)
   const [pending, setPending] = useState(false)
   const [estShares, setEstShares] = useState(null)
+  const [simDetails, setSimDetails] = useState(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
 
   const inputBg = darkMode ? bgColorButton : '#F0F4FF'
@@ -148,6 +140,23 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     }
   }, [amount, vaultAddress, underlying.decimals])
 
+  useEffect(() => {
+    const a = num(amount)
+    if (!a || !vaultAddress) {
+      setSimDetails(null)
+      return undefined
+    }
+    let active = true
+    const handle = setTimeout(async () => {
+      const res = await loopSimulateDeposit({ vaultAddress, underlying, amount: a, account })
+      if (active) setSimDetails(res)
+    }, 350)
+    return () => {
+      active = false
+      clearTimeout(handle)
+    }
+  }, [amount, vaultAddress, underlying, account])
+
   const preview = useMemo(() => {
     const a = num(amount)
     if (!a) return null
@@ -163,22 +172,17 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   }, [amount, estShares, perShareUsd, underlying, sharePrice])
 
   const entryCostBps = useMemo(() => {
-    // UI labels this as median 30d; prefer that over live share-math (usually ~0)
-    if (fees.entryCostBps30d != null) return fees.entryCostBps30d
+    if (simDetails?.entryCostBps != null) return simDetails.entryCostBps
     if (!preview) return null
     return computeEntryCostBps(preview.inputAmount, preview.valueToken)
-  }, [preview, fees.entryCostBps30d])
+  }, [simDetails, preview])
 
   const wethAfterCost = useMemo(() => {
+    if (simDetails?.wethEquivalent != null) return simDetails.wethEquivalent
     if (!preview) return null
     const cost = (entryCostBps || 0) / 10000
     return preview.inputAmount * (1 - cost)
-  }, [preview, entryCostBps])
-
-  const projectedLtv = useMemo(() => {
-    if (!position || !preview) return null
-    return projectLtvAfterDeposit(position, preview.inputAmount, entryCostBps || 0)
-  }, [position, preview, entryCostBps])
+  }, [simDetails, preview, entryCostBps])
 
   const inputUsd = useMemo(() => {
     const a = num(amount)
@@ -188,13 +192,15 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   }, [amount, underlying.priceUsd])
 
   const hasInput = num(amount) > 0
+  const exceedsBalance = hasInput && num(amount) > Number(walletBalance || 0)
+  const supplyDisabled = !connected || !hasInput || !checked || pending || exceedsBalance
   const yearlyYieldToken =
     preview && preview.valueToken != null ? preview.valueToken * (apy.total / 100) : null
   const yearlyYieldUsd =
     preview && preview.valueUsd != null ? preview.valueUsd * (apy.total / 100) : null
 
   const handleSupply = async () => {
-    if (!connected || !hasInput || !checked || pending) return
+    if (supplyDisabled) return
     const deposited = num(amount)
     setPending(true)
     try {
@@ -214,6 +220,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     if (!connected) return 'Connect Wallet to Get Started'
     if (pending) return 'Confirming...'
     if (!hasInput) return 'Enter an amount'
+    if (exceedsBalance) return `Insufficient ${underlying.symbol} balance`
     if (!checked) return 'Agree to terms above'
     return 'Supply'
   }
@@ -264,6 +271,27 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
         </TokenChip>
       </InputWithChip>
 
+      {exceedsBalance && (
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: 8,
+            margin: '12px 0',
+            padding: '14px 16px',
+            borderRadius: 12,
+            border: `1px solid ${inputBorderColor}`,
+            background: bgColorMessage,
+            color: fontColor2,
+            fontSize: 14,
+            fontWeight: 600,
+          }}
+        >
+          <img src={InfoIcon} alt="" width="18" height="18" />
+          Insufficient {underlying.symbol} balance in your wallet
+        </div>
+      )}
+
       {hasInput && (
         <>
           <SectionLabel $fontcolor={fontColor2}>Output</SectionLabel>
@@ -279,11 +307,8 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
                 </HelpTip>
               </OutputTitle>
               <OutputValue $fontcolor={fontColor1}>
-                {preview && preview.shares != null ? `~ ${fmt(preview.shares, 4)}` : 'n/a'}
+                {preview?.valueUsd != null ? `~ ${fmtUsd(preview.valueUsd)}` : 'n/a'}
               </OutputValue>
-              {preview?.valueUsd != null && (
-                <OutputSub $muted={fontColor3}>{fmtUsd(preview.valueUsd)}</OutputSub>
-              )}
               <OutputSub $muted={fontColor3}>{fTokenName}</OutputSub>
             </OutputCard>
 
@@ -329,20 +354,9 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
                 </b>
               </Row>
               <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-                <span>Entry cost (median 30d)</span>
+                <span>Entry cost</span>
                 <b>{fmtBps(entryCostBps)}</b>
               </Row>
-              {position && projectedLtv != null && (
-                <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-                  <span>Vault LTV after your entry</span>
-                  <b>
-                    {(projectedLtv * 100).toFixed(2)}%{' '}
-                    <span style={{ fontWeight: 500 }}>
-                      (was {(position.ltv * 100).toFixed(2)}%)
-                    </span>
-                  </b>
-                </Row>
-              )}
             </DetailsBody>
           </DetailsBox>
         </>
@@ -406,15 +420,15 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
         </CheckboxLabel>
       </CheckboxContainer>
 
-      <CTAWrap $disabled={!connected || !hasInput || !checked || pending}>
+      <CTAWrap $disabled={supplyDisabled}>
         <Button
           $fontcolor="wido-deposit"
           $width="100%"
           $btncolor={btnColor}
           $btnhovercolor={btnHoverColor}
           $btnactivecolor={btnActiveColor}
-          $disabled={!connected || !hasInput || !checked || pending}
-          disabled={!connected || !hasInput || !checked || pending}
+          $disabled={supplyDisabled}
+          disabled={supplyDisabled}
           onClick={handleSupply}
         >
           {ctaLabel()}

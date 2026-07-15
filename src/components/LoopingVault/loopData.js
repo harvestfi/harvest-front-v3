@@ -78,6 +78,11 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
   const leverage = chain?.leverage > 0 ? chain.leverage : null
   const leverageLabel = leverage ? `${leverage.toFixed(1)}×` : null
 
+  const pairLabel = `${collateralSymbol}/${debtSymbol}`
+  const platformLabel = leverage
+    ? `${pairLabel} ${leverage.toFixed(1)}x Loop - ${protocol}`
+    : `${pairLabel} Loop - ${protocol}`
+
   const stakingYield = stakingYieldForSupply(loopCfg.supplyAsset)
   const borrowRate = chain?.borrowRate
   const borrowApr = borrowRate != null && borrowRate > 0 ? -borrowRate : null
@@ -87,11 +92,10 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
     spread != null && leverage > 0 ? spread * leverage * profitFactor : null
   const leveredApy = liveApy > 0 ? liveApy : calculatedLeveredApy
 
-  const interactionCosts = extras.interactionCosts || {}
-
   return {
     protocol,
     type: 'Leveraged Loop',
+    platformLabel,
     leverage,
     leverageLabel,
     network: 'base',
@@ -146,8 +150,6 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
       entryFee: '0%',
       exitFee: '0%',
       profitSharePct: chain?.profitSharePct != null ? Math.round(chain.profitSharePct) : 10,
-      entryCostBps30d: interactionCosts.entryBps30d ?? null,
-      exitCostBps30d: interactionCosts.exitBps30d ?? null,
     },
 
     apy: {

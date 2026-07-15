@@ -53,57 +53,6 @@ export const AddressLink = styled.a`
   }
 `
 
-export const HFGaugeWrap = styled.div`
-  position: relative;
-  margin: 8px 0 6px;
-  overflow: visible;
-`
-
-export const HFGaugeTrack = styled.div`
-  position: relative;
-  height: 16px;
-  border-radius: 999px;
-  /* left = liquidation risk, right = safer HF */
-  background: linear-gradient(
-    90deg,
-    #ef4444 0%,
-    #f97316 18%,
-    #fbbf24 38%,
-    #7ee06a 62%,
-    #5dcf46 82%,
-    #2f9e2f 100%
-  );
-`
-
-export const HFTick = styled.div`
-  position: absolute;
-  top: 50%;
-  left: ${props => props.$pos}%;
-  width: 2px;
-  height: ${props => (props.$primary ? '24px' : '22px')};
-  border-radius: 1px;
-  background: ${props => props.$color || '#101828'};
-  transform: translate(-50%, -50%);
-  z-index: ${props => props.$z || 1};
-  pointer-events: none;
-`
-
-export const HFEdges = styled.div`
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: 500;
-  color: ${props => props.$muted};
-  margin-bottom: 14px;
-`
-
-export const HFFooter = styled.div`
-  font-size: 13px;
-  font-weight: 500;
-  color: ${props => props.$muted};
-  margin-top: 4px;
-`
-
 export const LTVGaugeWrap = styled.div`
   position: relative;
   margin: 8px 0 6px;

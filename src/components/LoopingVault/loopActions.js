@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { keccak256, encodeAbiParameters, pad, numberToHex } from 'viem'
 import { toWei, getViem, newContractInstance, baseViem } from '../../services/viem'
 import { CHAIN_IDS } from '../../data/constants'
 import LoopVaultContract from '../../services/viem/contracts/loop-vault/contract.json'
@@ -63,6 +64,106 @@ export const loopPreviewDepositShares = async ({ vaultAddress, amount, decimals 
   }
 }
 
+// Standard WETH9 storage layout (Base underlying): balanceOf -> slot 3, allowance -> slot 4.
+const WETH9_BALANCE_SLOT = 3n
+const WETH9_ALLOWANCE_SLOT = 4n
+// Placeholder sender used when the wallet is not connected; state overrides fund/approve it.
+const SIM_SENDER = '0x0000000000000000000000000000000000000001'
+
+const mappingSlot = (key, slot) =>
+  keccak256(encodeAbiParameters([{ type: 'address' }, { type: 'uint256' }], [key, slot]))
+
+const nestedMappingSlot = (owner, spender, slot) => {
+  const inner = mappingSlot(owner, slot)
+  return keccak256(
+    encodeAbiParameters([{ type: 'address' }, { type: 'bytes32' }], [spender, inner]),
+  )
+}
+
+const to32 = big => pad(numberToHex(big), { size: 32 })
+
+const depositAbi = LoopVaultContract.abi.filter(x => x.name === 'deposit' && x.inputs?.length === 2)
+
+/**
+ * Simulate the real deposit(amount, receiver) transaction to read the true minted shares
+ * (reflecting the vault's live zap + fold), then value them back to the underlying via
+ * price-per-share to derive the WETH-equivalent value and the effective entry cost.
+ * Falls back to the on-chain previewDeposit if the simulation reverts.
+ */
+export const loopSimulateDeposit = async ({ vaultAddress, underlying, amount, account }) => {
+  if (!vaultAddress || !underlying?.address || !(Number(amount) > 0)) return null
+
+  const decimals = underlying.decimals ?? 18
+  let amountWei
+  try {
+    amountWei = BigInt(toWei(amount, decimals, 0))
+  } catch (e) {
+    return null
+  }
+  if (amountWei <= 0n) return null
+
+  const sender = account || SIM_SENDER
+
+  const runSim = async stateOverride => {
+    const { result } = await baseViem.simulateContract({
+      address: vaultAddress,
+      abi: depositAbi,
+      functionName: 'deposit',
+      args: [amountWei, sender],
+      account: sender,
+      ...(stateOverride ? { stateOverride } : {}),
+    })
+    return result
+  }
+
+  // Fake WETH balance + allowance so the transferFrom inside deposit() clears even before approval.
+  const overrides = [
+    {
+      address: underlying.address,
+      stateDiff: [
+        { slot: mappingSlot(sender, WETH9_BALANCE_SLOT), value: to32(amountWei) },
+        {
+          slot: nestedMappingSlot(sender, vaultAddress, WETH9_ALLOWANCE_SLOT),
+          value: to32(amountWei),
+        },
+      ],
+    },
+  ]
+
+  const resolveMintedWei = async () => {
+    if (account) {
+      try {
+        return await runSim(null)
+      } catch (e) {
+      }
+    }
+    try {
+      return await runSim(overrides)
+    } catch (e) {
+    }
+    const previewShares = await loopPreviewDepositShares({ vaultAddress, amount, decimals })
+    if (previewShares == null) return null
+    return BigInt(new BigNumber(previewShares).times('1e18').toFixed(0))
+  }
+
+  const mintedWei = await resolveMintedWei()
+  if (mintedWei == null) return null
+
+  const vault = await readInstance(vaultAddress)
+  const ppsRaw = await settle(LoopVaultMethods.getPricePerFullShare(vault))
+  const pps =
+    ppsRaw != null && new BigNumber(ppsRaw.toString()).gt(0)
+      ? new BigNumber(ppsRaw.toString()).div('1e18')
+      : new BigNumber(1)
+
+  const shares = new BigNumber(mintedWei.toString()).div('1e18')
+  const wethEquivalent = shares.times(pps).toNumber()
+  const input = Number(amount)
+  const entryCostBps = input > 0 ? Math.max(0, ((input - wethEquivalent) / input) * 10000) : null
+
+  return { shares: shares.toNumber(), wethEquivalent, entryCostBps }
+}
+
 export const loopPreviewWithdrawUnderlying = async ({ vaultAddress, shares }) => {
   if (!vaultAddress || !(Number(shares) > 0)) return null
   try {
@@ -73,6 +174,58 @@ export const loopPreviewWithdrawUnderlying = async ({ vaultAddress, shares }) =>
   } catch (e) {
     return null
   }
+}
+
+const withdrawAbi = LoopVaultContract.abi.filter(
+  x => x.name === 'withdraw' && x.inputs?.length === 1,
+)
+
+/**
+ * Simulate the real withdraw(shares) transaction to read the true underlying returned by
+ * unwinding the loop, then compare it against the shares' book value (shares × price-per-share)
+ * to derive the effective exit cost. Returns null (caller keeps its own fallback) when the
+ * simulation can't run — e.g. no connected wallet or an amount above the held balance.
+ */
+export const loopSimulateWithdraw = async ({ vaultAddress, shares, account }) => {
+  if (!vaultAddress || !account || !(Number(shares) > 0)) return null
+
+  let sharesWei
+  try {
+    sharesWei = BigInt(toWei(shares, VAULT_DECIMALS, 0))
+  } catch (e) {
+    return null
+  }
+  if (sharesWei <= 0n) return null
+
+  const assetsWei = await (async () => {
+    try {
+      const { result } = await baseViem.simulateContract({
+        address: vaultAddress,
+        abi: withdrawAbi,
+        functionName: 'withdraw',
+        args: [sharesWei],
+        account,
+      })
+      return result
+    } catch (e) {
+      return null
+    }
+  })()
+  if (assetsWei == null) return null
+
+  const vault = await readInstance(vaultAddress)
+  const ppsRaw = await settle(LoopVaultMethods.getPricePerFullShare(vault))
+  const pps =
+    ppsRaw != null && new BigNumber(ppsRaw.toString()).gt(0)
+      ? new BigNumber(ppsRaw.toString()).div('1e18')
+      : new BigNumber(1)
+
+  const underlyingOut = new BigNumber(assetsWei.toString()).div('1e18').toNumber()
+  const sharesValue = new BigNumber(shares).times(pps).toNumber()
+  const exitCostBps =
+    sharesValue > 0 ? Math.max(0, ((sharesValue - underlyingOut) / sharesValue) * 10000) : null
+
+  return { underlyingOut, sharesValue, exitCostBps }
 }
 
 export const loopDeposit = async ({ vaultAddress, underlying, amount, account, viem }) => {
