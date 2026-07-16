@@ -5,7 +5,7 @@ import { PiQuestion, PiCaretDown } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
-import { loopWithdraw, loopPreviewWithdrawUnderlying } from './loopActions'
+import { loopWithdraw, loopPreviewWithdrawUnderlying, loopSimulateWithdraw } from './loopActions'
 import Button from '../Button'
 import {
   FieldTitle,
@@ -33,7 +33,7 @@ import {
   DetailsBody,
 } from './style'
 import { fmtBps } from './loopHelpers'
-import { projectLtvAfterWithdraw, computeExitCostBps } from './loopLtvSim'
+import { computeExitCostBps } from './loopLtvSim'
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
 const num = v => {
@@ -83,17 +83,8 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     bgColorButton,
   } = useThemeContext()
 
-  const {
-    underlying,
-    vaultAddress,
-    userPosition,
-    id,
-    tvlUsd,
-    position,
-    sharePrice,
-    underlyingUsdPrice,
-    fees = {},
-  } = data
+  const { underlying, vaultAddress, userPosition, id, tvlUsd, sharePrice, underlyingUsdPrice } =
+    data
   const fTokenName = id ? `f${id}` : 'shares'
   const availableShares = userPosition?.vaultShares || 0
   const perShareUsd =
@@ -105,6 +96,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
   const [slippage, setSlippage] = useState(0.5)
   const [pending, setPending] = useState(false)
   const [estUnderlying, setEstUnderlying] = useState(null)
+  const [simWithdraw, setSimWithdraw] = useState(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
 
   const inputBg = darkMode ? bgColorButton : '#F0F4FF'
@@ -138,32 +130,45 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     }
   }, [shares, vaultAddress])
 
+  useEffect(() => {
+    const s = num(shares)
+    if (!s || !vaultAddress) {
+      setSimWithdraw(null)
+      return undefined
+    }
+    let active = true
+    const handle = setTimeout(async () => {
+      const res = await loopSimulateWithdraw({ vaultAddress, shares: s, account })
+      if (active) setSimWithdraw(res)
+    }, 350)
+    return () => {
+      active = false
+      clearTimeout(handle)
+    }
+  }, [shares, vaultAddress, account])
+
   const preview = useMemo(() => {
     const s = num(shares)
     if (!s) return null
     const sharesUsd = perShareUsd > 0 ? s * perShareUsd : null
-    return { shares: s, underlying: estUnderlying, sharesUsd }
-  }, [shares, estUnderlying, perShareUsd])
+    const underlying = simWithdraw?.underlyingOut ?? estUnderlying
+    return { shares: s, underlying, sharesUsd }
+  }, [shares, estUnderlying, simWithdraw, perShareUsd])
 
   const exitCostBps = useMemo(() => {
-    if (!preview || preview.underlying == null) return fees.exitCostBps30d
+    if (simWithdraw?.exitCostBps != null) return simWithdraw.exitCostBps
+    if (!preview || preview.underlying == null) return null
     const sharesValue =
       preview.sharesUsd != null && preview.sharesUsd > 0
         ? preview.sharesUsd / (Number(underlyingUsdPrice) || 1)
         : preview.shares * (sharePrice || 1)
-    const live = computeExitCostBps(sharesValue, preview.underlying)
-    return live ?? fees.exitCostBps30d
-  }, [preview, fees.exitCostBps30d, underlyingUsdPrice, sharePrice])
+    return computeExitCostBps(sharesValue, preview.underlying)
+  }, [simWithdraw, preview, underlyingUsdPrice, sharePrice])
 
   const exitCostToken = useMemo(() => {
     if (!preview || preview.underlying == null || exitCostBps == null) return null
     return preview.underlying * (exitCostBps / 10000)
   }, [preview, exitCostBps])
-
-  const projectedLtv = useMemo(() => {
-    if (!position || !preview?.underlying) return null
-    return projectLtvAfterWithdraw(position, preview.underlying, exitCostBps || 0)
-  }, [position, preview, exitCostBps])
 
   const inputUsd = useMemo(() => {
     const s = num(shares)
@@ -306,7 +311,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
             </DetailsTitle>
             <DetailsBody $open={detailsOpen}>
               <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-                <span>Exit cost (median 30d)</span>
+                <span>Exit cost</span>
                 <b>
                   {fmtBps(exitCostBps)}
                   {exitCostToken != null && (
@@ -317,17 +322,6 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
                   )}
                 </b>
               </Row>
-              {position && projectedLtv != null && (
-                <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-                  <span>Vault LTV after your withdraw</span>
-                  <b>
-                    {(projectedLtv * 100).toFixed(2)}%{' '}
-                    <span style={{ fontWeight: 500 }}>
-                      (was {(position.ltv * 100).toFixed(2)}%)
-                    </span>
-                  </b>
-                </Row>
-              )}
             </DetailsBody>
           </DetailsBox>
         </>

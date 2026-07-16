@@ -572,36 +572,6 @@ const StructureLine = styled.div`
   }
 `
 
-const LeverageBadge = styled.span`
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-left: 8px;
-  padding: 2px 8px;
-  border-radius: 999px;
-  font-size: 12px;
-  font-weight: 700;
-  background: rgba(93, 207, 70, 0.14);
-  color: #2f9e2f;
-  vertical-align: middle;
-`
-
-const LeverageSpinner = styled.span`
-  width: 12px;
-  height: 12px;
-  border-radius: 50%;
-  border: 2px solid currentColor;
-  border-top-color: transparent;
-  animation: leverage-badge-spin 0.7s linear infinite;
-  flex-shrink: 0;
-
-  @keyframes leverage-badge-spin {
-    to {
-      transform: rotate(360deg);
-    }
-  }
-`
-
 const TopLogo = styled.div`
   display: flex;
   @media screen and (max-width: 992px) {
@@ -667,6 +637,10 @@ const FlexDiv = styled.div`
     border-bottom: ${props.$borderbottom};
   `
       : ''}
+
+  &.farm-symbol {
+    align-items: center;
+  }
 
   @media screen and (max-width: 992px) {
     &.farm-symbol {
@@ -1633,8 +1607,6 @@ export {
   TopButton,
   TopDesc,
   StructureLine,
-  LeverageBadge,
-  LeverageSpinner,
   TopLogo,
   Button,
   HalfContent,

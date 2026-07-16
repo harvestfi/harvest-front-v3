@@ -24,11 +24,6 @@ export const fmtBps = bps => {
   return `~ ${Math.round(bps)} bps`
 }
 
-export const fmtInteractionCosts = (entryBps, exitBps) => {
-  if (entryBps == null || exitBps == null) return '—'
-  return `${fmtBps(entryBps)} entry / ${fmtBps(exitBps)} exit`
-}
-
 export const fmtPct = (n, d = 2) => {
   if (n == null || !Number.isFinite(n)) return '—'
   return `~ ${n.toFixed(d)}%`

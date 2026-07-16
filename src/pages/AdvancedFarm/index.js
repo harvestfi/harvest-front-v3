@@ -112,7 +112,6 @@ import {
   initBalanceAndDetailData,
   getIPORLastHarvestInfo,
   getCLVaultRebalances,
-  getLoopVaultInteractionCosts,
 } from '../../utilities/apiCalls'
 import {
   BackBtnRect,
@@ -129,8 +128,6 @@ import {
   NewLabel,
   RestContent,
   TopDesc,
-  LeverageBadge,
-  LeverageSpinner,
   TopLogo,
   TopPart,
   MyBalance,
@@ -393,7 +390,6 @@ const AdvancedFarm = () => {
   const [clChainData, setClChainData] = useState(null)
   const [clRebalances, setClRebalances] = useState(null)
   const [loopChainData, setLoopChainData] = useState(null)
-  const [loopInteractionCosts, setLoopInteractionCosts] = useState(null)
   const [loopRebalances, setLoopRebalances] = useState(null)
 
   useEffect(() => {
@@ -426,11 +422,6 @@ const AdvancedFarm = () => {
       })
         .then(d => {
           if (active) setLoopChainData(d)
-        })
-        .catch(() => {})
-      getLoopVaultInteractionCosts(loopToken.vaultAddress, loopToken.chain || token.chain)
-        .then(costs => {
-          if (active) setLoopInteractionCosts(costs)
         })
         .catch(() => {})
       getCLVaultRebalances(loopToken.vaultAddress, loopToken.chain || token.chain)
@@ -536,7 +527,6 @@ const AdvancedFarm = () => {
     () =>
       isLoopingVault
         ? buildLoopData(loopToken, id, loopChainData, {
-            interactionCosts: loopInteractionCosts,
             lastRebalanceLabel: loopRebalances?.lastRebalanceLabel || '',
           })
         : null,
@@ -545,7 +535,6 @@ const AdvancedFarm = () => {
       loopToken,
       id,
       loopChainData,
-      loopInteractionCosts,
       loopRebalances,
       loopToken.estimatedApy,
       loopToken.totalValueLocked,
@@ -1759,10 +1748,8 @@ const AdvancedFarm = () => {
                           </MorphoBadge>
                         </BadgeRow>
                       ) : isLoopingVault ? (
-                        loopDataView?.type ? (
-                          <span>
-                            {loopDataView.type} - {loopDataView.protocol}
-                          </span>
+                        loopDataView?.platformLabel ? (
+                          <span>{loopDataView.platformLabel}</span>
                         ) : (
                           token.platform && token.platform[0]
                         )
@@ -1779,9 +1766,13 @@ const AdvancedFarm = () => {
             </TopButton>
             <FlexDiv className="farm-symbol">
               <TopLogo>
-                {logoUrl.map((el, i) => (
-                  <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
-                ))}
+                {isLoopingVault && loopDataView?.underlying?.logo ? (
+                  <LogoImg className="logo" src={loopDataView.underlying.logo} alt="" />
+                ) : (
+                  logoUrl.map((el, i) => (
+                    <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
+                  ))
+                )}
               </TopLogo>
               <div>
                 <TopDesc
@@ -1791,19 +1782,9 @@ const AdvancedFarm = () => {
                   $height={isMobile ? '45px' : 'auto'}
                   $marginbottom={isMobile ? '5px' : '4px'}
                 >
-                  {token.tokenNames.join('/')}
-                  {isLoopingVault && (
-                    <LeverageBadge>
-                      {loopDataView?.leverageLabel ? (
-                        <>{loopDataView.leverageLabel} LOOP</>
-                      ) : (
-                        <>
-                          <LeverageSpinner aria-label="Loading leverage" />
-                          LOOP
-                        </>
-                      )}
-                    </LeverageBadge>
-                  )}
+                  {isLoopingVault && loopDataView?.underlying?.symbol
+                    ? loopDataView.underlying.symbol
+                    : token.tokenNames.join('/')}
                 </TopDesc>
               </div>
             </FlexDiv>
@@ -1878,10 +1859,8 @@ const AdvancedFarm = () => {
                         </MorphoBadge>
                       </BadgeRow>
                     ) : isLoopingVault ? (
-                      loopDataView?.type ? (
-                        <span>
-                          {loopDataView.type} - {loopDataView.protocol}
-                        </span>
+                      loopDataView?.platformLabel ? (
+                        <span>{loopDataView.platformLabel}</span>
                       ) : (
                         token.platform && token.platform[0]
                       )
