@@ -1289,7 +1289,11 @@ const LoopingVault = () => {
                                 {labelTip(
                                   'Vault cap',
                                   'tip-vault-cap',
-                                  `This vault accepts up to ${VAULT.cap.total} ${VAULT.cap.unit}. Entries are blocked once the cap is reached; it may be raised over time.`,
+                                  `This vault accepts up to ${VAULT.cap.total} ${VAULT.cap.unit} — ${
+                                    VAULT.cap.filled
+                                  } supplied, ${capRemaining.toFixed(2)} ${
+                                    VAULT.cap.unit
+                                  } of room left. Entries are blocked once the cap is reached; it may be raised over time.`,
                                 )}
                               </NewLabel>
                               <NewLabel
@@ -1320,19 +1324,20 @@ const LoopingVault = () => {
                                 }}
                               />
                             </div>
-                            <NewLabel
-                              $size="11px"
-                              $weight="500"
-                              $height="16px"
-                              $fontcolor={overCap ? '#d6342f' : fontColor3}
-                              style={{ marginTop: 5 }}
-                            >
-                              {overCap
-                                ? `Amount exceeds remaining capacity. Only ${capRemaining.toFixed(
-                                    2,
-                                  )} ${VAULT.cap.unit} can still be supplied.`
-                                : `${capRemaining.toFixed(2)} ${VAULT.cap.unit} of room left.`}
-                            </NewLabel>
+                            {/* Room-left figure lives in the (?) tooltip; only surface an
+                                inline note when the entry exceeds remaining capacity. */}
+                            {overCap && (
+                              <NewLabel
+                                $size="11px"
+                                $weight="500"
+                                $height="16px"
+                                $fontcolor="#d6342f"
+                                style={{ marginTop: 6 }}
+                              >
+                                Amount exceeds remaining capacity. Only {capRemaining.toFixed(2)}{' '}
+                                {VAULT.cap.unit} can still be supplied.
+                              </NewLabel>
+                            )}
                           </div>
                         </>
                       ) : (
