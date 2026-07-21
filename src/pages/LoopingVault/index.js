@@ -1265,10 +1265,18 @@ const LoopingVault = () => {
 
                           {/* Vault cap — the vault only accepts up to VAULT.cap.total of the
                               entry asset; capRemaining is what's still open. */}
-                          <div style={{ marginBottom: 14 }}>
+                          <div
+                            style={{
+                              marginTop: 6,
+                              marginBottom: 18,
+                              padding: '11px 12px',
+                              border: `1px solid ${borderColorBox}`,
+                              borderRadius: 10,
+                            }}
+                          >
                             <FlexDiv
                               $justifycontent="space-between"
-                              style={{ alignItems: 'center', marginBottom: 5 }}
+                              style={{ alignItems: 'center', marginBottom: 6 }}
                             >
                               <NewLabel
                                 $size="12px"
