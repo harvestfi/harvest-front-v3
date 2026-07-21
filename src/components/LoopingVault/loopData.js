@@ -92,10 +92,30 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
     spread != null && leverage > 0 ? spread * leverage * profitFactor : null
   const leveredApy = liveApy > 0 ? liveApy : calculatedLeveredApy
 
+  const capInfo = extras.depositCap
+  const cap =
+    capInfo && capInfo.cap > 0
+      ? (() => {
+          const limit = capInfo.cap
+          const supplied = Math.max(0, num(capInfo.supplied))
+          const pct = limit > 0 ? Math.min(100, (supplied / limit) * 100) : 0
+          const remaining = Math.max(0, limit - supplied)
+          return {
+            limit,
+            supplied,
+            remaining,
+            pct,
+            full: remaining <= 0,
+            symbol: debtDisplaySymbol,
+          }
+        })()
+      : null
+
   return {
     protocol,
     type: 'Leveraged Loop',
     platformLabel,
+    cap,
     leverage,
     leverageLabel,
     network: 'base',

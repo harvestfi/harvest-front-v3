@@ -37,8 +37,13 @@ import {
   DetailsBox,
   DetailsTitle,
   DetailsBody,
+  CapBarHead,
+  CapBarLabel,
+  CapBarValue,
+  CapBarTrack,
+  CapBarFill,
 } from './style'
-import { fmtBps } from './loopHelpers'
+import { fmtBps, capColorForPct } from './loopHelpers'
 import { computeEntryCostBps } from './loopLtvSim'
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
@@ -90,7 +95,8 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     linkColor,
   } = useThemeContext()
 
-  const { underlying, vaultAddress, walletBalance, apy, id, sharePrice, underlyingUsdPrice } = data
+  const { underlying, vaultAddress, walletBalance, apy, id, sharePrice, underlyingUsdPrice, cap } =
+    data
   const fTokenName = id ? `f${id}` : 'shares'
   const perShareUsd =
     Number(underlyingUsdPrice) > 0 && Number(sharePrice) > 0
@@ -193,7 +199,10 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
 
   const hasInput = num(amount) > 0
   const exceedsBalance = hasInput && num(amount) > Number(walletBalance || 0)
-  const supplyDisabled = !connected || !hasInput || !checked || pending || exceedsBalance
+  const capFull = Boolean(cap && cap.full)
+  const exceedsCap = Boolean(cap && hasInput && num(amount) > cap.remaining)
+  const supplyDisabled =
+    !connected || !hasInput || !checked || pending || exceedsBalance || capFull || exceedsCap
   const yearlyYieldToken =
     preview && preview.valueToken != null ? preview.valueToken * (apy.total / 100) : null
   const yearlyYieldUsd =
@@ -221,6 +230,8 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     if (pending) return 'Confirming...'
     if (!hasInput) return 'Enter an amount'
     if (exceedsBalance) return `Insufficient ${underlying.symbol} balance`
+    if (capFull) return 'Vault cap reached'
+    if (exceedsCap) return 'Exceeds vault cap'
     if (!checked) return 'Agree to terms above'
     return 'Supply'
   }
@@ -289,6 +300,46 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
         >
           <img src={InfoIcon} alt="" width="18" height="18" />
           Insufficient {underlying.symbol} balance in your wallet
+        </div>
+      )}
+
+      {cap && (
+        <div style={{ margin: '14px 0' }}>
+          <CapBarHead>
+            <CapBarLabel $fontcolor={fontColor2}>
+              Vault cap
+              <PiQuestion className="question" data-tip id="loop-vault-cap" />
+              <Tooltip
+                id="loop-vault-cap"
+                anchorSelect="#loop-vault-cap"
+                place="top"
+                opacity={1}
+                backgroundColor={darkMode ? '#ffffff' : '#101828'}
+                textColor={darkMode ? '#101828' : '#ffffff'}
+                style={{
+                  maxWidth: 320,
+                  padding: '10px 14px',
+                  borderRadius: 8,
+                  fontSize: 11,
+                  fontWeight: 500,
+                  lineHeight: 1.5,
+                  textAlign: 'left',
+                  zIndex: 1000,
+                }}
+              >
+                This vault accepts up to {fmt(cap.limit, 2)} {cap.symbol}. Supplied:{' '}
+                {fmt(cap.supplied, 6)} {cap.symbol} · room left: {fmt(cap.remaining, 6)}{' '}
+                {cap.symbol}. Entries are blocked once the cap is reached; it may be raised over
+                time.
+              </Tooltip>
+            </CapBarLabel>
+            <CapBarValue $fontcolor={fontColor1}>
+              {fmt(cap.supplied, 2)} / {fmt(cap.limit, 2)} {cap.symbol}
+            </CapBarValue>
+          </CapBarHead>
+          <CapBarTrack>
+            <CapBarFill $pct={cap.pct} $color={capColorForPct(cap.pct)} />
+          </CapBarTrack>
         </div>
       )}
 

@@ -53,6 +53,51 @@ export const AddressLink = styled.a`
   }
 `
 
+export const CapBarHead = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+  gap: 8px;
+`
+
+export const CapBarLabel = styled.span`
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 600;
+  color: ${props => props.$fontcolor};
+
+  .question {
+    cursor: help;
+    flex-shrink: 0;
+  }
+`
+
+export const CapBarValue = styled.b`
+  font-size: 13px;
+  font-weight: 700;
+  color: ${props => props.$fontcolor};
+  white-space: nowrap;
+`
+
+export const CapBarTrack = styled.div`
+  position: relative;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(128, 128, 128, 0.18);
+  overflow: hidden;
+`
+
+export const CapBarFill = styled.div`
+  height: 100%;
+  width: ${props => Math.max(0, Math.min(100, props.$pct || 0))}%;
+  background: ${props => props.$color || '#5dcf46'};
+  border-radius: 999px;
+  transition: width 0.3s ease;
+`
+
 export const LTVGaugeWrap = styled.div`
   position: relative;
   margin: 8px 0 6px;

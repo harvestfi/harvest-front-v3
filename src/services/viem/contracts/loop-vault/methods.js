@@ -24,6 +24,10 @@ const getTotalSupply = async instance => {
   return await handleViemReadMethod('totalSupply', [], instance)
 }
 
+const getDepositCap = async instance => {
+  return await handleViemReadMethod('depositCap', [], instance)
+}
+
 // deposit(_assets, _receiver) -> minted shares (ERC-4626-compatible overload)
 const deposit = async (assets, receiver, address, instance) => {
   const { walletClient } = instance
@@ -57,6 +61,7 @@ export default {
   getAssetsOf,
   getUnderlying,
   getTotalSupply,
+  getDepositCap,
   deposit,
   withdraw,
 }

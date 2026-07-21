@@ -45,6 +45,29 @@ const toTokenAmount = (raw, decimals = VAULT_DECIMALS) => {
   return new BigNumber(raw.toString()).div(new BigNumber(10).pow(decimals)).toNumber()
 }
 
+export const fetchLoopDepositCap = async ({ vaultAddress, decimals = 18 }) => {
+  if (!vaultAddress) return null
+  try {
+    const vault = await readInstance(vaultAddress)
+    const [capRaw, supplyRaw, ppsRaw] = await Promise.all([
+      settle(LoopVaultMethods.getDepositCap(vault)),
+      settle(LoopVaultMethods.getTotalSupply(vault)),
+      settle(LoopVaultMethods.getPricePerFullShare(vault)),
+    ])
+    if (capRaw == null) return null
+    const cap = new BigNumber(capRaw.toString()).div(new BigNumber(10).pow(decimals)).toNumber()
+    const pps =
+      ppsRaw != null && new BigNumber(ppsRaw.toString()).gt(0)
+        ? new BigNumber(ppsRaw.toString()).div('1e18')
+        : new BigNumber(1)
+    const supplied =
+      supplyRaw != null ? new BigNumber(supplyRaw.toString()).div('1e18').times(pps).toNumber() : 0
+    return { cap, supplied }
+  } catch (e) {
+    return null
+  }
+}
+
 export const loopPreviewDepositShares = async ({ vaultAddress, amount, decimals = 18 }) => {
   if (!vaultAddress || !(Number(amount) > 0)) return null
   try {
