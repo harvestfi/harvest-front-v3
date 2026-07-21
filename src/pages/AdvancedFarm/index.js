@@ -50,6 +50,7 @@ import {
   LoopMetricsStrip,
   LoopFeesPanel,
   LoopApyBreakdown,
+  CapRing,
   buildLoopData,
   enrichLoopToken,
   fetchLoopChainData,
@@ -57,6 +58,7 @@ import {
   pollLoopWalletBalance,
   fetchLoopPosition,
   pollLoopPosition,
+  fetchLoopDepositCap,
 } from '../../components/LoopingVault'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import SharePricesData from '../../components/SharePricesChart/SharePricesData'
@@ -390,6 +392,7 @@ const AdvancedFarm = () => {
   const [clChainData, setClChainData] = useState(null)
   const [clRebalances, setClRebalances] = useState(null)
   const [loopChainData, setLoopChainData] = useState(null)
+  const [loopDepositCap, setLoopDepositCap] = useState(null)
   const [loopRebalances, setLoopRebalances] = useState(null)
 
   useEffect(() => {
@@ -429,6 +432,11 @@ const AdvancedFarm = () => {
           if (active) setLoopRebalances(r)
         })
         .catch(() => {})
+      fetchLoopDepositCap({ vaultAddress: loopToken.vaultAddress, decimals: loopToken.decimals })
+        .then(capData => {
+          if (active) setLoopDepositCap(capData)
+        })
+        .catch(() => {})
     }
     return () => {
       active = false
@@ -439,6 +447,7 @@ const AdvancedFarm = () => {
     loopToken.loopConfig,
     loopToken.vaultAddress,
     loopToken.chain,
+    loopToken.decimals,
     token.chain,
   ])
 
@@ -528,6 +537,7 @@ const AdvancedFarm = () => {
       isLoopingVault
         ? buildLoopData(loopToken, id, loopChainData, {
             lastRebalanceLabel: loopRebalances?.lastRebalanceLabel || '',
+            depositCap: loopDepositCap,
           })
         : null,
     [
@@ -535,6 +545,7 @@ const AdvancedFarm = () => {
       loopToken,
       id,
       loopChainData,
+      loopDepositCap,
       loopRebalances,
       loopToken.estimatedApy,
       loopToken.totalValueLocked,
@@ -1797,6 +1808,40 @@ const AdvancedFarm = () => {
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
+              {isLoopingVault && loopDataView?.cap && (
+                <GuidePart $fontcolor4={fontColor4} style={{ gap: 5 }}>
+                  <CapRing pct={loopDataView.cap.pct} />
+                  Cap:&nbsp;{Math.round(loopDataView.cap.pct)}%
+                  <PiQuestion
+                    className="question"
+                    data-tip
+                    id="loop-cap-top"
+                    style={{ cursor: 'help', flexShrink: 0 }}
+                  />
+                  <Tooltip
+                    id="loop-cap-top"
+                    anchorSelect="#loop-cap-top"
+                    place="bottom"
+                    opacity={1}
+                    backgroundColor={darkMode ? '#ffffff' : '#101828'}
+                    textColor={darkMode ? '#101828' : '#ffffff'}
+                    style={{
+                      maxWidth: 320,
+                      padding: '10px 14px',
+                      borderRadius: 8,
+                      fontSize: 11,
+                      fontWeight: 500,
+                      lineHeight: 1.5,
+                      textAlign: 'left',
+                      zIndex: 1000,
+                    }}
+                  >
+                    Deposit cap utilisation: {formatNumber(loopDataView.cap.supplied, 2)} of{' '}
+                    {formatNumber(loopDataView.cap.limit, 2)} {loopDataView.cap.symbol} supplied.
+                    New entries are blocked once the cap is full.
+                  </Tooltip>
+                </GuidePart>
+              )}
               {token.platform && token.platform[0].includes('Autopilot') && (
                 <TopBadge address={paramAddress} />
               )}

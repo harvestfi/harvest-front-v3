@@ -28,3 +28,9 @@ export const fmtPct = (n, d = 2) => {
   if (n == null || !Number.isFinite(n)) return '—'
   return `~ ${n.toFixed(d)}%`
 }
+
+export const capColorForPct = pct => {
+  if (pct >= 95) return '#ef4444'
+  if (pct >= 80) return '#f97316'
+  return '#5dcf46'
+}
