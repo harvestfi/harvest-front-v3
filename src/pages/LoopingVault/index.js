@@ -171,7 +171,7 @@ const VAULT = {
   tvl: '$411.37',
   lastRebalance: '6 hours ago',
   // Deposit cap (in the debt/entry asset, WETH). filled = already supplied.
-  cap: { total: 500, filled: 205, unit: 'WETH' },
+  cap: { total: 500, filled: 335, unit: 'WETH' },
   // Live position state.
   position: {
     collateralAmount: '742.18 cbETH',
@@ -1038,6 +1038,36 @@ const LoopingVault = () => {
               </GuidePart>
               <GuidePart $backcolor={bgColorBox} $fontcolor4={fontColor4}>
                 {VAULT.tvl} TVL
+              </GuidePart>
+              {/* Cap badge — mini donut showing how full the deposit cap is. */}
+              <GuidePart $backcolor={bgColorBox} $fontcolor4={fontColor4}>
+                <svg width="16" height="16" viewBox="0 0 20 20" style={{ flexShrink: 0 }}>
+                  <circle
+                    cx="10"
+                    cy="10"
+                    r="7"
+                    fill="none"
+                    stroke={borderColorBox}
+                    strokeWidth="4"
+                  />
+                  <circle
+                    cx="10"
+                    cy="10"
+                    r="7"
+                    fill="none"
+                    stroke={capFilledPct >= 90 ? '#d6342f' : '#5dcf46'}
+                    strokeWidth="4"
+                    strokeLinecap="round"
+                    strokeDasharray={`${(capFilledPct / 100) * 43.98} 43.98`}
+                    transform="rotate(-90 10 10)"
+                  />
+                </svg>
+                Cap: {Math.round(capFilledPct)}%
+                <Question
+                  id="loop-tooltip-cap-badge"
+                  dark={darkMode}
+                  content={`Deposit cap utilisation: ${VAULT.cap.filled} of ${VAULT.cap.total} ${VAULT.cap.unit} supplied. New entries are blocked once the cap is full.`}
+                />
               </GuidePart>
             </GuideSection>
 
