@@ -290,7 +290,18 @@ const Question = ({ id, content, dark }) => (
       backgroundColor={dark ? 'white' : '#101828'}
       borderColor={dark ? 'white' : 'black'}
       textColor={dark ? 'black' : 'white'}
-      style={{ maxWidth: 260, fontSize: 12, lineHeight: 1.4 }}
+      opacity={1}
+      style={{
+        maxWidth: 240,
+        padding: '9px 12px',
+        borderRadius: 8,
+        fontSize: 12,
+        fontWeight: 500,
+        lineHeight: 1.5,
+        textAlign: 'left',
+        zIndex: 30,
+        boxShadow: '0 6px 20px rgba(16, 24, 40, 0.18)',
+      }}
     >
       {content}
     </Tooltip>
