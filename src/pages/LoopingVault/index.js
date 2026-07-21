@@ -171,7 +171,7 @@ const VAULT = {
   tvl: '$411.37',
   lastRebalance: '6 hours ago',
   // Deposit cap (in the debt/entry asset, WETH). filled = already supplied.
-  cap: { total: 500, filled: 335, unit: 'WETH' },
+  cap: { total: 500, filled: 335.2143728, unit: 'WETH' },
   // Live position state.
   position: {
     collateralAmount: '742.18 cbETH',
@@ -292,8 +292,8 @@ const Question = ({ id, content, dark }) => (
       textColor={dark ? 'black' : 'white'}
       opacity={1}
       style={{
-        maxWidth: 240,
-        padding: '9px 12px',
+        maxWidth: 340,
+        padding: '9px 13px',
         borderRadius: 8,
         fontSize: 12,
         fontWeight: 500,
@@ -1077,7 +1077,7 @@ const LoopingVault = () => {
                 <Question
                   id="loop-tooltip-cap-badge"
                   dark={darkMode}
-                  content={`Deposit cap utilisation: ${VAULT.cap.filled} of ${VAULT.cap.total} ${VAULT.cap.unit} supplied. New entries are blocked once the cap is full.`}
+                  content={`Deposit cap utilisation: ${VAULT.cap.filled.toFixed(2)} of ${VAULT.cap.total} ${VAULT.cap.unit} supplied. New entries are blocked once the cap is full.`}
                 />
               </GuidePart>
             </GuideSection>
@@ -1289,11 +1289,11 @@ const LoopingVault = () => {
                                 {labelTip(
                                   'Vault cap',
                                   'tip-vault-cap',
-                                  `This vault accepts up to ${VAULT.cap.total} ${VAULT.cap.unit} — ${
-                                    VAULT.cap.filled
-                                  } supplied, ${capRemaining.toFixed(2)} ${
+                                  `This vault accepts up to ${VAULT.cap.total} ${VAULT.cap.unit}. Supplied: ${VAULT.cap.filled.toFixed(
+                                    6,
+                                  )} ${VAULT.cap.unit} · room left: ${capRemaining.toFixed(6)} ${
                                     VAULT.cap.unit
-                                  } of room left. Entries are blocked once the cap is reached; it may be raised over time.`,
+                                  }. Entries are blocked once the cap is reached; it may be raised over time.`,
                                 )}
                               </NewLabel>
                               <NewLabel
@@ -1302,7 +1302,7 @@ const LoopingVault = () => {
                                 $height="16px"
                                 $fontcolor={fontColor1}
                               >
-                                {VAULT.cap.filled} / {VAULT.cap.total} {VAULT.cap.unit}
+                                {VAULT.cap.filled.toFixed(2)} / {VAULT.cap.total} {VAULT.cap.unit}
                               </NewLabel>
                             </FlexDiv>
                             <div
