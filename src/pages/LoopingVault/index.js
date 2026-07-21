@@ -163,12 +163,15 @@ const VAULT = {
   pair: { token0: 'cbETH', token1: 'WETH' },
   collateralSymbol: 'cbETH',
   debtSymbol: 'WETH',
-  // Structure line shown under the headline.
-  structure: 'Leveraged cbETH/WETH carry on Aave V3, ~12.5×',
+  // The lending-market pair as it reads on Aave (cbETH borrowed against ETH).
+  marketPair: 'cbETH/ETH',
+  targetLeverage: 12.5,
   feeTier: 'E-mode',
-  apy: '8.74%',
-  tvl: '$1.83M',
+  apy: '7.94%',
+  tvl: '$411.37',
   lastRebalance: '6 hours ago',
+  // Deposit cap (in the debt/entry asset, WETH). filled = already supplied.
+  cap: { total: 500, filled: 205, unit: 'WETH' },
   // Live position state.
   position: {
     collateralAmount: '742.18 cbETH',
@@ -215,7 +218,7 @@ const VAULT = {
     operatingSince: 'Feb 03 2025',
     operatingDays: 96,
     sharePrice: '1.01207',
-    apy: { live: '8.74%', d7: '8.42%', d30: '7.91%', d180: 'n/a', d365: 'n/a', lifetime: '8.10%' },
+    apy: { live: '7.94%', d7: '8.42%', d30: '7.91%', d180: 'n/a', d365: 'n/a', lifetime: '8.10%' },
   },
   // For the deposit/withdraw "position after" preview line.
   vaultUsd: 1830000,
@@ -608,6 +611,12 @@ const LoopingVault = () => {
   const sharesReceived = sharePriceNum > 0 ? netWethEquiv / sharePriceNum : 0
   const apyRate = parseFloat(VAULT.apy) / 100 // "8.74%" -> 0.0874
   const yearlyYieldWeth = netWethEquiv * apyRate
+
+  // Deposit cap. filled = already supplied; remaining is what the vault can
+  // still take. A deposit larger than `capRemaining` would be rejected on-chain.
+  const capFilledPct = Math.min(100, (VAULT.cap.filled / VAULT.cap.total) * 100)
+  const capRemaining = Math.max(0, VAULT.cap.total - VAULT.cap.filled)
+  const overCap = grossWeth > capRemaining
 
   // Withdraw math. WETH out = shares * share price, minus the median exit cost.
   const exitCostRate = parseFloat(VAULT.costs.typicalExitBps.replace(/[^\d.]/g, '')) / 10000
@@ -1005,11 +1014,9 @@ const LoopingVault = () => {
 
             <FlexDiv className="farm-symbol">
               <TopLogo>
-                <TokenCircle bg="#1652f0" fc="#fff" border={bgColorBox} overlap>
-                  cb
-                </TokenCircle>
-                <TokenCircle bg="#627eea" fc="#fff" border={bgColorBox}>
-                  Ξ
+                {/* Single-asset entry vault: header shows the entry (debt) asset only. */}
+                <TokenCircle bg="#fff" fc="#101828" border={bgColorBox}>
+                  <span style={{ fontSize: 13, fontWeight: 700 }}>{VAULT.debtSymbol}</span>
                 </TokenCircle>
               </TopLogo>
               <TopDescOverride>
@@ -1020,35 +1027,7 @@ const LoopingVault = () => {
                   $height="82px"
                   $marginbottom="10px"
                 >
-                  {VAULT.pair.token0}/{VAULT.pair.token1}
-                  <span
-                    id="loop-badge-target-tip"
-                    style={{
-                      fontSize: 11,
-                      fontWeight: 700,
-                      letterSpacing: 0.4,
-                      padding: '3px 8px',
-                      borderRadius: 4,
-                      background: bgColorBox,
-                      border: `1px solid ${borderColorBox}`,
-                      color: '#7d68d3',
-                      marginLeft: 10,
-                      verticalAlign: 'middle',
-                      cursor: 'help',
-                    }}
-                  >
-                    {VAULT.position.leverage.toFixed(1)}× LOOP
-                  </span>
-                  <Tooltip
-                    anchorSelect="#loop-badge-target-tip"
-                    backgroundColor={darkMode ? 'white' : '#101828'}
-                    borderColor={darkMode ? 'white' : 'black'}
-                    textColor={darkMode ? 'black' : 'white'}
-                    style={{ maxWidth: 280, fontSize: 12, lineHeight: 1.45, fontWeight: 500 }}
-                  >
-                    Target loop multiple for this vault. The live leverage moves with price and is
-                    shown under the Details tab → Position panel.
-                  </Tooltip>
+                  {VAULT.debtSymbol}
                 </TopDesc>
               </TopDescOverride>
             </FlexDiv>
@@ -1082,8 +1061,9 @@ const LoopingVault = () => {
               </MainTagPanel>
               <NetDetail>
                 <NetDetailItem>
+                  <NetDetailTitle $fontcolor={fontColor}>Platform:</NetDetailTitle>
                   <NetDetailContent $fontcolor={fontColor}>
-                    Leveraged Loop - {VAULT.protocol}
+                    {VAULT.marketPair} {VAULT.targetLeverage}x Loop - {VAULT.protocol}
                   </NetDetailContent>
                 </NetDetailItem>
                 <NetDetailItem>
@@ -1241,6 +1221,70 @@ const LoopingVault = () => {
                               {entrySymbol}
                             </TokenPill>
                           </FieldBox>
+
+                          {/* Vault cap — the vault only accepts up to VAULT.cap.total of the
+                              entry asset; capRemaining is what's still open. */}
+                          <div style={{ marginBottom: 14 }}>
+                            <FlexDiv
+                              $justifycontent="space-between"
+                              style={{ alignItems: 'center', marginBottom: 5 }}
+                            >
+                              <NewLabel
+                                $size="12px"
+                                $weight="500"
+                                $height="16px"
+                                $fontcolor={fontColor3}
+                                $display="flex"
+                                $items="center"
+                              >
+                                {labelTip(
+                                  'Vault cap',
+                                  'tip-vault-cap',
+                                  `This vault accepts up to ${VAULT.cap.total} ${VAULT.cap.unit}. Entries are blocked once the cap is reached; it may be raised over time.`,
+                                )}
+                              </NewLabel>
+                              <NewLabel
+                                $size="12px"
+                                $weight="600"
+                                $height="16px"
+                                $fontcolor={fontColor1}
+                              >
+                                {VAULT.cap.filled} / {VAULT.cap.total} {VAULT.cap.unit}
+                              </NewLabel>
+                            </FlexDiv>
+                            <div
+                              style={{
+                                position: 'relative',
+                                height: 8,
+                                borderRadius: 6,
+                                background: bgColorChart,
+                                border: `1px solid ${borderColorBox}`,
+                                overflow: 'hidden',
+                              }}
+                            >
+                              <div
+                                style={{
+                                  position: 'absolute',
+                                  inset: 0,
+                                  right: `${100 - capFilledPct}%`,
+                                  background: overCap ? '#d6342f' : '#5dcf46',
+                                }}
+                              />
+                            </div>
+                            <NewLabel
+                              $size="11px"
+                              $weight="500"
+                              $height="16px"
+                              $fontcolor={overCap ? '#d6342f' : fontColor3}
+                              style={{ marginTop: 5 }}
+                            >
+                              {overCap
+                                ? `Amount exceeds remaining capacity. Only ${capRemaining.toFixed(
+                                    2,
+                                  )} ${VAULT.cap.unit} can still be supplied.`
+                                : `${capRemaining.toFixed(2)} ${VAULT.cap.unit} of room left.`}
+                            </NewLabel>
+                          </div>
                         </>
                       ) : (
                         <>
@@ -1571,12 +1615,17 @@ const LoopingVault = () => {
                         </span>
                       </label>
 
-                      <Cta type="button" disabled={supplyDisabled}>
+                      <Cta
+                        type="button"
+                        disabled={supplyDisabled || (depMode === 'quick' && overCap)}
+                      >
                         {!(depMode === 'quick' ? quickRoute : depRoute)
                           ? 'Enter an amount'
-                          : !agreed
-                            ? 'Agree to terms above'
-                            : 'Connect Wallet to Get Started'}
+                          : depMode === 'quick' && overCap
+                            ? 'Exceeds vault cap'
+                            : !agreed
+                              ? 'Agree to terms above'
+                              : 'Connect Wallet to Get Started'}
                       </Cta>
 
                       {/* Opt-in to two-sided deposit. Quick (single asset) is the default
