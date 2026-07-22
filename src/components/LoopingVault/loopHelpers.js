@@ -1,15 +1,10 @@
-const CBETH = '0x2Ae3F1Ec7F1F5012CFEab0185bfc7aa3cf0DEc22'
-const STETH = '0xc1CBa3fCea344f92D9239c08C0568f6F2F0ee452'
-
-const STAKING_APY_FALLBACK = {
-  [CBETH.toLowerCase()]: 3.05,
-  [STETH.toLowerCase()]: 3.2,
+const STAKING_POOL_IDS = {
+  cbeth: '0f45d730-b279-4629-8e11-ccb5cc3038b4',
+  steth: '747c1d2a-c668-4682-b9f9-296708a3dd90',
 }
 
-export const stakingYieldForSupply = supplyAsset => {
-  if (!supplyAsset) return 0
-  return STAKING_APY_FALLBACK[String(supplyAsset).toLowerCase()] || 0
-}
+export const stakingPoolIdForSymbol = symbol =>
+  symbol ? STAKING_POOL_IDS[String(symbol).toLowerCase()] || null : null
 
 export const median = values => {
   const nums = values.filter(v => Number.isFinite(v) && v >= 0)

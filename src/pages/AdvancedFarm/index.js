@@ -59,6 +59,7 @@ import {
   fetchLoopPosition,
   pollLoopPosition,
   fetchLoopDepositCap,
+  fetchLoopStakingYield,
 } from '../../components/LoopingVault'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import SharePricesData from '../../components/SharePricesChart/SharePricesData'
@@ -392,6 +393,7 @@ const AdvancedFarm = () => {
   const [clRebalances, setClRebalances] = useState(null)
   const [loopChainData, setLoopChainData] = useState(null)
   const [loopDepositCap, setLoopDepositCap] = useState(null)
+  const [loopStakingYield, setLoopStakingYield] = useState(null)
   const [loopRebalances, setLoopRebalances] = useState(null)
 
   useEffect(() => {
@@ -436,6 +438,11 @@ const AdvancedFarm = () => {
           if (active) setLoopDepositCap(capData)
         })
         .catch(() => {})
+      fetchLoopStakingYield(loopToken.tokenNames?.[0])
+        .then(apy => {
+          if (active) setLoopStakingYield(apy)
+        })
+        .catch(() => {})
     }
     return () => {
       active = false
@@ -445,6 +452,7 @@ const AdvancedFarm = () => {
     loopToken.strategyAddress,
     loopToken.loopConfig,
     loopToken.vaultAddress,
+    loopToken.tokenNames,
     loopToken.chain,
     loopToken.decimals,
     token.chain,
@@ -537,6 +545,7 @@ const AdvancedFarm = () => {
         ? buildLoopData(loopToken, id, loopChainData, {
             lastRebalanceLabel: loopRebalances?.lastRebalanceLabel || '',
             depositCap: loopDepositCap,
+            stakingYield: loopStakingYield,
           })
         : null,
     [
@@ -545,6 +554,7 @@ const AdvancedFarm = () => {
       id,
       loopChainData,
       loopDepositCap,
+      loopStakingYield,
       loopRebalances,
       loopToken.estimatedApy,
       loopToken.totalValueLocked,

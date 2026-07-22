@@ -1,5 +1,4 @@
 import addresses from '../../data/harvest-api-v3/data/mainnet/addresses.json'
-import { stakingYieldForSupply } from './loopHelpers'
 
 const num = (v, fallback = 0) => {
   const n = Number(v)
@@ -83,7 +82,7 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
     ? `${pairLabel} ${leverage.toFixed(1)}x Loop - ${protocol}`
     : `${pairLabel} Loop - ${protocol}`
 
-  const stakingYield = stakingYieldForSupply(loopCfg.supplyAsset)
+  const stakingYield = extras.stakingYield != null ? num(extras.stakingYield) : 0
   const borrowRate = chain?.borrowRate
   const borrowApr = borrowRate != null && borrowRate > 0 ? -borrowRate : null
   const spread = stakingYield > 0 && borrowRate != null ? stakingYield - borrowRate : null
