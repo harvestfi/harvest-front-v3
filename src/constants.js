@@ -99,6 +99,8 @@ export const PORTALS_FI_API_URL = 'https://api.portals.fi'
 
 export const IPOR_API_URL = 'https://api.ipor.io'
 
+export const DEFILLAMA_YIELDS_URL = 'https://yields.llama.fi'
+
 export const DECIMAL_PRECISION = 2
 
 export const FAQ_ITEMS_FIRST = [

@@ -5,5 +5,10 @@ export { default as LoopFeesPanel } from './LoopFeesPanel'
 export { default as LoopApyBreakdown } from './LoopApyBreakdown'
 export { default as CapRing } from './CapRing'
 export { buildLoopData, isLoopingVault, enrichLoopToken } from './loopData'
-export { fetchLoopChainData, fetchLoopWalletBalance, pollLoopWalletBalance } from './loopChainData'
+export {
+  fetchLoopChainData,
+  fetchLoopWalletBalance,
+  pollLoopWalletBalance,
+  fetchLoopStakingYield,
+} from './loopChainData'
 export { fetchLoopPosition, pollLoopPosition, fetchLoopDepositCap } from './loopActions'
