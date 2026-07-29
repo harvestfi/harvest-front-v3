@@ -1,4 +1,5 @@
 import styled from 'styled-components'
+import { Tooltip } from 'react-tooltip'
 
 const Container = styled.div`
   display: flex;
@@ -119,4 +120,56 @@ const Label = styled.div`
       : ``}
 `
 
-export { Container, Text, Vault, Content, EmptyContainer, Label, RightText, TextSpan }
+const BadgeRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`
+
+const OneWayTooltip = styled(Tooltip)`
+  max-width: 300px !important;
+  white-space: normal !important;
+  word-break: break-word;
+  /* react-tooltip's own class sets font-size: 90% at the same specificity, so these
+     need !important to win regardless of stylesheet order. */
+  font-size: 14px !important;
+  line-height: 21px !important;
+  font-weight: 500;
+  text-align: left;
+  z-index: 100 !important;
+`
+
+const OneWayBadge = styled.div`
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 1px 4px 1px 8px;
+  border-radius: 16px;
+  border: 1px solid ${props => props.$bordercolor};
+  background: ${props => props.$bgcolor};
+  color: ${props => props.$fontcolor};
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 18px;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+
+  .badge-question {
+    font-size: 13px;
+    cursor: help;
+  }
+`
+
+export {
+  Container,
+  Text,
+  Vault,
+  Content,
+  EmptyContainer,
+  Label,
+  RightText,
+  TextSpan,
+  BadgeRow,
+  OneWayBadge,
+  OneWayTooltip,
+}
