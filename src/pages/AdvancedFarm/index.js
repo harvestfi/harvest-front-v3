@@ -24,6 +24,7 @@ import History from '../../assets/images/logos/beginners/history.svg'
 import Benchmark from '../../assets/images/logos/beginners/benchmark.svg'
 import TickIcon from '../../assets/images/logos/tick-icon.svg'
 import TickCross from '../../assets/images/logos/tick-cross.svg'
+import FortyAcresIcon from '../../assets/images/logos/advancedfarm/fortyacres.svg'
 import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
 import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
 import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
@@ -85,6 +86,7 @@ import {
   feeList,
   chainList,
   historyTags,
+  NATIVE_EXIT_VAULTS,
 } from '../../constants'
 import { fromWei, newContractInstance, getViem } from '../../services/viem'
 import { usePools } from '../../providers/Pools'
@@ -711,6 +713,67 @@ const AdvancedFarm = () => {
   const usdPrice =
     Number(token.vaultPrice) || Number(token.usdPrice) * Number(pricePerFullShare) || 0
   const underlyingPrice = get(token, 'usdPrice', 0)
+
+  const nativeExitToken = useMemo(() => {
+    const cfg = NATIVE_EXIT_VAULTS[get(token, 'vaultAddress', '').toLowerCase()]
+    if (!cfg) {
+      return null
+    }
+    return {
+      symbol: cfg.symbol,
+      address: cfg.address,
+      decimals: cfg.decimals,
+      chainId: parseInt(cfg.chainId, 10),
+      logoURI: FortyAcresIcon,
+      usdPrice: underlyingPrice,
+      balance: '0',
+      usdValue: 0,
+      nativeExit: true,
+      oneWay: cfg.oneWay !== false,
+      oneWayText: cfg.oneWayText,
+    }
+  }, [token, underlyingPrice])
+
+  const nativeExitWalletToken = useMemo(() => {
+    if (!nativeExitToken) {
+      return null
+    }
+    const walletToken = balanceList.find(
+      item => item.address && item.address.toLowerCase() === nativeExitToken.address.toLowerCase(),
+    )
+    if (!walletToken) {
+      return nativeExitToken
+    }
+    return {
+      ...nativeExitToken,
+      balance: walletToken.balance,
+      rawBalance: walletToken.rawBalance,
+      usdValue: walletToken.usdValue,
+    }
+  }, [nativeExitToken, balanceList])
+
+  const withoutNativeExit = useCallback(
+    list => {
+      if (!nativeExitToken || !list) {
+        return list
+      }
+      return list.filter(
+        item =>
+          !item.address || item.address.toLowerCase() !== nativeExitToken.address.toLowerCase(),
+      )
+    },
+    [nativeExitToken],
+  )
+
+  const balanceListNoNativeExit = useMemo(
+    () => withoutNativeExit(balanceList),
+    [withoutNativeExit, balanceList],
+  )
+
+  const supTokenNoBalanceListNoNativeExit = useMemo(
+    () => withoutNativeExit(supTokenNoBalanceList),
+    [withoutNativeExit, supTokenNoBalanceList],
+  )
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -2851,8 +2914,8 @@ const AdvancedFarm = () => {
                             setSelectToken={setSelectTokenDepo}
                             setPickedToken={setPickedTokenDepo}
                             setBalance={setBalanceDepo}
-                            supTokenNoBalanceList={supTokenNoBalanceList}
-                            balanceList={balanceList}
+                            supTokenNoBalanceList={supTokenNoBalanceListNoNativeExit}
+                            balanceList={balanceListNoNativeExit}
                             defaultToken={defaultToken}
                             soonToSupList={soonToSupList}
                             supportedVault={supportedVault}
@@ -2887,6 +2950,7 @@ const AdvancedFarm = () => {
                             defaultToken={defaultToken}
                             pricePerFullShare={pricePerFullShare}
                             pickedToken={pickedTokenWith}
+                            nativeExitToken={nativeExitWalletToken}
                             unstakeBalance={unstakeBalance}
                             setUnstakeBalance={setUnstakeBalance}
                             balanceList={balanceList}
@@ -2911,9 +2975,10 @@ const AdvancedFarm = () => {
                             selectToken={selectTokenWith}
                             setSelectToken={setSelectTokenWith}
                             setPickedToken={setPickedTokenWith}
-                            supTokenNoBalanceList={supTokenNoBalanceList}
-                            balanceList={balanceList}
+                            supTokenNoBalanceList={supTokenNoBalanceListNoNativeExit}
+                            balanceList={balanceListNoNativeExit}
                             defaultToken={defaultToken}
+                            nativeExitToken={nativeExitWalletToken}
                             soonToSupList={soonToSupList}
                             supportedVault={supportedVault}
                             hasPortalsError={hasPortalsError}
@@ -2926,6 +2991,7 @@ const AdvancedFarm = () => {
                             defaultToken={defaultToken}
                             pickedToken={pickedTokenWith}
                             setPickedToken={setPickedTokenWith}
+                            nativeExitToken={nativeExitWalletToken}
                             token={token}
                             unstakeBalance={unstakeBalance}
                             tokenSymbol={tokenSym}

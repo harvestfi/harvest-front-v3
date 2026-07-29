@@ -2,6 +2,8 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect, useRef } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
+import { encodeFunctionData, erc20Abi } from 'viem'
+import { toast } from 'react-toastify'
 import { isNaN } from 'lodash'
 import { BsArrowUp } from 'react-icons/bs'
 import { CiSettings } from 'react-icons/ci'
@@ -28,6 +30,7 @@ import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getViem, fromWei } from '../../../../services/viem'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
+import { REDEEM_IN_KIND_ABI } from '../../../../constants'
 import AnimatedDots from '../../../AnimatedDots'
 import { getMatchedVaultList } from '../../../../utilities/parsers'
 import {
@@ -55,6 +58,14 @@ import {
   NamePart,
   ImageName,
 } from './style'
+
+const RECEIPT_TIMEOUT = 120000
+const BALANCE_POLL_ATTEMPTS = 30
+const BALANCE_POLL_INTERVAL = 2000
+const sleep = ms =>
+  new Promise(resolve => {
+    setTimeout(resolve, ms)
+  })
 
 const WithdrawStart = ({
   groupOfVaults,
@@ -175,7 +186,7 @@ const WithdrawStart = ({
       setProgressStep(1)
       setButtonName('Pending Approval in Wallet')
       setWithdrawFailed(false)
-      if (pickedDefaultToken) {
+      if (pickedDefaultToken || pickedToken.nativeExit) {
         setProgressStep(2)
         setButtonName('Confirm Transaction')
         setStartSpinner(false)
@@ -225,6 +236,98 @@ const WithdrawStart = ({
                 setButtonName('Approve Token')
               },
             )
+      } else if (pickedToken.nativeExit) {
+        try {
+          setProgressStep(3)
+          setButtonName('Pending Confirmation in Wallet')
+          setStartSpinner(true)
+
+          const nativeVaultAddress = pickedToken.address
+          const underlyingDecimals = token.vaultDecimals || token.decimals
+          const walletClient = await getViem(chainId, account, viem)
+          const publicClient = await getViem(chainId, false, viem)
+
+          const readBalance = async tokenAddress =>
+            new BigNumber(
+              (
+                await publicClient.readContract({
+                  address: tokenAddress,
+                  abi: erc20Abi,
+                  functionName: 'balanceOf',
+                  args: [account],
+                })
+              ).toString(),
+            )
+
+          const waitForReceipt = async hash => {
+            if (
+              !hash ||
+              !publicClient ||
+              typeof publicClient.waitForTransactionReceipt !== 'function'
+            )
+              return
+            try {
+              await publicClient.waitForTransactionReceipt({ hash, timeout: RECEIPT_TIMEOUT })
+            } catch (receiptErr) {
+              console.debug('Receipt wait failed, falling back to balance polling: ', receiptErr)
+            }
+          }
+
+          const waitForBalanceAbove = async (tokenAddress, previous) => {
+            let latest = await readBalance(tokenAddress)
+            for (let i = 0; i < BALANCE_POLL_ATTEMPTS; i += 1) {
+              if (latest.isGreaterThan(previous)) {
+                return latest
+              }
+              await sleep(BALANCE_POLL_INTERVAL)
+              latest = await readBalance(tokenAddress)
+            }
+            return latest
+          }
+
+          const sharesBefore = await readBalance(nativeVaultAddress)
+          const redeemData = encodeFunctionData({
+            abi: REDEEM_IN_KIND_ABI,
+            functionName: 'redeemInKind',
+            args: [BigInt(unstakeBalance.toString()), account, account],
+          })
+          const redeemHash = await walletClient.sendTransaction({
+            account,
+            to: fromToken,
+            data: redeemData,
+          })
+          await waitForReceipt(redeemHash)
+
+          const sharesAfter = await waitForBalanceAbove(nativeVaultAddress, sharesBefore)
+          const sharesReceived = sharesAfter.minus(sharesBefore).toFixed(0)
+
+          setRevertedAmount(fromWei(sharesReceived, pickedToken.decimals, pickedToken.decimals))
+          const assets = await publicClient.readContract({
+            address: fromToken,
+            abi: REDEEM_IN_KIND_ABI,
+            functionName: 'convertToAssets',
+            args: [BigInt(unstakeBalance.toString())],
+          })
+          const assetsDecimal = fromWei(
+            assets.toString(),
+            underlyingDecimals,
+            underlyingDecimals,
+            true,
+          )
+          setRevertedAmountUsd(
+            formatNumberWido(Number(assetsDecimal) * Number(token.usdPrice || 0)),
+          )
+          isSuccess = true
+        } catch (err) {
+          console.error('Native in-kind revert failed: ', err)
+          toast.error(`Reverting into ${pickedToken.symbol} failed. Please try again.`)
+          setWithdrawFailed(true)
+          setStartSpinner(false)
+          setProgressStep(0)
+          setButtonName('Approve Token')
+          isSuccess = false
+          return
+        }
       } else {
         try {
           setProgressStep(3)
