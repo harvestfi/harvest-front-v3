@@ -14,6 +14,59 @@ import HYPEREVM from './assets/images/chains/hype.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
+export const NATIVE_EXIT_ONE_WAY_TEXT =
+  'Reverting in kind is one-way and cannot be undone. 40 Acres vault shares are not ' +
+  'accepted by the Autocompounder. Any subsequent redemption is handled solely by 40 ' +
+  "Acres under its own terms, and availability, timing and value are outside Harvest's control."
+
+export const NATIVE_EXIT_VAULTS = {
+  '0xc777031d50f632083be7080e51e390709062263e': {
+    chainId: CHAIN_IDS.BASE,
+    symbol: 'fortyAcres_USDC',
+    address: '0xB99B6dF96d4d5448cC0a5B3e0ef7896df9507Cf5',
+    decimals: 6,
+    oneWayText: NATIVE_EXIT_ONE_WAY_TEXT,
+  },
+}
+
+export const REDEEM_IN_KIND_ABI = [
+  {
+    name: 'redeemInKind',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'shares', type: 'uint256' },
+      { name: 'receiver', type: 'address' },
+      { name: 'owner', type: 'address' },
+    ],
+    outputs: [{ name: 'inKindShares', type: 'uint256' }],
+  },
+  {
+    name: 'redeemInKindEnabled',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    name: 'convertToAssets',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'shares', type: 'uint256' }],
+    outputs: [{ name: 'assets', type: 'uint256' }],
+  },
+]
+
+export const ERC4626_CONVERT_ABI = [
+  {
+    name: 'convertToShares',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'assets', type: 'uint256' }],
+    outputs: [{ name: 'shares', type: 'uint256' }],
+  },
+]
+
 export const SOCIAL_LINKS = {
   TELEGRAM: 'https://t.me/Breadforthepeople',
   TWITTER: 'https://twitter.com/harvest_finance',

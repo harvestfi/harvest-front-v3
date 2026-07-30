@@ -17,6 +17,7 @@ import { fromWei, toWei, checkNativeToken } from '../../../../services/viem'
 import { isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import Button from '../../../Button'
 import AnimatedDots from '../../../AnimatedDots'
+import TokenLogo from '../../../TokenLogo'
 import {
   BalanceInfo,
   BaseWidoDiv,
@@ -518,8 +519,14 @@ const DepositBase = ({
                 setSelectToken(true)
               }}
             >
-              {pickedToken.logoURI ? (
-                <img className="logo" src={pickedToken.logoURI} width={21} height={21} alt="" />
+              {pickedToken.symbol !== 'Select Token' ? (
+                <TokenLogo
+                  className="logo"
+                  src={pickedToken.logoURI}
+                  symbol={pickedToken.symbol}
+                  size={21}
+                  marginRight="7.5px"
+                />
               ) : (
                 <></>
               )}

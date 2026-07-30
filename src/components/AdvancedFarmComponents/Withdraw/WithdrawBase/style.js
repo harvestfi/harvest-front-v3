@@ -317,6 +317,30 @@ const HasErrorSection = styled.div`
   margin-top: 20px;
 `
 
+const NativeExitInfoSection = styled.div`
+  border-radius: 12px;
+  border: 1px solid ${props => props.$bordercolor};
+  background: ${props => props.$bgcolor};
+  padding: 16px;
+  ${props =>
+    props.$isshow === 'true'
+      ? `
+    display: flex;
+    align-items: flex-start;
+  `
+      : `
+    display: none;
+  `}
+  margin-top: 20px;
+
+  .info-icon {
+    width: 21px;
+    height: 21px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+`
+
 const FlexDiv = styled.div`
   display: flex;
 `
@@ -458,5 +482,6 @@ export {
   TokenSelectSection,
   SwitchTabTag,
   HasErrorSection,
+  NativeExitInfoSection,
   FlexDiv,
 }
