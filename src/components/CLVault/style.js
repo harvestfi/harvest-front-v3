@@ -407,6 +407,23 @@ export const RoutingHint = styled.div`
   margin: 8px 0 12px;
 `
 
+export const InlineSpinner = styled.span`
+  display: inline-block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  border: 2px solid ${props => props.$color || '#6F78AA'};
+  border-top-color: transparent;
+  animation: cl-inline-spin 0.7s linear infinite;
+  vertical-align: middle;
+
+  @keyframes cl-inline-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+`
+
 export const InputUsd = styled.span`
   flex-shrink: 0;
   margin-left: auto;

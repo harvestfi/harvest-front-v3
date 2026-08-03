@@ -1,16 +1,17 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
-import { clWithdrawBoth, clWithdrawSingle } from './clActions'
+import { getTokenPricesByAddresses } from '../../utilities/apiCalls'
+import { clPreviewRedeemSingle, clWithdrawBoth, clWithdrawSingle } from './clActions'
+import { resolveTokenUsdPrice } from './clData'
 import Button from '../Button'
+import CLTokenIcon from './CLTokenIcon'
 import {
   FieldTitle,
-  TokenMonogram,
-  TokenIcon,
   BalanceInfo,
   OutputSelect,
   OutputOption,
@@ -21,6 +22,7 @@ import {
   SlipPills,
   PreviewBox,
   RoutingHint,
+  InlineSpinner,
   InputWithChip,
   TokenChip,
   CTAWrap,
@@ -73,28 +75,63 @@ const WithdrawModule = ({ data, connected, onRefresh }) => {
     bgColorButton,
   } = useThemeContext()
 
-  const { token0, token1, vaultAddress, position } = data
+  const { token0, token1, vaultAddress, position, price } = data
   const pos = position || { vaultShares: 0, underlying0: 0, underlying1: 0, usdValue: 0 }
   const tokenSelectBg = darkMode ? bgColorButton : '#fff'
   const inputBg = darkMode ? bgColorButton : '#F0F4FF'
   const previewBg = darkMode ? bgColorButton : '#F0F4FF'
   const slipInactiveBg = darkMode ? bgColorButton : '#F0F4FF'
 
-  const tokenIcon = tk =>
-    tk.logo ? (
-      <TokenIcon src={tk.logo} alt={tk.symbol} $size="18px" />
-    ) : (
-      <TokenMonogram $color={tk.color} $cardbg={bgColorNew} $size="18px">
-        {tk.symbol.slice(0, 1)}
-      </TokenMonogram>
-    )
+  const tokenIcon = tk => <CLTokenIcon token={tk} size="18px" cardBg={bgColorNew} />
 
   const [shares, setShares] = useState('')
   const [output, setOutput] = useState('token0')
   const [slippage, setSlippage] = useState(0.5)
   const [pending, setPending] = useState(false)
+  const [estOut, setEstOut] = useState(null)
+  const [quoting, setQuoting] = useState(false)
+  const [spotByAddress, setSpotByAddress] = useState({})
 
   const availableShares = pos.vaultShares
+  const outputToken = output === 'token0' ? token0 : output === 'token1' ? token1 : null
+
+  useEffect(() => {
+    const addresses = [token0, token1].map(t => t.address).filter(Boolean)
+    if (addresses.length === 0) return undefined
+
+    let active = true
+    getTokenPricesByAddresses(addresses, 'base')
+      .then(prices => {
+        if (active) setSpotByAddress(prices)
+      })
+      .catch(() => {})
+
+    return () => {
+      active = false
+    }
+  }, [token0.address, token1.address])
+
+  useEffect(() => {
+    const s = num(shares)
+    if (!s || !outputToken?.wrapper) {
+      setEstOut(null)
+      setQuoting(false)
+      return undefined
+    }
+    let active = true
+    setQuoting(true)
+    const handle = setTimeout(async () => {
+      const quote = await clPreviewRedeemSingle({ token: outputToken, shares: s })
+      if (active) {
+        setEstOut(quote)
+        setQuoting(false)
+      }
+    }, 350)
+    return () => {
+      active = false
+      clearTimeout(handle)
+    }
+  }, [shares, output, outputToken?.wrapper])
 
   const preview = useMemo(() => {
     const s = num(shares)
@@ -103,8 +140,18 @@ const WithdrawModule = ({ data, connected, onRefresh }) => {
     const frac = s / pos.vaultShares
     const exp0 = pos.underlying0 * frac
     const exp1 = pos.underlying1 * frac
-    const p0 = Number(token0.priceUsd)
-    const p1 = Number(token1.priceUsd)
+    const p0 = resolveTokenUsdPrice(token0, {
+      spotByAddress,
+      price,
+      tokens: [token0, token1],
+      tokenIndex: 0,
+    })
+    const p1 = resolveTokenUsdPrice(token1, {
+      spotByAddress,
+      price,
+      tokens: [token0, token1],
+      tokenIndex: 1,
+    })
     const usd0 = Number.isFinite(p0) && p0 > 0 ? exp0 * p0 : null
     const usd1 = Number.isFinite(p1) && p1 > 0 ? exp1 * p1 : null
     const totalUsd = pos.usdValue ? pos.usdValue * frac : (usd0 || 0) + (usd1 || 0)
@@ -121,16 +168,18 @@ const WithdrawModule = ({ data, connected, onRefresh }) => {
     }
     const tk = output === 'token0' ? token0 : token1
     const tkPrice = output === 'token0' ? p0 : p1
-    const amount = Number.isFinite(tkPrice) && tkPrice > 0 ? totalUsd / tkPrice : exp0 + exp1
+    let amount = estOut?.amount
+    if (amount == null) {
+      amount = Number.isFinite(tkPrice) && tkPrice > 0 ? totalUsd / tkPrice : null
+    }
     return {
       route: `CLWrapper(${tk.symbol})`,
-      swapBps: 14,
+      swapBps: estOut?.costBps ?? null,
       out: [{ token: tk, amount, usd: totalUsd }],
     }
-  }, [shares, output, pos, token0, token1])
+  }, [shares, output, pos, token0, token1, estOut, spotByAddress, price])
 
   const hasInput = num(shares) > 0
-  const outputToken = output === 'token0' ? token0 : output === 'token1' ? token1 : null
 
   const handleRevert = async () => {
     if (!connected || !hasInput || pending) return
@@ -259,7 +308,13 @@ const WithdrawModule = ({ data, connected, onRefresh }) => {
           preview.out.map(o => (
             <Row key={o.token.symbol} $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
               <span>Expected {o.token.symbol}</span>
-              <b>~ {fmt(o.amount, 4)}</b>
+              {o.amount != null ? (
+                <b>~ {fmt(o.amount, 4)}</b>
+              ) : quoting ? (
+                <InlineSpinner $color={fontColor3} aria-label="Loading" />
+              ) : (
+                <b>—</b>
+              )}
             </Row>
           ))
         ) : (
@@ -268,10 +323,14 @@ const WithdrawModule = ({ data, connected, onRefresh }) => {
             <b>~ 0.0000</b>
           </Row>
         )}
-        {preview && preview.swapBps != null && (
+        {preview && (preview.swapBps != null || quoting) && (
           <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
             <span>Internal swap cost</span>
-            <b>~ {preview.swapBps} bps</b>
+            {preview.swapBps != null ? (
+              <b>~ {fmt(preview.swapBps, 1)} bps</b>
+            ) : (
+              <InlineSpinner $color={fontColor3} aria-label="Loading" />
+            )}
           </Row>
         )}
       </PreviewBox>
