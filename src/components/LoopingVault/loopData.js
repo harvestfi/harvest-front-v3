@@ -13,6 +13,38 @@ const colorFor = (symbol, index) => {
   return FALLBACK_COLORS[hash % FALLBACK_COLORS.length]
 }
 
+const lower = v => String(v || '').toLowerCase()
+
+const CANONICAL_SYMBOLS = {
+  cbeth: 'cbETH',
+  wsteth: 'wstETH',
+  ezeth: 'ezETH',
+  wrseth: 'wrsETH',
+  ifarm: 'iFARM',
+}
+
+const canonicalSymbol = symbol => (symbol ? CANONICAL_SYMBOLS[lower(symbol)] || symbol : null)
+
+const BASE_SYMBOL_BY_ADDRESS = Object.entries(addresses.BASE || {}).reduce((acc, [key, value]) => {
+  if (typeof value === 'string' && value.startsWith('0x')) acc[lower(value)] = canonicalSymbol(key)
+  return acc
+}, {})
+
+const symbolForAddress = address =>
+  address ? BASE_SYMBOL_BY_ADDRESS[lower(address)] || null : null
+
+const pairSymbol = symbol => (symbol && symbol.toUpperCase() === 'WETH' ? 'ETH' : symbol)
+
+export const loopCollateralSymbol = (token = {}, chain = null) =>
+  canonicalSymbol(chain?.supplySymbol) ||
+  symbolForAddress(token?.loopConfig?.supplyAsset) ||
+  'cbETH'
+
+const loopDebtSymbol = (token = {}, chain = null) =>
+  canonicalSymbol(chain?.borrowSymbol) ||
+  symbolForAddress(token?.loopConfig?.borrowAsset || token?.tokenAddress) ||
+  'WETH'
+
 const LOOP_VAULT_IDS = ['aaveLoop_ETH_cbETH', 'aaveLoop_ETH_cbETH2']
 
 export const enrichLoopToken = (token = {}, vaultId) => {
@@ -40,29 +72,32 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
   )
 
   const loopCfg = token.loopConfig || {}
-  const collateralSymbol = names[0] || 'cbETH'
-  const debtSymbol = names[1] || 'ETH'
-  const debtDisplaySymbol = debtSymbol === 'ETH' ? 'WETH' : debtSymbol
+  const collateralSymbol = loopCollateralSymbol(token, chain)
+  const debtDisplaySymbol = loopDebtSymbol(token, chain)
+  const debtSymbol = pairSymbol(debtDisplaySymbol)
 
+  const logoForSymbol = symbol => {
+    const idx = names.findIndex(n => lower(n) === lower(symbol))
+    if (idx !== -1 && logos[idx]) return logos[idx]
+    return symbol ? `/icons/${lower(symbol)}.svg` : null
+  }
+
+  const usdPrice = num(token.usdPrice)
   const collateral = {
     symbol: collateralSymbol,
     address: loopCfg.supplyAsset,
-    decimals: 18,
-    logo: logos[0],
+    decimals: chain?.supplyDecimals ?? 18,
+    logo: logoForSymbol(collateralSymbol),
     color: colorFor(collateralSymbol, 0),
-    priceUsd: num(token.usdPrice),
+    priceUsd: chain?.supplyPrice > 0 ? usdPrice * chain.supplyPrice : usdPrice,
   }
-  const debtLogo =
-    debtDisplaySymbol === 'WETH'
-      ? '/icons/weth.svg'
-      : logos[1] || (debtDisplaySymbol ? `/icons/${debtDisplaySymbol.toLowerCase()}.svg` : null)
   const debt = {
     symbol: debtDisplaySymbol,
     address: token.tokenAddress || loopCfg.borrowAsset,
-    decimals: num(token.decimals, 18),
-    logo: debtLogo,
+    decimals: num(token.decimals, chain?.borrowDecimals ?? 18),
+    logo: logoForSymbol(debtDisplaySymbol),
     color: colorFor(debtDisplaySymbol, 1),
-    priceUsd: num(token.usdPrice),
+    priceUsd: usdPrice,
   }
 
   const platformStr = Array.isArray(token.platform) ? token.platform[0] : token.platform

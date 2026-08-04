@@ -53,6 +53,7 @@ import {
   CapRing,
   buildLoopData,
   enrichLoopToken,
+  loopCollateralSymbol,
   fetchLoopChainData,
   fetchLoopWalletBalance,
   pollLoopWalletBalance,
@@ -439,7 +440,7 @@ const AdvancedFarm = () => {
           if (active) setLoopDepositCap(capData)
         })
         .catch(() => {})
-      fetchLoopStakingYield(loopToken.tokenNames?.[0])
+      fetchLoopStakingYield(loopCollateralSymbol(loopToken))
         .then(apy => {
           if (active) setLoopStakingYield(apy)
         })
@@ -453,7 +454,6 @@ const AdvancedFarm = () => {
     loopToken.strategyAddress,
     loopToken.loopConfig,
     loopToken.vaultAddress,
-    loopToken.tokenNames,
     loopToken.chain,
     loopToken.decimals,
     token.chain,

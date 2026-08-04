@@ -41,6 +41,18 @@ const read = async (address, abi, fn, args = []) => {
   return settle(handleViemReadMethod(fn, args, instance))
 }
 
+const readTokenMeta = async address => {
+  if (!address) return { symbol: null, decimals: null }
+  const [symbol, decimals] = await Promise.all([
+    read(address, TokenContract.abi, 'symbol'),
+    read(address, TokenContract.abi, 'decimals'),
+  ])
+  return {
+    symbol: symbol || null,
+    decimals: decimals == null ? null : Number(decimals),
+  }
+}
+
 export const fetchLoopWalletBalance = async (account, tokenAddress, decimals = 18) => {
   if (!account || !tokenAddress) return 0
   try {
@@ -100,6 +112,8 @@ export const fetchLoopChainData = async ({
     borrowTargetRaw,
     profitShareRaw,
     feeDenomRaw,
+    supplyMeta,
+    borrowMeta,
   ] = await Promise.all([
     read(aavePool, poolAbi, 'getReserveData', [supplyAsset]),
     read(aavePool, poolAbi, 'getReserveData', [borrowAsset]),
@@ -112,6 +126,8 @@ export const fetchLoopChainData = async ({
     read(strategyAddress, strategyAbi, 'borrowTargetFactorNumerator'),
     read(strategyAddress, strategyAbi, 'profitSharingNumerator'),
     read(strategyAddress, strategyAbi, 'feeDenominator'),
+    readTokenMeta(supplyAsset),
+    readTokenMeta(borrowAsset),
   ])
 
   if (!supplyReserve || !borrowReserve) return null
@@ -226,6 +242,10 @@ export const fetchLoopChainData = async ({
     borrowRate,
     suppliedMul,
     borrowedMul,
+    supplySymbol: supplyMeta?.symbol || null,
+    borrowSymbol: borrowMeta?.symbol || null,
+    supplyDecimals: supplyMeta?.decimals ?? null,
+    borrowDecimals: borrowMeta?.decimals ?? null,
     chainId: CHAIN_IDS.BASE,
   }
 }
