@@ -9,14 +9,11 @@ import { getTokenPricesByAddresses } from '../../utilities/apiCalls'
 import { clDepositSingle, clPreviewDepositShares } from './clActions'
 import { resolveTokenUsdPrice } from './clData'
 import Button from '../Button'
+import CLTokenIcon from './CLTokenIcon'
 import {
   FieldTitle,
-  PillRow,
-  TokenPill,
   InputWithChip,
   TokenChip,
-  TokenMonogram,
-  TokenIcon,
   BalanceInfo,
   SlipOption,
   Row,
@@ -25,6 +22,7 @@ import {
   SlipPills,
   PreviewBox,
   RoutingHint,
+  InlineSpinner,
   InputUsd,
   CheckboxContainer,
   CheckboxInput,
@@ -97,7 +95,17 @@ const DepositModule = ({ data, connected, onRefresh }) => {
     linkColor,
   } = useThemeContext()
 
-  const { token0, token1, price, underlyingUsdPrice, sharePrice, walletBalances, apy } = data
+  const {
+    token0,
+    token1,
+    depositToken,
+    depositIndex,
+    price,
+    underlyingUsdPrice,
+    sharePrice,
+    walletBalances,
+    apy,
+  } = data
   const tokens = [token0, token1]
 
   const perShareUsd =
@@ -105,28 +113,23 @@ const DepositModule = ({ data, connected, onRefresh }) => {
       ? Number(underlyingUsdPrice) * Number(sharePrice)
       : 0
 
-  const [singleIdx, setSingleIdx] = useState(0)
   const [singleAmount, setSingleAmount] = useState('')
   const [slippage, setSlippage] = useState(0.5)
   const [checked, setChecked] = useState(false)
   const [pending, setPending] = useState(false)
 
-  const single = tokens[singleIdx]
+  // Supply is single-asset: only the vault's own deposit token is accepted.
+  const singleIdx = depositIndex === 1 ? 1 : 0
+  const single = depositToken || tokens[singleIdx]
   const inputBg = darkMode ? bgColorButton : '#F0F4FF'
   const pillBg = darkMode ? bgColorButton : '#fff'
   const previewBg = darkMode ? bgColorButton : '#F0F4FF'
   const slipInactiveBg = darkMode ? bgColorButton : '#F0F4FF'
 
-  const tokenIcon = (tk, size = '20px') =>
-    tk.logo ? (
-      <TokenIcon src={tk.logo} alt={tk.symbol} $size={size} />
-    ) : (
-      <TokenMonogram $color={tk.color} $cardbg={pillBg} $size={size}>
-        {tk.symbol.slice(0, 1)}
-      </TokenMonogram>
-    )
+  const tokenIcon = (tk, size = '20px') => <CLTokenIcon token={tk} size={size} cardBg={pillBg} />
 
   const [estShares, setEstShares] = useState(null)
+  const [quoting, setQuoting] = useState(false)
   const [spotByAddress, setSpotByAddress] = useState({})
 
   useEffect(() => {
@@ -160,12 +163,17 @@ const DepositModule = ({ data, connected, onRefresh }) => {
     const a = num(singleAmount)
     if (!a || !single?.wrapper) {
       setEstShares(null)
+      setQuoting(false)
       return undefined
     }
     let active = true
+    setQuoting(true)
     const handle = setTimeout(async () => {
-      const shares = await clPreviewDepositShares({ token: single, amount: a })
-      if (active) setEstShares(shares)
+      const quote = await clPreviewDepositShares({ token: single, amount: a })
+      if (active) {
+        setEstShares(quote)
+        setQuoting(false)
+      }
     }, 350)
     return () => {
       active = false
@@ -182,7 +190,7 @@ const DepositModule = ({ data, connected, onRefresh }) => {
   const preview = useMemo(() => {
     const a = num(singleAmount)
     if (!a) return null
-    let shares = estShares
+    let shares = estShares?.shares
     if (shares == null && depositValueUsd != null && perShareUsd > 0) {
       shares = depositValueUsd / perShareUsd
     }
@@ -191,7 +199,7 @@ const DepositModule = ({ data, connected, onRefresh }) => {
       shares,
       valueUsd: depositValueUsd,
       valueToken: a,
-      swapBps: 14,
+      swapBps: estShares?.costBps ?? null,
     }
   }, [singleAmount, singleIdx, estShares, perShareUsd, depositValueUsd, single.symbol])
 
@@ -233,23 +241,6 @@ const DepositModule = ({ data, connected, onRefresh }) => {
 
   return (
     <div>
-      <PillRow>
-        {tokens.map((tk, idx) => (
-          <TokenPill
-            key={tk.symbol}
-            $active={idx === singleIdx}
-            $bg={pillBg}
-            $activebg={darkMode ? bgColorButton : '#fff'}
-            $border={inputBorderColor}
-            $fontcolor={fontColor1}
-            onClick={() => setSingleIdx(idx)}
-          >
-            {tokenIcon(tk)}
-            {tk.symbol}
-          </TokenPill>
-        ))}
-      </PillRow>
-
       <div
         style={{
           display: 'flex',
@@ -324,10 +315,16 @@ const DepositModule = ({ data, connected, onRefresh }) => {
             )}
           </span>
         </Row>
-        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
-          <span>Internal swap cost</span>
-          <b>~ {preview ? preview.swapBps : 14} bps</b>
-        </Row>
+        {(preview?.swapBps != null || quoting) && (
+          <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+            <span>Internal swap cost</span>
+            {preview?.swapBps != null ? (
+              <b>~ {fmt(preview.swapBps, 1)} bps</b>
+            ) : (
+              <InlineSpinner $color={fontColor3} aria-label="Loading" />
+            )}
+          </Row>
+        )}
       </PreviewBox>
 
       <SettingRow $muted={fontColor3}>

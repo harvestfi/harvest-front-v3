@@ -49,6 +49,14 @@ const previewRedeem = async (shares, instance) => {
   return await handleViemReadMethod('previewRedeem', [shares], instance)
 }
 
+const convertToShares = async (assets, instance) => {
+  return await handleViemReadMethod('convertToShares', [assets], instance)
+}
+
+const convertToAssets = async (shares, instance) => {
+  return await handleViemReadMethod('convertToAssets', [shares], instance)
+}
+
 const getMaxRedeem = async (address, instance) => {
   return await handleViemReadMethod('maxRedeem', [address], instance)
 }
@@ -85,6 +93,8 @@ export default {
   getAssetsOf,
   previewDeposit,
   previewRedeem,
+  convertToShares,
+  convertToAssets,
   getMaxRedeem,
   deposit,
   redeem,

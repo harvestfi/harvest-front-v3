@@ -74,24 +74,38 @@ export const buildCLData = (token = {}, id, chain = null, rebalances = null) => 
     return Number.isFinite(p) && p > 0 ? p : undefined
   }
 
-  const token0 = {
-    symbol: names[0] || 'Token 0',
-    address: addr0,
-    decimals: dec0,
-    wrapper: wrapperByAddr(addr0)?.wrapperAddress,
-    logo: logos[0],
-    color: colorFor(names[0], 0),
-    priceUsd: priceFromWrapper(addr0),
+  const symbolFor = (addr, chainSymbol, index) =>
+    chainSymbol || wrapperByAddr(addr)?.tokenName || names[index] || `Token ${index}`
+
+  const logoFor = symbol => {
+    const idx = names.findIndex(n => lower(n) === lower(symbol))
+    if (idx !== -1 && logos[idx]) return logos[idx]
+    return symbol ? `/icons/${lower(symbol)}.svg` : undefined
   }
-  const token1 = {
-    symbol: names[1] || 'Token 1',
-    address: addr1,
-    decimals: dec1,
-    wrapper: wrapperByAddr(addr1)?.wrapperAddress,
-    logo: logos[1],
-    color: colorFor(names[1], 1),
-    priceUsd: priceFromWrapper(addr1),
+
+  const buildToken = (addr, decimals, chainSymbol, index) => {
+    const symbol = symbolFor(addr, chainSymbol, index)
+    return {
+      symbol,
+      address: addr,
+      decimals,
+      wrapper: wrapperByAddr(addr)?.wrapperAddress,
+      logo: logoFor(symbol),
+      color: colorFor(symbol, index),
+      priceUsd: priceFromWrapper(addr),
+    }
   }
+
+  const token0 = buildToken(addr0, dec0, chain && chain.sym0, 0)
+  const token1 = buildToken(addr1, dec1, chain && chain.sym1, 1)
+
+  const underlyingAddr = lower(token.tokenAddress)
+  const matchedIndex = [token0, token1].findIndex(
+    t => underlyingAddr && lower(t.address) === underlyingAddr,
+  )
+  const wrapperFallbackIndex = token0.wrapper ? 0 : 1
+  const depositIndex = matchedIndex === -1 ? wrapperFallbackIndex : matchedIndex
+  const depositToken = depositIndex === 1 ? token1 : token0
 
   const platformStr = Array.isArray(token.platform) ? token.platform[0] : token.platform
   const protocol =
@@ -162,6 +176,8 @@ export const buildCLData = (token = {}, id, chain = null, rebalances = null) => 
 
     token0,
     token1,
+    depositToken,
+    depositIndex,
 
     price,
     inRange,

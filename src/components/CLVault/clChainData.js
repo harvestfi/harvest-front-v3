@@ -83,14 +83,22 @@ export const fetchCLChainData = async vaultAddress => {
   const inRange =
     currentTick != null && tl != null && tu != null ? currentTick >= tl && currentTick < tu : null
 
-  const readDecimals = async addr => {
-    if (!addr) return null
+  const readTokenMeta = async addr => {
+    if (!addr) return { decimals: null, symbol: null }
     const tokenInstance = await newContractInstance(null, addr, TokenContract.abi, client)
-    if (!tokenInstance) return null
-    const d = await settle(TokenMethods.getDecimals(tokenInstance))
-    return d == null ? null : Number(d)
+    if (!tokenInstance) return { decimals: null, symbol: null }
+    const [d, s] = await Promise.all([
+      settle(TokenMethods.getDecimals(tokenInstance)),
+      settle(TokenMethods.getSymbol(tokenInstance)),
+    ])
+    return { decimals: d == null ? null : Number(d), symbol: s || null }
   }
-  const [dec0, dec1] = await Promise.all([readDecimals(token0Address), readDecimals(token1Address)])
+  const [meta0, meta1] = await Promise.all([
+    readTokenMeta(token0Address),
+    readTokenMeta(token1Address),
+  ])
+  const { decimals: dec0, symbol: sym0 } = meta0
+  const { decimals: dec1, symbol: sym1 } = meta1
 
   let weight0 = null,
     weight1 = null
@@ -123,6 +131,8 @@ export const fetchCLChainData = async vaultAddress => {
     token1Address: token1Address || null,
     dec0,
     dec1,
+    sym0,
+    sym1,
   }
 }
 

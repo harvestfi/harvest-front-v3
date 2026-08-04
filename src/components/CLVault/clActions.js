@@ -64,14 +64,48 @@ const ensureApproval = async ({ tokenAddress, spender, amountWei, account, viem 
   if (hash) await baseViem.waitForTransactionReceipt({ hash })
 }
 
+const swapCostBps = (actual, ideal) => {
+  if (actual == null || ideal == null) return null
+  const a = new BigNumber(actual.toString())
+  const i = new BigNumber(ideal.toString())
+  if (!i.gt(0) || !a.gt(0)) return null
+  const bps = i.minus(a).div(i).times(10000)
+  return bps.gt(0) ? Number(bps.toFixed(2)) : 0
+}
+
 export const clPreviewDepositShares = async ({ token, amount }) => {
   if (!token?.wrapper || !(Number(amount) > 0)) return null
   try {
     const assetsWei = toWei(amount, token.decimals, 0)
     const readWrap = await readInstance(token.wrapper, ClWrapperContract.abi)
-    const expected = await ClWrapperMethods.previewDeposit(assetsWei, readWrap)
+    const [expected, ideal] = await Promise.all([
+      ClWrapperMethods.previewDeposit(assetsWei, readWrap),
+      settle(ClWrapperMethods.convertToShares(assetsWei, readWrap)),
+    ])
     if (expected == null) return null
-    return Number(expected.toString()) / 10 ** VAULT_DECIMALS
+    return {
+      shares: Number(expected.toString()) / 10 ** VAULT_DECIMALS,
+      costBps: swapCostBps(expected, ideal),
+    }
+  } catch (e) {
+    return null
+  }
+}
+
+export const clPreviewRedeemSingle = async ({ token, shares }) => {
+  if (!token?.wrapper || !(Number(shares) > 0)) return null
+  try {
+    const sharesWei = toWei(shares, VAULT_DECIMALS, 0)
+    const readWrap = await readInstance(token.wrapper, ClWrapperContract.abi)
+    const [expected, ideal] = await Promise.all([
+      ClWrapperMethods.previewRedeem(sharesWei, readWrap),
+      settle(ClWrapperMethods.convertToAssets(sharesWei, readWrap)),
+    ])
+    if (expected == null) return null
+    return {
+      amount: Number(expected.toString()) / 10 ** (token.decimals ?? 18),
+      costBps: swapCostBps(expected, ideal),
+    }
   } catch (e) {
     return null
   }
