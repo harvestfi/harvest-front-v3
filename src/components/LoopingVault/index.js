@@ -4,7 +4,7 @@ export { LoopDetailsMain } from './LoopDetails'
 export { default as LoopFeesPanel } from './LoopFeesPanel'
 export { default as LoopApyBreakdown } from './LoopApyBreakdown'
 export { default as CapRing } from './CapRing'
-export { buildLoopData, isLoopingVault, enrichLoopToken } from './loopData'
+export { buildLoopData, isLoopingVault, enrichLoopToken, loopCollateralSymbol } from './loopData'
 export {
   fetchLoopChainData,
   fetchLoopWalletBalance,
