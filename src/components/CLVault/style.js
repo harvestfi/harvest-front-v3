@@ -512,17 +512,31 @@ export const TokenPill = styled.button`
 `
 
 export const InputWithChip = styled.div`
+  container-type: inline-size;
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  gap: 10px;
+  column-gap: 12px;
+  row-gap: 2px;
   border: 1px solid ${props => props.$border};
   border-radius: 12px;
-  padding: 14px 14px 14px 16px;
+  padding: 12px 12px 12px 16px;
   background: ${props => props.$bg};
+
+  > span {
+    order: 1;
+    flex: 0 0 100%;
+    margin-left: 0;
+  }
+
+  > div {
+    flex-shrink: 1;
+    max-width: 50%;
+  }
 
   input {
     flex: 1;
-    min-width: 0;
+    min-width: 6ch;
     border: none;
     outline: none;
     background: transparent;
@@ -542,11 +556,38 @@ export const InputWithChip = styled.div`
       margin: 0;
     }
   }
+
+  @container (max-width: 340px) {
+    input {
+      font-size: 18px;
+    }
+
+    > div {
+      font-size: 13px;
+    }
+  }
+
+  @container (max-width: 280px) {
+    input {
+      font-size: 16px;
+    }
+
+    > span {
+      font-size: 13px;
+    }
+
+    > div {
+      font-size: 12px;
+      padding: 4px 10px 4px 5px;
+    }
+  }
 `
 
 export const TokenChip = styled.div`
   display: inline-flex;
   align-items: center;
+  flex-shrink: 0;
+  min-width: 0;
   gap: 7px;
   background: ${props => props.$bg};
   border: 1px solid ${props => props.$border};
@@ -555,6 +596,13 @@ export const TokenChip = styled.div`
   font-size: 14px;
   font-weight: 600;
   color: ${props => props.$fontcolor};
+  white-space: nowrap;
+`
+
+export const ChipLabel = styled.span`
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 `
 

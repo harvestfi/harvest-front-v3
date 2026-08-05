@@ -22,6 +22,7 @@ import {
   SlipPills,
   RoutingHint,
   InputUsd,
+  ChipLabel,
   CheckboxContainer,
   CheckboxInput,
   CheckboxLabel,
@@ -43,22 +44,21 @@ import {
   CapBarTrack,
   CapBarFill,
 } from './style'
-import { fmtBps, capColorForPct } from './loopHelpers'
+import {
+  fmtBps,
+  capColorForPct,
+  fmtTokenAmount as fmt,
+  fmtApproxToken,
+  fmtUsdAmount as fmtUsd,
+  fmtApproxUsd,
+  truncateForDisplay,
+} from './loopHelpers'
 import { computeEntryCostBps } from './loopLtvSim'
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
 const num = v => {
   const n = parseFloat(v)
   return Number.isFinite(n) && n > 0 ? n : 0
-}
-const fmt = (n, d = 4) => {
-  if (!n || n === 0) return '0'
-  return n.toLocaleString(undefined, { maximumFractionDigits: d })
-}
-const fmtUsd = n => {
-  if (!n || n === 0) return '$0'
-  if (n >= 1000) return `$${Math.round(n).toLocaleString()}`
-  return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
 }
 
 const HelpTip = ({ id, tip, darkMode, children }) => (
@@ -104,6 +104,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
       : 0
 
   const [amount, setAmount] = useState('')
+  const [amountDisplay, setAmountDisplay] = useState('')
   const [slippage, setSlippage] = useState(0.5)
   const [checked, setChecked] = useState(false)
   const [pending, setPending] = useState(false)
@@ -208,6 +209,12 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   const yearlyYieldUsd =
     preview && preview.valueUsd != null ? preview.valueUsd * (apy.total / 100) : null
 
+  const applyAmount = (value, truncate = false) => {
+    const full = value == null ? '' : String(value)
+    setAmount(full)
+    setAmountDisplay(truncate ? truncateForDisplay(full) : full)
+  }
+
   const handleSupply = async () => {
     if (supplyDisabled) return
     const deposited = num(amount)
@@ -215,7 +222,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     try {
       await loopDeposit({ vaultAddress, underlying, amount: deposited, account, viem })
       toast.success('Deposit completed')
-      setAmount('')
+      applyAmount('')
       if (onRefresh) await onRefresh().catch(() => {})
       if (getWalletBalances) await getWalletBalances([], false, true).catch(() => {})
     } catch (err) {
@@ -256,7 +263,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
         </FieldTitle>
         <BalanceInfo
           $fontcolor={fontColor}
-          onClick={() => setAmount(String(walletBalance))}
+          onClick={() => applyAmount(walletBalance, true)}
           style={{ marginTop: 0 }}
         >
           Balance:<span>{fmt(walletBalance, 4)}</span>
@@ -272,13 +279,14 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
         <input
           type="number"
           placeholder="0.0"
-          value={amount}
-          onChange={e => setAmount(e.target.value)}
+          value={amountDisplay}
+          title={amount !== amountDisplay ? `${amount} ${underlying.symbol}` : undefined}
+          onChange={e => applyAmount(e.target.value)}
         />
         {inputUsd != null && <InputUsd $muted={fontColor3}>{fmtUsd(inputUsd)}</InputUsd>}
         <TokenChip $bg={pillBg} $border={inputBorderColor} $fontcolor={fontColor1}>
           {tokenIcon(underlying)}
-          {underlying.symbol}
+          <ChipLabel title={underlying.symbol}>{underlying.symbol}</ChipLabel>
         </TokenChip>
       </InputWithChip>
 
@@ -358,7 +366,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
                 </HelpTip>
               </OutputTitle>
               <OutputValue $fontcolor={fontColor1}>
-                {preview?.valueUsd != null ? `~ ${fmtUsd(preview.valueUsd)}` : 'n/a'}
+                {preview?.valueUsd != null ? fmtApproxUsd(preview.valueUsd) : 'n/a'}
               </OutputValue>
               <OutputSub $muted={fontColor3}>{fTokenName}</OutputSub>
             </OutputCard>
@@ -375,7 +383,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
               </OutputTitle>
               <OutputValue $fontcolor={fontColor1}>
                 {yearlyYieldToken != null
-                  ? `~ ${fmt(yearlyYieldToken, 4)} ${underlying.symbol}`
+                  ? fmtApproxToken(yearlyYieldToken, underlying.symbol)
                   : 'n/a'}
               </OutputValue>
               {yearlyYieldUsd != null && (
@@ -399,9 +407,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
               <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
                 <span>{underlying.symbol}-equivalent value (after entry cost)</span>
                 <b>
-                  {wethAfterCost != null
-                    ? `~ ${fmt(wethAfterCost, 4)} ${underlying.symbol}`
-                    : 'n/a'}
+                  {wethAfterCost != null ? fmtApproxToken(wethAfterCost, underlying.symbol) : 'n/a'}
                 </b>
               </Row>
               <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
