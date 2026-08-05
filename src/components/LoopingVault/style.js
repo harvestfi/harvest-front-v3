@@ -269,9 +269,20 @@ export const OutputGrid = styled.div`
 `
 
 export const OutputCard = styled.div`
-  padding: 12px;
+  padding: 14px;
   border-radius: 10px;
   background: ${props => props.$bg};
+`
+
+export const OutputRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+`
+
+export const OutputMain = styled.div`
+  min-width: 0;
 `
 
 export const OutputTitle = styled.div`

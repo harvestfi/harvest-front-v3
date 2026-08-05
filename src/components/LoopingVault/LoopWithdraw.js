@@ -21,33 +21,34 @@ import {
   TokenMonogram,
   TokenIcon,
   InputUsd,
+  InlineSpinner,
+  ChipLabel,
   CTAWrap,
 } from '../CLVault/style'
 import {
   SectionLabel,
   OutputCard,
+  OutputRow,
+  OutputMain,
   OutputValue,
   OutputSub,
   DetailsBox,
   DetailsTitle,
   DetailsBody,
 } from './style'
-import { fmtBps } from './loopHelpers'
+import {
+  fmtBps,
+  fmtTokenAmount as fmt,
+  fmtApproxToken,
+  fmtUsdAmount as fmtUsd,
+  truncateForDisplay,
+} from './loopHelpers'
 import { computeExitCostBps } from './loopLtvSim'
 
 const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
 const num = v => {
   const n = parseFloat(v)
   return Number.isFinite(n) && n > 0 ? n : 0
-}
-const fmt = (n, d = 4) => {
-  if (!n || n === 0) return '0'
-  return n.toLocaleString(undefined, { maximumFractionDigits: d })
-}
-const fmtUsd = n => {
-  if (!n || n === 0) return '$0'
-  if (n >= 1000) return `$${Math.round(n).toLocaleString()}`
-  return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
 }
 
 const HelpTip = ({ id, tip, darkMode, children }) => (
@@ -93,9 +94,11 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
       : 0
 
   const [shares, setShares] = useState('')
+  const [sharesDisplay, setSharesDisplay] = useState('')
   const [slippage, setSlippage] = useState(0.5)
   const [pending, setPending] = useState(false)
   const [estUnderlying, setEstUnderlying] = useState(null)
+  const [estLoading, setEstLoading] = useState(false)
   const [simWithdraw, setSimWithdraw] = useState(null)
   const [detailsOpen, setDetailsOpen] = useState(false)
 
@@ -117,12 +120,17 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     const s = num(shares)
     if (!s || !vaultAddress) {
       setEstUnderlying(null)
+      setEstLoading(false)
       return undefined
     }
     let active = true
+    setEstLoading(true)
     const handle = setTimeout(async () => {
       const out = await loopPreviewWithdrawUnderlying({ vaultAddress, shares: s })
-      if (active) setEstUnderlying(out)
+      if (active) {
+        setEstUnderlying(out)
+        setEstLoading(false)
+      }
     }, 350)
     return () => {
       active = false
@@ -179,13 +187,18 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
   const withdrawFraction =
     num(shares) > 0 && availableShares > 0 ? num(shares) / availableShares : 0
   const withdrawUsd = inputUsd || 0
-  // Warn only when the exit is large vs vault TVL (or a big personal exit with material USD).
-  // Tiny dust amounts should never trigger this even if they are a high % of a small balance.
   const vaultImpact = tvlUsd > 0 && withdrawUsd > 0 ? withdrawUsd / tvlUsd : 0
   const largeWithdraw = withdrawUsd >= 25 && (vaultImpact > 0.05 || withdrawFraction > 0.25)
 
   const hasInput = num(shares) > 0 && num(shares) <= availableShares
   const hasPreview = num(shares) > 0
+  const quoting = estLoading && preview?.underlying == null
+
+  const applyShares = (value, truncate = false) => {
+    const full = value == null ? '' : String(value)
+    setShares(full)
+    setSharesDisplay(truncate ? truncateForDisplay(full) : full)
+  }
 
   const handleWithdraw = async () => {
     if (!connected || !hasInput || pending) return
@@ -193,7 +206,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     try {
       await loopWithdraw({ vaultAddress, shares: num(shares), account, viem })
       toast.success('Withdraw completed')
-      setShares('')
+      applyShares('')
       if (onRefresh) await onRefresh().catch(() => {})
       if (getWalletBalances) await getWalletBalances([], false, true).catch(() => {})
     } catch (err) {
@@ -231,7 +244,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
         </FieldTitle>
         <BalanceInfo
           $fontcolor={fontColor}
-          onClick={() => setShares(String(availableShares))}
+          onClick={() => applyShares(availableShares, true)}
           style={{ marginTop: 0 }}
         >
           Balance:<span>{fmt(availableShares, 4)}</span>
@@ -247,12 +260,13 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
         <input
           type="number"
           placeholder="0.0"
-          value={shares}
-          onChange={e => setShares(e.target.value)}
+          value={sharesDisplay}
+          title={shares !== sharesDisplay ? `${shares} ${fTokenName}` : undefined}
+          onChange={e => applyShares(e.target.value)}
         />
         {inputUsd != null && <InputUsd $muted={fontColor3}>{fmtUsd(inputUsd)}</InputUsd>}
         <TokenChip $bg={pillBg} $border={inputBorderColor} $fontcolor={fontColor1}>
-          {fTokenName}
+          <ChipLabel title={fTokenName}>{fTokenName}</ChipLabel>
         </TokenChip>
       </InputWithChip>
 
@@ -277,25 +291,28 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
         <>
           <SectionLabel $fontcolor={fontColor2}>Receive</SectionLabel>
           <OutputCard $bg={cardBg} style={{ marginBottom: 12 }}>
-            <OutputValue $fontcolor={fontColor1}>
-              {preview && preview.underlying != null ? `~ ${fmt(preview.underlying, 4)}` : 'n/a'}
-            </OutputValue>
-            {preview?.underlying != null && underlyingUsdPrice > 0 && (
-              <OutputSub $muted={fontColor3}>
-                {fmtUsd(preview.underlying * Number(underlyingUsdPrice))}
-              </OutputSub>
-            )}
-            <OutputSub $muted={fontColor3}>
-              <TokenChip
-                $bg={pillBg}
-                $border={inputBorderColor}
-                $fontcolor={fontColor1}
-                style={{ display: 'inline-flex', marginTop: 4 }}
-              >
+            <OutputRow>
+              <OutputMain>
+                <OutputValue $fontcolor={fontColor1}>
+                  {preview?.underlying != null ? (
+                    fmtApproxToken(preview.underlying)
+                  ) : quoting ? (
+                    <InlineSpinner $color={fontColor3} aria-label="Loading" />
+                  ) : (
+                    'n/a'
+                  )}
+                </OutputValue>
+                {preview?.underlying != null && underlyingUsdPrice > 0 && (
+                  <OutputSub $muted={fontColor3}>
+                    {fmtUsd(preview.underlying * Number(underlyingUsdPrice))}
+                  </OutputSub>
+                )}
+              </OutputMain>
+              <TokenChip $bg={pillBg} $border={inputBorderColor} $fontcolor={fontColor1}>
                 {tokenIcon(underlying)}
-                {underlying.symbol}
+                <ChipLabel title={underlying.symbol}>{underlying.symbol}</ChipLabel>
               </TokenChip>
-            </OutputSub>
+            </OutputRow>
           </OutputCard>
 
           <DetailsBox $bg={cardBg}>
@@ -312,12 +329,12 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
             <DetailsBody $open={detailsOpen}>
               <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
                 <span>Exit cost</span>
-                <b>
+                <b style={{ textAlign: 'right' }}>
                   {fmtBps(exitCostBps)}
                   {exitCostToken != null && (
                     <span style={{ fontWeight: 500 }}>
                       {' '}
-                      (~ {fmt(exitCostToken, 4)} {underlying.symbol})
+                      ({fmtApproxToken(exitCostToken, underlying.symbol)})
                     </span>
                   )}
                 </b>
