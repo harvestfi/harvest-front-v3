@@ -27,6 +27,7 @@ import TickCross from '../../assets/images/logos/tick-cross.svg'
 import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
 import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
 import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
+import FortyAcresIcon from '../../assets/images/logos/advancedfarm/fortyacres.svg'
 import MorphoIcon from '../../assets/images/ui/morpho.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
@@ -86,6 +87,7 @@ import {
   feeList,
   chainList,
   historyTags,
+  NATIVE_EXIT_VAULTS,
 } from '../../constants'
 import { fromWei, newContractInstance, getViem } from '../../services/viem'
 import { usePools } from '../../providers/Pools'
@@ -714,6 +716,77 @@ const AdvancedFarm = () => {
   const usdPrice =
     Number(token.vaultPrice) || Number(token.usdPrice) * Number(pricePerFullShare) || 0
   const underlyingPrice = get(token, 'usdPrice', 0)
+
+  // "Revert in kind" — the native strategy token users can exit into from the Revert
+  // panel (see NATIVE_EXIT_VAULTS). Null for vaults that don't support an in-kind exit.
+  const nativeExitToken = useMemo(() => {
+    const cfg = NATIVE_EXIT_VAULTS[get(token, 'vaultAddress', '').toLowerCase()]
+    if (!cfg) {
+      return null
+    }
+    return {
+      symbol: cfg.symbol,
+      address: cfg.address,
+      decimals: cfg.decimals,
+      chainId: parseInt(cfg.chainId, 10),
+      logoURI: FortyAcresIcon,
+      usdPrice: underlyingPrice,
+      balance: '0',
+      usdValue: 0,
+      nativeExit: true,
+      oneWay: cfg.oneWay !== false,
+      oneWayText: cfg.oneWayText,
+    }
+  }, [token, underlyingPrice])
+
+  // Once a user has reverted in kind they hold the native strategy token, and Portals
+  // returns it in the wallet balance list under its own symbol (e.g. "VAULT"). Fold
+  // that balance into the in-kind exit entry so it shows the real amount...
+  const nativeExitWalletToken = useMemo(() => {
+    if (!nativeExitToken) {
+      return null
+    }
+    const walletToken = balanceList.find(
+      item => item.address && item.address.toLowerCase() === nativeExitToken.address.toLowerCase(),
+    )
+    if (!walletToken) {
+      return nativeExitToken
+    }
+    // Only the holding is taken from the wallet entry — usdPrice stays the underlying
+    // price, since the Revert quote prices this token off the vault's share price.
+    return {
+      ...nativeExitToken,
+      balance: walletToken.balance,
+      rawBalance: walletToken.rawBalance,
+      usdValue: walletToken.usdValue,
+    }
+  }, [nativeExitToken, balanceList])
+
+  // ...and drop the raw row from the token lists of both panels: on Revert it would
+  // duplicate the in-kind exit entry, and on Supply it isn't a valid input at all
+  // (the Autocompounder doesn't accept the native strategy token).
+  const withoutNativeExit = useCallback(
+    list => {
+      if (!nativeExitToken || !list) {
+        return list
+      }
+      return list.filter(
+        item =>
+          !item.address || item.address.toLowerCase() !== nativeExitToken.address.toLowerCase(),
+      )
+    },
+    [nativeExitToken],
+  )
+
+  const balanceListNoNativeExit = useMemo(
+    () => withoutNativeExit(balanceList),
+    [withoutNativeExit, balanceList],
+  )
+
+  const supTokenNoBalanceListNoNativeExit = useMemo(
+    () => withoutNativeExit(supTokenNoBalanceList),
+    [withoutNativeExit, supTokenNoBalanceList],
+  )
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -2854,8 +2927,8 @@ const AdvancedFarm = () => {
                             setSelectToken={setSelectTokenDepo}
                             setPickedToken={setPickedTokenDepo}
                             setBalance={setBalanceDepo}
-                            supTokenNoBalanceList={supTokenNoBalanceList}
-                            balanceList={balanceList}
+                            supTokenNoBalanceList={supTokenNoBalanceListNoNativeExit}
+                            balanceList={balanceListNoNativeExit}
                             defaultToken={defaultToken}
                             soonToSupList={soonToSupList}
                             supportedVault={supportedVault}
@@ -2890,6 +2963,7 @@ const AdvancedFarm = () => {
                             defaultToken={defaultToken}
                             pricePerFullShare={pricePerFullShare}
                             pickedToken={pickedTokenWith}
+                            nativeExitToken={nativeExitWalletToken}
                             unstakeBalance={unstakeBalance}
                             setUnstakeBalance={setUnstakeBalance}
                             balanceList={balanceList}
@@ -2914,9 +2988,10 @@ const AdvancedFarm = () => {
                             selectToken={selectTokenWith}
                             setSelectToken={setSelectTokenWith}
                             setPickedToken={setPickedTokenWith}
-                            supTokenNoBalanceList={supTokenNoBalanceList}
-                            balanceList={balanceList}
+                            supTokenNoBalanceList={supTokenNoBalanceListNoNativeExit}
+                            balanceList={balanceListNoNativeExit}
                             defaultToken={defaultToken}
+                            nativeExitToken={nativeExitWalletToken}
                             soonToSupList={soonToSupList}
                             supportedVault={supportedVault}
                             hasPortalsError={hasPortalsError}
@@ -2929,6 +3004,7 @@ const AdvancedFarm = () => {
                             defaultToken={defaultToken}
                             pickedToken={pickedTokenWith}
                             setPickedToken={setPickedTokenWith}
+                            nativeExitToken={nativeExitWalletToken}
                             token={token}
                             unstakeBalance={unstakeBalance}
                             tokenSymbol={tokenSym}

@@ -9,13 +9,14 @@ import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import { USD_BALANCES_DECIMALS } from '../../../../constants'
+import { ERC4626_CONVERT_ABI, USD_BALANCES_DECIMALS } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
-import { fromWei, toWei } from '../../../../services/viem'
+import { fromWei, getViem, toWei } from '../../../../services/viem'
 import { formatNumberWido, isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
+import TokenLogo from '../../../TokenLogo'
 import Button from '../../../Button'
 import {
   BaseWidoDiv,
@@ -33,6 +34,7 @@ import {
   TokenSelectSection,
   SwitchTabTag,
   HasErrorSection,
+  NativeExitInfoSection,
   FlexDiv,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
@@ -135,11 +137,16 @@ const WithdrawBase = ({
             fromInfoUsdValue = '',
             minReceivedString = '',
             minReceivedUsdString,
-            outputAmountDefault = ''
+            outputAmountDefault = '',
+            nativeExitAssets = ''
           const toToken = pickedToken.address
 
+          const isNativeExit = !!pickedToken.nativeExit
           const pickedDefaultToken =
-            pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
+            isNativeExit ||
+            (defaultToken &&
+              defaultToken.address &&
+              pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase())
 
           if (pickedDefaultToken) {
             const unstakeBalanceDecimals = fromWei(
@@ -151,6 +158,17 @@ const WithdrawBase = ({
               .times(new BigNumber(pricePerFullShare))
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
+            if (isNativeExit) {
+              nativeExitAssets = outputAmountDefault
+              const publicClient = await getViem(tokenChain, false, viem)
+              const inKindShares = await publicClient.readContract({
+                address: pickedToken.address,
+                abi: ERC4626_CONVERT_ABI,
+                functionName: 'convertToShares',
+                args: [BigInt(new BigNumber(nativeExitAssets).toFixed(0))],
+              })
+              outputAmountDefault = inKindShares.toString()
+            }
           } else {
             portalsEstimate = await getPortalsEstimate({
               chainId,
@@ -207,16 +225,22 @@ const WithdrawBase = ({
                     ) * quoteResult.fromTokenUsdPrice,
                     USD_BALANCES_DECIMALS,
                   )
-            const pDecimal = pickedDefaultToken
-              ? token.vaultDecimals || token.decimals
-              : pickedToken.decimals
+            const pDecimal =
+              pickedDefaultToken && !isNativeExit
+                ? token.vaultDecimals || token.decimals
+                : pickedToken.decimals
             minReceivedString = new BigNumber(
               fromWei(quoteResult.minToTokenAmount, pDecimal, pDecimal),
             ).toString()
-            minReceivedUsdString = formatNumberWido(
-              parseFloat(minReceivedString) * toTokenUsdPrice,
-              USD_BALANCES_DECIMALS,
-            )
+            minReceivedUsdString = isNativeExit
+              ? formatNumberWido(
+                  fromWei(nativeExitAssets, defaultDecimal, defaultDecimal, true) * toTokenUsdPrice,
+                  USD_BALANCES_DECIMALS,
+                )
+              : formatNumberWido(
+                  parseFloat(minReceivedString) * toTokenUsdPrice,
+                  USD_BALANCES_DECIMALS,
+                )
 
             if (Number(fromInfoUsdValue) < 0.01) {
               setRevertFromInfoUsdAmount(`<${currencySym}0.01`)
@@ -417,8 +441,14 @@ const WithdrawBase = ({
                 setSelectToken(true)
               }}
             >
-              {pickedToken.logoURI ? (
-                <img className="logo" src={pickedToken.logoURI} width={24} height={24} alt="" />
+              {pickedToken.symbol !== 'Select' ? (
+                <TokenLogo
+                  className="logo"
+                  src={pickedToken.logoURI}
+                  symbol={pickedToken.symbol}
+                  size={24}
+                  marginRight="8px"
+                />
               ) : (
                 <></>
               )}
@@ -442,7 +472,9 @@ const WithdrawBase = ({
           <span>
             {!connected ? (
               0
-            ) : lpTokenBalance ? (
+            ) : lpTokenBalance === undefined || lpTokenBalance === null || lpTokenBalance === '' ? (
+              <AnimatedDots />
+            ) : (
               new BigNumber(
                 fromWei(
                   lpTokenBalance,
@@ -451,8 +483,6 @@ const WithdrawBase = ({
                   false,
                 ),
               ).toString()
-            ) : (
-              <AnimatedDots />
             )}
           </span>
         </BalanceInfo>
@@ -510,6 +540,21 @@ const WithdrawBase = ({
             />
           </div>
         </HasErrorSection>
+        <NativeExitInfoSection
+          $isshow={pickedToken.nativeExit ? 'true' : 'false'}
+          $bordercolor={darkMode ? '#475467' : '#d0d5dd'}
+          $bgcolor={darkMode ? '#1f242f' : '#f9fafb'}
+        >
+          <img className="info-icon" src={InfoIcon} alt="" />
+          <NewLabel
+            $size={isMobile ? '13px' : '13px'}
+            $height={isMobile ? '20px' : '20px'}
+            $weight="400"
+            $fontcolor={fontColor2}
+          >
+            {pickedToken.oneWayText}
+          </NewLabel>
+        </NativeExitInfoSection>
       </BaseWidoDiv>
       <BaseWidoDiv $bordercolor={borderColorBox}>
         <NewLabel

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { PiQuestion } from 'react-icons/pi'
 import { fromWei } from '../../../../services/viem'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
@@ -11,8 +12,12 @@ import {
   Content,
   EmptyContainer,
   Label,
+  BadgeRow,
+  OneWayBadge,
+  OneWayTooltip,
 } from './style'
 import AnimatedDots from '../../../AnimatedDots'
+import TokenLogo from '../../../TokenLogo'
 import { useWallet } from '../../../../providers/Wallet'
 import { usePortals } from '../../../../providers/Portals'
 import { useRate } from '../../../../providers/Rate'
@@ -21,6 +26,7 @@ const SelectTokenList = ({
   balanceList,
   supTokenNoBalanceList,
   defaultToken,
+  nativeExitToken,
   soonToSupList,
   setPickedToken,
   setSelectToken,
@@ -28,7 +34,7 @@ const SelectTokenList = ({
   supportedVault,
   hasPortalsError,
 }) => {
-  const { fontColor, fontColor2, hoverColor, activeColorModal } = useThemeContext()
+  const { darkMode, fontColor, fontColor2, hoverColor, activeColorModal } = useThemeContext()
   const [showList, setShowList] = useState(false)
   const [curSupportedVault, setCurSupportedVault] = useState(supportedVault)
   const { chainId } = useWallet()
@@ -69,6 +75,23 @@ const SelectTokenList = ({
     setSelectToken(false)
   }
   const [defaultCurToken, setDefaultCurToken] = useState(defaultToken)
+
+  const handleNativeExitToken = () => {
+    setClickBalanceListId(-1)
+    setClickSupTokenNoBalanceListId(-1)
+    setPickedToken(nativeExitToken)
+    setSelectToken(false)
+  }
+  const nativeExitFilterWord = (filterWord || '').toLowerCase().trim()
+  const showNativeExit =
+    !!nativeExitToken &&
+    (nativeExitFilterWord === '' ||
+      nativeExitToken.symbol.toLowerCase().includes(nativeExitFilterWord) ||
+      (nativeExitToken.address && nativeExitToken.address.toLowerCase() === nativeExitFilterWord))
+
+  const showDefaultToken =
+    !!defaultCurToken &&
+    !(Object.keys(defaultCurToken).length === 0 && defaultCurToken.constructor === Object)
 
   useEffect(() => {
     const fetch = async () => {
@@ -182,51 +205,100 @@ const SelectTokenList = ({
           (balanceList && balanceList.length) +
           (supTokenNoBalanceList && supTokenNoBalanceList.length) +
           (soonToSupList && soonToSupList.length)
-    if (count > 0) {
+    if (count > 0 || nativeExitToken) {
       setShowList(true)
     }
-  }, [defaultToken, balanceList, supTokenNoBalanceList, soonToSupList])
+  }, [defaultToken, balanceList, supTokenNoBalanceList, soonToSupList, nativeExitToken])
 
   return (
     <>
       {showList ? (
         <Content>
-          {defaultCurToken &&
-            !(
-              Object.keys(defaultCurToken).length === 0 && defaultCurToken.constructor === Object
-            ) && (
-              <>
-                <Label $fontcolor={fontColor} $padding="15px 24px 0px">
-                  Default token to revert to{' '}
-                </Label>
-                <Container
-                  onClick={() => {
-                    handleDefaultToken()
-                  }}
-                  $hovercolor={hoverColor}
-                  $activecolor={activeColorModal}
-                >
-                  <img src={defaultCurToken.logoURI} width={26} height={26} alt="" />
-                  <Vault>
+          {showDefaultToken && (
+            <>
+              <Label $fontcolor={fontColor} $padding="15px 24px 0px">
+                Default token to revert to{' '}
+              </Label>
+              <Container
+                onClick={() => {
+                  handleDefaultToken()
+                }}
+                $hovercolor={hoverColor}
+                $activecolor={activeColorModal}
+              >
+                <TokenLogo src={defaultCurToken.logoURI} symbol={defaultCurToken.symbol} />
+                <Vault>
+                  <Text $weight={600} $fontcolor={fontColor2}>
+                    {defaultCurToken.symbol}
+                  </Text>
+                  <RightText $weight={600} $fontcolor={fontColor2}>
+                    <>{defaultCurToken.balance ? showTokenBalance(defaultCurToken.balance) : '0'}</>
+                    <TextSpan $fontcolor2={fontColor2}>
+                      {defaultCurToken.usdValue
+                        ? `${currencySym}${(
+                            defaultCurToken.usdValue * Number(currencyRate)
+                          ).toFixed(2)}`
+                        : `${currencySym}0`}
+                    </TextSpan>
+                  </RightText>
+                </Vault>
+              </Container>
+            </>
+          )}
+          {showNativeExit && (
+            <>
+              <Label $fontcolor={fontColor} $padding="15px 24px 0px">
+                Exit to the native strategy token
+              </Label>
+              <Container
+                onClick={() => {
+                  handleNativeExitToken()
+                }}
+                $hovercolor={hoverColor}
+                $activecolor={activeColorModal}
+              >
+                <TokenLogo src={nativeExitToken.logoURI} symbol={nativeExitToken.symbol} />
+                <Vault>
+                  <BadgeRow>
                     <Text $weight={600} $fontcolor={fontColor2}>
-                      {defaultCurToken.symbol}
+                      {nativeExitToken.symbol}
                     </Text>
-                    <RightText $weight={600} $fontcolor={fontColor2}>
-                      <>
-                        {defaultCurToken.balance ? showTokenBalance(defaultCurToken.balance) : '0'}
-                      </>
-                      <TextSpan $fontcolor2={fontColor2}>
-                        {defaultCurToken.usdValue
-                          ? `${currencySym}${(
-                              defaultCurToken.usdValue * Number(currencyRate)
-                            ).toFixed(2)}`
-                          : `${currencySym}0`}
-                      </TextSpan>
-                    </RightText>
-                  </Vault>
-                </Container>
-              </>
-            )}
+                    <OneWayBadge
+                      $bordercolor={darkMode ? '#475467' : '#d0d5dd'}
+                      $bgcolor={darkMode ? '#1f242f' : '#f9fafb'}
+                      $fontcolor={darkMode ? '#cecfd2' : '#475467'}
+                      onClick={e => e.stopPropagation()}
+                    >
+                      ONE-WAY
+                      <PiQuestion className="badge-question" data-tip id="native-exit-oneway" />
+                      <OneWayTooltip
+                        id="native-exit-oneway"
+                        anchorSelect="#native-exit-oneway"
+                        backgroundColor={darkMode ? 'white' : '#101828'}
+                        borderColor={darkMode ? 'white' : 'black'}
+                        textColor={darkMode ? 'black' : 'white'}
+                        place="top"
+                        clickable
+                      >
+                        {nativeExitToken.oneWayText}
+                      </OneWayTooltip>
+                    </OneWayBadge>
+                  </BadgeRow>
+                  <RightText $weight={600} $fontcolor={fontColor2}>
+                    <>{nativeExitToken.balance ? showTokenBalance(nativeExitToken.balance) : '0'}</>
+                    <TextSpan $fontcolor2={fontColor2}>
+                      {nativeExitToken.usdValue
+                        ? `${currencySym}${formatNumberWido(
+                            nativeExitToken.usdValue * Number(currencyRate),
+                            2,
+                          )}`
+                        : `${currencySym}0`}
+                    </TextSpan>
+                  </RightText>
+                </Vault>
+              </Container>
+            </>
+          )}
           {!hasPortalsError && balanceTokenList.length > 0 && (
             <>
               <Label $fontcolor={fontColor} $padding="15px 24px 0px">
@@ -245,7 +317,7 @@ const SelectTokenList = ({
                   $hovercolor={hoverColor}
                   $activecolor={activeColorModal}
                 >
-                  <img src={data.logoURI} width={26} height={26} alt="" />
+                  <TokenLogo src={data.logoURI} symbol={data.symbol} />
                   <Vault>
                     <Text $weight={600} $fontcolor={fontColor2}>
                       {data.symbol}
@@ -286,7 +358,7 @@ const SelectTokenList = ({
                   $hovercolor={hoverColor}
                   $activecolor={activeColorModal}
                 >
-                  <img src={data.logoURI} width={26} height={26} alt="" />
+                  <TokenLogo src={data.logoURI} symbol={data.symbol} />
                   <Vault>
                     <Text $weight={600} $fontcolor={fontColor2}>
                       {data.symbol}
@@ -307,7 +379,7 @@ const SelectTokenList = ({
               </Label>
               {soonToSupList.map((data, i) => (
                 <Container key={i} $hovercolor={hoverColor} $activecolor={activeColorModal}>
-                  <img src={data.logoURI} width={26} height={26} alt="" />
+                  <TokenLogo src={data.logoURI} symbol={data.symbol} />
                   <Vault>
                     <Text $weight={600} $fontcolor={fontColor2}>
                       {data.symbol}
@@ -321,7 +393,8 @@ const SelectTokenList = ({
               ))}
             </>
           )}
-          {defaultCurToken === null &&
+          {!showDefaultToken &&
+            !showNativeExit &&
             supTokenList.length === 0 &&
             balanceTokenList.length === 0 &&
             Object.keys(soonToSupList).length === 0 &&
