@@ -1,0 +1,54 @@
+{
+  "address": "",
+  "abi": [
+    {
+      "inputs": [],
+      "name": "positionHealth",
+      "outputs": [{ "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "targetHealth",
+      "outputs": [{ "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "collateralFactorNumerator",
+      "outputs": [{ "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "borrowTargetFactorNumerator",
+      "outputs": [{ "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "profitSharingNumerator",
+      "outputs": [{ "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "feeDenominator",
+      "outputs": [{ "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "getBorrowPriceInSupply",
+      "outputs": [{ "type": "uint256" }],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}

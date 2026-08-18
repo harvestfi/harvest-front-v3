@@ -29,6 +29,24 @@ import ReaderHyperevmMethods from './reader-hyperevm/methods'
 import IporVaultContract from './ipor-vault/contract.json'
 import IporVaultMethods from './ipor-vault/methods'
 
+import ClVaultContract from './cl-vault/contract.json'
+import ClVaultMethods from './cl-vault/methods'
+
+import ClWrapperContract from './cl-wrapper/contract.json'
+import ClWrapperMethods from './cl-wrapper/methods'
+
+import LoopVaultContract from './loop-vault/contract.json'
+import LoopVaultMethods from './loop-vault/methods'
+
+import AavePoolContract from './aave-pool/contract.json'
+import AavePoolMethods from './aave-pool/methods'
+
+import AaveViewerContract from './aave-viewer/contract.json'
+import AaveViewerMethods from './aave-viewer/methods'
+
+import LoopStrategyContract from './loop-strategy/contract.json'
+import LoopStrategyMethods from './loop-strategy/methods'
+
 import { CHAIN_IDS } from '../../../data/constants'
 
 const { tokens } = require('../../../data')
@@ -116,6 +134,42 @@ export default {
     contract: ReaderHyperevmContract,
     methods: ReaderHyperevmMethods,
     chain: CHAIN_IDS.HYPEREVM,
+  },
+
+  clVault: {
+    contract: ClVaultContract,
+    methods: ClVaultMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  clWrapper: {
+    contract: ClWrapperContract,
+    methods: ClWrapperMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  loopVault: {
+    contract: LoopVaultContract,
+    methods: LoopVaultMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  aavePool: {
+    contract: AavePoolContract,
+    methods: AavePoolMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  aaveViewer: {
+    contract: AaveViewerContract,
+    methods: AaveViewerMethods,
+    chain: CHAIN_IDS.BASE,
+  },
+
+  loopStrategy: {
+    contract: LoopStrategyContract,
+    methods: LoopStrategyMethods,
+    chain: CHAIN_IDS.BASE,
   },
 
   ...getTokensContracts(),

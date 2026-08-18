@@ -37,6 +37,32 @@ import WithdrawBase from '../../components/AdvancedFarmComponents/Withdraw/Withd
 import WithdrawSelectToken from '../../components/AdvancedFarmComponents/Withdraw/WithdrawSelectToken'
 import WithdrawStart from '../../components/AdvancedFarmComponents/Withdraw/WithdrawStart'
 import FarmDetailChart from '../../components/DetailChart/FarmDetailChart'
+import {
+  CLInteract,
+  CLDetailsMain,
+  buildCLData,
+  fetchCLChainData,
+  fetchCLWalletBalances,
+  fetchCLPosition,
+} from '../../components/CLVault'
+import {
+  LoopInteract,
+  LoopDetailsMain,
+  LoopMetricsStrip,
+  LoopFeesPanel,
+  LoopApyBreakdown,
+  CapRing,
+  buildLoopData,
+  enrichLoopToken,
+  loopCollateralSymbol,
+  fetchLoopChainData,
+  fetchLoopWalletBalance,
+  pollLoopWalletBalance,
+  fetchLoopPosition,
+  pollLoopPosition,
+  fetchLoopDepositCap,
+  fetchLoopStakingYield,
+} from '../../components/LoopingVault'
 import UserBalanceData from '../../components/UserBalanceChart/UserBalanceData'
 import SharePricesData from '../../components/SharePricesChart/SharePricesData'
 import AOTData from '../../components/AOTChart/AOTData'
@@ -91,6 +117,7 @@ import {
   getTokenPriceFromApi,
   initBalanceAndDetailData,
   getIPORLastHarvestInfo,
+  getCLVaultRebalances,
 } from '../../utilities/apiCalls'
 import {
   BackBtnRect,
@@ -292,6 +319,7 @@ const AdvancedFarm = () => {
   // Chart & Table API data
   const [activeHarvests, setActiveHarvests] = useState(true)
   const [historyData, setHistoryData] = useState([])
+  const [historyDataLoaded, setHistoryDataLoaded] = useState(false)
   const [sevenDApy, setSevenDApy] = useState('')
   const [thirtyDApy, setThirtyDApy] = useState('')
   const [oneEightyDApy, setOneEightyDApy] = useState('')
@@ -362,6 +390,253 @@ const AdvancedFarm = () => {
   const tokenSym = token.isIPORVault ? token.vaultSymbol : id
   const fTokenName = token.isIPORVault ? tokenSym : `f${tokenSym}`
 
+  const isCLVault = Boolean(token.isCLVault)
+  const loopToken = useMemo(() => enrichLoopToken(token, id), [token, id])
+  const isLoopingVault = Boolean(loopToken.isLoopingVault)
+  const [clChainData, setClChainData] = useState(null)
+  const [clRebalances, setClRebalances] = useState(null)
+  const [loopChainData, setLoopChainData] = useState(null)
+  const [loopDepositCap, setLoopDepositCap] = useState(null)
+  const [loopStakingYield, setLoopStakingYield] = useState(null)
+  const [loopRebalances, setLoopRebalances] = useState(null)
+
+  useEffect(() => {
+    let active = true
+    if (isCLVault && token.vaultAddress) {
+      fetchCLChainData(token.vaultAddress)
+        .then(d => {
+          if (active) setClChainData(d)
+        })
+        .catch(() => {})
+      getCLVaultRebalances(token.vaultAddress, CHAIN_IDS.BASE)
+        .then(r => {
+          if (active) setClRebalances(r)
+        })
+        .catch(() => {})
+    }
+    return () => {
+      active = false
+    }
+  }, [isCLVault, token.vaultAddress])
+
+  useEffect(() => {
+    let active = true
+    if (isLoopingVault && loopToken.strategyAddress && loopToken.loopConfig) {
+      fetchLoopChainData({
+        strategyAddress: loopToken.strategyAddress,
+        supplyAsset: loopToken.loopConfig.supplyAsset,
+        borrowAsset: loopToken.loopConfig.borrowAsset,
+        aavePool: loopToken.loopConfig.aavePool,
+      })
+        .then(d => {
+          if (active) setLoopChainData(d)
+        })
+        .catch(() => {})
+      getCLVaultRebalances(loopToken.vaultAddress, loopToken.chain || token.chain)
+        .then(r => {
+          if (active) setLoopRebalances(r)
+        })
+        .catch(() => {})
+      fetchLoopDepositCap({ vaultAddress: loopToken.vaultAddress, decimals: loopToken.decimals })
+        .then(capData => {
+          if (active) setLoopDepositCap(capData)
+        })
+        .catch(() => {})
+      fetchLoopStakingYield(loopCollateralSymbol(loopToken))
+        .then(apy => {
+          if (active) setLoopStakingYield(apy)
+        })
+        .catch(() => {})
+    }
+    return () => {
+      active = false
+    }
+  }, [
+    isLoopingVault,
+    loopToken.strategyAddress,
+    loopToken.loopConfig,
+    loopToken.vaultAddress,
+    loopToken.chain,
+    loopToken.decimals,
+    token.chain,
+  ])
+
+  const clData = useMemo(
+    () => (isCLVault ? buildCLData(token, id, clChainData, clRebalances) : null),
+    [
+      isCLVault,
+      id,
+      clChainData,
+      clRebalances,
+      token.estimatedApy,
+      token.totalValueLocked,
+      token.pricePerFullShare,
+    ],
+  )
+
+  const [clWalletBalances, setClWalletBalances] = useState({ token0: 0, token1: 0 })
+  const [clPosition, setClPosition] = useState({
+    vaultShares: 0,
+    underlying0: 0,
+    underlying1: 0,
+    usdValue: 0,
+  })
+
+  const refreshCL = useCallback(async () => {
+    if (!isCLVault || !token.vaultAddress) return
+    const chain = await fetchCLChainData(token.vaultAddress).catch(() => null)
+    if (chain) setClChainData(chain)
+    getCLVaultRebalances(token.vaultAddress, CHAIN_IDS.BASE)
+      .then(r => setClRebalances(r))
+      .catch(() => {})
+    if (account && clData) {
+      const wait = ms => new Promise(r => setTimeout(r, ms))
+      for (let attempt = 0; attempt < 3; attempt += 1) {
+        const [balances, position] = await Promise.all([
+          fetchCLWalletBalances(account, clData.token0, clData.token1).catch(() => null),
+          fetchCLPosition({
+            vaultAddress: token.vaultAddress,
+            token0: clData.token0,
+            token1: clData.token1,
+            account,
+            usdPrice: clData.underlyingUsdPrice,
+            pricePerShare: clData.sharePrice,
+          }).catch(() => null),
+        ])
+        if (balances) setClWalletBalances(balances)
+        if (position) setClPosition(position)
+        if (position) break
+        await wait(1500)
+      }
+    }
+  }, [isCLVault, token.vaultAddress, account, clData])
+
+  useEffect(() => {
+    let active = true
+    if (isCLVault && account && clData) {
+      fetchCLWalletBalances(account, clData.token0, clData.token1)
+        .then(b => {
+          if (active) setClWalletBalances(b)
+        })
+        .catch(() => {})
+      fetchCLPosition({
+        vaultAddress: token.vaultAddress,
+        token0: clData.token0,
+        token1: clData.token1,
+        account,
+        usdPrice: clData.underlyingUsdPrice,
+        pricePerShare: clData.sharePrice,
+      })
+        .then(p => {
+          if (active) setClPosition(p)
+        })
+        .catch(() => {})
+    }
+    return () => {
+      active = false
+    }
+  }, [isCLVault, account, clData, token.vaultAddress])
+
+  const clDataView = useMemo(
+    () => (clData ? { ...clData, walletBalances: clWalletBalances, position: clPosition } : null),
+    [clData, clWalletBalances, clPosition],
+  )
+
+  const loopData = useMemo(
+    () =>
+      isLoopingVault
+        ? buildLoopData(loopToken, id, loopChainData, {
+            lastRebalanceLabel: loopRebalances?.lastRebalanceLabel || '',
+            depositCap: loopDepositCap,
+            stakingYield: loopStakingYield,
+          })
+        : null,
+    [
+      isLoopingVault,
+      loopToken,
+      id,
+      loopChainData,
+      loopDepositCap,
+      loopStakingYield,
+      loopRebalances,
+      loopToken.estimatedApy,
+      loopToken.totalValueLocked,
+      loopToken.pricePerFullShare,
+    ],
+  )
+
+  const [loopWalletBalance, setLoopWalletBalance] = useState(0)
+  const [loopUserPosition, setLoopUserPosition] = useState({ vaultShares: 0, usdValue: 0 })
+
+  const refreshLoop = useCallback(async () => {
+    if (!isLoopingVault || !loopToken.strategyAddress || !loopToken.loopConfig) return
+    const chain = await fetchLoopChainData({
+      strategyAddress: loopToken.strategyAddress,
+      supplyAsset: loopToken.loopConfig.supplyAsset,
+      borrowAsset: loopToken.loopConfig.borrowAsset,
+      aavePool: loopToken.loopConfig.aavePool,
+    }).catch(() => null)
+    if (chain) setLoopChainData(chain)
+    if (account && loopToken.vaultAddress) {
+      const previousShares = loopUserPosition?.vaultShares || 0
+      const previousWallet = loopWalletBalance || 0
+      const [balance, position] = await Promise.all([
+        pollLoopWalletBalance(account, loopToken.tokenAddress, Number(loopToken.decimals) || 18, {
+          previousBalance: previousWallet,
+        }).catch(() => previousWallet),
+        pollLoopPosition(
+          {
+            vaultAddress: loopToken.vaultAddress,
+            account,
+            usdPrice: loopToken.usdPrice,
+            pricePerShare: loopData?.sharePrice,
+          },
+          { previousShares },
+        ).catch(() => null),
+      ])
+      setLoopWalletBalance(balance)
+      if (position) setLoopUserPosition(position)
+    }
+  }, [
+    isLoopingVault,
+    loopToken,
+    account,
+    loopData?.sharePrice,
+    loopUserPosition?.vaultShares,
+    loopWalletBalance,
+  ])
+
+  useEffect(() => {
+    let active = true
+    if (isLoopingVault && account && loopToken.vaultAddress) {
+      fetchLoopWalletBalance(account, loopToken.tokenAddress, Number(loopToken.decimals) || 18)
+        .then(b => {
+          if (active) setLoopWalletBalance(b)
+        })
+        .catch(() => {})
+      fetchLoopPosition({
+        vaultAddress: loopToken.vaultAddress,
+        account,
+        usdPrice: loopToken.usdPrice,
+        pricePerShare: loopData?.sharePrice,
+      })
+        .then(p => {
+          if (active) setLoopUserPosition(p)
+        })
+        .catch(() => {})
+    }
+    return () => {
+      active = false
+    }
+  }, [
+    isLoopingVault,
+    account,
+    loopToken.vaultAddress,
+    loopToken.tokenAddress,
+    loopToken.usdPrice,
+    loopData?.sharePrice,
+  ])
+
   const { logoUrl } = token
 
   const vaultPool = find(pools, pool => pool.collateralAddress === get(token, `vaultAddress`))
@@ -370,6 +645,9 @@ const AdvancedFarm = () => {
   const rewardApy = get(vaultPool, 'totalRewardAPY', 0)
   const tradingApy = get(vaultPool, 'tradingApy', 0)
   const totalApy = Number(estimatedApy) + Number(rewardApy) + Number(tradingApy)
+  const liveApy = get(token, `liveApy`, null) ?? estimatedApy
+  const liveTotalApy = Number(liveApy) + Number(rewardApy) + Number(tradingApy)
+  const showsSevenDayApy = isLoopingVault && get(token, `sevenDayApy`, null) !== null
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC, HYPEREVM]
   const tokenChain = token.chain || token.data.chain
@@ -422,6 +700,15 @@ const AdvancedFarm = () => {
   const lpTokenApprovedBalance = token.id
     ? 0
     : get(userStats, `[${vaultPool.id}]['lpTokenApprovedBalance']`, 0)
+
+  const loopDataView = useMemo(() => {
+    if (!loopData) return null
+    return {
+      ...loopData,
+      walletBalance: loopWalletBalance,
+      userPosition: loopUserPosition,
+    }
+  }, [loopData, loopWalletBalance, loopUserPosition])
 
   const tempPricePerFullShare = get(token, `pricePerFullShare`, 0)
   const pricePerFullShare = fromWei(tempPricePerFullShare, tokenDecimals, tokenDecimals)
@@ -574,6 +861,34 @@ const AdvancedFarm = () => {
   }, [token, tokenChain])
 
   useEffect(() => {
+    if (isCLVault) {
+      const { vaultShares = 0, usdValue = 0 } = clPosition || {}
+      const usd = usdValue * Number(currencyRate)
+      const aprPct = estimatedApy || (clData && clData.apy ? clData.apy.total : 0) || 0
+      const apr = aprPct / 100
+      setStakedAmount(vaultShares)
+      setUnstakedAmount(0)
+      setTotalValue(vaultShares)
+      setBalanceAmount(usd)
+      setYieldDaily(usd * (apr / 365))
+      setYieldMonthly(usd * (apr / 12))
+      return
+    }
+
+    if (isLoopingVault) {
+      const { vaultShares = 0, usdValue = 0 } = loopUserPosition || {}
+      const usd = usdValue * Number(currencyRate)
+      const aprPct = estimatedApy || (loopData && loopData.apy ? loopData.apy.total : 0) || 0
+      const apr = aprPct / 100
+      setStakedAmount(vaultShares)
+      setUnstakedAmount(0)
+      setTotalValue(vaultShares)
+      setBalanceAmount(usd)
+      setYieldDaily(usd * (apr / 365))
+      setYieldMonthly(usd * (apr / 12))
+      return
+    }
+
     let staked, unstaked, total, amountBalanceUSD
     staked =
       totalStaked && fromWei(totalStaked, token.vaultDecimals || token.decimals, MAX_DECIMALS, true)
@@ -640,6 +955,12 @@ const AdvancedFarm = () => {
     estimatedApy,
     rewardApy,
     tradingApy,
+    isCLVault,
+    clPosition,
+    clData,
+    isLoopingVault,
+    loopUserPosition,
+    loopData,
   ])
 
   useEffect(() => {
@@ -1277,9 +1598,17 @@ const AdvancedFarm = () => {
 
   useEffect(() => {
     const initData = async () => {
-      if (account && token && id) {
-        const address = token.vaultAddress
-        const iporVFlag = token.isIPORVault ?? false
+      if (!account || !token || !id) {
+        setHistoryDataLoaded(false)
+        return
+      }
+
+      if (loadingVaults) return
+
+      const address = token.vaultAddress
+      const iporVFlag = token.isIPORVault ?? false
+
+      try {
         const {
           bFlag,
           vHFlag,
@@ -1298,7 +1627,7 @@ const AdvancedFarm = () => {
           token.vaultDecimals,
         )
 
-        if (bFlag && vHFlag && !loadingVaults) {
+        if (bFlag && vHFlag) {
           setUnderlyingEarnings(sumNetChange)
           setUsdEarnings(sumNetChangeUsd)
           setUnderlyingEarningsLatest(sumLatestNetChange)
@@ -1310,30 +1639,32 @@ const AdvancedFarm = () => {
           setHistoryData(enrichedDataWithSymbol)
           setChartData(uniqueVaultHData)
         }
-        if (token.isIPORVault && vHFlag && !loadingVaults) {
+        if (token.isIPORVault && vHFlag) {
           setChartData(uniqueVaultHData)
         }
+      } finally {
+        setHistoryDataLoaded(true)
       }
     }
 
     initData()
-  }, [account, loadingVaults])
+  }, [account, loadingVaults, token, id])
 
   const apyDaily = totalApy
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
     : null
 
-  const showAPY = () => {
+  const showAPY = (apyValue = totalApy) => {
     return (
       <>
-        {totalApy !== null && !loadingVaults ? (
+        {apyValue !== null && !loadingVaults ? (
           <div>
             {token?.inactive || token?.testInactive || !token?.dataFetched ? (
               token?.inactive || token?.testInactive ? (
                 'Inactive'
               ) : null
             ) : (
-              <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
+              <>{displayAPY(apyValue, DECIMAL_PRECISION, 10)}</>
             )}
           </div>
         ) : (
@@ -1356,6 +1687,28 @@ const AdvancedFarm = () => {
       </>
     )
   }
+
+  const showLeverage = () => {
+    if (!loopDataView || loopChainData === null) {
+      return <AnimatedDots />
+    }
+    const lev = loopDataView.leverage ?? loopDataView.position?.leverage
+    return lev > 0 ? `${lev.toFixed(1)}x` : '—'
+  }
+
+  const showLastRebalance = () => {
+    if (isLoopingVault && loopRebalances?.lastRebalanceLabel) {
+      return loopRebalances.lastRebalanceLabel
+    }
+    return lastHarvest !== '' ? `${lastHarvest} ago` : '—'
+  }
+
+  const loopMetricItems = [
+    { title: showsSevenDayApy ? '7d APY' : 'Live APY', value: showAPY() },
+    { title: 'Live Leverage', value: showLeverage() },
+    { title: 'TVL', value: showTVL() },
+    { title: 'Last Rebalance', value: showLastRebalance() },
+  ]
 
   const showApyDaily = () => {
     return (
@@ -1389,7 +1742,7 @@ const AdvancedFarm = () => {
   ]
 
   const apyPeriods = [
-    { label: 'Live', value: showAPY() },
+    { label: 'Live', value: showAPY(liveTotalApy) },
     { label: '7d', value: sevenDApy },
     { label: '30d', value: thirtyDApy },
     { label: '180d', value: oneEightyDApy },
@@ -1491,6 +1844,12 @@ const AdvancedFarm = () => {
                             </Tooltip>
                           </MorphoBadge>
                         </BadgeRow>
+                      ) : isLoopingVault ? (
+                        loopDataView?.platformLabel ? (
+                          <span>{loopDataView.platformLabel}</span>
+                        ) : (
+                          token.platform && token.platform[0]
+                        )
                       ) : (
                         token.platform && token.platform[0]
                       )}
@@ -1504,19 +1863,27 @@ const AdvancedFarm = () => {
             </TopButton>
             <FlexDiv className="farm-symbol">
               <TopLogo>
-                {logoUrl.map((el, i) => (
-                  <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
-                ))}
+                {isLoopingVault && loopDataView?.underlying?.logo ? (
+                  <LogoImg className="logo" src={loopDataView.underlying.logo} alt="" />
+                ) : (
+                  logoUrl.map((el, i) => (
+                    <LogoImg className="logo" src={el.slice(1, el.length)} key={i} alt="" />
+                  ))
+                )}
               </TopLogo>
-              <TopDesc
-                $weight={600}
-                $fontcolor2={fontColor2}
-                $size={isMobile ? '19.7px' : '25px'}
-                $height={isMobile ? '45px' : '82px'}
-                $marginbottom={isMobile ? '5px' : '10px'}
-              >
-                {token.tokenNames.join(' • ')}
-              </TopDesc>
+              <div>
+                <TopDesc
+                  $weight={600}
+                  $fontcolor2={fontColor2}
+                  $size={isMobile ? '19.7px' : '25px'}
+                  $height={isMobile ? '45px' : 'auto'}
+                  $marginbottom={isMobile ? '5px' : '4px'}
+                >
+                  {isLoopingVault && loopDataView?.underlying?.symbol
+                    ? loopDataView.underlying.symbol
+                    : token.tokenNames.join('/')}
+                </TopDesc>
+              </div>
             </FlexDiv>
             <GuideSection>
               <GuidePart $fontcolor4={fontColor4}>
@@ -1527,6 +1894,40 @@ const AdvancedFarm = () => {
                 {showTVL()}
                 &nbsp;TVL
               </GuidePart>
+              {isLoopingVault && loopDataView?.cap && (
+                <GuidePart $fontcolor4={fontColor4} style={{ gap: 5 }}>
+                  <CapRing pct={loopDataView.cap.pct} />
+                  Cap:&nbsp;{Math.round(loopDataView.cap.pct)}%
+                  <PiQuestion
+                    className="question"
+                    data-tip
+                    id="loop-cap-top"
+                    style={{ cursor: 'help', flexShrink: 0 }}
+                  />
+                  <Tooltip
+                    id="loop-cap-top"
+                    anchorSelect="#loop-cap-top"
+                    place="bottom"
+                    opacity={1}
+                    backgroundColor={darkMode ? '#ffffff' : '#101828'}
+                    textColor={darkMode ? '#101828' : '#ffffff'}
+                    style={{
+                      maxWidth: 320,
+                      padding: '10px 14px',
+                      borderRadius: 8,
+                      fontSize: 11,
+                      fontWeight: 500,
+                      lineHeight: 1.5,
+                      textAlign: 'left',
+                      zIndex: 1000,
+                    }}
+                  >
+                    Deposit cap utilisation: {formatNumber(loopDataView.cap.supplied, 2)} of{' '}
+                    {formatNumber(loopDataView.cap.limit, 2)} {loopDataView.cap.symbol} supplied.
+                    New entries are blocked once the cap is full.
+                  </Tooltip>
+                </GuidePart>
+              )}
               {token.platform && token.platform[0].includes('Autopilot') && (
                 <TopBadge address={paramAddress} />
               )}
@@ -1588,6 +1989,12 @@ const AdvancedFarm = () => {
                           </Tooltip>
                         </MorphoBadge>
                       </BadgeRow>
+                    ) : isLoopingVault ? (
+                      loopDataView?.platformLabel ? (
+                        <span>{loopDataView.platformLabel}</span>
+                      ) : (
+                        token.platform && token.platform[0]
+                      )
                     ) : (
                       token.platform && token.platform[0]
                     )}
@@ -2184,20 +2591,30 @@ const AdvancedFarm = () => {
                 </ManageBoxWrapper>
               </>
             ) : activeMainTag === 2 ? (
-              <BoxCover $bordercolor={borderColorBox}>
-                {detailBoxes.map(({ title, showValue, className }, index) => (
-                  <ValueBox
-                    key={index}
-                    $width="24%"
-                    className={className}
-                    $backcolor={bgColorNew}
-                    $bordercolor={borderColorBox}
-                  >
-                    <BoxTitle $fontcolor3={fontColor3}>{title}</BoxTitle>
-                    <BoxValue $fontcolor1={fontColor1}>{showValue()}</BoxValue>
-                  </ValueBox>
-                ))}
-              </BoxCover>
+              isLoopingVault ? (
+                <LoopMetricsStrip
+                  items={loopMetricItems}
+                  bgColor={bgColorNew}
+                  borderColor={borderColorBox}
+                  fontColor1={fontColor1}
+                  fontColor3={fontColor3}
+                />
+              ) : (
+                <BoxCover $bordercolor={borderColorBox}>
+                  {detailBoxes.map(({ title, showValue, className }, index) => (
+                    <ValueBox
+                      key={index}
+                      $width="24%"
+                      className={className}
+                      $backcolor={bgColorNew}
+                      $bordercolor={borderColorBox}
+                    >
+                      <BoxTitle $fontcolor3={fontColor3}>{title}</BoxTitle>
+                      <BoxValue $fontcolor1={fontColor1}>{showValue()}</BoxValue>
+                    </ValueBox>
+                  ))}
+                </BoxCover>
+              )
             ) : activeMainTag === 3 ? (
               <>
                 <NewLabel
@@ -2364,6 +2781,8 @@ const AdvancedFarm = () => {
                     underlyingPrice={underlyingPrice}
                     lpTokenBalance={lpTokenBalance}
                     chartData={chartData}
+                    historyData={historyData}
+                    historyDataLoaded={historyDataLoaded}
                     showRewardsTab={showRewardsTab}
                   />
                 )
@@ -2421,7 +2840,7 @@ const AdvancedFarm = () => {
                       token={token}
                       vaultPool={vaultPool}
                       lastTVL={Number(vaultValue)}
-                      lastAPY={Number(totalApy)}
+                      lastAPY={Number(liveTotalApy)}
                       set7DApy={setSevenDApy}
                       set30DApy={setThirtyDApy}
                       set180DApy={setOneEightyDApy}
@@ -2437,7 +2856,11 @@ const AdvancedFarm = () => {
                       setHarvestFrequency={setHarvestFrequency}
                     />
                   </HalfInfo>
-                  {!isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
+                  {isCLVault && clDataView && <CLDetailsMain data={clDataView} />}
+                  {isLoopingVault && loopDataView && <LoopDetailsMain data={loopDataView} />}
+                  {!isMobile && !isLoopingVault && (
+                    <SourceOfYield token={token} vaultPool={vaultPool} />
+                  )}
                 </>
               ) : (
                 <></>
@@ -2452,141 +2875,153 @@ const AdvancedFarm = () => {
                     $marginbottom={isMobile ? '20px' : '0px'}
                     $borderradius={isMobile ? '12px' : '12px'}
                   >
-                    <DepositSection $isshow={activeDepo}>
-                      <DepositBase
-                        setSelectToken={setSelectTokenDepo}
-                        deposit={depositStart}
-                        setDeposit={setDepositStart}
-                        balance={balanceDepo}
-                        pickedToken={pickedTokenDepo}
-                        defaultToken={defaultToken}
-                        inputAmount={inputAmountDepo}
-                        pricePerFullShare={pricePerFullShare}
-                        setInputAmount={setInputAmountDepo}
-                        token={token}
-                        supTokenList={supTokenList}
-                        switchMethod={handleToggle(setActiveDepo)}
-                        tokenSymbol={tokenSym}
-                        activeDepo={activeDepo}
-                        balanceList={balanceList}
-                        setFromInfoAmount={setFromInfoAmount}
-                        setFromInfoUsdAmount={setFromInfoUsdAmount}
-                        fromInfoUsdAmount={fromInfoUsdAmount}
-                        convertYearlyYieldUSD={convertYearlyYieldUSD}
-                        convertMonthlyYieldUSD={convertMonthlyYieldUSD}
-                        convertDailyYieldUSD={convertDailyYieldUSD}
-                        minReceiveAmountString={minReceiveAmountString}
-                        setMinReceiveAmountString={setMinReceiveAmountString}
-                        minReceiveUsdAmount={minReceiveUsdAmount}
-                        setMinReceiveUsdAmount={setMinReceiveUsdAmount}
-                        setConvertYearlyYieldUSD={setConvertYearlyYieldUSD}
-                        setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
-                        setConvertDailyYieldUSD={setConvertDailyYieldUSD}
-                        hasErrorOccurred={hasErrorOccurredConvert}
-                        setHasErrorOccurred={setHasErrorOccurredConvert}
-                        failureCount={failureCountConvert}
-                        setFailureCount={setFailureCountConvert}
-                        supportedVault={supportedVault}
-                        setSupportedVault={setSupportedVault}
+                    {isCLVault ? (
+                      <CLInteract data={clDataView} connected={connected} onRefresh={refreshCL} />
+                    ) : isLoopingVault ? (
+                      <LoopInteract
+                        data={loopDataView}
+                        connected={connected}
+                        onRefresh={refreshLoop}
                       />
-                      <DepositSelectToken
-                        selectToken={selectTokenDepo}
-                        setSelectToken={setSelectTokenDepo}
-                        setPickedToken={setPickedTokenDepo}
-                        setBalance={setBalanceDepo}
-                        supTokenNoBalanceList={supTokenNoBalanceListNoNativeExit}
-                        balanceList={balanceListNoNativeExit}
-                        defaultToken={defaultToken}
-                        soonToSupList={soonToSupList}
-                        supportedVault={supportedVault}
-                        hasPortalsError={hasPortalsError}
-                        setFromTokenList={setFromTokenList}
-                      />
-                      <DepositStart
-                        pickedToken={pickedTokenDepo}
-                        deposit={depositStart}
-                        setDeposit={setDepositStart}
-                        defaultToken={defaultToken}
-                        inputAmount={inputAmountDepo}
-                        setInputAmount={setInputAmountDepo}
-                        token={token}
-                        tokenSymbol={tokenSym}
-                        vaultPool={vaultPool}
-                        multipleAssets={multipleAssets}
-                        fromInfoAmount={fromInfoAmount}
-                        fromInfoUsdAmount={fromInfoUsdAmount}
-                        minReceiveAmountString={minReceiveAmountString}
-                        minReceiveUsdAmount={minReceiveUsdAmount}
-                        setSelectToken={setSelectTokenDepo}
-                        setConvertSuccess={setConvertSuccess}
-                      />
-                    </DepositSection>
-                    <WithdrawSection $isshow={!activeDepo}>
-                      <WithdrawBase
-                        unstakeInputValue={unstakeInputValue}
-                        setUnstakeInputValue={setUnstakeInputValue}
-                        setSelectToken={setSelectTokenWith}
-                        setWithdrawStart={setWithdrawStart}
-                        defaultToken={defaultToken}
-                        pricePerFullShare={pricePerFullShare}
-                        pickedToken={pickedTokenWith}
-                        nativeExitToken={nativeExitWalletToken}
-                        unstakeBalance={unstakeBalance}
-                        setUnstakeBalance={setUnstakeBalance}
-                        balanceList={balanceList}
-                        tokenSymbol={tokenSym}
-                        vaultPool={vaultPool}
-                        lpTokenBalance={lpTokenBalance}
-                        stakedAmount={stakedAmount}
-                        token={token}
-                        supTokenList={supTokenList}
-                        switchMethod={handleToggle(setActiveDepo)}
-                        setRevertFromInfoAmount={setRevertFromInfoAmount}
-                        revertFromInfoUsdAmount={revertFromInfoUsdAmount}
-                        setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
-                        setRevertMinReceivedAmount={setRevertMinReceivedAmount}
-                        revertMinReceivedAmount={revertMinReceivedAmount}
-                        revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
-                        setRevertMinReceivedUsdAmount={setRevertMinReceivedUsdAmount}
-                        hasErrorOccurred={hasErrorOccurredRevert}
-                        setHasErrorOccurred={setHasErrorOccurredRevert}
-                      />
-                      <WithdrawSelectToken
-                        selectToken={selectTokenWith}
-                        setSelectToken={setSelectTokenWith}
-                        setPickedToken={setPickedTokenWith}
-                        supTokenNoBalanceList={supTokenNoBalanceListNoNativeExit}
-                        balanceList={balanceListNoNativeExit}
-                        defaultToken={defaultToken}
-                        nativeExitToken={nativeExitWalletToken}
-                        soonToSupList={soonToSupList}
-                        supportedVault={supportedVault}
-                        hasPortalsError={hasPortalsError}
-                      />
-                      <WithdrawStart
-                        groupOfVaults={groupOfVaults}
-                        unstakeInputValue={unstakeInputValue}
-                        withdrawStart={withdrawStart}
-                        setWithdrawStart={setWithdrawStart}
-                        defaultToken={defaultToken}
-                        pickedToken={pickedTokenWith}
-                        setPickedToken={setPickedTokenWith}
-                        nativeExitToken={nativeExitWalletToken}
-                        token={token}
-                        unstakeBalance={unstakeBalance}
-                        tokenSymbol={tokenSym}
-                        vaultPool={vaultPool}
-                        multipleAssets={multipleAssets}
-                        depositedValueUSD={depositedValueUSD}
-                        setRevertFromInfoAmount={setRevertFromInfoAmount}
-                        revertFromInfoAmount={revertFromInfoAmount}
-                        revertFromInfoUsdAmount={revertFromInfoUsdAmount}
-                        revertMinReceivedAmount={revertMinReceivedAmount}
-                        revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
-                        setUnstakeInputValue={setUnstakeInputValue}
-                        setRevertSuccess={setRevertSuccess}
-                      />
-                    </WithdrawSection>
+                    ) : (
+                      <>
+                        <DepositSection $isshow={activeDepo}>
+                          <DepositBase
+                            setSelectToken={setSelectTokenDepo}
+                            deposit={depositStart}
+                            setDeposit={setDepositStart}
+                            balance={balanceDepo}
+                            pickedToken={pickedTokenDepo}
+                            defaultToken={defaultToken}
+                            inputAmount={inputAmountDepo}
+                            pricePerFullShare={pricePerFullShare}
+                            setInputAmount={setInputAmountDepo}
+                            token={token}
+                            supTokenList={supTokenList}
+                            switchMethod={handleToggle(setActiveDepo)}
+                            tokenSymbol={tokenSym}
+                            activeDepo={activeDepo}
+                            balanceList={balanceList}
+                            setFromInfoAmount={setFromInfoAmount}
+                            setFromInfoUsdAmount={setFromInfoUsdAmount}
+                            fromInfoUsdAmount={fromInfoUsdAmount}
+                            convertYearlyYieldUSD={convertYearlyYieldUSD}
+                            convertMonthlyYieldUSD={convertMonthlyYieldUSD}
+                            convertDailyYieldUSD={convertDailyYieldUSD}
+                            minReceiveAmountString={minReceiveAmountString}
+                            setMinReceiveAmountString={setMinReceiveAmountString}
+                            minReceiveUsdAmount={minReceiveUsdAmount}
+                            setMinReceiveUsdAmount={setMinReceiveUsdAmount}
+                            setConvertYearlyYieldUSD={setConvertYearlyYieldUSD}
+                            setConvertMonthlyYieldUSD={setConvertMonthlyYieldUSD}
+                            setConvertDailyYieldUSD={setConvertDailyYieldUSD}
+                            hasErrorOccurred={hasErrorOccurredConvert}
+                            setHasErrorOccurred={setHasErrorOccurredConvert}
+                            failureCount={failureCountConvert}
+                            setFailureCount={setFailureCountConvert}
+                            supportedVault={supportedVault}
+                            setSupportedVault={setSupportedVault}
+                          />
+                          <DepositSelectToken
+                            selectToken={selectTokenDepo}
+                            setSelectToken={setSelectTokenDepo}
+                            setPickedToken={setPickedTokenDepo}
+                            setBalance={setBalanceDepo}
+                            supTokenNoBalanceList={supTokenNoBalanceListNoNativeExit}
+                            balanceList={balanceListNoNativeExit}
+                            defaultToken={defaultToken}
+                            soonToSupList={soonToSupList}
+                            supportedVault={supportedVault}
+                            hasPortalsError={hasPortalsError}
+                            setFromTokenList={setFromTokenList}
+                          />
+                          <DepositStart
+                            pickedToken={pickedTokenDepo}
+                            deposit={depositStart}
+                            setDeposit={setDepositStart}
+                            defaultToken={defaultToken}
+                            inputAmount={inputAmountDepo}
+                            setInputAmount={setInputAmountDepo}
+                            token={token}
+                            tokenSymbol={tokenSym}
+                            vaultPool={vaultPool}
+                            multipleAssets={multipleAssets}
+                            fromInfoAmount={fromInfoAmount}
+                            fromInfoUsdAmount={fromInfoUsdAmount}
+                            minReceiveAmountString={minReceiveAmountString}
+                            minReceiveUsdAmount={minReceiveUsdAmount}
+                            setSelectToken={setSelectTokenDepo}
+                            setConvertSuccess={setConvertSuccess}
+                          />
+                        </DepositSection>
+                        <WithdrawSection $isshow={!activeDepo}>
+                          <WithdrawBase
+                            unstakeInputValue={unstakeInputValue}
+                            setUnstakeInputValue={setUnstakeInputValue}
+                            setSelectToken={setSelectTokenWith}
+                            setWithdrawStart={setWithdrawStart}
+                            defaultToken={defaultToken}
+                            pricePerFullShare={pricePerFullShare}
+                            pickedToken={pickedTokenWith}
+                            nativeExitToken={nativeExitWalletToken}
+                            unstakeBalance={unstakeBalance}
+                            setUnstakeBalance={setUnstakeBalance}
+                            balanceList={balanceList}
+                            tokenSymbol={tokenSym}
+                            vaultPool={vaultPool}
+                            lpTokenBalance={lpTokenBalance}
+                            stakedAmount={stakedAmount}
+                            token={token}
+                            supTokenList={supTokenList}
+                            switchMethod={handleToggle(setActiveDepo)}
+                            setRevertFromInfoAmount={setRevertFromInfoAmount}
+                            revertFromInfoUsdAmount={revertFromInfoUsdAmount}
+                            setRevertFromInfoUsdAmount={setRevertFromInfoUsdAmount}
+                            setRevertMinReceivedAmount={setRevertMinReceivedAmount}
+                            revertMinReceivedAmount={revertMinReceivedAmount}
+                            revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
+                            setRevertMinReceivedUsdAmount={setRevertMinReceivedUsdAmount}
+                            hasErrorOccurred={hasErrorOccurredRevert}
+                            setHasErrorOccurred={setHasErrorOccurredRevert}
+                          />
+                          <WithdrawSelectToken
+                            selectToken={selectTokenWith}
+                            setSelectToken={setSelectTokenWith}
+                            setPickedToken={setPickedTokenWith}
+                            supTokenNoBalanceList={supTokenNoBalanceListNoNativeExit}
+                            balanceList={balanceListNoNativeExit}
+                            defaultToken={defaultToken}
+                            nativeExitToken={nativeExitWalletToken}
+                            soonToSupList={soonToSupList}
+                            supportedVault={supportedVault}
+                            hasPortalsError={hasPortalsError}
+                          />
+                          <WithdrawStart
+                            groupOfVaults={groupOfVaults}
+                            unstakeInputValue={unstakeInputValue}
+                            withdrawStart={withdrawStart}
+                            setWithdrawStart={setWithdrawStart}
+                            defaultToken={defaultToken}
+                            pickedToken={pickedTokenWith}
+                            setPickedToken={setPickedTokenWith}
+                            nativeExitToken={nativeExitWalletToken}
+                            token={token}
+                            unstakeBalance={unstakeBalance}
+                            tokenSymbol={tokenSym}
+                            vaultPool={vaultPool}
+                            multipleAssets={multipleAssets}
+                            depositedValueUSD={depositedValueUSD}
+                            setRevertFromInfoAmount={setRevertFromInfoAmount}
+                            revertFromInfoAmount={revertFromInfoAmount}
+                            revertFromInfoUsdAmount={revertFromInfoUsdAmount}
+                            revertMinReceivedAmount={revertMinReceivedAmount}
+                            revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
+                            setUnstakeInputValue={setUnstakeInputValue}
+                            setRevertSuccess={setRevertSuccess}
+                          />
+                        </WithdrawSection>
+                      </>
+                    )}
                   </HalfContent>
                   {isMobile ? (
                     <PerformanceChart
@@ -2970,7 +3405,14 @@ const AdvancedFarm = () => {
                           </FlexDiv>
                         ))}
                   </LastHarvestInfo>
-                  {
+                  {isLoopingVault && loopDataView ? (
+                    <LoopApyBreakdown
+                      data={loopDataView}
+                      isMobile={isMobile}
+                      showTip={showTip}
+                      onCloseTip={() => setShowTip(false)}
+                    />
+                  ) : (
                     <MyBalance
                       $marginbottom={isMobile ? '20px' : '25px'}
                       $backcolor={bgColorNew}
@@ -3025,89 +3467,93 @@ const AdvancedFarm = () => {
                         </NewLabel>
                       </Tip>
                     </MyBalance>
-                  }
-                  <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
-                    <NewLabel
-                      $size={isMobile ? '12px' : '14px'}
-                      $weight={isMobile ? '600' : '600'}
-                      $height={isMobile ? '20px' : '24px'}
-                      $fontcolor={fontColor4}
-                      $padding={isMobile ? '10px 15px' : '10px 15px'}
-                      $borderbottom={`1px solid ${borderColorBox}`}
-                    >
-                      Fees
-                    </NewLabel>
-                    {feeList.map((feeItem, index) => (
-                      <FlexDiv
-                        key={index}
-                        $justifycontent="space-between"
+                  )}
+                  {isLoopingVault && loopDataView ? (
+                    <LoopFeesPanel data={loopDataView} isMobile={isMobile} />
+                  ) : (
+                    <LastHarvestInfo $backcolor={bgColorNew} $bordercolor={borderColorBox}>
+                      <NewLabel
+                        $size={isMobile ? '12px' : '14px'}
+                        $weight={isMobile ? '600' : '600'}
+                        $height={isMobile ? '20px' : '24px'}
+                        $fontcolor={fontColor4}
                         $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        $borderbottom={`1px solid ${borderColorBox}`}
                       >
-                        <NewLabel
-                          $size={isMobile ? '12px' : '14px'}
-                          $weight="500"
-                          $height={isMobile ? '24px' : '24px'}
-                          $fontcolor={fontColor3}
+                        Fees
+                      </NewLabel>
+                      {feeList.map((feeItem, index) => (
+                        <FlexDiv
+                          key={index}
+                          $justifycontent="space-between"
+                          $padding={isMobile ? '10px 15px' : '10px 15px'}
                         >
-                          {feeItem.label}
-                        </NewLabel>
-                        <NewLabel
-                          $size={isMobile ? '12px' : '14px'}
-                          $weight="600"
-                          $height={isMobile ? '24px' : '24px'}
-                          $fontcolor={fontColor1}
-                        >
-                          {feeItem.value}
-                        </NewLabel>
-                      </FlexDiv>
-                    ))}
-                    {
-                      <FlexDiv
-                        $justifycontent="space-between"
-                        $padding={isMobile ? '10px 15px' : '10px 15px'}
-                      >
-                        <NewLabel
-                          $size={isMobile ? '13px' : '13px'}
-                          $weight="300"
-                          $height="normal"
-                          $fontcolor={fontColor3}
-                        >
-                          The APY shown already considers the performance fee taken only from
-                          generated yield and not deposits.
-                        </NewLabel>
-                        <NewLabel $display="flex" $self="center">
-                          <PiQuestion className="question" data-tip id="tooltip-last-harvest" />
-                          <Tooltip
-                            id="tooltip-last-harvest"
-                            anchorSelect="#tooltip-last-harvest"
-                            backgroundColor={darkMode ? 'white' : '#101828'}
-                            borderColor={darkMode ? 'white' : 'black'}
-                            textColor={darkMode ? 'black' : 'white'}
-                            place={isMobile ? 'left' : 'top'}
+                          <NewLabel
+                            $size={isMobile ? '12px' : '14px'}
+                            $weight="500"
+                            $height={isMobile ? '24px' : '24px'}
+                            $fontcolor={fontColor3}
                           >
-                            <NewLabel
-                              $weight="500"
-                              $size={isMobile ? '13px' : '13px'}
-                              $height={isMobile ? '16px' : '16px'}
+                            {feeItem.label}
+                          </NewLabel>
+                          <NewLabel
+                            $size={isMobile ? '12px' : '14px'}
+                            $weight="600"
+                            $height={isMobile ? '24px' : '24px'}
+                            $fontcolor={fontColor1}
+                          >
+                            {feeItem.value}
+                          </NewLabel>
+                        </FlexDiv>
+                      ))}
+                      {
+                        <FlexDiv
+                          $justifycontent="space-between"
+                          $padding={isMobile ? '10px 15px' : '10px 15px'}
+                        >
+                          <NewLabel
+                            $size={isMobile ? '13px' : '13px'}
+                            $weight="300"
+                            $height="normal"
+                            $fontcolor={fontColor3}
+                          >
+                            The APY shown already considers the performance fee taken only from
+                            generated yield and not deposits.
+                          </NewLabel>
+                          <NewLabel $display="flex" $self="center">
+                            <PiQuestion className="question" data-tip id="tooltip-last-harvest" />
+                            <Tooltip
+                              id="tooltip-last-harvest"
+                              anchorSelect="#tooltip-last-harvest"
+                              backgroundColor={darkMode ? 'white' : '#101828'}
+                              borderColor={darkMode ? 'white' : 'black'}
+                              textColor={darkMode ? 'black' : 'white'}
+                              place={isMobile ? 'left' : 'top'}
                             >
-                              <FlexDiv $gap="15px" $justifycontent="space-between">
-                                <div>Harvest Treasury</div>
-                                <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
-                              </FlexDiv>
-                              <FlexDiv
-                                $gap="15px"
-                                $justifycontent="space-between"
-                                $margintop="12px"
+                              <NewLabel
+                                $weight="500"
+                                $size={isMobile ? '13px' : '13px'}
+                                $height={isMobile ? '16px' : '16px'}
                               >
-                                <div>Profit Sharing</div>
-                                <div>{token.isIPORVault ? '0' : profitShare}%</div>
-                              </FlexDiv>
-                            </NewLabel>
-                          </Tooltip>
-                        </NewLabel>
-                      </FlexDiv>
-                    }
-                  </LastHarvestInfo>
+                                <FlexDiv $gap="15px" $justifycontent="space-between">
+                                  <div>Harvest Treasury</div>
+                                  <div>{token.isIPORVault ? '0' : harvestTreasury}%</div>
+                                </FlexDiv>
+                                <FlexDiv
+                                  $gap="15px"
+                                  $justifycontent="space-between"
+                                  $margintop="12px"
+                                >
+                                  <div>Profit Sharing</div>
+                                  <div>{token.isIPORVault ? '0' : profitShare}%</div>
+                                </FlexDiv>
+                              </NewLabel>
+                            </Tooltip>
+                          </NewLabel>
+                        </FlexDiv>
+                      }
+                    </LastHarvestInfo>
+                  )}
                   {token.isIPORVault && (
                     <LastHarvestInfo $backcolor={backColor} $bordercolor={borderColor}>
                       <NewLabel
@@ -3165,7 +3611,9 @@ const AdvancedFarm = () => {
                       )}
                     </LastHarvestInfo>
                   )}
-                  {isMobile && <SourceOfYield token={token} vaultPool={vaultPool} />}
+                  {isMobile && !isLoopingVault && (
+                    <SourceOfYield token={token} vaultPool={vaultPool} />
+                  )}
                 </RestInternal>
               ) : (
                 <></>
