@@ -458,7 +458,9 @@ const QuickFilter = ({
                         $backcolor={bgColorNew}
                         $hovercolor={filterChainHoverColor}
                         $bordercolor={borderColorBox}
-                        className={`${selectedClass.includes(i) ? 'active' : ''}`}
+                        className={`${item.name.toLowerCase()} ${
+                          selectedClass.includes(i) ? 'active' : ''
+                        }`}
                         data-tip
                         data-for={`chain-${item.name}`}
                         key={i}
@@ -625,7 +627,9 @@ const QuickFilter = ({
                   $backcolor={bgColorNew}
                   $hovercolor={filterChainHoverColor}
                   $bordercolor={borderColorBox}
-                  className={`${selectedClass.includes(i) ? 'active' : ''}`}
+                  className={`${item.name.toLowerCase()} ${
+                    selectedClass.includes(i) ? 'active' : ''
+                  }`}
                   data-tip
                   data-for={`chain-${item.name}`}
                   key={i}
