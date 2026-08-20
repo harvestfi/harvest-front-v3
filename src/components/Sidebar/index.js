@@ -8,6 +8,7 @@ import connectAvatar from '../../assets/images/logos/sidebar/ellipse.svg'
 import Docs from '../../assets/images/logos/sidebar/file-search.svg'
 import Home from '../../assets/images/logos/sidebar/bar-chart-square.svg'
 import Diamond from '../../assets/images/logos/sidebar/diamond.svg'
+import Stocks from '../../assets/images/logos/sidebar/stocks.svg'
 import Activity from '../../assets/images/logos/sidebar/layout.svg'
 import Settings from '../../assets/images/logos/sidebar/settings.svg'
 import Support from '../../assets/images/logos/sidebar/discord-side.svg'
@@ -54,6 +55,7 @@ import {
   Logo,
   Desktop,
   NewTag,
+  ComingSoonTag,
   LinkMobile,
   MobileMenuContainer,
   Mobile,
@@ -74,10 +76,15 @@ const sideLinksTop = [
     name: 'Products',
   },
   {
+    name: 'Stocks',
+    imgPath: Stocks,
+    enabled: false,
+    comingSoon: true,
+  },
+  {
     path: ROUTES.AUTOPILOT,
     name: 'Autopilot',
     imgPath: Diamond,
-    new: true,
   },
   {
     path: ROUTES.ADVANCED,
@@ -169,6 +176,16 @@ const sideLinksMobile = [
 const sideLinksMobileBottom = [
   {
     category: true,
+    name: 'Products',
+  },
+  {
+    name: 'Stocks',
+    imgPath: Stocks,
+    enabled: false,
+    comingSoon: true,
+  },
+  {
+    category: true,
     name: 'User',
   },
   {
@@ -253,6 +270,7 @@ const SideLink = ({ item, isDropdownLink, fontColor1, darkMode, hoverColorSide }
       </div>
       <div className="item-name">{item.name}</div>
       {item.new ? <NewTag>New</NewTag> : <></>}
+      {item.comingSoon ? <ComingSoonTag>Coming Soon</ComingSoonTag> : <></>}
     </LinkWrap>
   )
 }
@@ -460,8 +478,20 @@ const Sidebar = ({ width }) => {
                     </CategoryRow>
                   )
                 }
+                if (item.enabled === false) {
+                  return (
+                    <LinkContainer key={item.name} $enabled="false">
+                      <SideLink
+                        item={item}
+                        fontColor1={fontColor1}
+                        darkMode={darkMode}
+                        hoverColorSide={hoverColorSide}
+                      />
+                    </LinkContainer>
+                  )
+                }
                 const url = item.path
-                const shouldOpenNewTab = item.newTab || item.enabled === false
+                const shouldOpenNewTab = item.newTab
 
                 return (
                   <Link to={url} key={item.name} style={{ textDecoration: 'none' }}>
