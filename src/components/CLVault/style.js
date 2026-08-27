@@ -41,9 +41,17 @@ export const PanelHead = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
+  flex-wrap: wrap;
+  gap: 8px 12px;
   padding: 11px 15px;
   border-bottom: 1px solid ${props => props.$border};
+`
+
+export const PanelHeadTools = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
 `
 
 export const PanelTitle = styled.div`
@@ -93,6 +101,31 @@ export const Row = styled.div`
 `
 
 /* ---- Active range ---- */
+export const UnitToggle = styled.button`
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid ${props => props.$border};
+  background: ${props => props.$bg};
+  color: ${props => props.$fontcolor};
+  white-space: nowrap;
+  cursor: pointer;
+  transition: 0.25s;
+
+  &:hover {
+    background: ${props => props.$hoverbg};
+  }
+
+  svg {
+    font-size: 13px;
+    flex-shrink: 0;
+  }
+`
+
 export const RangeDesc = styled.p`
   margin: 0 0 20px;
   font-size: 14px;

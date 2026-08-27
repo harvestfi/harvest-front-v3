@@ -1,11 +1,15 @@
-import React from 'react'
+import React, { useState } from 'react'
+import { PiArrowsLeftRightBold } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
+import { handleToggle } from '../../utilities/parsers'
 import {
   Panel,
   PanelSection,
   PanelHead,
+  PanelHeadTools,
   PanelTitle,
   Badge,
+  UnitToggle,
   RangeDesc,
   BandWrap,
   BandTrack,
@@ -21,9 +25,21 @@ const decimalsFor = (lower, upper) => {
   return Math.min(8, Math.max(3, Math.ceil(-Math.log10(span)) + 2))
 }
 
+const positive = n => Number.isFinite(n) && n > 0
+
 const ActiveRange = ({ data }) => {
-  const { bgColorNew, borderColorBox, fontColor1, fontColor3 } = useThemeContext()
-  const { price, inRange, lastRebalance } = data
+  const {
+    darkMode,
+    bgColorNew,
+    bgColorButton,
+    borderColorBox,
+    inputBorderColor,
+    fontColor1,
+    fontColor3,
+    hoverColorButton,
+  } = useThemeContext()
+  const { price, inRange, lastRebalance, token0, token1, depositIndex } = data
+  const [flipped, setFlipped] = useState(false)
 
   if (!price) {
     return (
@@ -38,22 +54,55 @@ const ActiveRange = ({ data }) => {
     )
   }
 
-  const { lower, upper, current, unit } = price
-  const decimals = decimalsFor(lower, upper)
+  const { lower, upper, current } = price
+
+  // clData always quotes token0 in token1. This panel prices the vault's own
+  // deposit token instead, so it inverts whenever that token is token1; the
+  // toggle flips base and quote back the other way.
+  const invertible = positive(lower) && positive(upper) && positive(current)
+  const baseIsToken0 = invertible ? (depositIndex !== 1) !== flipped : true
+
+  // Inverting reverses the axis, so the bounds swap places to stay ascending.
+  const view = baseIsToken0
+    ? { lower, upper, current }
+    : { lower: 1 / upper, upper: 1 / lower, current: 1 / current }
+
+  const base = baseIsToken0 ? token0 : token1
+  const quote = baseIsToken0 ? token1 : token0
+  const unit = `${base.symbol}/${quote.symbol}`
+
+  const decimals = decimalsFor(view.lower, view.upper)
   const fmt = (n, withUnit = false) => {
     const s = n.toFixed(decimals)
     return withUnit ? `${s} ${unit}` : s
   }
 
-  const span = upper - lower
-  const markerPos = span > 0 ? ((current - lower) / span) * 100 : 50
+  const span = view.upper - view.lower
+  const markerPos = span > 0 ? ((view.current - view.lower) / span) * 100 : 50
   const rangeOk = inRange === true
 
   return (
     <Panel $cardbg={bgColorNew} $border={borderColorBox}>
       <PanelHead $border={borderColorBox}>
         <PanelTitle $fontcolor={fontColor1}>Active Range</PanelTitle>
-        <Badge $ok={rangeOk}>{rangeOk ? 'in range' : 'out of range'}</Badge>
+        <PanelHeadTools>
+          {invertible && (
+            <UnitToggle
+              type="button"
+              onClick={handleToggle(setFlipped)}
+              title={`Show prices as ${quote.symbol}/${base.symbol}`}
+              aria-label={`Show prices as ${quote.symbol}/${base.symbol}`}
+              $border={inputBorderColor}
+              $bg={darkMode ? bgColorButton : '#F0F4FF'}
+              $fontcolor={fontColor1}
+              $hoverbg={hoverColorButton}
+            >
+              <PiArrowsLeftRightBold />
+              {unit}
+            </UnitToggle>
+          )}
+          <Badge $ok={rangeOk}>{rangeOk ? 'in range' : 'out of range'}</Badge>
+        </PanelHeadTools>
       </PanelHead>
       <PanelSection>
         <RangeDesc $muted={fontColor3}>
@@ -62,19 +111,23 @@ const ActiveRange = ({ data }) => {
 
         <BandWrap>
           <BandTrack $inrange={rangeOk} />
-          <BandMarker $pos={markerPos} $fontcolor={fontColor1} $cardbg={bgColorNew} />
+          <BandMarker
+            $pos={Math.min(100, Math.max(0, markerPos))}
+            $fontcolor={fontColor1}
+            $cardbg={bgColorNew}
+          />
         </BandWrap>
 
         <BandEdges $muted={fontColor3}>
-          <span>{fmt(lower)}</span>
-          <span>{fmt(upper)}</span>
+          <span>{fmt(view.lower)}</span>
+          <span>{fmt(view.upper)}</span>
         </BandEdges>
 
         <RangeSummary $muted={fontColor3} $fontcolor={fontColor1}>
           <b>
-            {fmt(lower)} – {fmt(upper, true)}
+            {fmt(view.lower)} – {fmt(view.upper, true)}
           </b>{' '}
-          currently <b>{fmt(current)}</b>
+          currently <b>{fmt(view.current)}</b>
         </RangeSummary>
 
         <RangeFooter $muted={fontColor3}>Last rebalance: {lastRebalance}</RangeFooter>
