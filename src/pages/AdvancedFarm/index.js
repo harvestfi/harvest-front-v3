@@ -111,6 +111,7 @@ import {
   generateColor,
 } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
+import { getUnderlyingSymbol } from '../../utilities/pairAssets'
 import {
   getCoinListFromApi,
   getLastHarvestInfo,
@@ -389,6 +390,9 @@ const AdvancedFarm = () => {
   const token = groupOfVaults[id]
   const tokenSym = token.isIPORVault ? token.vaultSymbol : id
   const fTokenName = token.isIPORVault ? tokenSym : `f${tokenSym}`
+  // Pair vaults list both legs in pool order, so the accounting asset is looked
+  // up rather than assumed to be the first one.
+  const underlyingSymbol = getUnderlyingSymbol(token)
 
   const isCLVault = Boolean(token.isCLVault)
   const loopToken = useMemo(() => enrichLoopToken(token, id), [token, id])
@@ -2342,7 +2346,7 @@ const AdvancedFarm = () => {
                               </NewLabel>
                             </Tooltip>
                             None Yet
-                            <span className="symbol">{token.tokenNames[0]}</span>
+                            <span className="symbol">{underlyingSymbol}</span>
                           </>
                         ) : (
                           <>
@@ -2368,7 +2372,7 @@ const AdvancedFarm = () => {
                                 {showLatestEarnings ? underlyingEarningsLatest : underlyingEarnings}
                               </NewLabel>
                             </Tooltip>
-                            <span className="symbol">{token.tokenNames[0]}</span>
+                            <span className="symbol">{underlyingSymbol}</span>
                           </>
                         )}
                       </NewLabel>
