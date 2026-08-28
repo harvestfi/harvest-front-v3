@@ -12,7 +12,7 @@ import FAQ from './pages/FAQ'
 import Sidebar from './components/Sidebar'
 import AdvancedFarm from './pages/AdvancedFarm'
 import Activity from './pages/Activity'
-import { ROUTES } from './constants'
+import { ROUTES, STOCKS_ASSET_FILTER } from './constants'
 import { Body, GlobalStyle } from './components/GlobalStyle'
 import Modal from './components/Modal'
 import Providers from './providers'
@@ -85,7 +85,11 @@ const App = () => (
             element={<Navigate to={ROUTES.AUTOPILOT} replace />}
           />
           <Route path={ROUTES.AUTOPILOT} element={<Autopilot />} />
-          <Route path={ROUTES.ADVANCED} element={<Farm />} />
+          <Route path={ROUTES.ADVANCED} element={<Farm key="all-vaults" />} />
+          <Route
+            path={ROUTES.STOCKS}
+            element={<Farm key="stocks" defaultAsset={STOCKS_ASSET_FILTER} />}
+          />
           <Route path={ROUTES.LiveSupport} element={<LiveSupport />} />
           <Route path={ROUTES.ANALYTIC} element={<Analytic />} />
           <Route path={ROUTES.ADVANCEDFARM} element={<AdvancedFarm />} />
