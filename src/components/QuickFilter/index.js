@@ -16,7 +16,7 @@ import { CHAIN_IDS } from '../../data/constants'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { isSpecialApp } from '../../utilities/formats'
-import { ChainsList } from '../../constants'
+import { ChainsList, ROUTES, STOCKS_ASSET_FILTER } from '../../constants'
 import ButtonGroup from '../ButtonGroup'
 import SearchBar from '../SearchBar'
 import {
@@ -78,6 +78,7 @@ const AssetsList = [
   { id: 2, name: 'Single', filter: 'singlestakes' },
   { id: 3, name: 'Stable', filter: 'stablecoins' },
   { id: 4, name: 'Autopilot', filter: 'autopilot' },
+  { id: 5, name: 'Stocks', filter: STOCKS_ASSET_FILTER },
 ]
 
 const QuickFilter = ({
@@ -94,6 +95,7 @@ const QuickFilter = ({
   riskId,
   setRiskId,
   setSortOrder,
+  defaultAsset = '',
 }) => {
   // Search string is null, it will be false, otherwise true.
   const [stringSearch, setStringSearch] = useState(false)
@@ -203,6 +205,9 @@ const QuickFilter = ({
       case 3:
         text = 'Autopilot'
         break
+      case 4:
+        text = 'Stocks'
+        break
       default:
         break
     }
@@ -295,10 +300,22 @@ const QuickFilter = ({
   }, [farmId])
 
   useEffect(() => {
+    const applyAsset = filter => {
+      for (let i = 0; i < AssetsList.length; i += 1) {
+        if (AssetsList[i].filter === filter) {
+          printAsset(i)
+          setAssetsId(i)
+          return true
+        }
+      }
+      return false
+    }
+
     const setUrlData = () => {
       const chains = [],
         chainIds = []
       const params = new URLSearchParams(window.location.search)
+      let assetFromUrl = false
 
       for (const [key, value] of params.entries()) {
         if (key === 'risk') {
@@ -310,13 +327,7 @@ const QuickFilter = ({
             }
           }
         } else if (key === 'asset') {
-          for (let i = 0; i < AssetsList.length; i += 1) {
-            if (AssetsList[i].filter === value) {
-              printAsset(i)
-              setAssetsId(i)
-              break
-            }
-          }
+          assetFromUrl = applyAsset(value)
         } else if (key === 'farm') {
           for (let k = 0; k < FarmsList.length; k += 1) {
             if (FarmsList[k].filter === value) {
@@ -355,6 +366,10 @@ const QuickFilter = ({
           }
         }
       }
+      if (!assetFromUrl && defaultAsset) {
+        applyAsset(defaultAsset)
+      }
+
       if (chains.length !== 0) {
         setSelectedClass(chainIds)
         setSelChain(chains)
@@ -375,12 +390,18 @@ const QuickFilter = ({
         }
       }
     }
-    navigate(`${pathname}?${params.toString()}`)
+    // The router defers its own location behind a transition, so `pathname`
+    // still reads the page being left while these updates commit. This writes
+    // the filters onto the address actually showing, and so cannot resurrect a
+    // route a navigation in the same batch has already left.
+    navigate(`${window.location.pathname}?${params.toString()}`)
   }, [selectedClass, paramObj])
 
   const clearFilter = () => {
     setParamObj({})
-    navigate(pathname)
+    // A category route is itself one of the filters being cleared, so clearing
+    // leaves for the unfiltered list rather than emptying the page in place.
+    navigate(defaultAsset ? ROUTES.ADVANCED : pathname)
   }
 
   useEffect(() => {
@@ -603,6 +624,7 @@ const QuickFilter = ({
                   clickedId={assetsId}
                   setClickedId={setAssetsId}
                   fontColor={fontColor2}
+                  oneClass="asset-filter"
                 />
               </DivWidth>
             </DivWidth>
@@ -757,6 +779,7 @@ const QuickFilter = ({
                       clickedId={assetsId}
                       setClickedId={setAssetsId}
                       fontColor={fontColor2}
+                      oneClass="asset-filter"
                     />
                   </DivWidth>
                   <DivWidth $display="none" mobileMarginBottom="10px" $height="fit-content">

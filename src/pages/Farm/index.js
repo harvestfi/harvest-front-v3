@@ -3,12 +3,12 @@ import VaultList from '../../components/VaultComponents/VaultList'
 import { useThemeContext } from '../../providers/useThemeContext'
 import FarmContainer from './style'
 
-const Farm = () => {
+const Farm = ({ defaultAsset = '' }) => {
   const { bgColorNew } = useThemeContext()
 
   return (
     <FarmContainer $bgcolor={bgColorNew}>
-      <VaultList />
+      <VaultList defaultAsset={defaultAsset} />
     </FarmContainer>
   )
 }

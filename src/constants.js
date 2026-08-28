@@ -100,7 +100,10 @@ export const ROUTES = {
   WIKI: 'https://docs.harvest.finance/',
   LEADERBOARD: '/leaderboard',
   MIGRATE: '/migrate',
+  STOCKS: '/stocks',
 }
+
+export const STOCKS_ASSET_FILTER = 'stocks'
 
 export const KEY_CODES = {
   MINUS: 189,
