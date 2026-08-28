@@ -76,10 +76,9 @@ const sideLinksTop = [
     name: 'Products',
   },
   {
+    path: ROUTES.STOCKS,
     name: 'Stocks',
     imgPath: Stocks,
-    enabled: false,
-    comingSoon: true,
   },
   {
     path: ROUTES.AUTOPILOT,
@@ -179,10 +178,9 @@ const sideLinksMobileBottom = [
     name: 'Products',
   },
   {
+    path: ROUTES.STOCKS,
     name: 'Stocks',
     imgPath: Stocks,
-    enabled: false,
-    comingSoon: true,
   },
   {
     category: true,
