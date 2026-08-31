@@ -458,6 +458,9 @@ const ApexChart = ({
     endPoint,
   ])
 
+  const hasPosition = totalValue !== '0' && totalValue !== 0
+  const showDataUnavailable = chartDataUnavailable || hasPosition
+
   return (
     <>
       {isDataReady === 'true' ? (
@@ -549,7 +552,7 @@ const ApexChart = ({
             <>
               {!connected ? (
                 <NoData $fontcolor={fontColor}>Connect wallet to see your balance chart</NoData>
-              ) : chartDataUnavailable ? (
+              ) : showDataUnavailable ? (
                 <NoData $fontcolor={fontColor}>
                   Chart data is temporarily unavailable for this vault.
                 </NoData>
