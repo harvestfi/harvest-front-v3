@@ -13,6 +13,7 @@ import AnimatedDots from '../../AnimatedDots'
 import { formatNetworkName, formatNumber, formatNumberWido } from '../../../utilities/formats'
 import VaultList from '../VaultList'
 import { getMatchedVaultList } from '../../../utilities/parsers'
+import { getPortalsTokenImage, resolveTokenLogo } from '../../../utilities/tokenIcons'
 import { USD_BALANCES_DECIMALS } from '../../../constants'
 import { usePortals } from '../../../providers/Portals'
 import { VaultBox } from '../PositionList/style'
@@ -338,11 +339,8 @@ const VaultModal = ({
                     default: false,
                     usdValue: 0,
                     usdPrice: baseToken.price,
-                    logoURI: baseToken.image
-                      ? baseToken.image
-                      : baseToken.images
-                        ? baseToken.images[0]
-                        : 'https://etherscan.io/images/main/empty-token.png',
+                    logoURI: resolveTokenLogo(chain, baseToken),
+                    logoURIFallback: getPortalsTokenImage(baseToken),
                     decimals: baseToken.decimals,
                     chainId: chain,
                   }
@@ -367,11 +365,8 @@ const VaultModal = ({
                   default: false,
                   usdValue: rawBalance.balanceUSD,
                   usdPrice: rawBalance.price,
-                  logoURI: rawBalance.image
-                    ? rawBalance.image
-                    : rawBalance.images
-                      ? rawBalance.images[0]
-                      : 'https://etherscan.io/images/main/empty-token.png',
+                  logoURI: resolveTokenLogo(chain, rawBalance),
+                  logoURIFallback: getPortalsTokenImage(rawBalance),
                   decimals: rawBalance.decimals,
                   chainId: chain,
                 }
@@ -588,7 +583,8 @@ const VaultModal = ({
           if (Object.keys(TokenDetail).length !== 0) {
             TokenDetail = {
               ...TokenDetail,
-              logoURI: TokenDetail.image,
+              logoURI: resolveTokenLogo(chain, TokenDetail),
+              logoURIFallback: getPortalsTokenImage(TokenDetail),
               balance: 0,
               default: false,
               usdValue: 0,

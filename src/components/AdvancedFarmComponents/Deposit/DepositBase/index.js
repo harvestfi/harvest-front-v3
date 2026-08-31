@@ -523,6 +523,7 @@ const DepositBase = ({
                 <TokenLogo
                   className="logo"
                   src={pickedToken.logoURI}
+                  fallbackSrc={pickedToken.logoURIFallback}
                   symbol={pickedToken.symbol}
                   size={21}
                   marginRight="7.5px"

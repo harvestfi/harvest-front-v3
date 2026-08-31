@@ -1,16 +1,23 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { LogoFallback } from './style'
 
-const TokenLogo = ({ src, symbol, size = 26, className, marginRight }) => {
+const TokenLogo = ({ src, fallbackSrc, symbol, size = 26, className, marginRight }) => {
   const { darkMode } = useThemeContext()
-  const [failed, setFailed] = useState(false)
+  const sources = useMemo(
+    () =>
+      [src, fallbackSrc].filter((source, index, all) => source && all.indexOf(source) === index),
+    [src, fallbackSrc],
+  )
+  const [attempt, setAttempt] = useState(0)
 
   useEffect(() => {
-    setFailed(false)
-  }, [src])
+    setAttempt(0)
+  }, [sources])
 
-  if (!src || failed) {
+  const source = sources[attempt]
+
+  if (!source) {
     return (
       <LogoFallback
         className={className}
@@ -26,9 +33,10 @@ const TokenLogo = ({ src, symbol, size = 26, className, marginRight }) => {
 
   return (
     <img
+      key={source}
       className={className}
-      src={src}
-      onError={() => setFailed(true)}
+      src={source}
+      onError={() => setAttempt(current => current + 1)}
       width={size}
       height={size}
       alt=""

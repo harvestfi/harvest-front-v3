@@ -189,6 +189,7 @@ import {
   BadgeRow,
 } from './style'
 import { CHAIN_IDS } from '../../data/constants'
+import { getPortalsTokenImage, resolveTokenLogo } from '../../utilities/tokenIcons'
 import { usePortals } from '../../providers/Portals'
 import SourceOfYield from '../../components/AdvancedFarmComponents/SourceOfYield'
 import TopBadge from '../../components/AdvancedFarmComponents/TopBadge'
@@ -994,11 +995,8 @@ const AdvancedFarm = () => {
                       default: false,
                       usdValue: 0,
                       usdPrice: baseToken.price,
-                      logoURI: baseToken.image
-                        ? baseToken.image
-                        : baseToken.images
-                          ? baseToken.images[0]
-                          : 'https://etherscan.io/images/main/empty-token.png',
+                      logoURI: resolveTokenLogo(tokenChain, baseToken),
+                      logoURIFallback: getPortalsTokenImage(baseToken),
                       decimals: baseToken.decimals,
                       chainId: tokenChain,
                     }
@@ -1030,11 +1028,8 @@ const AdvancedFarm = () => {
                           ? BaseAutopilotUSDC
                           : balance.symbol === 'bAutopilot_cbBTC'
                             ? BaseAutopilotcbBTC
-                            : balance.image
-                              ? balance.image
-                              : balance.images
-                                ? balance.images[0]
-                                : 'https://etherscan.io/images/main/empty-token.png',
+                            : resolveTokenLogo(tokenChain, balance),
+                    logoURIFallback: getPortalsTokenImage(balance),
                     decimals: balance.decimals,
                     chainId: tokenChain,
                   }

@@ -17,6 +17,7 @@ import { useWallet } from '../../../../providers/Wallet'
 import { usePortals } from '../../../../providers/Portals'
 import { useRate } from '../../../../providers/Rate'
 import { showTokenBalance } from '../../../../utilities/formats'
+import { getPortalsTokenImage, resolveTokenLogo } from '../../../../utilities/tokenIcons'
 
 const SelectTokenList = ({
   balanceList,
@@ -102,7 +103,8 @@ const SelectTokenList = ({
           if (Object.keys(TokenDetail).length !== 0) {
             TokenDetail = {
               ...TokenDetail,
-              logoURI: TokenDetail.image,
+              logoURI: resolveTokenLogo(chainId, TokenDetail),
+              logoURIFallback: getPortalsTokenImage(TokenDetail),
               balance: 0,
               default: false,
               usdValue: 0,
@@ -220,7 +222,11 @@ const SelectTokenList = ({
                   $hovercolor={hoverColor}
                   $activecolor={activeColorModal}
                 >
-                  <TokenLogo src={defaultCurToken.logoURI} symbol={defaultCurToken.symbol} />
+                  <TokenLogo
+                    src={defaultCurToken.logoURI}
+                    fallbackSrc={defaultCurToken.logoURIFallback}
+                    symbol={defaultCurToken.symbol}
+                  />
                   <Vault>
                     <Text $weight={600} $fontcolor={fontColor2}>
                       {defaultCurToken.symbol}
@@ -259,7 +265,11 @@ const SelectTokenList = ({
                     $hovercolor={hoverColor}
                     $activecolor={activeColorModal}
                   >
-                    <TokenLogo src={data.logoURI} symbol={data.symbol} />
+                    <TokenLogo
+                      src={data.logoURI}
+                      fallbackSrc={data.logoURIFallback}
+                      symbol={data.symbol}
+                    />
                     <Vault>
                       <Text $weight={600} $fontcolor={fontColor2}>
                         {data.symbol}
@@ -301,7 +311,11 @@ const SelectTokenList = ({
                   $hovercolor={hoverColor}
                   $activecolor={activeColorModal}
                 >
-                  <TokenLogo src={data.logoURI} symbol={data.symbol} />
+                  <TokenLogo
+                    src={data.logoURI}
+                    fallbackSrc={data.logoURIFallback}
+                    symbol={data.symbol}
+                  />
                   <Vault>
                     <Text $weight={600} $fontcolor={fontColor2}>
                       {data.symbol}
@@ -322,7 +336,11 @@ const SelectTokenList = ({
               </Label>
               {soonToSupList.map((data, i) => (
                 <Container key={i} $hovercolor={hoverColor} $activecolor={activeColorModal}>
-                  <TokenLogo src={data.logoURI} symbol={data.symbol} />
+                  <TokenLogo
+                    src={data.logoURI}
+                    fallbackSrc={data.logoURIFallback}
+                    symbol={data.symbol}
+                  />
                   <Vault>
                     <Text $weight={600} $fontcolor={fontColor2}>
                       {data.symbol}
