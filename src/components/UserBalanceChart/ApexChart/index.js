@@ -107,6 +107,7 @@ const ApexChart = ({
   showRewardsTab = false,
   harvestEventCount = 0,
   historyDataLoaded = true,
+  chartDataUnavailable = false,
 }) => {
   const { fontColor, fontColor5, bgColorChart, darkMode, bgColorNew } = useThemeContext()
   const { connected } = useWallet()
@@ -252,13 +253,13 @@ const ApexChart = ({
       } else if (lpTokenBalance === 0 && !token.isIPORVault && showRewardsTab) {
         setIsDataReady(loadComplete ? 'false' : 'loading')
       } else if (lpTokenBalance === '0' && totalValue !== 0 && dl === 0) {
-        setIsDataReady('loading')
+        setIsDataReady(loadComplete ? 'false' : 'loading')
       } else if ((lpTokenBalance === '0' || lpTokenBalance === 0) && totalValue === 0 && dl === 0) {
         setIsDataReady('false')
       } else if (lpTokenBalance === 0 && dl !== 0 && dl1 !== 0 && token.isIPORVault) {
         setIsDataReady('true')
       } else if (totalValue !== '0' && totalValue !== 0 && dl === 0) {
-        setIsDataReady('loading')
+        setIsDataReady(loadComplete ? 'false' : 'loading')
       } else if (dl !== 0 && dl1 !== 0) {
         setIsDataReady('true')
       }
@@ -837,12 +838,16 @@ const ApexChart = ({
       ) : (
         <LoadingDiv>
           <>
-            {connected ? (
+            {!connected ? (
+              <NoData $fontcolor={fontColor}>Connect wallet to see your balance chart</NoData>
+            ) : chartDataUnavailable ? (
+              <NoData $fontcolor={fontColor}>
+                Chart data is temporarily unavailable for this vault.
+              </NoData>
+            ) : (
               <NoData $fontcolor={fontColor}>
                 No activity found for this wallet. Convert any token to start farming!
               </NoData>
-            ) : (
-              <NoData $fontcolor={fontColor}>Connect wallet to see your balance chart</NoData>
             )}
             <FakeChartWrapper>
               <ResponsiveContainer width="100%" height={onlyWidth > 1291 ? 346 : 365}>

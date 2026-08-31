@@ -88,6 +88,7 @@ const UserBalanceData = ({
   const [apiData, setApiData] = useState([])
   const [apiData1, setApiData1] = useState([])
   const [loadComplete, setLoadComplete] = useState(false)
+  const [chartDataUnavailable, setChartDataUnavailable] = useState(false)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState(`${currencySym}0`)
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
@@ -415,12 +416,14 @@ const UserBalanceData = ({
           }
 
           if (isMounted && !token.isCLVault) {
-            setLoadComplete(Boolean(balanceFlag && priceFeedFlag))
+            setLoadComplete(true)
+            setChartDataUnavailable(Boolean(balanceFlag) && !priceFeedFlag)
           }
         } catch (error) {
           console.log('An error ocurred', error)
           if (isMounted && !token.isCLVault) {
             setLoadComplete(true)
+            setChartDataUnavailable(true)
           }
         }
       }
@@ -544,6 +547,7 @@ const UserBalanceData = ({
           showRewardsTab={showRewardsTab}
           harvestEventCount={harvestEventCount}
           historyDataLoaded={historyDataLoaded}
+          chartDataUnavailable={chartDataUnavailable}
         />
       </ChartDiv>
       <ButtonGroup>
