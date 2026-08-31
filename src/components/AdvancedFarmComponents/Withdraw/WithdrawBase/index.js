@@ -445,6 +445,7 @@ const WithdrawBase = ({
                 <TokenLogo
                   className="logo"
                   src={pickedToken.logoURI}
+                  fallbackSrc={pickedToken.logoURIFallback}
                   symbol={pickedToken.symbol}
                   size={24}
                   marginRight="8px"
