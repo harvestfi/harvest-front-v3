@@ -2,7 +2,7 @@ import { useNavigate, useLocation } from 'react-router-dom'
 import { useWindowWidth } from '@react-hook/window-size'
 import { debounce } from 'lodash'
 import { MdCheck } from 'react-icons/md'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FaRegSquare, FaRegSquareCheck } from 'react-icons/fa6'
 import { useMediaQuery } from 'react-responsive'
 import { IoIosArrowDown } from 'react-icons/io'
@@ -81,6 +81,8 @@ const AssetsList = [
   { id: 5, name: 'Stocks', filter: STOCKS_ASSET_FILTER },
 ]
 
+const assetIndexOf = filter => AssetsList.findIndex(asset => asset.filter === filter)
+
 const QuickFilter = ({
   onSelectActiveType = () => {},
   setSearchQuery,
@@ -110,7 +112,7 @@ const QuickFilter = ({
     setFlag(true)
   }, [flag, onSelectActiveType])
 
-  const { pathname } = useLocation()
+  const { pathname, search } = useLocation()
   const navigate = useNavigate()
 
   const [paramObj, setParamObj] = useState({})
@@ -300,22 +302,10 @@ const QuickFilter = ({
   }, [farmId])
 
   useEffect(() => {
-    const applyAsset = filter => {
-      for (let i = 0; i < AssetsList.length; i += 1) {
-        if (AssetsList[i].filter === filter) {
-          printAsset(i)
-          setAssetsId(i)
-          return true
-        }
-      }
-      return false
-    }
-
     const setUrlData = () => {
       const chains = [],
         chainIds = []
       const params = new URLSearchParams(window.location.search)
-      let assetFromUrl = false
 
       for (const [key, value] of params.entries()) {
         if (key === 'risk') {
@@ -326,8 +316,6 @@ const QuickFilter = ({
               break
             }
           }
-        } else if (key === 'asset') {
-          assetFromUrl = applyAsset(value)
         } else if (key === 'farm') {
           for (let k = 0; k < FarmsList.length; k += 1) {
             if (FarmsList[k].filter === value) {
@@ -366,10 +354,6 @@ const QuickFilter = ({
           }
         }
       }
-      if (!assetFromUrl && defaultAsset) {
-        applyAsset(defaultAsset)
-      }
-
       if (chains.length !== 0) {
         setSelectedClass(chainIds)
         setSelChain(chains)
@@ -378,6 +362,20 @@ const QuickFilter = ({
 
     setUrlData()
   }, [])
+
+  const lastPathname = useRef(pathname)
+  useEffect(() => {
+    const stayedOnPage = lastPathname.current === pathname
+    lastPathname.current = pathname
+    if (!stayedOnPage) return
+
+    const fromUrl = assetIndexOf(new URLSearchParams(search).get('asset'))
+    const assetId = fromUrl === -1 ? assetIndexOf(defaultAsset) : fromUrl
+    if (assetId === -1 || assetId === assetsId) return
+
+    printAsset(assetId)
+    setAssetsId(assetId)
+  }, [pathname, search, defaultAsset])
 
   useEffect(() => {
     const params = new URLSearchParams(paramObj)
