@@ -79,6 +79,7 @@ const sideLinksTop = [
     path: ROUTES.STOCKS,
     name: 'Stocks',
     imgPath: Stocks,
+    new: true,
   },
   {
     path: ROUTES.AUTOPILOT,
@@ -181,6 +182,7 @@ const sideLinksMobileBottom = [
     path: ROUTES.STOCKS,
     name: 'Stocks',
     imgPath: Stocks,
+    new: true,
   },
   {
     category: true,
