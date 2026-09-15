@@ -341,6 +341,55 @@ const NativeExitInfoSection = styled.div`
   }
 `
 
+const ExitFeeInfoSection = styled.div`
+  border-radius: 12px;
+  border: 1px solid ${props => props.$bordercolor};
+  background: ${props => props.$bgcolor};
+  padding: 16px;
+  ${props =>
+    props.$isshow === 'true'
+      ? `
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+  `
+      : `
+    display: none;
+  `}
+  margin-top: 20px;
+
+  .info-icon {
+    width: 21px;
+    height: 21px;
+    margin-right: 12px;
+    flex-shrink: 0;
+  }
+
+  .fee-text {
+    color: ${props => props.$fontcolor};
+    font-size: 13px;
+    font-weight: 400;
+    line-height: 20px;
+  }
+
+  .fee-text b {
+    font-weight: 600;
+  }
+
+  svg.fee-question {
+    font-size: 16px;
+    color: ${props => props.$fontcolor};
+    cursor: help;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  #revert-exit-fee {
+    max-width: 300px;
+  }
+`
+
 const FlexDiv = styled.div`
   display: flex;
 `
@@ -483,5 +532,6 @@ export {
   SwitchTabTag,
   HasErrorSection,
   NativeExitInfoSection,
+  ExitFeeInfoSection,
   FlexDiv,
 }
