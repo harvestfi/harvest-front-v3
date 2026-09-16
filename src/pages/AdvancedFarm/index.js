@@ -88,6 +88,10 @@ import {
   chainList,
   historyTags,
   NATIVE_EXIT_VAULTS,
+  EXIT_MECHANICS_VAULTS,
+  EXIT_FEE_ABI,
+  EXIT_FEE_WAD_PER_BPS,
+  EXIT_FEE_READ_ATTEMPTS,
 } from '../../constants'
 import { fromWei, newContractInstance, getViem } from '../../services/viem'
 import { usePools } from '../../providers/Pools'
@@ -192,6 +196,7 @@ import { CHAIN_IDS } from '../../data/constants'
 import { getPortalsTokenImage, resolveTokenLogo } from '../../utilities/tokenIcons'
 import { usePortals } from '../../providers/Portals'
 import SourceOfYield from '../../components/AdvancedFarmComponents/SourceOfYield'
+import RevertExitMechanics from '../../components/AdvancedFarmComponents/RevertExitMechanics'
 import TopBadge from '../../components/AdvancedFarmComponents/TopBadge'
 
 const AdvancedFarm = () => {
@@ -792,6 +797,54 @@ const AdvancedFarm = () => {
     () => withoutNativeExit(supTokenNoBalanceList),
     [withoutNativeExit, supTokenNoBalanceList],
   )
+
+  const exitMechanics = useMemo(
+    () => EXIT_MECHANICS_VAULTS[get(token, 'vaultAddress', '').toLowerCase()] || null,
+    [token],
+  )
+
+  const [exitFeeBps, setExitFeeBps] = useState(null)
+
+  useEffect(() => {
+    let cancelled = false
+    setExitFeeBps(null)
+    if (!exitMechanics) {
+      return () => {
+        cancelled = true
+      }
+    }
+    const readExitFee = async () => {
+      for (let attempt = 0; attempt < EXIT_FEE_READ_ATTEMPTS; attempt += 1) {
+        try {
+          const viemClient = await getViem(tokenChain, null)
+          const feeWad = await viemClient.readContract({
+            address: exitMechanics.withdrawManager,
+            abi: EXIT_FEE_ABI,
+            functionName: 'getWithdrawFee',
+          })
+          if (cancelled) {
+            return
+          }
+          if (feeWad !== null && feeWad >= 0n && feeWad < 10n ** 18n) {
+            const bps = new BigNumber(feeWad.toString()).div(EXIT_FEE_WAD_PER_BPS)
+            setExitFeeBps(bps.decimalPlaces(2).toNumber())
+            return
+          }
+          console.error('Strategy exit fee out of range: ', feeWad)
+          return
+        } catch (err) {
+          if (cancelled) {
+            return
+          }
+          console.error(`Failed to read strategy exit fee (attempt ${attempt + 1}): `, err)
+        }
+      }
+    }
+    readExitFee()
+    return () => {
+      cancelled = true
+    }
+  }, [exitMechanics, tokenChain])
 
   const mainTags = [
     { name: 'Manage', img: Safe },
@@ -2857,6 +2910,12 @@ const AdvancedFarm = () => {
                   </HalfInfo>
                   {isCLVault && clDataView && <CLDetailsMain data={clDataView} />}
                   {isLoopingVault && loopDataView && <LoopDetailsMain data={loopDataView} />}
+                  {!isMobile && exitMechanics && (
+                    <RevertExitMechanics
+                      outputSymbol={underlyingSymbol}
+                      strategyTokenSymbol={exitMechanics.strategyTokenSymbol}
+                    />
+                  )}
                   {!isMobile && !isLoopingVault && (
                     <SourceOfYield token={token} vaultPool={vaultPool} />
                   )}
@@ -2963,6 +3022,7 @@ const AdvancedFarm = () => {
                             pricePerFullShare={pricePerFullShare}
                             pickedToken={pickedTokenWith}
                             nativeExitToken={nativeExitWalletToken}
+                            exitFeeBps={exitFeeBps}
                             unstakeBalance={unstakeBalance}
                             setUnstakeBalance={setUnstakeBalance}
                             balanceList={balanceList}
@@ -3609,6 +3669,12 @@ const AdvancedFarm = () => {
                         <></>
                       )}
                     </LastHarvestInfo>
+                  )}
+                  {isMobile && exitMechanics && (
+                    <RevertExitMechanics
+                      outputSymbol={underlyingSymbol}
+                      strategyTokenSymbol={exitMechanics.strategyTokenSymbol}
+                    />
                   )}
                   {isMobile && !isLoopingVault && (
                     <SourceOfYield token={token} vaultPool={vaultPool} />

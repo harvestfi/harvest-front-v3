@@ -1,4 +1,4 @@
-import { handleViemReadMethod } from '../..'
+import { getViem, handleViemReadMethod } from '../..'
 
 const getUnderlyingBalanceWithInvestment = async instance => {
   return await handleViemReadMethod('underlyingBalanceWithInvestment', [], instance)
@@ -32,6 +32,26 @@ const getTotalSupply = async instance => {
   return await handleViemReadMethod('totalSupply', [], instance)
 }
 
+const awaitReceipt = async (instance, hash) => {
+  if (!hash) {
+    return hash
+  }
+
+  const { publicClient, walletClient } = instance
+  let client = publicClient
+
+  if (typeof client?.waitForTransactionReceipt !== 'function') {
+    const chainId = walletClient?.chain?.id ?? publicClient?.chain?.id
+    client = await getViem(chainId ? String(chainId) : '', false)
+  }
+
+  if (typeof client?.waitForTransactionReceipt === 'function') {
+    await client.waitForTransactionReceipt({ hash })
+  }
+
+  return hash
+}
+
 const withdraw = async (amount, address, instance) => {
   const { walletClient } = instance
 
@@ -43,7 +63,7 @@ const withdraw = async (amount, address, instance) => {
     account: address,
   })
 
-  return hash
+  return awaitReceipt(instance, hash)
 }
 
 const deposit = async (amount, address, instance) => {
@@ -57,7 +77,7 @@ const deposit = async (amount, address, instance) => {
     account: address,
   })
 
-  return hash
+  return awaitReceipt(instance, hash)
 }
 
 export default {
