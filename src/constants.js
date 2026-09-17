@@ -868,8 +868,8 @@ export const MIGRATION_STEPS = {
 export const directDetailUrl = '/'
 
 export const feeList = [
-  { label: 'Convert Fee', value: '0%' },
-  { label: 'Revert Fee', value: '0%' },
+  { key: 'convert', label: 'Convert Fee', value: '0%' },
+  { key: 'revert', label: 'Revert Fee', value: '0%' },
 ]
 
 export const SUPPORTED_CURRENCY = {
