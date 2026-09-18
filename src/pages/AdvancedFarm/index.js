@@ -846,6 +846,14 @@ const AdvancedFarm = () => {
     }
   }, [exitMechanics, tokenChain])
 
+  const vaultFeeList = useMemo(() => {
+    if (!(Number(exitFeeBps) > 0)) {
+      return feeList
+    }
+    const exitFeeLabel = `${new BigNumber(exitFeeBps).div(100).decimalPlaces(3).toString()}%`
+    return feeList.map(fee => (fee.key === 'revert' ? { ...fee, value: exitFeeLabel } : fee))
+  }, [exitFeeBps])
+
   const mainTags = [
     { name: 'Manage', img: Safe },
     { name: 'Rewards', img: Diamond },
@@ -3541,7 +3549,7 @@ const AdvancedFarm = () => {
                       >
                         Fees
                       </NewLabel>
-                      {feeList.map((feeItem, index) => (
+                      {vaultFeeList.map((feeItem, index) => (
                         <FlexDiv
                           key={index}
                           $justifycontent="space-between"
