@@ -1,0 +1,447 @@
+import React, { useState, useMemo, useEffect } from 'react'
+import { toast } from 'react-toastify'
+import { Tooltip } from 'react-tooltip'
+import { PiQuestion } from 'react-icons/pi'
+import { useThemeContext } from '../../providers/useThemeContext'
+import { useWallet } from '../../providers/Wallet'
+import { formatViemPluginErrorMessage } from '../../services/viem'
+import { getTokenPricesByAddresses } from '../../utilities/apiCalls'
+import { clDepositSingle, clPreviewDepositShares } from './clActions'
+import { resolveTokenUsdPrice } from './clData'
+import Button from '../Button'
+import CLTokenIcon from './CLTokenIcon'
+import {
+  FieldTitle,
+  InputWithChip,
+  TokenChip,
+  BalanceInfo,
+  SlipOption,
+  Row,
+  SettingRow,
+  SettingLabel,
+  SlipPills,
+  PreviewBox,
+  RoutingHint,
+  InlineSpinner,
+  InputUsd,
+  CheckboxContainer,
+  CheckboxInput,
+  CheckboxLabel,
+  CTAWrap,
+} from './style'
+
+const SLIPPAGE_OPTIONS = [0.1, 0.5, 1]
+const num = v => {
+  const n = parseFloat(v)
+  return Number.isFinite(n) && n > 0 ? n : 0
+}
+
+const fmt = (n, d = 4) => {
+  if (!n || n === 0) return '0'
+  if (n < 10 ** -d) {
+    const sigFigs = Math.max(d, Math.ceil(-Math.log10(n)) + 2)
+    return n.toLocaleString(undefined, { maximumFractionDigits: Math.min(sigFigs, 10) })
+  }
+  return n.toLocaleString(undefined, { maximumFractionDigits: d })
+}
+
+const fmtUsd = n => {
+  if (!n || n === 0) return '$0'
+  if (n >= 1000) return `$${Math.round(n).toLocaleString()}`
+  return `$${n.toLocaleString(undefined, { maximumFractionDigits: 2 })}`
+}
+
+const AmountWithUsd = ({ amount, usd, decimals = 4, mutedColor }) => {
+  if (amount == null) return <b>~0.0000</b>
+  return (
+    <>
+      <b>~{fmt(amount, decimals)}</b>
+      {usd != null && usd > 0 && <InputUsd $muted={mutedColor}> ({fmtUsd(usd)})</InputUsd>}
+    </>
+  )
+}
+
+const HelpTip = ({ id, tip, darkMode, children }) => (
+  <SettingLabel>
+    {children}
+    <PiQuestion className="question" data-tip id={id} />
+    <Tooltip
+      id={id}
+      anchorSelect={`#${id}`}
+      backgroundColor={darkMode ? 'white' : '#101828'}
+      borderColor={darkMode ? 'white' : 'black'}
+      textColor={darkMode ? 'black' : 'white'}
+      place="right"
+    >
+      {tip}
+    </Tooltip>
+  </SettingLabel>
+)
+
+const DepositModule = ({ data, connected, onRefresh }) => {
+  const { account, viem, getWalletBalances } = useWallet()
+  const {
+    darkMode,
+    fontColor,
+    fontColor1,
+    fontColor2,
+    fontColor3,
+    btnColor,
+    btnHoverColor,
+    btnActiveColor,
+    inputBorderColor,
+    bgColorButton,
+    bgColorMessage,
+    linkColor,
+  } = useThemeContext()
+
+  const {
+    token0,
+    token1,
+    depositToken,
+    depositIndex,
+    price,
+    underlyingUsdPrice,
+    sharePrice,
+    walletBalances,
+    apy,
+  } = data
+  const tokens = [token0, token1]
+
+  const perShareUsd =
+    Number(underlyingUsdPrice) > 0 && Number(sharePrice) > 0
+      ? Number(underlyingUsdPrice) * Number(sharePrice)
+      : 0
+
+  const [singleAmount, setSingleAmount] = useState('')
+  const [slippage, setSlippage] = useState(0.5)
+  const [checked, setChecked] = useState(false)
+  const [pending, setPending] = useState(false)
+
+  // Supply is single-asset: only the vault's own deposit token is accepted.
+  const singleIdx = depositIndex === 1 ? 1 : 0
+  const single = depositToken || tokens[singleIdx]
+  const inputBg = darkMode ? bgColorButton : '#F0F4FF'
+  const pillBg = darkMode ? bgColorButton : '#fff'
+  const previewBg = darkMode ? bgColorButton : '#F0F4FF'
+  const slipInactiveBg = darkMode ? bgColorButton : '#F0F4FF'
+
+  const tokenIcon = (tk, size = '20px') => <CLTokenIcon token={tk} size={size} cardBg={pillBg} />
+
+  const [estShares, setEstShares] = useState(null)
+  const [quoting, setQuoting] = useState(false)
+  const [spotByAddress, setSpotByAddress] = useState({})
+
+  useEffect(() => {
+    const addresses = tokens.map(t => t.address).filter(Boolean)
+    if (addresses.length === 0) return undefined
+
+    let active = true
+    getTokenPricesByAddresses(addresses, 'base')
+      .then(prices => {
+        if (active) setSpotByAddress(prices)
+      })
+      .catch(() => {})
+
+    return () => {
+      active = false
+    }
+  }, [token0.address, token1.address])
+
+  const singleUsdPrice = useMemo(
+    () =>
+      resolveTokenUsdPrice(single, {
+        spotByAddress,
+        price,
+        tokens,
+        tokenIndex: singleIdx,
+      }),
+    [single, spotByAddress, price, tokens, singleIdx],
+  )
+
+  useEffect(() => {
+    const a = num(singleAmount)
+    if (!a || !single?.wrapper) {
+      setEstShares(null)
+      setQuoting(false)
+      return undefined
+    }
+    let active = true
+    setQuoting(true)
+    const handle = setTimeout(async () => {
+      const quote = await clPreviewDepositShares({ token: single, amount: a })
+      if (active) {
+        setEstShares(quote)
+        setQuoting(false)
+      }
+    }, 350)
+    return () => {
+      active = false
+      clearTimeout(handle)
+    }
+  }, [singleAmount, singleIdx])
+
+  const depositValueUsd = useMemo(() => {
+    const a = num(singleAmount)
+    if (!a || !(singleUsdPrice > 0)) return null
+    return a * singleUsdPrice
+  }, [singleAmount, singleUsdPrice])
+
+  const preview = useMemo(() => {
+    const a = num(singleAmount)
+    if (!a) return null
+    let shares = estShares?.shares
+    if (shares == null && depositValueUsd != null && perShareUsd > 0) {
+      shares = depositValueUsd / perShareUsd
+    }
+    return {
+      route: `CLWrapper(${single.symbol})`,
+      shares,
+      valueUsd: depositValueUsd,
+      valueToken: a,
+      swapBps: estShares?.costBps ?? null,
+    }
+  }, [singleAmount, singleIdx, estShares, perShareUsd, depositValueUsd, single.symbol])
+
+  const inputUsd = depositValueUsd
+
+  const hasInput = num(singleAmount) > 0
+  const yearlyYield =
+    preview && preview.valueUsd != null ? preview.valueUsd * (apy.total / 100) : null
+
+  const handleSupply = async () => {
+    if (!connected || !hasInput || !checked || pending) return
+
+    setPending(true)
+    try {
+      await clDepositSingle({ token: single, amount: num(singleAmount), account, viem, slippage })
+
+      toast.success('Deposit completed')
+      setSingleAmount('')
+      if (onRefresh) {
+        try {
+          await onRefresh()
+        } catch (e) {
+          /* non-fatal */
+        }
+      }
+      if (getWalletBalances) {
+        try {
+          await getWalletBalances([], false, true)
+        } catch (e) {
+          /* non-fatal */
+        }
+      }
+    } catch (err) {
+      toast.error(formatViemPluginErrorMessage(err))
+    } finally {
+      setPending(false)
+    }
+  }
+
+  return (
+    <div>
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'baseline',
+          marginBottom: 6,
+        }}
+      >
+        <FieldTitle $fontcolor={fontColor2} style={{ margin: 0 }}>
+          Amount {single.symbol}
+        </FieldTitle>
+        <BalanceInfo
+          $fontcolor={fontColor}
+          onClick={() => setSingleAmount(String(walletBalances[`token${singleIdx}`]))}
+          style={{ marginTop: 0 }}
+        >
+          Balance:<span>{fmt(walletBalances[`token${singleIdx}`], 4)}</span>
+        </BalanceInfo>
+      </div>
+
+      <InputWithChip
+        $border={inputBorderColor}
+        $bg={inputBg}
+        $fontcolor={fontColor1}
+        $muted={fontColor3}
+      >
+        <input
+          type="number"
+          placeholder="0.0"
+          value={singleAmount}
+          onChange={e => setSingleAmount(e.target.value)}
+        />
+        {inputUsd != null && <InputUsd $muted={fontColor3}>{fmtUsd(inputUsd)}</InputUsd>}
+        <TokenChip $bg={pillBg} $border={inputBorderColor} $fontcolor={fontColor1}>
+          {tokenIcon(single)}
+          {single.symbol}
+        </TokenChip>
+      </InputWithChip>
+
+      <RoutingHint $muted={fontColor3}>
+        Routed via CLWrapper({single.symbol}): single asset
+      </RoutingHint>
+
+      <PreviewBox $bg={previewBg}>
+        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+          <span>Expected shares</span>
+          <span>
+            {preview && preview.shares != null ? (
+              <AmountWithUsd
+                amount={preview.shares}
+                usd={preview.valueUsd}
+                decimals={4}
+                mutedColor={fontColor3}
+              />
+            ) : (
+              <b>~0.0000</b>
+            )}
+          </span>
+        </Row>
+        <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+          <span>Value (in {single.symbol})</span>
+          <span>
+            {preview ? (
+              <AmountWithUsd
+                amount={preview.valueToken}
+                usd={preview.valueUsd}
+                decimals={4}
+                mutedColor={fontColor3}
+              />
+            ) : (
+              <b>~0.0000</b>
+            )}
+          </span>
+        </Row>
+        {(preview?.swapBps != null || quoting) && (
+          <Row $muted={fontColor3} $fontcolor={fontColor1} $pad="4px 0">
+            <span>Internal swap cost</span>
+            {preview?.swapBps != null ? (
+              <b>~ {fmt(preview.swapBps, 1)} bps</b>
+            ) : (
+              <InlineSpinner $color={fontColor3} aria-label="Loading" />
+            )}
+          </Row>
+        )}
+      </PreviewBox>
+
+      <SettingRow $muted={fontColor3}>
+        <HelpTip
+          id="cl-max-slippage"
+          darkMode={darkMode}
+          tip="Maximum price movement allowed during the deposit swap."
+        >
+          Max slippage
+        </HelpTip>
+        <SlipPills>
+          {SLIPPAGE_OPTIONS.map(s => (
+            <SlipOption
+              key={s}
+              $active={slippage === s}
+              $accent={btnColor}
+              $border={inputBorderColor}
+              $fontcolor={fontColor1}
+              $inactivebg={slipInactiveBg}
+              onClick={() => setSlippage(s)}
+            >
+              {s}%
+            </SlipOption>
+          ))}
+        </SlipPills>
+      </SettingRow>
+
+      <SettingRow $muted={fontColor3}>
+        <HelpTip
+          id="cl-yearly-yield"
+          darkMode={darkMode}
+          tip="Calculated using live APY and the estimated deposit value."
+        >
+          Est. Yearly Yield
+        </HelpTip>
+        <b style={{ color: fontColor1, fontWeight: 600 }}>
+          {yearlyYield != null ? `$${fmt(yearlyYield, 2)}` : 'n/a'}
+        </b>
+      </SettingRow>
+
+      <SettingRow $muted={fontColor3}>
+        <HelpTip
+          id="cl-est-received"
+          darkMode={darkMode}
+          tip="The estimated number of vault shares you will receive."
+        >
+          Est. Received
+        </HelpTip>
+        <span style={{ color: fontColor1 }}>
+          {preview && preview.shares != null ? (
+            <AmountWithUsd
+              amount={preview.shares}
+              usd={preview.valueUsd}
+              decimals={2}
+              mutedColor={fontColor3}
+            />
+          ) : (
+            'n/a'
+          )}
+        </span>
+      </SettingRow>
+
+      <CheckboxContainer
+        $dark={darkMode}
+        style={{ background: darkMode ? undefined : bgColorMessage }}
+      >
+        <CheckboxInput
+          type="checkbox"
+          id="cl-terms"
+          checked={checked}
+          onChange={e => setChecked(e.target.checked)}
+        />
+        <CheckboxLabel htmlFor="cl-terms" $dark={darkMode}>
+          I confirm that I have read and understand the product, have read the{' '}
+          <a
+            href="https://docs.harvest.finance/legal/risk-disclosures"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: linkColor }}
+          >
+            Risk Disclosures
+          </a>
+          , and agree to the{' '}
+          <a
+            href="https://docs.harvest.finance/legal/terms-and-conditions"
+            target="_blank"
+            rel="noopener noreferrer"
+            style={{ color: linkColor }}
+          >
+            Terms and Conditions
+          </a>
+          .
+        </CheckboxLabel>
+      </CheckboxContainer>
+
+      <CTAWrap $disabled={!connected || !hasInput || !checked || pending}>
+        <Button
+          $fontcolor="wido-deposit"
+          $width="100%"
+          $btncolor={btnColor}
+          $btnhovercolor={btnHoverColor}
+          $btnactivecolor={btnActiveColor}
+          $disabled={!connected || !hasInput || !checked || pending}
+          disabled={!connected || !hasInput || !checked || pending}
+          onClick={handleSupply}
+        >
+          {!connected
+            ? 'Connect Wallet to Get Started'
+            : pending
+              ? 'Confirming...'
+              : !hasInput
+                ? 'Enter an amount'
+                : 'Supply'}
+        </Button>
+      </CTAWrap>
+    </div>
+  )
+}
+
+export default DepositModule

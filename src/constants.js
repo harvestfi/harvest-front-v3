@@ -14,6 +14,94 @@ import HYPEREVM from './assets/images/chains/hype.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
+export const NATIVE_EXIT_ONE_WAY_TEXT =
+  'Reverting in kind is one-way and cannot be undone. 40 Acres vault shares are not ' +
+  'accepted by the Autocompounder. Any subsequent redemption is handled solely by 40 ' +
+  "Acres under its own terms, and availability, timing and value are outside Harvest's control."
+
+export const NATIVE_EXIT_VAULTS = {
+  '0xc777031d50f632083be7080e51e390709062263e': {
+    chainId: CHAIN_IDS.BASE,
+    symbol: 'fortyAcres_USDC',
+    address: '0xB99B6dF96d4d5448cC0a5B3e0ef7896df9507Cf5',
+    decimals: 6,
+    oneWayText: NATIVE_EXIT_ONE_WAY_TEXT,
+  },
+}
+
+export const EXIT_FEE_TOOLTIP_TEXT =
+  'The fee covers the cost of unwinding the position and the associated network fees. It is not ' +
+  'retained as revenue by the strategy operator or by Harvest.'
+
+export const EXIT_MECHANICS_VAULTS = {
+  // IPOR - Bitcoin Dollar USDC
+  '0xbce1b3ac78b895c69f91e446c8f654bc1c40a3b8': {
+    withdrawManager: '0x300AcEE178162959eF5f792CC7a65aE3124E1281',
+    strategyVault: '0xF8F226dA66244F89e70C5B5D1a5C5b0d505Eb1d8',
+    strategyTokenSymbol: 'bdUSD',
+  },
+  // IPOR - wBTC Dollar Carry. Charges half what the USDC vault does — the rate is per
+  // Fusion vault, never a shared constant.
+  '0x0d39d6ef06a3a5c2408db195d9af2ea7a8d52b92': {
+    withdrawManager: '0x26cE30D9A024fb74af3341383eaC32438179d0Ea',
+    strategyVault: '0x7659fc26bf3A63E8133BbECB7E16ACD48EE8E292',
+    strategyTokenSymbol: 'BTCdc',
+  },
+}
+
+export const EXIT_FEE_ABI = [
+  {
+    name: 'getWithdrawFee',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'uint256' }],
+  },
+]
+
+// WAD per basis point — 1e18 / 10000 — the divisor that turns getWithdrawFee into bps.
+export const EXIT_FEE_WAD_PER_BPS = '100000000000000'
+
+export const EXIT_FEE_READ_ATTEMPTS = 3
+
+export const REDEEM_IN_KIND_ABI = [
+  {
+    name: 'redeemInKind',
+    type: 'function',
+    stateMutability: 'nonpayable',
+    inputs: [
+      { name: 'shares', type: 'uint256' },
+      { name: 'receiver', type: 'address' },
+      { name: 'owner', type: 'address' },
+    ],
+    outputs: [{ name: 'inKindShares', type: 'uint256' }],
+  },
+  {
+    name: 'redeemInKindEnabled',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [],
+    outputs: [{ name: '', type: 'bool' }],
+  },
+  {
+    name: 'convertToAssets',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'shares', type: 'uint256' }],
+    outputs: [{ name: 'assets', type: 'uint256' }],
+  },
+]
+
+export const ERC4626_CONVERT_ABI = [
+  {
+    name: 'convertToShares',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'assets', type: 'uint256' }],
+    outputs: [{ name: 'shares', type: 'uint256' }],
+  },
+]
+
 export const SOCIAL_LINKS = {
   TELEGRAM: 'https://t.me/Breadforthepeople',
   TWITTER: 'https://twitter.com/harvest_finance',
@@ -47,7 +135,10 @@ export const ROUTES = {
   WIKI: 'https://docs.harvest.finance/',
   LEADERBOARD: '/leaderboard',
   MIGRATE: '/migrate',
+  STOCKS: '/stocks',
 }
+
+export const STOCKS_ASSET_FILTER = 'stocks'
 
 export const KEY_CODES = {
   MINUS: 189,
@@ -98,6 +189,8 @@ export const HYPEREVMSCAN_URL = 'https://hyperevmscan.io//'
 export const PORTALS_FI_API_URL = 'https://api.portals.fi'
 
 export const IPOR_API_URL = 'https://api.ipor.io'
+
+export const DEFILLAMA_YIELDS_URL = 'https://yields.llama.fi'
 
 export const DECIMAL_PRECISION = 2
 
@@ -775,8 +868,8 @@ export const MIGRATION_STEPS = {
 export const directDetailUrl = '/'
 
 export const feeList = [
-  { label: 'Convert Fee', value: '0%' },
-  { label: 'Revert Fee', value: '0%' },
+  { key: 'convert', label: 'Convert Fee', value: '0%' },
+  { key: 'revert', label: 'Revert Fee', value: '0%' },
 ]
 
 export const SUPPORTED_CURRENCY = {

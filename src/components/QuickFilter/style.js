@@ -300,6 +300,10 @@ const ChainButton = styled.button`
     height: 22px;
   }
 
+  &.base img {
+    transform: scale(0.8);
+  }
+
   @media screen and (max-width: 1480px) {
     img {
       width: 20px;

@@ -9,13 +9,18 @@ import { BsArrowDown, BsArrowUp } from 'react-icons/bs'
 import DropDownIcon from '../../../../assets/images/logos/advancedfarm/drop-down.svg'
 import InfoIcon from '../../../../assets/images/logos/beginners/info-circle.svg'
 import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
-import { USD_BALANCES_DECIMALS } from '../../../../constants'
+import {
+  ERC4626_CONVERT_ABI,
+  EXIT_FEE_TOOLTIP_TEXT,
+  USD_BALANCES_DECIMALS,
+} from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
 import { useRate } from '../../../../providers/Rate'
-import { fromWei, toWei } from '../../../../services/viem'
+import { fromWei, getViem, toWei } from '../../../../services/viem'
 import { formatNumberWido, isSpecialApp, showTokenBalance } from '../../../../utilities/formats'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
+import TokenLogo from '../../../TokenLogo'
 import Button from '../../../Button'
 import {
   BaseWidoDiv,
@@ -33,6 +38,8 @@ import {
   TokenSelectSection,
   SwitchTabTag,
   HasErrorSection,
+  NativeExitInfoSection,
+  ExitFeeInfoSection,
   FlexDiv,
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
@@ -63,6 +70,7 @@ const WithdrawBase = ({
   setRevertMinReceivedUsdAmount,
   hasErrorOccurred,
   setHasErrorOccurred,
+  exitFeeBps,
 }) => {
   const {
     darkMode,
@@ -128,6 +136,8 @@ const WithdrawBase = ({
       const getQuoteResult = async () => {
         setRevertFromInfoAmount('')
         setRevertFromInfoUsdAmount('')
+        setRevertMinReceivedAmount('')
+        setRevertMinReceivedUsdAmount('')
         const amount = unstakeBalance
         let portalsEstimate
         try {
@@ -135,11 +145,16 @@ const WithdrawBase = ({
             fromInfoUsdValue = '',
             minReceivedString = '',
             minReceivedUsdString,
-            outputAmountDefault = ''
+            outputAmountDefault = '',
+            nativeExitAssets = ''
           const toToken = pickedToken.address
 
+          const isNativeExit = !!pickedToken.nativeExit
           const pickedDefaultToken =
-            pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase()
+            isNativeExit ||
+            (defaultToken &&
+              defaultToken.address &&
+              pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase())
 
           if (pickedDefaultToken) {
             const unstakeBalanceDecimals = fromWei(
@@ -151,6 +166,17 @@ const WithdrawBase = ({
               .times(new BigNumber(pricePerFullShare))
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
+            if (isNativeExit) {
+              nativeExitAssets = outputAmountDefault
+              const publicClient = await getViem(tokenChain, false, viem)
+              const inKindShares = await publicClient.readContract({
+                address: pickedToken.address,
+                abi: ERC4626_CONVERT_ABI,
+                functionName: 'convertToShares',
+                args: [BigInt(new BigNumber(nativeExitAssets).toFixed(0))],
+              })
+              outputAmountDefault = inKindShares.toString()
+            }
           } else {
             portalsEstimate = await getPortalsEstimate({
               chainId,
@@ -179,12 +205,18 @@ const WithdrawBase = ({
               toTokenUsdPrice = toTokenDetail?.price
             }
 
+            const grossToTokenAmount = pickedDefaultToken
+              ? outputAmountDefault
+              : portalsEstimate.res.outputAmount
+            const applyExitFee = !isNativeExit && Number(exitFeeBps) > 0
             const quoteResult = {
               fromTokenAmount: amount,
               fromTokenUsdPrice,
-              minToTokenAmount: pickedDefaultToken
-                ? outputAmountDefault
-                : portalsEstimate.res.outputAmount,
+              minToTokenAmount: applyExitFee
+                ? new BigNumber(grossToTokenAmount.toString())
+                    .times(new BigNumber(10000).minus(exitFeeBps).div(10000))
+                    .toFixed(0, BigNumber.ROUND_DOWN)
+                : grossToTokenAmount,
             }
 
             const defaultDecimal = token.vaultDecimals || token.decimals
@@ -207,16 +239,22 @@ const WithdrawBase = ({
                     ) * quoteResult.fromTokenUsdPrice,
                     USD_BALANCES_DECIMALS,
                   )
-            const pDecimal = pickedDefaultToken
-              ? token.vaultDecimals || token.decimals
-              : pickedToken.decimals
+            const pDecimal =
+              pickedDefaultToken && !isNativeExit
+                ? token.vaultDecimals || token.decimals
+                : pickedToken.decimals
             minReceivedString = new BigNumber(
               fromWei(quoteResult.minToTokenAmount, pDecimal, pDecimal),
             ).toString()
-            minReceivedUsdString = formatNumberWido(
-              parseFloat(minReceivedString) * toTokenUsdPrice,
-              USD_BALANCES_DECIMALS,
-            )
+            minReceivedUsdString = isNativeExit
+              ? formatNumberWido(
+                  fromWei(nativeExitAssets, defaultDecimal, defaultDecimal, true) * toTokenUsdPrice,
+                  USD_BALANCES_DECIMALS,
+                )
+              : formatNumberWido(
+                  parseFloat(minReceivedString) * toTokenUsdPrice,
+                  USD_BALANCES_DECIMALS,
+                )
 
             if (Number(fromInfoUsdValue) < 0.01) {
               setRevertFromInfoUsdAmount(`<${currencySym}0.01`)
@@ -270,6 +308,8 @@ const WithdrawBase = ({
     setRevertFromInfoAmount,
     setRevertFromInfoUsdAmount,
     setRevertMinReceivedAmount,
+    setRevertMinReceivedUsdAmount,
+    exitFeeBps,
     getPortalsEstimate,
     getPortalsTokensBatch,
     currencySym,
@@ -319,6 +359,12 @@ const WithdrawBase = ({
     { name: 'Supply', img: BsArrowDown },
     { name: 'Revert', img: BsArrowUp },
   ]
+
+  const showExitFeeNotice = Number(exitFeeBps) > 0 && !pickedToken.nativeExit
+  const exitFeeLabel =
+    Number(exitFeeBps) > 0
+      ? `${new BigNumber(exitFeeBps).div(100).decimalPlaces(3).toString()}%`
+      : ''
 
   return (
     <>
@@ -417,8 +463,15 @@ const WithdrawBase = ({
                 setSelectToken(true)
               }}
             >
-              {pickedToken.logoURI ? (
-                <img className="logo" src={pickedToken.logoURI} width={24} height={24} alt="" />
+              {pickedToken.symbol !== 'Select' ? (
+                <TokenLogo
+                  className="logo"
+                  src={pickedToken.logoURI}
+                  fallbackSrc={pickedToken.logoURIFallback}
+                  symbol={pickedToken.symbol}
+                  size={24}
+                  marginRight="8px"
+                />
               ) : (
                 <></>
               )}
@@ -442,7 +495,9 @@ const WithdrawBase = ({
           <span>
             {!connected ? (
               0
-            ) : lpTokenBalance ? (
+            ) : lpTokenBalance === undefined || lpTokenBalance === null || lpTokenBalance === '' ? (
+              <AnimatedDots />
+            ) : (
               new BigNumber(
                 fromWei(
                   lpTokenBalance,
@@ -451,8 +506,6 @@ const WithdrawBase = ({
                   false,
                 ),
               ).toString()
-            ) : (
-              <AnimatedDots />
             )}
           </span>
         </BalanceInfo>
@@ -510,6 +563,51 @@ const WithdrawBase = ({
             />
           </div>
         </HasErrorSection>
+        <NativeExitInfoSection
+          $isshow={pickedToken.nativeExit ? 'true' : 'false'}
+          $bordercolor={darkMode ? '#475467' : '#d0d5dd'}
+          $bgcolor={darkMode ? '#1f242f' : '#f9fafb'}
+        >
+          <img className="info-icon" src={InfoIcon} alt="" />
+          <NewLabel
+            $size={isMobile ? '13px' : '13px'}
+            $height={isMobile ? '20px' : '20px'}
+            $weight="400"
+            $fontcolor={fontColor2}
+          >
+            {pickedToken.oneWayText}
+          </NewLabel>
+        </NativeExitInfoSection>
+        <ExitFeeInfoSection
+          $isshow={showExitFeeNotice ? 'true' : 'false'}
+          $bordercolor={darkMode ? '#475467' : '#d0d5dd'}
+          $bgcolor={darkMode ? '#1f242f' : '#f9fafb'}
+          $fontcolor={fontColor2}
+        >
+          <FlexDiv>
+            <img className="info-icon" src={InfoIcon} alt="" />
+            <div className="fee-text">
+              An exit fee applies when reverting from this strategy, currently <b>{exitFeeLabel}</b>
+              . The estimate below always reflects the rate in effect.
+            </div>
+          </FlexDiv>
+          <PiQuestion className="fee-question" data-tip id="revert-exit-fee" />
+          <Tooltip
+            id="revert-exit-fee"
+            anchorSelect="#revert-exit-fee"
+            backgroundColor={darkMode ? 'white' : '#101828'}
+            borderColor={darkMode ? 'white' : 'black'}
+            textColor={darkMode ? 'black' : 'white'}
+          >
+            <NewLabel
+              $size={isMobile ? '12px' : '12px'}
+              $height={isMobile ? '18px' : '18px'}
+              $weight="500"
+            >
+              {EXIT_FEE_TOOLTIP_TEXT}
+            </NewLabel>
+          </Tooltip>
+        </ExitFeeInfoSection>
       </BaseWidoDiv>
       <BaseWidoDiv $bordercolor={borderColorBox}>
         <NewLabel

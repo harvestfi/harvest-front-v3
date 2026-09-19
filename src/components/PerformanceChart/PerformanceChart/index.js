@@ -62,6 +62,7 @@ const PerformanceChart = ({
   const [apiData, setApiData] = useState([])
   const [apiData1, setApiData1] = useState([])
   const [loadComplete, setLoadComplete] = useState(false)
+  const [chartDataUnavailable, setChartDataUnavailable] = useState(false)
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState(`${currencySym}0`)
   const [curContentUnderlying, setCurContentUnderlying] = useState('0')
@@ -439,10 +440,15 @@ const PerformanceChart = ({
             }
           }
           if (isMounted) {
-            setLoadComplete(balanceFlag && priceFeedFlag)
+            setLoadComplete(true)
+            setChartDataUnavailable(Boolean(balanceFlag) && !priceFeedFlag)
           }
         } catch (error) {
           console.log('An error ocurred', error)
+          if (isMounted) {
+            setLoadComplete(true)
+            setChartDataUnavailable(true)
+          }
         }
       }
     }
@@ -526,6 +532,7 @@ const PerformanceChart = ({
           lpTokenBalance={lpTokenBalance}
           totalValue={totalValue}
           isInactive={token.inactive}
+          chartDataUnavailable={chartDataUnavailable}
         />
       </ChartDiv>
       <ButtonGroup>

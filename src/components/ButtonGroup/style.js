@@ -14,6 +14,12 @@ const ButtonsGroup = styled.div`
     &.time-filter {
       width: 65%;
     }
+
+    /* Five categories share the row here, so the longest label sets how much
+       padding each one can afford. */
+    &.asset-filter button {
+      padding: 10px 6px;
+    }
   }
 `
 

@@ -560,6 +560,18 @@ const TopDesc = styled(NewLabel)`
   }
 `
 
+const StructureLine = styled.div`
+  font-size: ${props => props.$size || '13px'};
+  font-weight: 500;
+  color: ${props => props.$fontcolor};
+  margin: -4px 0 0 35px;
+  line-height: 1.4;
+  @media screen and (max-width: 992px) {
+    margin: 2px auto 0;
+    text-align: center;
+  }
+`
+
 const TopLogo = styled.div`
   display: flex;
   @media screen and (max-width: 992px) {
@@ -625,6 +637,10 @@ const FlexDiv = styled.div`
     border-bottom: ${props.$borderbottom};
   `
       : ''}
+
+  &.farm-symbol {
+    align-items: center;
+  }
 
   @media screen and (max-width: 992px) {
     &.farm-symbol {
@@ -1590,6 +1606,7 @@ export {
   TopPart,
   TopButton,
   TopDesc,
+  StructureLine,
   TopLogo,
   Button,
   HalfContent,

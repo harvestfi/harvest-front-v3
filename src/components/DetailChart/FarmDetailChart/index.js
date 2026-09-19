@@ -47,6 +47,28 @@ const recommendLinks = [
   { name: 'ALL', type: 4, state: 'ALL' },
 ]
 
+// aaveLoop_ETH_cbETH2 — drop leading zeros and seed the real APY start.
+const LOOP_APY_CHART_VAULT = '0xe78285a51f51916f2311b7017db036d8351f3cf9'
+const LOOP_APY_CHART_START_TS = 1778371200
+const LOOP_APY_CHART_START_APY = '1.16'
+
+const applyLoopApyChartStart = generalApies => {
+  const filtered = (generalApies || []).filter(
+    entry => Number(entry.timestamp) >= LOOP_APY_CHART_START_TS,
+  )
+  const withSeed = filtered.map(entry =>
+    Number(entry.timestamp) === LOOP_APY_CHART_START_TS
+      ? { ...entry, apy: LOOP_APY_CHART_START_APY }
+      : entry,
+  )
+  const hasSeed = withSeed.some(entry => Number(entry.timestamp) === LOOP_APY_CHART_START_TS)
+  const seeded = hasSeed
+    ? withSeed
+    : [...withSeed, { timestamp: String(LOOP_APY_CHART_START_TS), apy: LOOP_APY_CHART_START_APY }]
+  // Newest-first, matching subgraph order used by ApexChart.
+  return seeded.sort((a, b) => Number(b.timestamp) - Number(a.timestamp))
+}
+
 const FarmDetailChart = ({
   token,
   vaultPool,
@@ -71,6 +93,9 @@ const FarmDetailChart = ({
   const [clickedId, setClickedId] = useState(2)
   const [selectedState, setSelectedState] = useState('1Y')
   const [apiData, setApiData] = useState({})
+  // 'loading' | 'ready' | 'error' - lets the chart tell "still fetching" apart from "no data",
+  // which an empty apiData object on its own cannot express.
+  const [chartStatus, setChartStatus] = useState('loading')
   const [iFarmTVLData, setIFarmTVLData] = useState({})
   const [curDate, setCurDate] = useState('')
   const [curContent, setCurContent] = useState('')
@@ -114,18 +139,45 @@ const FarmDetailChart = ({
 
   useEffect(() => {
     let isMounted = true
+    const controller = new AbortController()
     const initData = async () => {
       if (address && chainId) {
+        setChartStatus('loading')
         try {
-          const { vaultTVLCount } = token.isIPORVault
-            ? await getIPORSequenceId(address.toLowerCase(), chainId)
-            : await getSequenceId(address, chainId)
+          const sequence = token.isIPORVault
+            ? await getIPORSequenceId(address.toLowerCase(), chainId, controller.signal)
+            : await getSequenceId(address, chainId, controller.signal)
+          if (!token.isIPORVault && sequence.vaultsFlag === false) {
+            throw new Error('Could not read the vault sequence ids from the subgraph')
+          }
+          const { vaultTVLCount } = sequence
           const data = token.isIPORVault
-            ? await getIPORDataQuery(address.toLowerCase(), chainId, vaultTVLCount, false)
-            : await getDataQuery(address, chainId, vaultTVLCount, false)
+            ? await getIPORDataQuery(
+                address.toLowerCase(),
+                chainId,
+                vaultTVLCount,
+                false,
+                undefined,
+                {},
+                controller.signal,
+              )
+            : await getDataQuery(
+                address,
+                chainId,
+                vaultTVLCount,
+                false,
+                undefined,
+                {},
+                controller.signal,
+              )
+          const cappedApies = data.generalApies.filter(entry => parseFloat(entry.apy) <= 10000)
+          const generalApies =
+            address?.toLowerCase() === LOOP_APY_CHART_VAULT
+              ? applyLoopApyChartStart(cappedApies)
+              : cappedApies
           const filteredData = {
             ...data,
-            generalApies: data.generalApies.filter(entry => parseFloat(entry.apy) <= 10000),
+            generalApies,
           }
           const updatedData = { ...filteredData }
           updatedData.vaultHistories = updatedData.vaultHistories.filter(
@@ -290,6 +342,10 @@ const FarmDetailChart = ({
               (24 * 3600)
           }
 
+          if (!isMounted) {
+            return
+          }
+
           set7DApy(sevenDaysApy)
           set30DApy(thirtyDaysApy)
           set180DApy(oneEightyDaysApy)
@@ -304,18 +360,24 @@ const FarmDetailChart = ({
           set360DHarvest(threeSixtyFiveDaysHarvest)
           setHarvestFrequency(frequencyOfHarvest)
 
-          if (isMounted) {
-            setApiData(updatedData)
-            if (isIFARM && updatedData) {
-              data.apyRewards = updatedData.apyRewards
-              data.tvls = updatedData.tvls
+          setApiData(updatedData)
+          if (isIFARM && updatedData) {
+            data.apyRewards = updatedData.apyRewards
+            data.tvls = updatedData.tvls
 
-              const iFarmTVL = await getTotalTVLData()
-              setIFarmTVLData(iFarmTVL)
+            const iFarmTVL = await getTotalTVLData()
+            if (!isMounted) {
+              return
             }
+            setIFarmTVLData(iFarmTVL)
           }
+          setChartStatus('ready')
         } catch (error) {
-          console.log('An error ocurred', error)
+          if (!isMounted || controller.signal.aborted) {
+            return
+          }
+          console.error('Failed to load vault chart data', error)
+          setChartStatus('error')
         }
       }
     }
@@ -324,6 +386,7 @@ const FarmDetailChart = ({
 
     return () => {
       isMounted = false
+      controller.abort()
     }
   }, [address, chainId, isIFARM])
 
@@ -357,6 +420,7 @@ const FarmDetailChart = ({
         <ApexChart
           token={token}
           data={apiData}
+          status={chartStatus}
           iFarmTVL={iFarmTVLData}
           isIFARM={isIFARM}
           range={selectedState}

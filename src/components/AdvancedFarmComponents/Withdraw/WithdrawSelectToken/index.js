@@ -27,6 +27,7 @@ const WithdrawSelectToken = ({
   supTokenNoBalanceList,
   balanceList,
   defaultToken,
+  nativeExitToken,
   soonToSupList,
   supportedVault,
   hasPortalsError,
@@ -129,6 +130,7 @@ const WithdrawSelectToken = ({
                 balanceList={balanceList}
                 supTokenNoBalanceList={supTokenNoBalanceList}
                 defaultToken={defaultToken}
+                nativeExitToken={nativeExitToken}
                 soonToSupList={soonToSupList}
                 setPickedToken={setPickedToken}
                 setSelectToken={setSelectToken}

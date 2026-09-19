@@ -1,6 +1,8 @@
 import React from 'react'
 import { TokenDescriptionContainer, TokenNameContainer, BadgeIcon, BadgePlatform } from '../style'
 import AutopilotBadges from '../../../AutopilotBadges'
+import StocksBadge from '../../../StocksBadge'
+import { isStockVault } from '../../../../utilities/stockAssets'
 
 const VaultName = ({ token, tokenSymbol, fontColor1, BadgeAry, badgeId, isMobile }) => {
   const isAutopilotMorpho = token.platform[0] && token.platform[0].includes('Autopilot - MORPHO')
@@ -8,7 +10,9 @@ const VaultName = ({ token, tokenSymbol, fontColor1, BadgeAry, badgeId, isMobile
   const uniqueId = token.vaultAddress || token.tokenAddress || tokenSymbol
 
   const renderPlatformBadges = () => {
-    if (token.subLabel) {
+    if (isStockVault(token)) {
+      return <StocksBadge />
+    } else if (token.subLabel) {
       return token.platform[0] && `${token.platform[0]} - ${token.subLabel}`
     } else if (isAutopilotMorpho || isAutopilot) {
       return (

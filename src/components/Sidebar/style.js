@@ -96,7 +96,7 @@ const CategoryRow = styled.div`
 
 const LinkContainer = styled.div`
   position: relative;
-  cursor: pointer;
+  cursor: ${props => (props.$enabled === 'false' ? 'default' : 'pointer')};
 
   @media screen and (min-width: 992px) {
     display: flex;
@@ -716,6 +716,18 @@ const NewTag = styled.div`
   margin-left: 10px;
 `
 
+const ComingSoonTag = styled.div`
+  font-size: 8.637px;
+  font-weight: 500;
+  line-height: 12.955px;
+  border-radius: 16px;
+  background: #5dcf46;
+  padding: 2px 8px;
+  color: white !important;
+  margin-left: 10px;
+  white-space: nowrap;
+`
+
 const LinkName = styled.div`
   font-weight: 400;
   font-size: 13px;
@@ -816,6 +828,7 @@ export {
   Logo,
   Desktop,
   NewTag,
+  ComingSoonTag,
   LinkMobile,
   MobileMenuContainer,
   Mobile,

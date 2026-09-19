@@ -73,6 +73,7 @@ export const safeViem = async () => {
 }
 
 export const mainViem = createPublicClient({
+  chain: mainnet,
   transport: window.ethereum ? custom(window.ethereum) : http(INFURA_URL),
 })
 

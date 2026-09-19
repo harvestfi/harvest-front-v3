@@ -125,6 +125,7 @@ function generateIFARMTVLWithSlots(slots, apiData) {
 const ApexChart = ({
   token,
   data,
+  status = 'ready',
   iFarmTVL,
   isIFARM,
   range,
@@ -147,7 +148,7 @@ const ApexChart = ({
 
   const [mainSeries, setMainSeries] = useState([])
   const [allMainSeries, setAllMainSeries] = useState([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [isDataReady, setIsDataReady] = useState(true)
   const [startPoint, setStartPoint] = useState(0)
   const [endPoint, setEndPoint] = useState(0)
@@ -234,6 +235,19 @@ const ApexChart = ({
   useEffect(() => {
     const init = async () => {
       setLoading(true)
+      setIsDataReady(true)
+
+      const showNoData = () => {
+        setIsDataReady(false)
+        setCurDate('')
+        setCurContent('')
+      }
+
+      if (status === 'loading' || status === 'error') {
+        setCurDate('')
+        setCurContent('')
+        return
+      }
 
       let mainData = [],
         allMainData = [],
@@ -255,7 +269,7 @@ const ApexChart = ({
         ago
 
       if ((Object.keys(data).length === 0 && data.constructor === Object) || data.length === 0) {
-        setIsDataReady(false)
+        showNoData()
         return
       }
 
@@ -263,17 +277,18 @@ const ApexChart = ({
         if (isIFARM) {
           if (iFarmTVL && iFarmTVL.FARM) {
             if (iFarmTVL.FARM.length === 0) {
-              setIsDataReady(false)
+              showNoData()
               return
             }
             usedData = iFarmTVL && iFarmTVL.FARM ? iFarmTVL.FARM : []
           } else {
+            showNoData()
             return
           }
         } else {
           if (data && data.tvls) {
             if (data.tvls.length === 0) {
-              setIsDataReady(false)
+              showNoData()
               return
             }
           }
@@ -285,7 +300,7 @@ const ApexChart = ({
       } else if (filter === 0) {
         if (data && data.generalApies) {
           if (data.generalApies.length === 0) {
-            setIsDataReady(false)
+            showNoData()
             return
           }
         }
@@ -296,7 +311,7 @@ const ApexChart = ({
       } else {
         if (data && data.vaultHistories) {
           if (data.vaultHistories.length === 0) {
-            setIsDataReady(false)
+            showNoData()
             return
           }
         }
@@ -398,6 +413,7 @@ const ApexChart = ({
       if (filter === 1) {
         if (isIFARM) {
           if (iFarmTVL.FARM.length === 0) {
+            showNoData()
             return
           }
           const filteredSlots = slots.filter(
@@ -406,6 +422,7 @@ const ApexChart = ({
           mainData = generateIFARMTVLWithSlots(filteredSlots, iFarmTVL, 'value')
         } else {
           if (usedData.length === 0) {
+            showNoData()
             return
           }
           const filteredSlots = slots.filter(
@@ -423,7 +440,7 @@ const ApexChart = ({
         minTVL = findMin(mainData)
       } else if (filter === 0) {
         if (usedData.length === 0) {
-          setIsDataReady(false)
+          showNoData()
           return
         }
         const filteredSlots = slots.filter(
@@ -440,6 +457,7 @@ const ApexChart = ({
         minAPY = findMin(mainData)
       } else {
         if (usedData.length === 0) {
+          showNoData()
           return
         }
         const filteredSlots = slots.filter(
@@ -576,6 +594,7 @@ const ApexChart = ({
     range,
     filter,
     data,
+    status,
     lastTVL,
     lastAPY,
     isIFARM,
@@ -597,7 +616,7 @@ const ApexChart = ({
 
   return (
     <>
-      {!loading ? (
+      {status !== 'error' && !loading ? (
         <ChartWrapper $bgcolorchart={bgColorChart}>
           <ResponsiveContainer
             width="100%"
@@ -744,7 +763,11 @@ const ApexChart = ({
         </ChartWrapper>
       ) : (
         <LoadingDiv>
-          {isDataReady ? (
+          {status === 'error' ? (
+            <NoData $fontcolor={fontColor}>
+              Couldn&apos;t load vault data. Please try again later.
+            </NoData>
+          ) : isDataReady ? (
             <ClipLoader size={30} margin={2} color={fontColor} />
           ) : (
             <NoData $fontcolor={fontColor}>Vault data soon to be available.</NoData>

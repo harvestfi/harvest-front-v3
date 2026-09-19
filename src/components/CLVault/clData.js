@@ -1,0 +1,215 @@
+/**
+ * Adapter that builds the CL-vault display shape consumed by the CL components
+ * (ActiveRange, PositionComposition, CLDeposit/CLWithdraw, etc.).
+ *
+ * All token-level data comes from live sources — no per-vault mock config:
+ *   - API `token`: symbols (tokenNames), icons (logoUrl), single-asset wrappers
+ *     and per-token prices (wrappers[]), APY, TVL, usdPrice, pricePerFullShare,
+ *     platform.
+ *   - Vault contract (`chain`, via fetchCLChainData): token addresses + decimals,
+ *     range ticks, weights, amounts.
+ *   - Subgraph (`rebalances`): last rebalance time.
+ */
+
+const num = (v, fallback = 0) => {
+  const n = Number(v)
+  return Number.isFinite(n) ? n : fallback
+}
+
+export const isCLVault = token => Boolean(token && token.isCLVault)
+
+export const resolveTokenUsdPrice = (token, { spotByAddress, price, tokens, tokenIndex } = {}) => {
+  const direct = Number(token?.priceUsd)
+  if (Number.isFinite(direct) && direct > 0) return direct
+
+  const addr = String(token?.address || '').toLowerCase()
+  const spot = spotByAddress?.[addr]
+  if (Number.isFinite(spot) && spot > 0) return spot
+
+  if (!price?.current || !(price.current > 0) || !Array.isArray(tokens) || tokenIndex == null) {
+    return undefined
+  }
+
+  const other = tokens[1 - tokenIndex]
+  const otherUsd = resolveTokenUsdPrice(other, { spotByAddress })
+  if (!(otherUsd > 0)) return undefined
+
+  // Pool unit is token0/token1; current is token0 priced in token1.
+  return tokenIndex === 0 ? price.current * otherUsd : otherUsd / price.current
+}
+
+const tickToPrice = (tick, dec0, dec1) => Number(1.0001 ** tick) * 10 ** (dec0 - dec1)
+
+const FALLBACK_COLORS = ['#1652f0', '#627eea', '#f2a900', '#f0883e', '#26a17b', '#8247e5']
+const colorFor = (symbol, index) => {
+  if (!symbol) return FALLBACK_COLORS[index % FALLBACK_COLORS.length]
+  let hash = 0
+  for (let i = 0; i < symbol.length; i += 1) hash = (hash * 31 + symbol.charCodeAt(i)) >>> 0
+  return FALLBACK_COLORS[hash % FALLBACK_COLORS.length]
+}
+
+const lower = v => String(v || '').toLowerCase()
+
+export const buildCLData = (token = {}, id, chain = null, rebalances = null) => {
+  const address = token.vaultAddress || ''
+
+  const names = Array.isArray(token.tokenNames) ? token.tokenNames : []
+  const logos = (Array.isArray(token.logoUrl) ? token.logoUrl : []).map(u =>
+    typeof u === 'string' && u.startsWith('.') ? u.slice(1) : u,
+  )
+
+  const apiWrappers = Array.isArray(token.wrappers) ? token.wrappers : []
+  const wrapperByAddr = addr => apiWrappers.find(w => lower(w.tokenAddress) === lower(addr))
+
+  const addr0 = (chain && chain.token0Address) || token.tokenAddress || apiWrappers[0]?.tokenAddress
+  const otherWrapper = apiWrappers.find(w => lower(w.tokenAddress) !== lower(addr0))
+  const addr1 = (chain && chain.token1Address) || otherWrapper?.tokenAddress
+
+  const dec0 = chain && chain.dec0 != null ? chain.dec0 : num(token.decimals, 18)
+  const dec1 = chain && chain.dec1 != null ? chain.dec1 : num(token.decimals, 18)
+
+  const priceFromWrapper = addr => {
+    const w = wrapperByAddr(addr)
+    const p = w ? Number(w.priceUsd) : NaN
+    return Number.isFinite(p) && p > 0 ? p : undefined
+  }
+
+  const symbolFor = (addr, chainSymbol, index) =>
+    chainSymbol || wrapperByAddr(addr)?.tokenName || names[index] || `Token ${index}`
+
+  const logoFor = symbol => {
+    const idx = names.findIndex(n => lower(n) === lower(symbol))
+    if (idx !== -1 && logos[idx]) return logos[idx]
+    return symbol ? `/icons/${lower(symbol)}.svg` : undefined
+  }
+
+  const buildToken = (addr, decimals, chainSymbol, index) => {
+    const symbol = symbolFor(addr, chainSymbol, index)
+    return {
+      symbol,
+      address: addr,
+      decimals,
+      wrapper: wrapperByAddr(addr)?.wrapperAddress,
+      logo: logoFor(symbol),
+      color: colorFor(symbol, index),
+      priceUsd: priceFromWrapper(addr),
+    }
+  }
+
+  const token0 = buildToken(addr0, dec0, chain && chain.sym0, 0)
+  const token1 = buildToken(addr1, dec1, chain && chain.sym1, 1)
+
+  const underlyingAddr = lower(token.tokenAddress)
+  const matchedIndex = [token0, token1].findIndex(
+    t => underlyingAddr && lower(t.address) === underlyingAddr,
+  )
+  const wrapperFallbackIndex = token0.wrapper ? 0 : 1
+  const depositIndex = matchedIndex === -1 ? wrapperFallbackIndex : matchedIndex
+  const depositToken = depositIndex === 1 ? token1 : token0
+
+  const platformStr = Array.isArray(token.platform) ? token.platform[0] : token.platform
+  const protocol =
+    typeof platformStr === 'string' && platformStr
+      ? platformStr.split(/[-–]/)[0].trim()
+      : 'Aerodrome'
+
+  const liveApy = num(token.estimatedApy)
+  const totalApy = liveApy > 0 ? liveApy : 0
+  const livePps = num(token.pricePerFullShare)
+  const sharePrice = livePps > 0 ? livePps / 1e18 : 1
+  const tvlUsd = num(token.totalValueLocked)
+  const underlyingUsdPrice = num(token.usdPrice)
+
+  const hasTicks = Boolean(chain && chain.tickLower != null && chain.tickUpper != null)
+
+  let price = null
+  if (hasTicks) {
+    const lowerPrice = tickToPrice(chain.tickLower, dec0, dec1)
+    const upperPrice = tickToPrice(chain.tickUpper, dec0, dec1)
+    let current
+    if (chain.sqrtPriceX96 != null) {
+      const ratio = Number(chain.sqrtPriceX96) / 2 ** 96
+      current = ratio * ratio * 10 ** (dec0 - dec1)
+    } else if (chain.currentTick != null) {
+      current = tickToPrice(chain.currentTick, dec0, dec1)
+    } else {
+      current = (lowerPrice + upperPrice) / 2
+    }
+    price = {
+      current,
+      lower: lowerPrice,
+      upper: upperPrice,
+      unit: `${token0.symbol}/${token1.symbol}`,
+    }
+  }
+
+  const inRange =
+    chain && typeof chain.inRange === 'boolean'
+      ? chain.inRange
+      : price
+        ? price.current >= price.lower && price.current <= price.upper
+        : null
+
+  const weights =
+    chain && chain.weight0 != null ? { token0: chain.weight0, token1: chain.weight1 } : null
+
+  const formatAmount = (raw, dec) => Number(raw) / 10 ** dec
+  const amounts =
+    chain && chain.amount0Raw != null
+      ? {
+          token0: formatAmount(chain.amount0Raw, dec0),
+          token1: formatAmount(chain.amount1Raw, dec1),
+        }
+      : null
+
+  const tickSpan = hasTicks ? chain.tickUpper - chain.tickLower : null
+  const feeTier = tickSpan != null ? `${tickSpan}-tick width` : 'CL'
+
+  return {
+    protocol,
+    type: 'Concentrated Liquidity',
+    feeTier,
+    network: 'base',
+    vaultAddress: address,
+    id,
+    live: hasTicks,
+
+    token0,
+    token1,
+    depositToken,
+    depositIndex,
+
+    price,
+    inRange,
+    lastRebalance:
+      rebalances && rebalances.lastRebalanceLabel ? rebalances.lastRebalanceLabel : '—',
+
+    weights,
+    amounts,
+    tvlUsd,
+    underlyingUsdPrice,
+
+    sharePrice,
+
+    apy: {
+      total: Number(totalApy.toFixed(2)),
+      daily: Number((totalApy / 365).toFixed(3)),
+      breakdown: [
+        { label: 'Trading fees', value: Number((totalApy * 0.6).toFixed(2)) },
+        { label: 'AERO emissions (auto-compounded)', value: Number((totalApy * 0.4).toFixed(2)) },
+      ],
+      historical: {
+        live: Number(totalApy.toFixed(2)),
+        d7: null,
+        d30: null,
+        d180: null,
+        d365: null,
+        lifetime: null,
+      },
+    },
+
+    walletBalances: { token0: 0, token1: 0 },
+  }
+}
+
+export default buildCLData

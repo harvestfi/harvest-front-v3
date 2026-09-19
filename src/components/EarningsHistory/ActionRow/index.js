@@ -7,12 +7,7 @@ import { useRate } from '../../../providers/Rate'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import TrendUp from '../../../assets/images/logos/advancedfarm/trend-up.svg'
 import TrendDown from '../../../assets/images/logos/advancedfarm/trend-down.svg'
-import {
-  formatDateTime,
-  formatDateTimeMobile,
-  formatNumber,
-  showUsdValueCurrency,
-} from '../../../utilities/formats'
+import { formatDateTime, formatDateTimeMobile, formatNumber } from '../../../utilities/formats'
 import { Content, DetailView, FlexDiv, IconWrapper, Badge, NetImg, NewLabel } from './style'
 
 const ActionRow = ({ info, showTotalBalance }) => {
@@ -29,6 +24,17 @@ const ActionRow = ({ info, showTotalBalance }) => {
       setCurrencyRate(rates.rateData[rates.currency.symbol])
     }
   }, [rates])
+
+  const formatNetChangeUsd = () => {
+    if (info.netChangeUsd < 0) {
+      return info.netChangeUsd > -0.01
+        ? `-<${currencySym}0.01`
+        : `≈-${currencySym}${formatNumber(Math.abs(info.netChangeUsd * Number(currencyRate)), 2)}`
+    }
+    return info.netChangeUsd < 0.01
+      ? `<${currencySym}0.01`
+      : `≈${currencySym}${formatNumber(info.netChangeUsd * Number(currencyRate), 2)}`
+  }
 
   return (
     <DetailView
@@ -134,7 +140,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                   size={12}
                   height={18}
                   color={info.netChangeUsd < 0 ? '#B42318' : '#5FCF76'}
-                  value={showUsdValueCurrency(info.netChangeUsd, currencySym, currencyRate)}
+                  value={formatNetChangeUsd()}
                 />
                 <ListItem
                   weight={500}
@@ -196,7 +202,7 @@ const ActionRow = ({ info, showTotalBalance }) => {
                 height={20}
                 color={info.netChangeUsd < 0 ? '#B42318' : '#5FCF76'}
                 justifyContent="end"
-                value={showUsdValueCurrency(info.netChangeUsd, currencySym, currencyRate)}
+                value={formatNetChangeUsd()}
               />
               <ListItem
                 weight={500}

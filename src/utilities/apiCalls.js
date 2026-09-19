@@ -17,30 +17,31 @@ const delay = ms => new Promise(resolve => setTimeout(resolve, ms))
 const farm = '0xa0246c9032bc3a600820415ae600c6388619a14d'
 const ifarm = '0x1571ed0bed4d987fe2b498ddbae7dfa19519f651'
 
-const executeGraphCall = async (url, query, variables, retries = 10, delayMs = 5000) => {
+const executeGraphCall = async (url, query, variables, retries = 10, delayMs = 5000, signal) => {
   let retry = 0,
     response
-  try {
-    response = await axios.post(url, {
-      query,
-      variables,
-    })
-  } catch (error) {
-    response = error.response
+
+  const post = async () => {
+    try {
+      return await axios.post(url, { query, variables }, { signal })
+    } catch (error) {
+      return error.response
+    }
   }
 
-  while (retry < retries && (!response || response.status !== 200)) {
+  if (signal?.aborted) {
+    return null
+  }
+  response = await post()
+
+  while (retry < retries && !signal?.aborted && (!response || response.status !== 200)) {
     console.warn(`Error in subgraph call. Retry ${retry + 1}. Retrying after ${delayMs}ms...`)
 
     await delay(delayMs)
-    try {
-      response = await axios.post(url, {
-        query,
-        variables,
-      })
-    } catch (error) {
-      response = error.response
+    if (signal?.aborted) {
+      return null
     }
+    response = await post()
     retry += 1
   }
   const data = get(response, 'data.data')
@@ -48,6 +49,104 @@ const executeGraphCall = async (url, query, variables, retries = 10, delayMs = 5
     return data
   }
   return null
+}
+
+export class GraphCallCancelled extends Error {
+  constructor(collection) {
+    super(`Subgraph fetch for ${collection} was cancelled`)
+    this.name = 'GraphCallCancelled'
+  }
+}
+
+const GRAPH_PAGE_SIZE = 1000
+const GRAPH_MAX_PAGES = 200
+
+const fetchAllPagedByTimestamp = async (
+  url,
+  query,
+  collection,
+  variables,
+  initialEndTime,
+  cursorKey = 'endTime',
+  signal,
+) => {
+  const rows = []
+  let endTime = String(initialEndTime)
+
+  for (let page = 0; page < GRAPH_MAX_PAGES; page += 1) {
+    if (signal?.aborted) {
+      throw new GraphCallCancelled(collection)
+    }
+    const data = await executeGraphCall(
+      url,
+      query,
+      { ...variables, [cursorKey]: endTime },
+      undefined,
+      undefined,
+      signal,
+    )
+    if (signal?.aborted) {
+      throw new GraphCallCancelled(collection)
+    }
+    if (!data) {
+      throw new Error(`Subgraph call for ${collection} failed after retries`)
+    }
+    const batch = get(data, collection) || []
+    rows.push(...batch)
+
+    if (batch.length < GRAPH_PAGE_SIZE) {
+      return rows
+    }
+
+    const oldest = Number(batch[batch.length - 1].timestamp)
+    if (!Number.isFinite(oldest) || String(oldest) === endTime) {
+      return rows
+    }
+    endTime = String(oldest)
+  }
+
+  console.warn(`Reached the page limit while fetching ${collection} from the subgraph.`)
+  return rows
+}
+
+const fetchAllCollections = async (url, initialEndTime, specs, signal) => {
+  const controller = new AbortController()
+  const forwardAbort = () => controller.abort()
+
+  if (signal) {
+    if (signal.aborted) {
+      controller.abort()
+    } else {
+      signal.addEventListener('abort', forwardAbort)
+    }
+  }
+
+  try {
+    const settled = await Promise.allSettled(
+      specs.map(spec =>
+        fetchAllPagedByTimestamp(
+          url,
+          spec.query,
+          spec.collection,
+          spec.variables,
+          initialEndTime,
+          'endTime',
+          controller.signal,
+        ).catch(error => {
+          controller.abort()
+          throw error
+        }),
+      ),
+    )
+
+    const failures = settled.filter(result => result.status === 'rejected').map(r => r.reason)
+    if (failures.length) {
+      throw failures.find(error => !(error instanceof GraphCallCancelled)) ?? failures[0]
+    }
+    return settled.map(result => result.value)
+  } finally {
+    signal?.removeEventListener('abort', forwardAbort)
+  }
 }
 
 export const getLastHarvestInfo = async (address, chainId) => {
@@ -74,7 +173,7 @@ export const getLastHarvestInfo = async (address, chainId) => {
   const url = GRAPH_URLS[chainId]
 
   const data = await executeGraphCall(url, query, variables)
-  const hisData = data.vaultHistories
+  const hisData = data?.vaultHistories
 
   if (hisData && hisData.length !== 0) {
     const timeStamp = hisData[0].timestamp
@@ -101,6 +200,83 @@ export const getLastHarvestInfo = async (address, chainId) => {
     }`}${minString}`
   }
   return result
+}
+
+export const getCLVaultRebalances = async (vault, chainId, sample = 100) => {
+  const empty = {
+    lastRebalanceTs: null,
+    lastRebalanceLabel: '',
+    avgIntervalSec: null,
+    frequencyLabel: '',
+    count: 0,
+  }
+  if (!vault) return empty
+
+  const query = `
+    query getCLVaultRebalances($vault: String!, $first: Int!) {
+      vaultRebalances(
+        first: $first,
+        where: { vault: $vault },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        id
+        oldPosId
+        newPosId
+        oldLiquidity
+        newLiquidity
+        timestamp
+      }
+    }
+  `
+  const url = GRAPH_URLS[chainId]
+  const data = await executeGraphCall(url, query, {
+    vault: String(vault).toLowerCase(),
+    first: sample,
+  })
+  const rows = data?.vaultRebalances || []
+  if (rows.length === 0) return empty
+
+  const stamps = rows.map(r => Number(r.timestamp)).sort((a, b) => b - a)
+  const lastRebalanceTs = stamps[0]
+
+  const nowSec = Math.floor(Date.now() / 1000)
+  let diff = Math.max(0, nowSec - lastRebalanceTs)
+  const d = Math.floor(diff / 86400)
+  diff -= d * 86400
+  const h = Math.floor(diff / 3600)
+  diff -= h * 3600
+  const m = Math.floor(diff / 60)
+  const parts = [d ? `${d}d` : '', h ? `${h}h` : '', m ? `${m}m` : ''].filter(Boolean)
+  const lastRebalanceLabel = parts.length ? `${parts.join(' ')} ago` : 'just now'
+
+  // eslint-disable-next-line one-var
+  let avgIntervalSec = null,
+    frequencyLabel = ''
+  if (stamps.length >= 2) {
+    const span = stamps[0] - stamps[stamps.length - 1]
+    const gaps = stamps.length - 1
+    if (span > 0 && gaps > 0) {
+      avgIntervalSec = Math.round(span / gaps)
+      if (avgIntervalSec >= 86400) {
+        frequencyLabel = `~every ${(avgIntervalSec / 86400).toFixed(1)}d`
+      } else if (avgIntervalSec >= 3600) {
+        frequencyLabel = `~every ${(avgIntervalSec / 3600).toFixed(1)}h`
+      } else if (avgIntervalSec >= 60) {
+        frequencyLabel = `~every ${Math.round(avgIntervalSec / 60)}m`
+      } else {
+        frequencyLabel = `~every ${avgIntervalSec}s`
+      }
+    }
+  }
+
+  return {
+    lastRebalanceTs,
+    lastRebalanceLabel,
+    avgIntervalSec,
+    frequencyLabel,
+    count: rows.length,
+  }
 }
 
 export const getPublishDate = async () => {
@@ -200,13 +376,14 @@ export const getPublishDate = async () => {
   return { data: allData, flag: combinedFlags }
 }
 
-export const getSequenceId = async (address, chainId) => {
+export const getSequenceId = async (address, chainId, signal) => {
   let vaultTVLCount,
     vaultPriceFeedCount,
     vaultsFlag = true
 
   address = address.toLowerCase()
-  const vaultAddress = address === ifarm ? farm : address
+  const priceFeedVaultAddress = address === ifarm ? farm : address
+  const tvlVaultAddress = address === farm ? ifarm : address
 
   const query = `
     {
@@ -221,23 +398,26 @@ export const getSequenceId = async (address, chainId) => {
   `
   const url = GRAPH_URLS[chainId]
 
-  const data = await executeGraphCall(url, query, {})
+  const data = await executeGraphCall(url, query, {}, undefined, undefined, signal)
   const vaultsData = data ? data.vaults : []
 
   if (!vaultsData || vaultsData.length === 0) {
     vaultsFlag = false
   } else {
-    const matchingVault = vaultsData.find(vault => vault.id === vaultAddress)
-    if (matchingVault) {
-      vaultTVLCount = matchingVault.tvlSequenceId
-      vaultPriceFeedCount = matchingVault.priceFeedSequenceId
+    const tvlVault = vaultsData.find(vault => vault.id === tvlVaultAddress)
+    const priceFeedVault = vaultsData.find(vault => vault.id === priceFeedVaultAddress)
+    if (tvlVault) {
+      vaultTVLCount = tvlVault.tvlSequenceId
+    }
+    if (priceFeedVault) {
+      vaultPriceFeedCount = priceFeedVault.priceFeedSequenceId
     }
   }
 
   return { vaultTVLCount, vaultPriceFeedCount, vaultsFlag }
 }
 
-export const getIPORSequenceId = async (vault, chainId) => {
+export const getIPORSequenceId = async (vault, chainId, signal) => {
   let vaultTVLCount
 
   const query = `
@@ -256,7 +436,7 @@ export const getIPORSequenceId = async (vault, chainId) => {
   `
   const url = GRAPH_URLS[chainId]
 
-  const data = await executeGraphCall(url, query, { vault })
+  const data = await executeGraphCall(url, query, { vault }, undefined, undefined, signal)
   const vaultsData = data ? data.plasmaVaultHistories : []
 
   if (!vaultsData || vaultsData.length === 0) {
@@ -318,27 +498,14 @@ export const getVaultHistories = async (address, chainId, isIPOR = false) => {
   const url = GRAPH_URLS[chainId]
 
   try {
-    const data = await executeGraphCall(url, query, variables)
-
-    if (isIPOR) {
-      vaultHistoryData = data?.plasmaVaultHistories || []
-    } else {
-      vaultHistoryData = data?.vaultHistories || []
-    }
-
-    while (vaultHistoryData.length % 1000 === 0 && vaultHistoryData.length > 0) {
-      const lastTimestamp = vaultHistoryData[vaultHistoryData.length - 1].timestamp
-      variables.finishTime = lastTimestamp
-      const additionalData = await executeGraphCall(url, query, variables)
-      if (isIPOR) {
-        vaultHistoryData = vaultHistoryData.concat(additionalData?.plasmaVaultHistories || [])
-      } else {
-        vaultHistoryData = vaultHistoryData.concat(additionalData?.vaultHistories || [])
-      }
-      if (vaultHistoryData.length === 1000) {
-        break
-      }
-    }
+    vaultHistoryData = await fetchAllPagedByTimestamp(
+      url,
+      query,
+      isIPOR ? 'plasmaVaultHistories' : 'vaultHistories',
+      variables,
+      variables.finishTime,
+      'finishTime',
+    )
   } catch (e) {
     console.error('Error fetching vault histories:', e)
     return { vaultHData: [], vaultHFlag: false, error: e }
@@ -411,27 +578,14 @@ export const getMultiVaultHistories = async (addresses, chainId, isIPOR = false)
   const url = GRAPH_URLS[chainId]
 
   try {
-    const data = await executeGraphCall(url, query, variables)
-
-    if (isIPOR) {
-      vaultHistoryData = data?.plasmaVaultHistories || []
-    } else {
-      vaultHistoryData = data?.vaultHistories || []
-    }
-
-    while (vaultHistoryData.length % 1000 === 0 && vaultHistoryData.length > 0) {
-      const lastTimestamp = vaultHistoryData[vaultHistoryData.length - 1].timestamp
-      variables.finishTime = lastTimestamp
-      const additionalData = await executeGraphCall(url, query, variables)
-      if (isIPOR) {
-        vaultHistoryData = vaultHistoryData.concat(additionalData?.plasmaVaultHistories || [])
-      } else {
-        vaultHistoryData = vaultHistoryData.concat(additionalData?.vaultHistories || [])
-      }
-      if (vaultHistoryData.length === 1000) {
-        break
-      }
-    }
+    vaultHistoryData = await fetchAllPagedByTimestamp(
+      url,
+      query,
+      isIPOR ? 'plasmaVaultHistories' : 'vaultHistories',
+      variables,
+      variables.finishTime,
+      'finishTime',
+    )
   } catch (e) {
     console.error('Error fetching vault histories:', e)
     return {
@@ -509,7 +663,7 @@ export const getMultipleVaultHistories = async (vaults, startTime, chainId) => {
     const variables = { vaults, startTime, finishTime }
 
     const data = await executeGraphCall(url, query, variables)
-    vaultHData = vaultHData.concat(data?.vaultHistories)
+    vaultHData = vaultHData.concat(data?.vaultHistories || [])
     if (vaultHData.length % 1000 === 0 && vaultHData.length > lastLn) {
       lastLn = vaultHData.length
       finishTime = vaultHData[vaultHData.length - 1].timestamp
@@ -532,6 +686,7 @@ export const getDataQuery = async (
   asQuery,
   timestamp,
   chartData = {},
+  signal,
 ) => {
   const sequenceIdsArray = []
   if (vaultTVLCount > 10000) {
@@ -551,37 +706,34 @@ export const getDataQuery = async (
   }
 
   const nowTime = Math.floor(new Date().getTime() / 1000)
-  const timestampQuery = asQuery ? timestamp : nowTime
+  const initialEndTime = String(asQuery ? timestamp : nowTime)
   address = address.toLowerCase()
+  const vault = address === farm ? ifarm : address
+  const url = GRAPH_URLS[chainId]
 
-  const query = `
-    query getData($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
+  const generalApiesQuery = `
+    query getGeneralApies($vault: String!, $endTime: BigInt) {
       generalApies(
-        first: 1000,
+        first: ${GRAPH_PAGE_SIZE},
         where: {
           vault: $vault,
-        }, 
-        orderBy: timestamp, 
-        orderDirection: desc
-      ) { 
-        apy, timestamp
-      }
-      tvls(
-        first: 1000,
-        where: {
-          vault: $vault, 
-          timestamp_lt: $endTime,
-          tvlSequenceId_in: $sequenceIds
+          timestamp_lt: $endTime
         },
         orderBy: timestamp,
         orderDirection: desc
       ) {
-        value, timestamp
-      },
+        apy, timestamp
+      }
+    }
+  `
+
+  const vaultHistoriesQuery = `
+    query getVaultHistories($vault: String!, $endTime: BigInt) {
       vaultHistories(
-        first: 1000,
+        first: ${GRAPH_PAGE_SIZE},
         where: {
           vault: $vault,
+          timestamp_lt: $endTime
         },
         orderBy: timestamp,
         orderDirection: desc
@@ -590,33 +742,43 @@ export const getDataQuery = async (
       }
     }
   `
-  const variables =
-    address === farm
-      ? { vault: ifarm, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
-      : { vault: address, endTime: timestampQuery, sequenceIds: sequenceIdsArray }
-  const url = GRAPH_URLS[chainId]
 
-  const data = await executeGraphCall(url, query, variables)
-  // To merge the response data into the chartData object
-  Object.keys(data).forEach(key => {
-    if (!Object.prototype.hasOwnProperty.call(chartData, key)) {
-      chartData[key] = data[key]
-    } else if (Array.isArray(chartData[key]) && Array.isArray(data[key])) {
-      chartData[key].push(...data[key])
-    } else if (typeof chartData[key] === 'object' && typeof data[key] === 'object') {
-      Object.assign(chartData[key], data[key])
-    } else {
-      chartData[key] = data[key]
+  const tvlsQuery = `
+    query getTvls($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
+      tvls(
+        first: ${GRAPH_PAGE_SIZE},
+        where: {
+          vault: $vault,
+          timestamp_lt: $endTime,
+          tvlSequenceId_in: $sequenceIds
+        },
+        orderBy: timestamp,
+        orderDirection: desc
+      ) {
+        value, timestamp
+      }
     }
-  })
-  const dataTimestamp = Number(
-    chartData.vaultHistories[chartData.vaultHistories.length - 1].timestamp,
-  )
-  const initTimestamp = Number(chartData.generalApies[chartData.generalApies.length - 1].timestamp)
+  `
 
-  if (data.tvls.length === 1000 && dataTimestamp > initTimestamp) {
-    await getDataQuery(address, chainId, vaultTVLCount, true, dataTimestamp, chartData)
-  }
+  const [generalApies, vaultHistories, tvls] = await fetchAllCollections(
+    url,
+    initialEndTime,
+    [
+      { query: generalApiesQuery, collection: 'generalApies', variables: { vault } },
+      { query: vaultHistoriesQuery, collection: 'vaultHistories', variables: { vault } },
+      {
+        query: tvlsQuery,
+        collection: 'tvls',
+        variables: { vault, sequenceIds: sequenceIdsArray },
+      },
+    ],
+    signal,
+  )
+
+  chartData.generalApies = generalApies
+  chartData.vaultHistories = vaultHistories
+  chartData.tvls = tvls
+
   return chartData
 }
 
@@ -732,6 +894,7 @@ export const getIPORDataQuery = async (
   asQuery,
   timestamp,
   chartData = {},
+  signal,
 ) => {
   const sequenceIdsArray = []
   if (vaultTVLCount > 10000) {
@@ -747,89 +910,58 @@ export const getIPORDataQuery = async (
   const nowTime = Math.floor(Date.now() / 1000)
   const initialEndTime = String(asQuery ? timestamp : nowTime)
   const url = GRAPH_URLS[chainId]
-  const pageSize = 1000
 
-  const lastTs = arr => {
-    const n = arr?.length ?? 0
-    return n ? Number(arr[n - 1].timestamp) : undefined
-  }
-
-  // 1) Fetch ALL generalApies
-  const allGeneralApies = []
-  {
-    let endTime = initialEndTime
-    while (true) {
-      const query = `
-        query getGeneralApies($vault: String!, $endTime: BigInt) {
-          generalApies: plasmaVaultHistories(
-            where: { plasmaVault: $vault, timestamp_lt: $endTime },
-            first: ${pageSize},
-            orderBy: timestamp,
-            orderDirection: desc
-          ) { apy, timestamp }
-        }
-      `
-      const variables = { vault, endTime }
-      const { generalApies = [] } = (await executeGraphCall(url, query, variables)) ?? {}
-      allGeneralApies.push(...generalApies)
-      if (generalApies.length < pageSize) break
-      const ts = lastTs(generalApies)
-      if (!Number.isFinite(ts)) break
-      endTime = String(ts)
+  const generalApiesQuery = `
+    query getGeneralApies($vault: String!, $endTime: BigInt) {
+      generalApies: plasmaVaultHistories(
+        where: { plasmaVault: $vault, timestamp_lt: $endTime },
+        first: ${GRAPH_PAGE_SIZE},
+        orderBy: timestamp,
+        orderDirection: desc
+      ) { apy, timestamp }
     }
-  }
+  `
 
-  const allVaultHistories = []
-  {
-    let endTime = initialEndTime
-    while (true) {
-      const query = `
-        query getVaultHistories($vault: String!, $endTime: BigInt) {
-          vaultHistories: plasmaVaultHistories(
-            where: { plasmaVault: $vault, timestamp_lt: $endTime },
-            first: ${pageSize},
-            orderBy: timestamp,
-            orderDirection: desc
-          ) { priceUnderlying, sharePrice, timestamp }
-        }
-      `
-      const variables = { vault, endTime }
-      const { vaultHistories = [] } = (await executeGraphCall(url, query, variables)) ?? {}
-      allVaultHistories.push(...vaultHistories)
-      if (vaultHistories.length < pageSize) break
-      const ts = lastTs(vaultHistories)
-      if (!Number.isFinite(ts)) break
-      endTime = String(ts)
+  const vaultHistoriesQuery = `
+    query getVaultHistories($vault: String!, $endTime: BigInt) {
+      vaultHistories: plasmaVaultHistories(
+        where: { plasmaVault: $vault, timestamp_lt: $endTime },
+        first: ${GRAPH_PAGE_SIZE},
+        orderBy: timestamp,
+        orderDirection: desc
+      ) { priceUnderlying, sharePrice, timestamp }
     }
-  }
+  `
 
-  const allTvls = []
-  {
-    let endTime = initialEndTime
-    while (true) {
-      const query = `
-        query getTvls($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
-          tvls: plasmaVaultHistories(
-            where: {
-              plasmaVault: $vault,
-              timestamp_lt: $endTime,
-              historySequenceId_in: $sequenceIds
-            },
-            first: ${pageSize},
-            orderBy: timestamp,
-            orderDirection: desc
-          ) { tvl, timestamp }
-        }
-      `
-      const variables = { vault, endTime, sequenceIds: sequenceIdsArray }
-      const { tvls = [] } = (await executeGraphCall(url, query, variables)) ?? {}
-      allTvls.push(...tvls)
-      if (tvls.length < pageSize) break
-      const ts = lastTs(tvls)
-      if (!Number.isFinite(ts)) break
-      endTime = String(ts)
+  const tvlsQuery = `
+    query getTvls($vault: String!, $endTime: BigInt, $sequenceIds: [Int!]) {
+      tvls: plasmaVaultHistories(
+        where: {
+          plasmaVault: $vault,
+          timestamp_lt: $endTime,
+          historySequenceId_in: $sequenceIds
+        },
+        first: ${GRAPH_PAGE_SIZE},
+        orderBy: timestamp,
+        orderDirection: desc
+      ) { tvl, timestamp }
     }
-  }
+  `
+
+  const [allGeneralApies, allVaultHistories, allTvls] = await fetchAllCollections(
+    url,
+    initialEndTime,
+    [
+      { query: generalApiesQuery, collection: 'generalApies', variables: { vault } },
+      { query: vaultHistoriesQuery, collection: 'vaultHistories', variables: { vault } },
+      {
+        query: tvlsQuery,
+        collection: 'tvls',
+        variables: { vault, sequenceIds: sequenceIdsArray },
+      },
+    ],
+    signal,
+  )
 
   chartData.generalApies = allGeneralApies
   chartData.vaultHistories = allVaultHistories
@@ -892,27 +1024,14 @@ export const getUserBalanceHistories = async (address, chainId, account, isIPOR 
   const url = GRAPH_URLS[chainId]
 
   try {
-    const data = await executeGraphCall(url, query, variables)
-
-    if (isIPOR) {
-      balanceData = data?.plasmaUserBalanceHistories || []
-    } else {
-      balanceData = data?.userBalanceHistories || []
-    }
-
-    while (balanceData.length % 1000 === 0 && balanceData.length > 0) {
-      const lastTimestamp = balanceData[balanceData.length - 1].timestamp
-      variables.finishTime = lastTimestamp
-      const additionalData = await executeGraphCall(url, query, variables)
-      if (isIPOR) {
-        balanceData = balanceData.concat(additionalData?.plasmaUserBalanceHistories || [])
-      } else {
-        balanceData = balanceData.concat(additionalData?.userBalanceHistories || [])
-      }
-      if (balanceData.length === 1000) {
-        break
-      }
-    }
+    balanceData = await fetchAllPagedByTimestamp(
+      url,
+      query,
+      isIPOR ? 'plasmaUserBalanceHistories' : 'userBalanceHistories',
+      variables,
+      variables.finishTime,
+      'finishTime',
+    )
   } catch (e) {
     console.error('Error fetching user balance histories:', e)
     return { balanceData: [], balanceFlag: false, error: e }
@@ -995,27 +1114,14 @@ export const getMultipleUserBalanceHistories = async (
   const url = GRAPH_URLS[chainId]
 
   try {
-    const data = await executeGraphCall(url, query, variables)
-
-    if (isIPOR) {
-      balanceData = data?.plasmaUserBalanceHistories || []
-    } else {
-      balanceData = data?.userBalanceHistories || []
-    }
-
-    while (balanceData.length % 1000 === 0 && balanceData.length > 0) {
-      const lastTimestamp = balanceData[balanceData.length - 1].timestamp
-      variables.finishTime = lastTimestamp
-      const additionalData = await executeGraphCall(url, query, variables)
-      if (isIPOR) {
-        balanceData = balanceData.concat(additionalData?.plasmaUserBalanceHistories || [])
-      } else {
-        balanceData = balanceData.concat(additionalData?.userBalanceHistories || [])
-      }
-      if (balanceData.length === 1000) {
-        break
-      }
-    }
+    balanceData = await fetchAllPagedByTimestamp(
+      url,
+      query,
+      isIPOR ? 'plasmaUserBalanceHistories' : 'userBalanceHistories',
+      variables,
+      variables.finishTime,
+      'finishTime',
+    )
   } catch (e) {
     console.error('Error fetching user balance histories:', e)
     return { balanceFlag: false, error: e, groupedBalances: {} }
@@ -1684,6 +1790,35 @@ export const getTokenPriceFromApi = async tokenID => {
   }
 }
 
+export const getTokenPricesByAddresses = async (addresses, platform = 'base') => {
+  const unique = [...new Set(addresses.map(a => String(a || '').toLowerCase()).filter(Boolean))]
+  if (unique.length === 0) return {}
+
+  try {
+    const response = await axios.get(`${GECKO_URL}simple/token_price/${platform}`, {
+      params: {
+        // eslint-disable-next-line camelcase
+        contract_addresses: unique.join(','),
+        // eslint-disable-next-line camelcase
+        vs_currencies: 'usd',
+      },
+      headers: {
+        'x-cg-pro-api-key': COINGECKO_API_KEY,
+      },
+    })
+    const data = response.data || {}
+    const prices = {}
+    Object.entries(data).forEach(([addr, quote]) => {
+      const p = Number(quote?.usd)
+      if (p > 0) prices[addr.toLowerCase()] = p
+    })
+    return prices
+  } catch (err) {
+    console.log('Fetch token prices by address error: ', err)
+    return {}
+  }
+}
+
 export const fetchLeaderboardData = async () => {
   try {
     const response = await axios.get(LEADERBOARD_API_ENDPOINT)
@@ -1821,12 +1956,15 @@ export const sendWalletConnection = async walletAddress => {
   }
 
   // Create the request promise
+  const sessionId = localStorage.getItem('hsid') || null
+
   const requestPromise = (async () => {
     try {
       const response = await axios.post(
         WALLET_CONNECTION_API_ENDPOINT,
         {
           walletAddress: normalizedAddress,
+          ...(sessionId ? { sessionId } : {}),
         },
         {
           headers: {

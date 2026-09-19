@@ -18,6 +18,7 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { isSpecialApp } from '../../../utilities/formats'
 import { getTotalApy } from '../../../utilities/parsers'
+import { isStockVault } from '../../../utilities/stockAssets'
 import { getPublishDate } from '../../../utilities/apiCalls'
 import VaultPanel from '../VaultPanel'
 import VaultsListHeader from '../VaultsListHeader'
@@ -236,6 +237,9 @@ const formatVaults = (
   if (selectAsset !== '') {
     vaultsSymbol = vaultsSymbol.filter(tokenSymbol => {
       const assetLength = groupOfVaults[tokenSymbol].tokenNames.length
+      if (selectAsset === 'Stocks') {
+        return isStockVault(groupOfVaults[tokenSymbol])
+      }
       if (assetLength === 1 && selectAsset === 'Single Asset') {
         return true
       }
@@ -294,7 +298,7 @@ const SortingIcon = ({ sortType, sortField, selectedField, riskId }) => {
   }
 }
 
-const VaultList = () => {
+const VaultList = ({ defaultAsset = '' }) => {
   const { fontColor, filterColor, bgColorNew, borderColorBox, darkMode } = useThemeContext()
 
   const { vaultsData, getFarmingBalances, loadedUserVaultsViemProvider, loadingVaults } =
@@ -510,6 +514,7 @@ const VaultList = () => {
           riskId={riskId}
           setRiskId={setRiskId}
           setSortOrder={setSortOrder}
+          defaultAsset={defaultAsset}
         />
       )}
       <DisplayCount $fontcolor={fontColor} $mobilecolor={darkMode ? '#fff' : '#000'}>
