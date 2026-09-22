@@ -9,7 +9,13 @@ import SortCurrency from '../../../assets/images/logos/farm/sortCurrency.svg'
 import sortAscIcon from '../../../assets/images/ui/asc.svg'
 import sortDescIcon from '../../../assets/images/ui/desc.svg'
 import sortIcon from '../../../assets/images/ui/sort.svg'
-import { FARM_TOKEN_SYMBOL, IFARM_TOKEN_SYMBOL, MAX_DECIMALS, chainList } from '../../../constants'
+import {
+  FARM_TOKEN_SYMBOL,
+  IFARM_TOKEN_SYMBOL,
+  MAX_DECIMALS,
+  PROMOTED_VAULTS,
+  chainList,
+} from '../../../constants'
 import { fromWei } from '../../../services/viem'
 import { CHAIN_IDS } from '../../../data/constants'
 import { usePools } from '../../../providers/Pools'
@@ -18,6 +24,7 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { isSpecialApp } from '../../../utilities/formats'
 import { getTotalApy } from '../../../utilities/parsers'
+import { getPromotedRank } from '../../../utilities/promotedVaults'
 import { isStockVault } from '../../../utilities/stockAssets'
 import { getPublishDate } from '../../../utilities/apiCalls'
 import VaultPanel from '../VaultPanel'
@@ -281,6 +288,12 @@ const formatVaults = (
     }
   }
   vaultsSymbol = [...new Set(vaultsSymbol)]
+
+  vaultsSymbol = orderBy(vaultsSymbol, v => {
+    const promotedRank = getPromotedRank(groupOfVaults[v])
+
+    return promotedRank === -1 ? PROMOTED_VAULTS.length : promotedRank
+  })
 
   return { vaultsSymbol, totalVaultsCount }
 }

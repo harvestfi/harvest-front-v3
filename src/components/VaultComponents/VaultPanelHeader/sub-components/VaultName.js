@@ -1,7 +1,9 @@
 import React from 'react'
 import { TokenDescriptionContainer, TokenNameContainer, BadgeIcon, BadgePlatform } from '../style'
 import AutopilotBadges from '../../../AutopilotBadges'
+import PromotedBadge from '../../../PromotedBadge'
 import StocksBadge from '../../../StocksBadge'
+import { isPromotedVault } from '../../../../utilities/promotedVaults'
 import { isStockVault } from '../../../../utilities/stockAssets'
 
 const VaultName = ({ token, tokenSymbol, fontColor1, BadgeAry, badgeId, isMobile }) => {
@@ -34,6 +36,7 @@ const VaultName = ({ token, tokenSymbol, fontColor1, BadgeAry, badgeId, isMobile
     <TokenDescriptionContainer>
       <TokenNameContainer $fontcolor1={fontColor1}>
         {token.tokenNames.join(' - ') || tokenSymbol}
+        {isPromotedVault(token) && <PromotedBadge />}
       </TokenNameContainer>
       {isMobile ? (
         <BadgePlatform>
