@@ -14,6 +14,13 @@ import HYPEREVM from './assets/images/chains/hype.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
+export const PROMOTED_VAULT_BADGE = 'New'
+
+export const PROMOTED_VAULTS = [
+  '0x0d39d6ef06a3a5c2408db195d9af2ea7a8d52b92', // IPOR - wBTC Dollar Carry
+  '0xbce1b3ac78b895c69f91e446c8f654bc1c40a3b8', // IPOR - Bitcoin Dollar USDC
+]
+
 export const NATIVE_EXIT_ONE_WAY_TEXT =
   'Reverting in kind is one-way and cannot be undone. 40 Acres vault shares are not ' +
   'accepted by the Autocompounder. Any subsequent redemption is handled solely by 40 ' +
