@@ -1,6 +1,5 @@
 import { PROMOTED_VAULTS } from '../constants'
 
-
 const promotedAddress = token => {
   const address = (token && token.vaultAddress) || (token && token.data && token.data.vaultAddress)
 
