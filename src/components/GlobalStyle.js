@@ -53,6 +53,9 @@ html {
       .farm-mobile-filter {
         background: #FFF;
         box-shadow: -3px 4px 4px 0px rgba(0, 0, 0, 0.10);
+        height: auto !important;
+        max-height: 85vh;
+        max-height: 85dvh;
       }
     }
 
