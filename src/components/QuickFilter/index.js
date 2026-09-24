@@ -732,11 +732,11 @@ const QuickFilter = ({
               <FilterOffCanvas
                 show={filterShow}
                 onHide={handleFilterClose}
-                placement="left"
+                placement="bottom"
                 $backcolor={bgColorNew}
                 $bordercolor={borderColorBox}
                 $filtercolor={filterColor}
-                className="farm-mobile-filter offcanvas-bottom"
+                className="farm-mobile-filter"
               >
                 <FilterOffCanvasHeader closeButton>
                   <FarmFilter
@@ -760,7 +760,7 @@ const QuickFilter = ({
                   $hovercolor={mobileFilterHoverColor}
                   $mobilefilterdisablecolor={mobileFilterDisableColor}
                 >
-                  <DivWidth mobileMarginBottom="25px">
+                  <DivWidth $mobilemarginbottom="25px">
                     <ButtonGroup
                       buttons={RiskListMobile}
                       doSomethingAfterClick={() => {}}
@@ -770,7 +770,7 @@ const QuickFilter = ({
                       $unsetwidth={false}
                     />
                   </DivWidth>
-                  <DivWidth mobileMarginBottom="25px">
+                  <DivWidth $mobilemarginbottom="25px">
                     <ButtonGroup
                       buttons={AssetsList}
                       doSomethingAfterClick={() => {}}
@@ -780,7 +780,7 @@ const QuickFilter = ({
                       oneClass="asset-filter"
                     />
                   </DivWidth>
-                  <DivWidth $display="none" mobileMarginBottom="10px" $height="fit-content">
+                  <DivWidth $display="none" $mobilemarginbottom="10px" $height="fit-content">
                     <Dropdown>
                       <TrendDropDown
                         // $num={trendsBackNum}

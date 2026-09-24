@@ -641,8 +641,6 @@ const FilterOffCanvasBody = styled(Offcanvas.Body)`
   width: 95%;
 
   &.filter-show {
-    height: 100% !important;
-
     .show {
       .toggle {
         .narrow {
