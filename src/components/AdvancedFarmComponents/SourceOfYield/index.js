@@ -4,6 +4,7 @@ import ReactHtmlParser from 'react-html-parser'
 import { HalfInfo, NewLabel, DescInfo, FlexDiv, InfoLabel } from './style'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { getExplorerLink } from '../../../services/viem'
+import MarketHoursNotice from '../MarketHoursNotice'
 
 const SourceOfYield = params => {
   const { bgColorNew, borderColorBox, hoverColor, fontColor1, fontColor3, fontColor4, fontColor6 } =
@@ -12,6 +13,7 @@ const SourceOfYield = params => {
 
   const token = params.token
   const vaultPool = params.vaultPool
+  const showMarketHoursNotice = params.showMarketHoursNotice
 
   return (
     <HalfInfo $marginbottom="20px" $backcolor={bgColorNew} $bordercolor={borderColorBox}>
@@ -25,6 +27,7 @@ const SourceOfYield = params => {
       >
         Source of Yield
       </NewLabel>
+      {showMarketHoursNotice && <MarketHoursNotice margin="15px 15px 0" />}
       <DescInfo $fontcolor6={fontColor6} $fontcolor3={fontColor3}>
         {token.id === 'IFARM' ? (
           <div>
