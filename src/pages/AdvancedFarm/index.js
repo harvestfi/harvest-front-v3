@@ -2982,17 +2982,19 @@ const AdvancedFarm = () => {
                   </HalfInfo>
                   {isCLVault && clDataView && <CLDetailsMain data={clDataView} />}
                   {isLoopingVault && loopDataView && <LoopDetailsMain data={loopDataView} />}
-                  {!isMobile && exitMechanics && (
+                  {!isMobile && nativeExitToken && (
                     <RevertExitMechanics
                       outputSymbol={underlyingSymbol}
-                      strategyTokenSymbol={exitMechanics.strategyTokenSymbol}
+                      strategyTokenSymbol={nativeExitToken.symbol}
+                      hasExitFee={Number(exitFeeBps) > 0}
+                      showMarketHoursNotice={showMarketHoursNotice}
                     />
                   )}
                   {!isMobile && !isLoopingVault && (
                     <SourceOfYield
                       token={token}
                       vaultPool={vaultPool}
-                      showMarketHoursNotice={showMarketHoursNotice}
+                      showMarketHoursNotice={showMarketHoursNotice && !nativeExitToken}
                     />
                   )}
                 </>
@@ -3750,17 +3752,19 @@ const AdvancedFarm = () => {
                       )}
                     </LastHarvestInfo>
                   )}
-                  {isMobile && exitMechanics && (
+                  {isMobile && nativeExitToken && (
                     <RevertExitMechanics
                       outputSymbol={underlyingSymbol}
-                      strategyTokenSymbol={exitMechanics.strategyTokenSymbol}
+                      strategyTokenSymbol={nativeExitToken.symbol}
+                      hasExitFee={Number(exitFeeBps) > 0}
+                      showMarketHoursNotice={showMarketHoursNotice}
                     />
                   )}
                   {isMobile && !isLoopingVault && (
                     <SourceOfYield
                       token={token}
                       vaultPool={vaultPool}
-                      showMarketHoursNotice={showMarketHoursNotice}
+                      showMarketHoursNotice={showMarketHoursNotice && !nativeExitToken}
                     />
                   )}
                 </RestInternal>
