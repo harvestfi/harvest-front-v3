@@ -79,6 +79,12 @@ export const EQUITY_MARKET_HOURS_NOTICE =
   "Exits from this vault may not be possible one hour before Friday's market close until one " +
   "hour after Monday's market open due to tokenized equity oracle requirements."
 
+export const equityMarketHoursInKindNotice = symbol =>
+  "Reverting into a market token may not be possible from one hour before Friday's market close " +
+  "until one hour after Monday's market open due to tokenized equity oracle requirements. " +
+  `Reverting in kind into ${symbol} remains available during this window, although redeeming ` +
+  `${symbol} itself on the issuer platform is subject to the same restriction.`
+
 export const EXIT_FEE_TOOLTIP_TEXT =
   'The fee covers the cost of unwinding the position and the associated network fees. It is not ' +
   'retained as revenue by the strategy operator or by Harvest.'
@@ -88,14 +94,12 @@ export const EXIT_MECHANICS_VAULTS = {
   '0xbce1b3ac78b895c69f91e446c8f654bc1c40a3b8': {
     withdrawManager: '0x300AcEE178162959eF5f792CC7a65aE3124E1281',
     strategyVault: '0xF8F226dA66244F89e70C5B5D1a5C5b0d505Eb1d8',
-    strategyTokenSymbol: 'bdUSD',
   },
   // IPOR - wBTC Dollar Carry. Charges half what the USDC vault does — the rate is per
   // Fusion vault, never a shared constant.
   '0x0d39d6ef06a3a5c2408db195d9af2ea7a8d52b92': {
     withdrawManager: '0x26cE30D9A024fb74af3341383eaC32438179d0Ea',
     strategyVault: '0x7659fc26bf3A63E8133BbECB7E16ACD48EE8E292',
-    strategyTokenSymbol: 'BTCdc',
   },
 }
 

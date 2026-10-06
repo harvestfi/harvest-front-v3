@@ -1,7 +1,7 @@
 import React from 'react'
 import { PiInfo } from 'react-icons/pi'
 import { useThemeContext } from '../../../providers/useThemeContext'
-import { EQUITY_MARKET_HOURS_NOTICE } from '../../../constants'
+import { EQUITY_MARKET_HOURS_NOTICE, equityMarketHoursInKindNotice } from '../../../constants'
 import { NoticeBox, NoticeText } from './style'
 
 // Blue, like the notice IPOR shows on its own app, so the warning reads the same in both.
@@ -15,7 +15,8 @@ const TINTS = {
   },
 }
 
-const MarketHoursNotice = ({ margin }) => {
+// inKindSymbol: the strategy token symbol when Revert in kind is active on the vault.
+const MarketHoursNotice = ({ margin, inKindSymbol }) => {
   const { darkMode } = useThemeContext()
   const tint = TINTS[darkMode ? 'dark' : 'light']
 
@@ -28,7 +29,9 @@ const MarketHoursNotice = ({ margin }) => {
       $margin={margin}
     >
       <PiInfo className="notice-icon" aria-hidden="true" />
-      <NoticeText $fontcolor={tint.font}>{EQUITY_MARKET_HOURS_NOTICE}</NoticeText>
+      <NoticeText $fontcolor={tint.font}>
+        {inKindSymbol ? equityMarketHoursInKindNotice(inKindSymbol) : EQUITY_MARKET_HOURS_NOTICE}
+      </NoticeText>
     </NoticeBox>
   )
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useThemeContext } from '../../../providers/useThemeContext'
+import MarketHoursNotice from '../MarketHoursNotice'
 import {
   HalfInfo,
   CardTitle,
@@ -35,7 +36,12 @@ const ROUTE_TINTS = {
   },
 }
 
-const RevertExitMechanics = ({ outputSymbol, strategyTokenSymbol }) => {
+const RevertExitMechanics = ({
+  outputSymbol,
+  strategyTokenSymbol,
+  hasExitFee,
+  showMarketHoursNotice,
+}) => {
   const { darkMode, bgColorNew, borderColorBox, fontColor2, fontColor3, fontColor4 } =
     useThemeContext()
 
@@ -72,13 +78,17 @@ const RevertExitMechanics = ({ outputSymbol, strategyTokenSymbol }) => {
             than the strategy token.
           </RouteText>
           <BulletList $fontcolor={fontColor3} $markercolor={routeA.badgeFont}>
+            {hasExitFee && (
+              <li>
+                The amount received is net of the exit fee applied by the strategy operator at the
+                strategy level, which covers unwinding the position and the associated network
+                costs.
+              </li>
+            )}
             <li>
-              The amount received is net of the exit fee applied by the strategy operator at the
-              strategy level, which covers unwinding the position and the associated network costs.
-            </li>
-            <li>
-              Because the position is unwound through the market, the final amount settles at
-              execution and the panel quote is an estimate.
+              When the output token is not <b>{outputSymbol}</b>, the position is converted through
+              a market route, so the final amount settles at execution and the panel quote is an
+              estimate.
             </li>
           </BulletList>
         </RouteBox>
@@ -98,15 +108,21 @@ const RevertExitMechanics = ({ outputSymbol, strategyTokenSymbol }) => {
             </Badge>
           </RouteHead>
           <RouteText $fontcolor={fontColor2}>
-            fTokens are exchanged for the equivalent balance of <b>{strategyTokenSymbol}</b>, the
-            underlying strategy vault token, at the prevailing share price. No market route is used,
-            so the settlement is not exposed to slippage or swap pricing, or subject to exit fees.
+            fTokens are exchanged, at the prevailing share price, for their pro-rata share of{' '}
+            <b>{strategyTokenSymbol}</b>, the underlying strategy vault token, plus any idle{' '}
+            <b>{outputSymbol}</b>. No market route is used, so the settlement is not exposed to
+            slippage or swap pricing, or subject to exit fees.
           </RouteText>
           <BulletList $fontcolor={fontColor3} $markercolor={routeB.badgeFont}>
             <li>
-              The strategy vault token continues to accrue value at the issuer level. An exit fee
-              may still apply later, at the strategy operator level, when the token itself is
-              redeemed there.
+              The strategy vault token continues to accrue value at the issuer level.
+              {hasExitFee && (
+                <>
+                  {' '}
+                  An exit fee may still apply later, at the strategy operator level, when the token
+                  itself is redeemed there.
+                </>
+              )}
             </li>
             <li>
               Any rewards that Harvest autocompounds within this setup no longer apply to a position
@@ -119,6 +135,10 @@ const RevertExitMechanics = ({ outputSymbol, strategyTokenSymbol }) => {
             </li>
           </BulletList>
         </RouteBox>
+
+        {showMarketHoursNotice && (
+          <MarketHoursNotice margin="12px 0 0" inKindSymbol={strategyTokenSymbol} />
+        )}
       </Body>
     </HalfInfo>
   )
