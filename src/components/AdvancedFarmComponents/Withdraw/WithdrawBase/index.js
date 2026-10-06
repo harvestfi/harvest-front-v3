@@ -56,6 +56,7 @@ const WithdrawBase = ({
   defaultToken,
   pricePerFullShare,
   pickedToken,
+  nativeExitToken,
   showMarketHoursNotice,
   unstakeBalance,
   setUnstakeBalance,
@@ -685,7 +686,9 @@ const WithdrawBase = ({
             </NewLabel>
           </Tooltip>
         </ExitFeeInfoSection>
-        {showMarketHoursNotice && <MarketHoursNotice margin="20px 0 0" />}
+        {showMarketHoursNotice && (
+          <MarketHoursNotice margin="20px 0 0" inKindSymbol={nativeExitToken?.symbol} />
+        )}
       </BaseWidoDiv>
       <BaseWidoDiv $bordercolor={borderColorBox}>
         <NewLabel
