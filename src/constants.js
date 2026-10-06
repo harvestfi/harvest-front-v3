@@ -11,6 +11,7 @@ import ETHEREUM from './assets/images/chains/ethereum.svg'
 import POLYGON from './assets/images/chains/polygon.svg'
 import ZKSYNC from './assets/images/chains/zksync.svg'
 import HYPEREVM from './assets/images/chains/hype.svg'
+import FortyAcresIcon from './assets/images/logos/advancedfarm/fortyacres.svg'
 
 export const HARVEST_LAUNCH_DATE = new Date(1598986800000)
 
@@ -26,15 +27,57 @@ export const NATIVE_EXIT_ONE_WAY_TEXT =
   'accepted by the Autocompounder. Any subsequent redemption is handled solely by 40 ' +
   "Acres under its own terms, and availability, timing and value are outside Harvest's control."
 
+export const IPOR_NATIVE_EXIT_ONE_WAY_TEXT =
+  'Reverting in kind is one-way and cannot be undone. IPOR Fusion vault shares are not ' +
+  'accepted by the Autocompounder. Any subsequent redemption is handled solely by IPOR under ' +
+  "its own terms, and availability, timing and value are outside Harvest's control."
+
 export const NATIVE_EXIT_VAULTS = {
   '0xc777031d50f632083be7080e51e390709062263e': {
     chainId: CHAIN_IDS.BASE,
     symbol: 'fortyAcres_USDC',
     address: '0xB99B6dF96d4d5448cC0a5B3e0ef7896df9507Cf5',
     decimals: 6,
+    logoURI: FortyAcresIcon,
     oneWayText: NATIVE_EXIT_ONE_WAY_TEXT,
   },
+  // IPOR - Apple Carry Trade
+  '0x35ef1f2f187b326a93a3d74441f38fdcff85ce48': {
+    chainId: CHAIN_IDS.BASE,
+    symbol: 'AAPLCT',
+    address: '0x31744E44d6aF88225C1dBEFbe5Df8308fAeA641B',
+    decimals: 10,
+    oneWayText: IPOR_NATIVE_EXIT_ONE_WAY_TEXT,
+  },
+  // IPOR - Google Carry Trade
+  '0x23cd4f9a8251193b3ac798e4e52b542d63634438': {
+    chainId: CHAIN_IDS.BASE,
+    symbol: 'GOOGCT',
+    address: '0x01DBDB9748ECf71B1fFbb62f5cB41318531bA362',
+    decimals: 10,
+    oneWayText: IPOR_NATIVE_EXIT_ONE_WAY_TEXT,
+  },
+  // IPOR - Meta Carry Trade
+  '0xfe63614d41c70deccdf6b5770a8500e287a654a4': {
+    chainId: CHAIN_IDS.BASE,
+    symbol: 'METACT',
+    address: '0xCd19f18884bf388b866D05cDd1ae351133821F01',
+    decimals: 10,
+    oneWayText: IPOR_NATIVE_EXIT_ONE_WAY_TEXT,
+  },
+  // IPOR - Nvidia Carry Trade
+  '0xd14359c2addb2194cc7319084b7b2a1ac006ec5a': {
+    chainId: CHAIN_IDS.BASE,
+    symbol: 'NVDACT',
+    address: '0xFb132f4C6d9DCF4f80483Ea7D96C5A5dccfcFE83',
+    decimals: 10,
+    oneWayText: IPOR_NATIVE_EXIT_ONE_WAY_TEXT,
+  },
 }
+
+export const EQUITY_MARKET_HOURS_NOTICE =
+  "Exits from this vault may not be possible one hour before Friday's market close until one " +
+  "hour after Monday's market open due to tokenized equity oracle requirements."
 
 export const EXIT_FEE_TOOLTIP_TEXT =
   'The fee covers the cost of unwinding the position and the associated network fees. It is not ' +
@@ -81,7 +124,32 @@ export const REDEEM_IN_KIND_ABI = [
       { name: 'receiver', type: 'address' },
       { name: 'owner', type: 'address' },
     ],
-    outputs: [{ name: 'inKindShares', type: 'uint256' }],
+    outputs: [
+      { name: 'assetsOut', type: 'uint256' },
+      { name: 'poolSharesOut', type: 'uint256' },
+    ],
+  },
+  {
+    name: 'previewRedeemInKind',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'shares', type: 'uint256' }],
+    outputs: [
+      { name: 'assetsOut', type: 'uint256' },
+      { name: 'poolSharesOut', type: 'uint256' },
+    ],
+  },
+  {
+    name: 'RedeemInKind',
+    type: 'event',
+    inputs: [
+      { name: 'sender', type: 'address', indexed: true },
+      { name: 'receiver', type: 'address', indexed: true },
+      { name: 'owner', type: 'address', indexed: true },
+      { name: 'shares', type: 'uint256', indexed: false },
+      { name: 'assetsOut', type: 'uint256', indexed: false },
+      { name: 'poolSharesOut', type: 'uint256', indexed: false },
+    ],
   },
   {
     name: 'redeemInKindEnabled',
@@ -106,6 +174,13 @@ export const ERC4626_CONVERT_ABI = [
     stateMutability: 'view',
     inputs: [{ name: 'assets', type: 'uint256' }],
     outputs: [{ name: 'shares', type: 'uint256' }],
+  },
+  {
+    name: 'convertToAssets',
+    type: 'function',
+    stateMutability: 'view',
+    inputs: [{ name: 'shares', type: 'uint256' }],
+    outputs: [{ name: 'assets', type: 'uint256' }],
   },
 ]
 

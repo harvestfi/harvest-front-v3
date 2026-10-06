@@ -2,7 +2,7 @@ import BigNumber from 'bignumber.js'
 import React, { useState, useEffect, useRef } from 'react'
 import Modal from 'react-bootstrap/Modal'
 import { useMediaQuery } from 'react-responsive'
-import { encodeFunctionData, erc20Abi } from 'viem'
+import { encodeFunctionData, erc20Abi, parseEventLogs } from 'viem'
 import { toast } from 'react-toastify'
 import { isNaN } from 'lodash'
 import { BsArrowUp } from 'react-icons/bs'
@@ -30,7 +30,7 @@ import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
 import { getViem, fromWei } from '../../../../services/viem'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
-import { REDEEM_IN_KIND_ABI } from '../../../../constants'
+import { ERC4626_CONVERT_ABI, REDEEM_IN_KIND_ABI } from '../../../../constants'
 import AnimatedDots from '../../../AnimatedDots'
 import { getMatchedVaultList } from '../../../../utilities/parsers'
 import {
@@ -84,6 +84,7 @@ const WithdrawStart = ({
   revertFromInfoUsdAmount,
   revertMinReceivedAmount,
   revertMinReceivedUsdAmount,
+  revertInKindAssetsAmount,
   setUnstakeInputValue,
   setRevertSuccess,
 }) => {
@@ -111,6 +112,7 @@ const WithdrawStart = ({
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
   const [revertedAmount, setRevertedAmount] = useState('')
   const [revertedAmountUsd, setRevertedAmountUsd] = useState('')
+  const [revertedInKindAssets, setRevertedInKindAssets] = useState('')
   const { handleWithdraw, handleIPORWithdraw } = useActions()
   const { vaultsData } = useVaults()
   const { rates } = useRate()
@@ -164,6 +166,8 @@ const WithdrawStart = ({
 
   const chainId = token.chain || token.data.chain
   const fromToken = token.vaultAddress || token.tokenAddress
+  const inKindAssetsShown =
+    (progressStep === 4 ? revertedInKindAssets : revertInKindAssetsAmount) || ''
 
   const isMobile = useMediaQuery({ query: '(max-width: 992px)' })
 
@@ -241,9 +245,13 @@ const WithdrawStart = ({
           setProgressStep(3)
           setButtonName('Pending Confirmation in Wallet')
           setStartSpinner(true)
+          setRevertedInKindAssets('')
+          setRevertedAmountUsd('')
 
           const nativeVaultAddress = pickedToken.address
-          const underlyingDecimals = token.vaultDecimals || token.decimals
+          const shares = BigInt(
+            new BigNumber(unstakeBalance.toString()).integerValue(BigNumber.ROUND_DOWN).toFixed(),
+          )
           const walletClient = await getViem(chainId, account, viem)
           const publicClient = await getViem(chainId, false, viem)
 
@@ -265,11 +273,15 @@ const WithdrawStart = ({
               !publicClient ||
               typeof publicClient.waitForTransactionReceipt !== 'function'
             )
-              return
+              return null
             try {
-              await publicClient.waitForTransactionReceipt({ hash, timeout: RECEIPT_TIMEOUT })
+              return await publicClient.waitForTransactionReceipt({
+                hash,
+                timeout: RECEIPT_TIMEOUT,
+              })
             } catch (receiptErr) {
               console.debug('Receipt wait failed, falling back to balance polling: ', receiptErr)
+              return null
             }
           }
 
@@ -286,37 +298,86 @@ const WithdrawStart = ({
           }
 
           const sharesBefore = await readBalance(nativeVaultAddress)
+          const assetsBefore = await readBalance(token.tokenAddress).catch(() => null)
           const redeemData = encodeFunctionData({
             abi: REDEEM_IN_KIND_ABI,
             functionName: 'redeemInKind',
-            args: [BigInt(unstakeBalance.toString()), account, account],
+            args: [shares, account, account],
           })
           const redeemHash = await walletClient.sendTransaction({
             account,
             to: fromToken,
             data: redeemData,
           })
-          await waitForReceipt(redeemHash)
+          const receipt = await waitForReceipt(redeemHash)
+          if (receipt && receipt.status === 'reverted') {
+            throw new Error(`redeemInKind reverted: ${redeemHash}`)
+          }
 
-          const sharesAfter = await waitForBalanceAbove(nativeVaultAddress, sharesBefore)
-          const sharesReceived = sharesAfter.minus(sharesBefore).toFixed(0)
+          let sharesReceived = null,
+            assetsReceived = null
+          const [redeemEvent] = receipt
+            ? parseEventLogs({
+                abi: REDEEM_IN_KIND_ABI,
+                eventName: 'RedeemInKind',
+                logs: receipt.logs.filter(
+                  log => log.address && log.address.toLowerCase() === fromToken.toLowerCase(),
+                ),
+              })
+            : []
+          if (redeemEvent) {
+            sharesReceived = redeemEvent.args.poolSharesOut.toString()
+            assetsReceived = redeemEvent.args.assetsOut.toString()
+          } else {
+            try {
+              const sharesAfter = await waitForBalanceAbove(nativeVaultAddress, sharesBefore)
+              if (sharesAfter.isGreaterThan(sharesBefore)) {
+                sharesReceived = sharesAfter.minus(sharesBefore).toFixed(0)
+                if (assetsBefore) {
+                  const assetsAfter = await readBalance(token.tokenAddress)
+                  assetsReceived = BigNumber.max(assetsAfter.minus(assetsBefore), 0).toFixed(0)
+                }
+              }
+            } catch (readErr) {
+              console.debug('Reading the in-kind payout failed, showing the quote: ', readErr)
+            }
+          }
 
-          setRevertedAmount(fromWei(sharesReceived, pickedToken.decimals, pickedToken.decimals))
-          const assets = await publicClient.readContract({
-            address: fromToken,
-            abi: REDEEM_IN_KIND_ABI,
-            functionName: 'convertToAssets',
-            args: [BigInt(unstakeBalance.toString())],
-          })
-          const assetsDecimal = fromWei(
-            assets.toString(),
-            underlyingDecimals,
-            underlyingDecimals,
-            true,
+          setRevertedAmount(
+            sharesReceived !== null
+              ? fromWei(sharesReceived, pickedToken.decimals, pickedToken.decimals)
+              : revertMinReceivedAmount || '-',
           )
-          setRevertedAmountUsd(
-            formatNumberWido(Number(assetsDecimal) * Number(token.usdPrice || 0)),
-          )
+          if (assetsReceived === null) {
+            setRevertedInKindAssets(revertInKindAssetsAmount || '')
+          } else if (new BigNumber(assetsReceived).gt(0)) {
+            setRevertedInKindAssets(
+              new BigNumber(
+                fromWei(assetsReceived, pickedToken.assetDecimals, pickedToken.assetDecimals),
+              ).toString(),
+            )
+          }
+          if (sharesReceived !== null && assetsReceived !== null) {
+            const sharesAssets = await publicClient
+              .readContract({
+                address: nativeVaultAddress,
+                abi: ERC4626_CONVERT_ABI,
+                functionName: 'convertToAssets',
+                args: [BigInt(sharesReceived)],
+              })
+              .catch(() => null)
+            if (sharesAssets !== null) {
+              const assetsDecimal = fromWei(
+                new BigNumber(sharesAssets.toString()).plus(assetsReceived).toFixed(),
+                pickedToken.assetDecimals,
+                pickedToken.assetDecimals,
+                true,
+              )
+              setRevertedAmountUsd(
+                formatNumberWido(Number(assetsDecimal) * Number(token.usdPrice || 0)),
+              )
+            }
+          }
           isSuccess = true
         } catch (err) {
           console.error('Native in-kind revert failed: ', err)
@@ -638,7 +699,9 @@ const WithdrawStart = ({
                   <>
                     <div data-tip id="modal-fToken-receive-revert">
                       {!pickedDefaultToken && progressStep === 4 ? (
-                        revertedAmount !== '' ? (
+                        revertedAmount === '-' ? (
+                          '-'
+                        ) : revertedAmount !== '' ? (
                           showTokenBalance(revertedAmount)
                         ) : (
                           <AnimateDotDiv>
@@ -685,6 +748,11 @@ const WithdrawStart = ({
                     </Tooltip>
                   </>
                   <span>{pickedToken.symbol}</span>
+                  {pickedToken.nativeExit && inKindAssetsShown !== '' && (
+                    <span>
+                      + {showTokenBalance(inKindAssetsShown)} {pickedToken.assetSymbol}
+                    </span>
+                  )}
                 </>
                 <span>
                   {!pickedDefaultToken && progressStep === 4 ? (
