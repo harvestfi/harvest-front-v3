@@ -27,7 +27,6 @@ import TickCross from '../../assets/images/logos/tick-cross.svg'
 import BaseAutopilotUSDC from '../../assets/images/logos/advancedfarm/BaseAutopilotUSDC.svg'
 import BaseAutopilotcbBTC from '../../assets/images/logos/advancedfarm/BaseAutopilotcbBTC.svg'
 import BaseAutopilotwETH from '../../assets/images/logos/advancedfarm/BaseAutopilotwETH.svg'
-import FortyAcresIcon from '../../assets/images/logos/advancedfarm/fortyacres.svg'
 import MorphoIcon from '../../assets/images/ui/morpho.svg'
 import AnimatedDots from '../../components/AnimatedDots'
 import DepositBase from '../../components/AdvancedFarmComponents/Deposit/DepositBase'
@@ -88,6 +87,7 @@ import {
   chainList,
   historyTags,
   NATIVE_EXIT_VAULTS,
+  REDEEM_IN_KIND_ABI,
   EXIT_MECHANICS_VAULTS,
   EXIT_FEE_ABI,
   EXIT_FEE_WAD_PER_BPS,
@@ -116,6 +116,7 @@ import {
 } from '../../utilities/parsers'
 import { getAdvancedRewardText } from '../../utilities/html'
 import { getUnderlyingSymbol } from '../../utilities/pairAssets'
+import { isStockVault } from '../../utilities/stockAssets'
 import {
   getCoinListFromApi,
   getLastHarvestInfo,
@@ -277,6 +278,7 @@ const AdvancedFarm = () => {
   const [revertFromInfoUsdAmount, setRevertFromInfoUsdAmount] = useState('')
   const [revertMinReceivedAmount, setRevertMinReceivedAmount] = useState('')
   const [revertMinReceivedUsdAmount, setRevertMinReceivedUsdAmount] = useState('')
+  const [revertInKindAssetsAmount, setRevertInKindAssetsAmount] = useState('')
   const [revertSuccess, setRevertSuccess] = useState(false)
   const [hasErrorOccurredRevert, setHasErrorOccurredRevert] = useState(0)
 
@@ -727,27 +729,72 @@ const AdvancedFarm = () => {
     Number(token.vaultPrice) || Number(token.usdPrice) * Number(pricePerFullShare) || 0
   const underlyingPrice = get(token, 'usdPrice', 0)
 
+  const nativeExitConfig = useMemo(
+    () => NATIVE_EXIT_VAULTS[get(token, 'vaultAddress', '').toLowerCase()] || null,
+    [token],
+  )
+
+  const [inKindDisabled, setInKindDisabled] = useState(false)
+
+  useEffect(() => {
+    let cancelled = false
+    setInKindDisabled(false)
+    if (!nativeExitConfig) {
+      return () => {
+        cancelled = true
+      }
+    }
+    const readInKindEnabled = async () => {
+      try {
+        const viemClient = await getViem(tokenChain, null)
+        const enabled = await viemClient.readContract({
+          address: token.vaultAddress,
+          abi: REDEEM_IN_KIND_ABI,
+          functionName: 'redeemInKindEnabled',
+        })
+        if (!cancelled && enabled === false) {
+          setInKindDisabled(true)
+        }
+      } catch (err) {
+        console.error('Failed to read in-kind redemption status: ', err)
+      }
+    }
+    readInKindEnabled()
+    return () => {
+      cancelled = true
+    }
+  }, [nativeExitConfig, token.vaultAddress, tokenChain])
+
+  useEffect(() => {
+    if (inKindDisabled) {
+      setPickedTokenWith(prev => (prev && prev.nativeExit ? { symbol: 'Select' } : prev))
+    }
+  }, [inKindDisabled])
+
   // "Revert in kind" — the native strategy token users can exit into from the Revert
   // panel (see NATIVE_EXIT_VAULTS). Null for vaults that don't support an in-kind exit.
   const nativeExitToken = useMemo(() => {
-    const cfg = NATIVE_EXIT_VAULTS[get(token, 'vaultAddress', '').toLowerCase()]
-    if (!cfg) {
+    if (!nativeExitConfig || inKindDisabled) {
       return null
     }
     return {
-      symbol: cfg.symbol,
-      address: cfg.address,
-      decimals: cfg.decimals,
-      chainId: parseInt(cfg.chainId, 10),
-      logoURI: FortyAcresIcon,
+      symbol: nativeExitConfig.symbol,
+      address: nativeExitConfig.address,
+      decimals: nativeExitConfig.decimals,
+      chainId: parseInt(nativeExitConfig.chainId, 10),
+      logoURI: nativeExitConfig.logoURI || get(token, 'logoUrl[0]', '').substring(1),
       usdPrice: underlyingPrice,
       balance: '0',
       usdValue: 0,
       nativeExit: true,
-      oneWay: cfg.oneWay !== false,
-      oneWayText: cfg.oneWayText,
+      oneWay: nativeExitConfig.oneWay !== false,
+      oneWayText: nativeExitConfig.oneWayText,
+      assetSymbol: underlyingSymbol,
+      assetDecimals: tokenDecimals,
     }
-  }, [token, underlyingPrice])
+  }, [nativeExitConfig, inKindDisabled, token, underlyingPrice, underlyingSymbol, tokenDecimals])
+
+  const showMarketHoursNotice = isStockVault(token)
 
   // Once a user has reverted in kind they hold the native strategy token, and Portals
   // returns it in the wallet balance list under its own symbol (e.g. "VAULT"). Fold
@@ -1384,8 +1431,25 @@ const AdvancedFarm = () => {
     }
   }, [sharePricesData, token])
 
+  const withdrawStartRef = useRef(withdrawStart)
+  withdrawStartRef.current = withdrawStart
+  const skippedAutoPickRef = useRef(false)
+
+  useEffect(() => {
+    if (!withdrawStart && skippedAutoPickRef.current) {
+      skippedAutoPickRef.current = false
+      if (defaultToken !== null) {
+        setPickedTokenWith(defaultToken)
+      }
+    }
+  }, [withdrawStart, defaultToken])
+
   useEffect(() => {
     const timer = setTimeout(() => {
+      if (withdrawStartRef.current) {
+        skippedAutoPickRef.current = true
+        return
+      }
       if (defaultToken !== null) {
         let tokenToSet = null
 
@@ -2925,7 +2989,11 @@ const AdvancedFarm = () => {
                     />
                   )}
                   {!isMobile && !isLoopingVault && (
-                    <SourceOfYield token={token} vaultPool={vaultPool} />
+                    <SourceOfYield
+                      token={token}
+                      vaultPool={vaultPool}
+                      showMarketHoursNotice={showMarketHoursNotice}
+                    />
                   )}
                 </>
               ) : (
@@ -3030,6 +3098,7 @@ const AdvancedFarm = () => {
                             pricePerFullShare={pricePerFullShare}
                             pickedToken={pickedTokenWith}
                             nativeExitToken={nativeExitWalletToken}
+                            showMarketHoursNotice={showMarketHoursNotice}
                             exitFeeBps={exitFeeBps}
                             unstakeBalance={unstakeBalance}
                             setUnstakeBalance={setUnstakeBalance}
@@ -3048,6 +3117,8 @@ const AdvancedFarm = () => {
                             revertMinReceivedAmount={revertMinReceivedAmount}
                             revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
                             setRevertMinReceivedUsdAmount={setRevertMinReceivedUsdAmount}
+                            revertInKindAssetsAmount={revertInKindAssetsAmount}
+                            setRevertInKindAssetsAmount={setRevertInKindAssetsAmount}
                             hasErrorOccurred={hasErrorOccurredRevert}
                             setHasErrorOccurred={setHasErrorOccurredRevert}
                           />
@@ -3083,6 +3154,7 @@ const AdvancedFarm = () => {
                             revertFromInfoUsdAmount={revertFromInfoUsdAmount}
                             revertMinReceivedAmount={revertMinReceivedAmount}
                             revertMinReceivedUsdAmount={revertMinReceivedUsdAmount}
+                            revertInKindAssetsAmount={revertInKindAssetsAmount}
                             setUnstakeInputValue={setUnstakeInputValue}
                             setRevertSuccess={setRevertSuccess}
                           />
@@ -3685,7 +3757,11 @@ const AdvancedFarm = () => {
                     />
                   )}
                   {isMobile && !isLoopingVault && (
-                    <SourceOfYield token={token} vaultPool={vaultPool} />
+                    <SourceOfYield
+                      token={token}
+                      vaultPool={vaultPool}
+                      showMarketHoursNotice={showMarketHoursNotice}
+                    />
                   )}
                 </RestInternal>
               ) : (

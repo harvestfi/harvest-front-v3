@@ -12,6 +12,7 @@ import CloseIcon from '../../../../assets/images/logos/beginners/close.svg'
 import {
   ERC4626_CONVERT_ABI,
   EXIT_FEE_TOOLTIP_TEXT,
+  REDEEM_IN_KIND_ABI,
   USD_BALANCES_DECIMALS,
 } from '../../../../constants'
 import { useWallet } from '../../../../providers/Wallet'
@@ -22,6 +23,7 @@ import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
 import TokenLogo from '../../../TokenLogo'
 import Button from '../../../Button'
+import MarketHoursNotice from '../../MarketHoursNotice'
 import {
   BaseWidoDiv,
   NewLabel,
@@ -54,6 +56,7 @@ const WithdrawBase = ({
   defaultToken,
   pricePerFullShare,
   pickedToken,
+  showMarketHoursNotice,
   unstakeBalance,
   setUnstakeBalance,
   balanceList,
@@ -68,6 +71,8 @@ const WithdrawBase = ({
   revertMinReceivedAmount,
   revertMinReceivedUsdAmount,
   setRevertMinReceivedUsdAmount,
+  revertInKindAssetsAmount,
+  setRevertInKindAssetsAmount,
   hasErrorOccurred,
   setHasErrorOccurred,
   exitFeeBps,
@@ -127,6 +132,7 @@ const WithdrawBase = ({
       : ''
 
   useEffect(() => {
+    let cancelled = false
     if (
       account &&
       pickedToken.symbol !== 'Select' &&
@@ -138,6 +144,7 @@ const WithdrawBase = ({
         setRevertFromInfoUsdAmount('')
         setRevertMinReceivedAmount('')
         setRevertMinReceivedUsdAmount('')
+        setRevertInKindAssetsAmount('')
         const amount = unstakeBalance
         let portalsEstimate
         try {
@@ -146,7 +153,8 @@ const WithdrawBase = ({
             minReceivedString = '',
             minReceivedUsdString,
             outputAmountDefault = '',
-            nativeExitAssets = ''
+            nativeExitAssets = '',
+            inKindAssetsOut = '0'
           const toToken = pickedToken.address
 
           const isNativeExit = !!pickedToken.nativeExit
@@ -156,7 +164,53 @@ const WithdrawBase = ({
               defaultToken.address &&
               pickedToken.address.toLowerCase() === defaultToken.address.toLowerCase())
 
-          if (pickedDefaultToken) {
+          if (isNativeExit) {
+            const publicClient = await getViem(tokenChain, false, viem)
+            const shares = BigInt(
+              new BigNumber(unstakeBalance.toString()).integerValue(BigNumber.ROUND_DOWN).toFixed(),
+            )
+            const vaultDecimals = token.vaultDecimals || token.decimals
+            const sharesDecimals = fromWei(unstakeBalance, vaultDecimals, vaultDecimals)
+            const sharePriceAssets = toWei(
+              new BigNumber(sharesDecimals.toString())
+                .times(new BigNumber(pricePerFullShare))
+                .toString(),
+              pickedToken.assetDecimals,
+              0,
+            )
+            try {
+              const [assetsOut, poolSharesOut] = await publicClient.readContract({
+                address: fromToken,
+                abi: REDEEM_IN_KIND_ABI,
+                functionName: 'previewRedeemInKind',
+                args: [shares],
+              })
+              outputAmountDefault = poolSharesOut.toString()
+              inKindAssetsOut = assetsOut.toString()
+              const poolSharesAssets = await publicClient
+                .readContract({
+                  address: pickedToken.address,
+                  abi: ERC4626_CONVERT_ABI,
+                  functionName: 'convertToAssets',
+                  args: [poolSharesOut],
+                })
+                .catch(() => null)
+              nativeExitAssets =
+                poolSharesAssets !== null
+                  ? (poolSharesAssets + assetsOut).toString()
+                  : sharePriceAssets
+            } catch (previewErr) {
+              console.error('In-kind preview failed, estimating from share price: ', previewErr)
+              nativeExitAssets = sharePriceAssets
+              const inKindShares = await publicClient.readContract({
+                address: pickedToken.address,
+                abi: ERC4626_CONVERT_ABI,
+                functionName: 'convertToShares',
+                args: [BigInt(new BigNumber(nativeExitAssets).toFixed(0))],
+              })
+              outputAmountDefault = inKindShares.toString()
+            }
+          } else if (pickedDefaultToken) {
             const unstakeBalanceDecimals = fromWei(
               unstakeBalance,
               pickedToken.decimals,
@@ -166,17 +220,6 @@ const WithdrawBase = ({
               .times(new BigNumber(pricePerFullShare))
               .toString()
             outputAmountDefault = toWei(outputAmountDefaultDecimals, pickedToken.decimals, 0)
-            if (isNativeExit) {
-              nativeExitAssets = outputAmountDefault
-              const publicClient = await getViem(tokenChain, false, viem)
-              const inKindShares = await publicClient.readContract({
-                address: pickedToken.address,
-                abi: ERC4626_CONVERT_ABI,
-                functionName: 'convertToShares',
-                args: [BigInt(new BigNumber(nativeExitAssets).toFixed(0))],
-              })
-              outputAmountDefault = inKindShares.toString()
-            }
           } else {
             portalsEstimate = await getPortalsEstimate({
               chainId,
@@ -187,6 +230,9 @@ const WithdrawBase = ({
               sender: account,
             })
           }
+          if (cancelled) {
+            return
+          }
 
           if (pickedDefaultToken || portalsEstimate.succeed) {
             let fromTokenUsdPrice, toTokenUsdPrice, fromTokenDetail, toTokenDetail
@@ -195,6 +241,9 @@ const WithdrawBase = ({
               toTokenUsdPrice = pickedToken.usdPrice
             } else {
               const tokenDetails = await getPortalsTokensBatch(chainId, [fromToken, toToken])
+              if (cancelled) {
+                return
+              }
               fromTokenDetail = tokenDetails.find(
                 token => token.address.toLowerCase() === fromToken.toLowerCase(),
               )
@@ -248,7 +297,12 @@ const WithdrawBase = ({
             ).toString()
             minReceivedUsdString = isNativeExit
               ? formatNumberWido(
-                  fromWei(nativeExitAssets, defaultDecimal, defaultDecimal, true) * toTokenUsdPrice,
+                  fromWei(
+                    nativeExitAssets,
+                    pickedToken.assetDecimals,
+                    pickedToken.assetDecimals,
+                    true,
+                  ) * toTokenUsdPrice,
                   USD_BALANCES_DECIMALS,
                 )
               : formatNumberWido(
@@ -272,6 +326,13 @@ const WithdrawBase = ({
             }
             setRevertFromInfoAmount(fromInfoValue)
             setRevertMinReceivedAmount(minReceivedString)
+            if (new BigNumber(inKindAssetsOut).gt(0)) {
+              setRevertInKindAssetsAmount(
+                new BigNumber(
+                  fromWei(inKindAssetsOut, pickedToken.assetDecimals, pickedToken.assetDecimals),
+                ).toString(),
+              )
+            }
             setHasErrorOccurred(0)
           } else {
             setRevertFromInfoAmount('-')
@@ -293,6 +354,9 @@ const WithdrawBase = ({
       }
       getQuoteResult()
     }
+    return () => {
+      cancelled = true
+    }
   }, [
     account,
     tokenChain,
@@ -309,12 +373,19 @@ const WithdrawBase = ({
     setRevertFromInfoUsdAmount,
     setRevertMinReceivedAmount,
     setRevertMinReceivedUsdAmount,
+    setRevertInKindAssetsAmount,
     exitFeeBps,
     getPortalsEstimate,
     getPortalsTokensBatch,
     currencySym,
     currencyRate,
   ])
+
+  useEffect(() => {
+    if (!pickedToken.nativeExit) {
+      setRevertInKindAssetsAmount('')
+    }
+  }, [pickedToken, setRevertInKindAssetsAmount])
 
   useEffect(() => {
     if (account) {
@@ -361,6 +432,12 @@ const WithdrawBase = ({
   ]
 
   const showExitFeeNotice = Number(exitFeeBps) > 0 && !pickedToken.nativeExit
+  const showInKindAssets =
+    !!pickedToken.nativeExit &&
+    revertInKindAssetsAmount !== '' &&
+    !!account &&
+    !new BigNumber(unstakeBalance.toString()).isEqualTo(0) &&
+    curChain === tokenChain
   const exitFeeLabel =
     Number(exitFeeBps) > 0
       ? `${new BigNumber(exitFeeBps).div(100).decimalPlaces(3).toString()}%`
@@ -608,6 +685,7 @@ const WithdrawBase = ({
             </NewLabel>
           </Tooltip>
         </ExitFeeInfoSection>
+        {showMarketHoursNotice && <MarketHoursNotice margin="20px 0 0" />}
       </BaseWidoDiv>
       <BaseWidoDiv $bordercolor={borderColorBox}>
         <NewLabel
@@ -694,6 +772,11 @@ const WithdrawBase = ({
                 <span className="token-symbol">
                   {pickedToken.symbol !== 'Select' ? pickedToken.symbol : 'Output Token'}
                 </span>
+                {showInKindAssets && (
+                  <span className="token-symbol">
+                    + {showTokenBalance(revertInKindAssetsAmount)} {pickedToken.assetSymbol}
+                  </span>
+                )}
               </>
               <span className="token-symbol">
                 {unstakeInputValue === '0' ||
