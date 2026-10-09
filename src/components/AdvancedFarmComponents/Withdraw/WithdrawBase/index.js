@@ -23,6 +23,7 @@ import { useThemeContext } from '../../../../providers/useThemeContext'
 import AnimatedDots from '../../../AnimatedDots'
 import TokenLogo from '../../../TokenLogo'
 import Button from '../../../Button'
+import ExitSuggestion, { useExitSuggestion } from '../../ExitSuggestion'
 import MarketHoursNotice from '../../MarketHoursNotice'
 import {
   BaseWidoDiv,
@@ -46,6 +47,15 @@ import {
 } from './style'
 import { usePortals } from '../../../../providers/Portals'
 import { getChainName } from '../../../../utilities/parsers'
+
+const OUTLINE_TINTS = {
+  light: { back: '#ffffff', hover: '#f6fef3', active: '#ecfdf3' },
+  dark: {
+    back: 'transparent',
+    hover: 'rgba(93, 207, 70, 0.08)',
+    active: 'rgba(93, 207, 70, 0.16)',
+  },
+}
 
 const WithdrawBase = ({
   setSelectToken,
@@ -100,6 +110,7 @@ const WithdrawBase = ({
 
   const { account, viem, connected, connectAction, chainId } = useWallet()
   const { getPortalsEstimate, getPortalsTokensBatch } = usePortals()
+  const exitSuggestion = useExitSuggestion(token)
 
   const { rates } = useRate()
   const [currencySym, setCurrencySym] = useState('$')
@@ -443,6 +454,8 @@ const WithdrawBase = ({
     Number(exitFeeBps) > 0
       ? `${new BigNumber(exitFeeBps).div(100).decimalPlaces(3).toString()}%`
       : ''
+  const showExitSuggestion = !!exitSuggestion && !pickedToken.nativeExit
+  const outlineTint = OUTLINE_TINTS[darkMode ? 'dark' : 'light']
 
   return (
     <>
@@ -797,13 +810,16 @@ const WithdrawBase = ({
             </NewLabel>
           </NewLabel>
         </NewLabel>
+        {showExitSuggestion && <ExitSuggestion suggestion={exitSuggestion} />}
         <NewLabel>
           <Button
-            $fontcolor="wido-deposit"
+            $fontcolor={showExitSuggestion ? 'wido-outline' : 'wido-deposit'}
             $width="100%"
             $btncolor={btnColor}
-            $btnhovercolor={btnHoverColor}
-            $btnactivecolor={btnActiveColor}
+            $backcolor={outlineTint.back}
+            $btnhovercolor={showExitSuggestion ? outlineTint.hover : btnHoverColor}
+            $btnactivecolor={showExitSuggestion ? outlineTint.active : btnActiveColor}
+            $focuscolor={fontColor2}
             $size="md"
             onClick={async () => {
               if (!connected) {

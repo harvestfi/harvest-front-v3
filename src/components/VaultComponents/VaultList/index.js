@@ -13,6 +13,7 @@ import {
   FARM_TOKEN_SYMBOL,
   IFARM_TOKEN_SYMBOL,
   MAX_DECIMALS,
+  PINNED_VAULTS,
   PROMOTED_VAULTS,
   chainList,
 } from '../../../constants'
@@ -24,7 +25,7 @@ import { useVaults } from '../../../providers/Vault'
 import { useWallet } from '../../../providers/Wallet'
 import { isSpecialApp } from '../../../utilities/formats'
 import { getTotalApy } from '../../../utilities/parsers'
-import { getPromotedRank } from '../../../utilities/promotedVaults'
+import { getPinnedRank, getPromotedRank } from '../../../utilities/promotedVaults'
 import { isStockVault } from '../../../utilities/stockAssets'
 import { getPublishDate } from '../../../utilities/apiCalls'
 import VaultPanel from '../VaultPanel'
@@ -289,11 +290,18 @@ const formatVaults = (
   }
   vaultsSymbol = [...new Set(vaultsSymbol)]
 
-  vaultsSymbol = orderBy(vaultsSymbol, v => {
-    const promotedRank = getPromotedRank(groupOfVaults[v])
+  vaultsSymbol = orderBy(vaultsSymbol, [
+    v => {
+      const pinnedRank = getPinnedRank(groupOfVaults[v])
 
-    return promotedRank === -1 ? PROMOTED_VAULTS.length : promotedRank
-  })
+      return pinnedRank === -1 ? PINNED_VAULTS.length : pinnedRank
+    },
+    v => {
+      const promotedRank = getPromotedRank(groupOfVaults[v])
+
+      return promotedRank === -1 ? PROMOTED_VAULTS.length : promotedRank
+    },
+  ])
 
   return { vaultsSymbol, totalVaultsCount }
 }
