@@ -233,6 +233,41 @@ const ButtonStyle = styled.button`
       : ''}
 
   ${props =>
+    props.$fontcolor === 'wido-outline'
+      ? `
+      background: ${props.$backcolor};
+      box-shadow: inset 0 0 0 1.5px ${props.$btncolor};
+      font-weight: 600;
+      font-size: 16px;
+      line-height: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: ${props.$btncolor};
+      padding: 15px 18px;
+      border-radius: 8px;
+      ${
+        !props.$disabled
+          ? `
+      &:hover {
+        background: ${props.$btnhovercolor};
+      }`
+          : ''
+      }
+
+      &:active {
+        background: ${props.$btnactivecolor};
+      }
+
+      &:focus-visible {
+        outline: 2px solid ${props.$focuscolor};
+        outline-offset: 2px;
+      }
+      `
+      : ''}
+
+  ${props =>
     props.$fontcolor === 'subscribe'
       ? `
       background: ${props.$btncolor};
