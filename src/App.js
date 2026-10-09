@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter as Router, Routes, Route, Navigate, useParams } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
 import Tutorial from './pages/Tutorial'
 import Settings from './pages/Settings'
@@ -68,6 +68,12 @@ const NewLoginModal = () => {
   )
 }
 
+const AdvancedFarmPage = () => {
+  const { network, paramAddress } = useParams()
+
+  return <AdvancedFarm key={`${network}/${paramAddress}`.toLowerCase()} />
+}
+
 const App = () => (
   <Router>
     <Providers>
@@ -92,7 +98,7 @@ const App = () => (
           />
           <Route path={ROUTES.LiveSupport} element={<LiveSupport />} />
           <Route path={ROUTES.ANALYTIC} element={<Analytic />} />
-          <Route path={ROUTES.ADVANCEDFARM} element={<AdvancedFarm />} />
+          <Route path={ROUTES.ADVANCEDFARM} element={<AdvancedFarmPage />} />
           <Route path={ROUTES.FAQ} element={<FAQ />} />
           <Route path={ROUTES.LEADERBOARD} element={<LeaderBoard />} />
           <Route path={ROUTES.MIGRATE} element={<Migrate />} />

@@ -22,6 +22,10 @@ export const PROMOTED_VAULTS = [
   '0xbce1b3ac78b895c69f91e446c8f654bc1c40a3b8', // IPOR - Bitcoin Dollar USDC
 ]
 
+export const PINNED_VAULTS = [
+  '0xe78285a51f51916f2311b7017db036d8351f3cf9', // Aave - Looping WETH
+]
+
 export const NATIVE_EXIT_ONE_WAY_TEXT =
   'Reverting in kind is one-way and cannot be undone. 40 Acres vault shares are not ' +
   'accepted by the Autocompounder. Any subsequent redemption is handled solely by 40 ' +
@@ -100,6 +104,16 @@ export const EXIT_MECHANICS_VAULTS = {
   '0x0d39d6ef06a3a5c2408db195d9af2ea7a8d52b92': {
     withdrawManager: '0x26cE30D9A024fb74af3341383eaC32438179d0Ea',
     strategyVault: '0x7659fc26bf3A63E8133BbECB7E16ACD48EE8E292',
+  },
+}
+
+// A related vault suggested in the Revert panel of the keyed vault. Name, logo and APY are read
+// from the suggested vault's own data; only the strategy label is set here.
+export const EXIT_SUGGESTION_VAULTS = {
+  // Autopilot - WETH (Base) -> Aave - Looping WETH
+  '0x7872893e528fe2c0829e405960db5b742112aa97': {
+    vaultAddress: '0xe78285a51f51916f2311b7017db036d8351f3cf9',
+    label: 'Automated Looping',
   },
 }
 
