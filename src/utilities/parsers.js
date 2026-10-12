@@ -463,12 +463,12 @@ const mergeArrays = (rewardsAPIData, totalHistoryData) => {
 
 export const handleToggle = setter => () => setter(prev => !prev)
 
-export const calculateApyValue = (vaultHData, latestSharePriceValue, vaultData, periodDays) => {
+export const calculateApy = (vaultHData, latestSharePriceValue, vaultData, periodDays) => {
   const filteredData = vaultHData.filter(
     entry => Number(entry.timestamp) >= Number(vaultHData[0].timestamp) - periodDays * 24 * 3600,
   )
 
-  if (filteredData.length === 0) return null
+  if (filteredData.length === 0) return '0%'
 
   const initialSharePrice = fromWei(
     filteredData[filteredData.length - 1].sharePrice,
@@ -477,15 +477,10 @@ export const calculateApyValue = (vaultHData, latestSharePriceValue, vaultData, 
     false,
   )
 
-  return ((latestSharePriceValue - initialSharePrice) / (periodDays / 365)) * 100
-}
-
-export const calculateApy = (vaultHData, latestSharePriceValue, vaultData, periodDays) => {
-  const apy = calculateApyValue(vaultHData, latestSharePriceValue, vaultData, periodDays)
-
-  if (apy === null) return '0%'
-
-  return `${formatNumber(apy, 2)}%`
+  return `${formatNumber(
+    ((latestSharePriceValue - initialSharePrice) / (periodDays / 365)) * 100,
+    2,
+  )}%`
 }
 
 const COLOR_PALETTE = [
