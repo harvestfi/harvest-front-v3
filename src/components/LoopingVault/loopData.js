@@ -104,8 +104,7 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
   const protocol =
     typeof platformStr === 'string' && platformStr.includes('Aave') ? 'Aave V3' : 'Aave'
 
-  const displayApy = num(token.estimatedApy)
-  const liveApy = token.liveApy != null ? num(token.liveApy) : displayApy
+  const liveApy = num(token.estimatedApy)
   const livePps = num(token.pricePerFullShare)
   const sharePrice = livePps > 0 ? livePps / 1e18 : 1
   const tvlUsd = num(token.totalValueLocked)
@@ -208,9 +207,8 @@ export const buildLoopData = (token = {}, id, chain = null, extras = {}) => {
     },
 
     apy: {
-      total: Number(displayApy.toFixed(2)),
-      daily: Number((displayApy / 365).toFixed(3)),
-      live: Number(liveApy.toFixed(2)),
+      total: Number(liveApy.toFixed(2)),
+      daily: Number((liveApy / 365).toFixed(3)),
       breakdown: [
         {
           label: `${collateralSymbol} staking yield`,

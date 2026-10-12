@@ -281,7 +281,7 @@ export const fetchLoopPosition = async ({
   usdPrice = 0,
   pricePerShare = 0,
 }) => {
-  const empty = { vaultShares: 0, usdValue: 0, assets: 0 }
+  const empty = { vaultShares: 0, vaultSharesExact: '0', usdValue: 0, assets: 0 }
   if (!account || !vaultAddress) return empty
 
   try {
@@ -293,6 +293,8 @@ export const fetchLoopPosition = async ({
     ])
 
     const vaultShares = toTokenAmount(vsRaw)
+    const vaultSharesExact =
+      vsRaw == null ? '0' : new BigNumber(vsRaw.toString()).shiftedBy(-VAULT_DECIMALS).toFixed()
     const assets = toTokenAmount(assetsRaw)
     const pps =
       ppsRaw != null && new BigNumber(ppsRaw.toString()).gt(0)
@@ -301,7 +303,7 @@ export const fetchLoopPosition = async ({
     const usdValue =
       Number(usdPrice) > 0 ? (assets > 0 ? assets : vaultShares * pps) * Number(usdPrice) : 0
 
-    return { vaultShares, usdValue, assets }
+    return { vaultShares, vaultSharesExact, usdValue, assets }
   } catch (e) {
     return empty
   }

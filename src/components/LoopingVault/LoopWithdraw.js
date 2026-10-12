@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js'
 import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
@@ -88,6 +89,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     data
   const fTokenName = id ? `f${id}` : 'shares'
   const availableShares = userPosition?.vaultShares || 0
+  const availableSharesExact = userPosition?.vaultSharesExact || String(availableShares)
   const perShareUsd =
     Number(underlyingUsdPrice) > 0 && Number(sharePrice) > 0
       ? Number(underlyingUsdPrice) * Number(sharePrice)
@@ -126,7 +128,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     let active = true
     setEstLoading(true)
     const handle = setTimeout(async () => {
-      const out = await loopPreviewWithdrawUnderlying({ vaultAddress, shares: s })
+      const out = await loopPreviewWithdrawUnderlying({ vaultAddress, shares })
       if (active) {
         setEstUnderlying(out)
         setEstLoading(false)
@@ -146,7 +148,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     }
     let active = true
     const handle = setTimeout(async () => {
-      const res = await loopSimulateWithdraw({ vaultAddress, shares: s, account })
+      const res = await loopSimulateWithdraw({ vaultAddress, shares, account })
       if (active) setSimWithdraw(res)
     }, 350)
     return () => {
@@ -190,7 +192,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
   const vaultImpact = tvlUsd > 0 && withdrawUsd > 0 ? withdrawUsd / tvlUsd : 0
   const largeWithdraw = withdrawUsd >= 25 && (vaultImpact > 0.05 || withdrawFraction > 0.25)
 
-  const hasInput = num(shares) > 0 && num(shares) <= availableShares
+  const hasInput = num(shares) > 0 && new BigNumber(shares).lte(availableSharesExact)
   const hasPreview = num(shares) > 0
   const quoting = estLoading && preview?.underlying == null
 
@@ -204,7 +206,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     if (!connected || !hasInput || pending) return
     setPending(true)
     try {
-      await loopWithdraw({ vaultAddress, shares: num(shares), account, viem })
+      await loopWithdraw({ vaultAddress, shares, account, viem })
       toast.success('Withdraw completed')
       applyShares('')
       if (onRefresh) await onRefresh().catch(() => {})
@@ -220,7 +222,9 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     if (!connected) return 'Connect Wallet to Withdraw'
     if (pending) return 'Confirming...'
     if (!hasInput) {
-      return num(shares) > availableShares ? 'Insufficient shares' : 'Enter an amount'
+      return new BigNumber(shares).gt(availableSharesExact)
+        ? 'Insufficient shares'
+        : 'Enter an amount'
     }
     return 'Revert'
   }
@@ -244,7 +248,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
         </FieldTitle>
         <BalanceInfo
           $fontcolor={fontColor}
-          onClick={() => applyShares(availableShares, true)}
+          onClick={() => applyShares(availableSharesExact, true)}
           style={{ marginTop: 0 }}
         >
           Balance:<span>{fmt(availableShares, 4)}</span>

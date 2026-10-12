@@ -29,7 +29,6 @@ import {
   isSpecialApp,
   // isLedgerLive
 } from '../../utilities/formats'
-import { fetchLoopingVaultSevenDayApys } from '../../utilities/loopApy'
 import { usePools } from '../Pools'
 import { useWallet } from '../Wallet'
 import { calculateFarmingBalance, filterVaults } from './utils'
@@ -61,7 +60,6 @@ const VaultsProvider = _ref => {
   const setFormattedVaults = useCallback(
     async (apiData, apiFailed) => {
       const formattedVaults = {}
-      const sevenDayApyRequest = fetchLoopingVaultSevenDayApys(importedVaults)
       // let curChainId = chainId
       // try {
       //   if (isLedgerLive()) {
@@ -77,7 +75,6 @@ const VaultsProvider = _ref => {
         try {
           let viemClient = await getViem(vaultChain, account),
             estimatedApy = null,
-            liveApy = null,
             estimatedApyBreakdown = [],
             usdPrice = null,
             vaultPrice = null,
@@ -114,10 +111,6 @@ const VaultsProvider = _ref => {
 
           if (apiData && apiData[vaultSymbol]) {
             estimatedApy = apiData[vaultSymbol].estimatedApy
-            liveApy =
-              apiData[vaultSymbol].liveApy != null
-                ? apiData[vaultSymbol].liveApy
-                : apiData[vaultSymbol].estimatedApy
             estimatedApyBreakdown = apiData[vaultSymbol].estimatedApyBreakdown
             boostedEstimatedAPY = apiData[vaultSymbol].boostedEstimatedAPY
             usdPrice = apiData[vaultSymbol].usdPrice
@@ -164,7 +157,6 @@ const VaultsProvider = _ref => {
             ...importedVaults[vaultSymbol],
             vaultAddress: importedVaults[vaultSymbol].vaultAddress,
             estimatedApy,
-            liveApy,
             estimatedApyBreakdown,
             boostedEstimatedAPY,
             apyIconUrls: importedVaults[vaultSymbol].apyIconUrls,
@@ -189,15 +181,6 @@ const VaultsProvider = _ref => {
         } catch (e) {
           console.log(e)
         }
-      })
-
-      const sevenDayApys = await sevenDayApyRequest
-      Object.keys(sevenDayApys).forEach(vaultSymbol => {
-        if (!formattedVaults[vaultSymbol]) {
-          return
-        }
-        formattedVaults[vaultSymbol].sevenDayApy = sevenDayApys[vaultSymbol]
-        formattedVaults[vaultSymbol].estimatedApy = sevenDayApys[vaultSymbol]
       })
 
       if (account) {
