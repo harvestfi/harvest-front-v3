@@ -657,9 +657,6 @@ const AdvancedFarm = () => {
   const rewardApy = get(vaultPool, 'totalRewardAPY', 0)
   const tradingApy = get(vaultPool, 'tradingApy', 0)
   const totalApy = Number(estimatedApy) + Number(rewardApy) + Number(tradingApy)
-  const liveApy = get(token, `liveApy`, null) ?? estimatedApy
-  const liveTotalApy = Number(liveApy) + Number(rewardApy) + Number(tradingApy)
-  const showsSevenDayApy = isLoopingVault && get(token, `sevenDayApy`, null) !== null
 
   const BadgeAry = [ETHEREUM, POLYGON, ARBITRUM, BASE, ZKSYNC, HYPEREVM]
   const tokenChain = token.chain || token.data.chain
@@ -1778,17 +1775,17 @@ const AdvancedFarm = () => {
     ? (((Number(totalApy) / 100 + 1) ** (1 / 365) - 1) * 100).toFixed(3)
     : null
 
-  const showAPY = (apyValue = totalApy) => {
+  const showAPY = () => {
     return (
       <>
-        {apyValue !== null && !loadingVaults ? (
+        {totalApy !== null && !loadingVaults ? (
           <div>
             {token?.inactive || token?.testInactive || !token?.dataFetched ? (
               token?.inactive || token?.testInactive ? (
                 'Inactive'
               ) : null
             ) : (
-              <>{displayAPY(apyValue, DECIMAL_PRECISION, 10)}</>
+              <>{displayAPY(totalApy, DECIMAL_PRECISION, 10)}</>
             )}
           </div>
         ) : (
@@ -1828,7 +1825,7 @@ const AdvancedFarm = () => {
   }
 
   const loopMetricItems = [
-    { title: showsSevenDayApy ? '7d APY' : 'Live APY', value: showAPY() },
+    { title: 'Live APY', value: showAPY() },
     { title: 'Live Leverage', value: showLeverage() },
     { title: 'TVL', value: showTVL() },
     { title: 'Last Rebalance', value: showLastRebalance() },
@@ -1866,7 +1863,7 @@ const AdvancedFarm = () => {
   ]
 
   const apyPeriods = [
-    { label: 'Live', value: showAPY(liveTotalApy) },
+    { label: 'Live', value: showAPY() },
     { label: '7d', value: sevenDApy },
     { label: '30d', value: thirtyDApy },
     { label: '180d', value: oneEightyDApy },
@@ -2964,7 +2961,7 @@ const AdvancedFarm = () => {
                       token={token}
                       vaultPool={vaultPool}
                       lastTVL={Number(vaultValue)}
-                      lastAPY={Number(liveTotalApy)}
+                      lastAPY={Number(totalApy)}
                       set7DApy={setSevenDApy}
                       set30DApy={setThirtyDApy}
                       set180DApy={setOneEightyDApy}

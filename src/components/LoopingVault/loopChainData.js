@@ -65,7 +65,7 @@ export const fetchLoopWalletBalance = async (account, tokenAddress, decimals = 1
       }),
     )
     if (raw == null) return 0
-    return new BigNumber(raw.toString()).div(new BigNumber(10).pow(decimals)).toNumber()
+    return new BigNumber(raw.toString()).shiftedBy(-decimals).toFixed()
   } catch (e) {
     return 0
   }
@@ -80,7 +80,7 @@ export const pollLoopWalletBalance = async (
 ) => {
   let last = await fetchLoopWalletBalance(account, tokenAddress, decimals)
   for (let i = 0; i < retries; i += 1) {
-    if (Math.abs((last || 0) - (previousBalance || 0)) > 1e-14) return last
+    if (!new BigNumber(last || 0).eq(previousBalance || 0)) return last
     await new Promise(r => setTimeout(r, delayMs))
     last = await fetchLoopWalletBalance(account, tokenAddress, decimals)
   }

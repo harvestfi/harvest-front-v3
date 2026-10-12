@@ -1,10 +1,11 @@
+import BigNumber from 'bignumber.js'
 import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
 import { PiQuestion, PiCaretDown } from 'react-icons/pi'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
-import { formatViemPluginErrorMessage } from '../../services/viem'
+import { formatViemPluginErrorMessage, toWei } from '../../services/viem'
 import { loopDeposit, loopPreviewDepositShares, loopSimulateDeposit } from './loopActions'
 import Button from '../Button'
 import InfoIcon from '../../assets/images/logos/beginners/info-circle.svg'
@@ -136,7 +137,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     const handle = setTimeout(async () => {
       const shares = await loopPreviewDepositShares({
         vaultAddress,
-        amount: a,
+        amount,
         decimals: underlying.decimals,
       })
       if (active) setEstShares(shares)
@@ -155,7 +156,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     }
     let active = true
     const handle = setTimeout(async () => {
-      const res = await loopSimulateDeposit({ vaultAddress, underlying, amount: a, account })
+      const res = await loopSimulateDeposit({ vaultAddress, underlying, amount, account })
       if (active) setSimDetails(res)
     }, 350)
     return () => {
@@ -198,8 +199,8 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
     return a * p
   }, [amount, underlying.priceUsd])
 
-  const hasInput = num(amount) > 0
-  const exceedsBalance = hasInput && num(amount) > Number(walletBalance || 0)
+  const hasInput = new BigNumber(toWei(amount, underlying.decimals, 0)).gt(0)
+  const exceedsBalance = hasInput && new BigNumber(amount).gt(walletBalance || 0)
   const capFull = Boolean(cap && cap.full)
   const exceedsCap = Boolean(cap && hasInput && num(amount) > cap.remaining)
   const supplyDisabled =
@@ -217,10 +218,9 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
 
   const handleSupply = async () => {
     if (supplyDisabled) return
-    const deposited = num(amount)
     setPending(true)
     try {
-      await loopDeposit({ vaultAddress, underlying, amount: deposited, account, viem })
+      await loopDeposit({ vaultAddress, underlying, amount, account, viem })
       toast.success('Deposit completed')
       applyAmount('')
       if (onRefresh) await onRefresh().catch(() => {})
