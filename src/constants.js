@@ -36,6 +36,8 @@ export const IPOR_NATIVE_EXIT_ONE_WAY_TEXT =
   'accepted by the Autocompounder. Any subsequent redemption is handled solely by IPOR under ' +
   "its own terms, and availability, timing and value are outside Harvest's control."
 
+// In-kind exit token per vault. Whether Revert in kind is live comes from the API's
+// redeemInKindEnabled, so a vault can be listed here before governance turns it on.
 export const NATIVE_EXIT_VAULTS = {
   '0xc777031d50f632083be7080e51e390709062263e': {
     chainId: CHAIN_IDS.BASE,
@@ -74,6 +76,22 @@ export const NATIVE_EXIT_VAULTS = {
     chainId: CHAIN_IDS.BASE,
     symbol: 'NVDACT',
     address: '0xFb132f4C6d9DCF4f80483Ea7D96C5A5dccfcFE83',
+    decimals: 10,
+    oneWayText: IPOR_NATIVE_EXIT_ONE_WAY_TEXT,
+  },
+  // IPOR - Bitcoin Dollar USDC
+  '0xbce1b3ac78b895c69f91e446c8f654bc1c40a3b8': {
+    chainId: CHAIN_IDS.ETH_MAINNET,
+    symbol: 'bdUSD',
+    address: '0xF8F226dA66244F89e70C5B5D1a5C5b0d505Eb1d8',
+    decimals: 8,
+    oneWayText: IPOR_NATIVE_EXIT_ONE_WAY_TEXT,
+  },
+  // IPOR - wBTC Dollar Carry
+  '0x0d39d6ef06a3a5c2408db195d9af2ea7a8d52b92': {
+    chainId: CHAIN_IDS.ETH_MAINNET,
+    symbol: 'BTCdc',
+    address: '0x7659fc26bf3A63E8133BbECB7E16ACD48EE8E292',
     decimals: 10,
     oneWayText: IPOR_NATIVE_EXIT_ONE_WAY_TEXT,
   },

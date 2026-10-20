@@ -90,6 +90,7 @@ const VaultsProvider = _ref => {
             uniswapV3UnderlyingTokenPrices = [],
             { subLabel } = importedVaults[vaultSymbol],
             uniswapV3ManagedData = null,
+            redeemInKindEnabled = false,
             dataFetched = false
           if (!isSpecialApp) {
             viemClient = viem
@@ -131,6 +132,7 @@ const VaultsProvider = _ref => {
               .div(10 ** (apiData[vaultSymbol]?.decimals || 18))
             uniswapV3PositionId = apiData[vaultSymbol]?.uniswapV3PositionId
             uniswapV3UnderlyingTokenPrices = apiData[vaultSymbol]?.uniswapV3UnderlyingTokenPrices
+            redeemInKindEnabled = apiData[vaultSymbol]?.redeemInKindEnabled === true
             if (apiData[vaultSymbol]?.uniswapV3ManagedData) {
               const { capLimit, currentCap, ranges } = apiData[vaultSymbol].uniswapV3ManagedData
               const upper = abbreaviteNumber(Math.floor(ranges[0].upperBound / 100) * 100, 1)
@@ -177,6 +179,7 @@ const VaultsProvider = _ref => {
             pool: tokenPool,
             subLabel,
             uniswapV3ManagedData,
+            redeemInKindEnabled,
           }
         } catch (e) {
           console.log(e)

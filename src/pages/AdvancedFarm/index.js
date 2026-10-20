@@ -87,7 +87,6 @@ import {
   chainList,
   historyTags,
   NATIVE_EXIT_VAULTS,
-  REDEEM_IN_KIND_ABI,
   EXIT_MECHANICS_VAULTS,
   EXIT_FEE_ABI,
   EXIT_FEE_WAD_PER_BPS,
@@ -731,47 +730,21 @@ const AdvancedFarm = () => {
     [token],
   )
 
-  const [inKindDisabled, setInKindDisabled] = useState(false)
+  const inKindEnabled = get(token, 'redeemInKindEnabled') === true
+
+  const inKindPending =
+    Boolean(nativeExitConfig) && typeof get(token, 'redeemInKindEnabled') !== 'boolean'
 
   useEffect(() => {
-    let cancelled = false
-    setInKindDisabled(false)
-    if (!nativeExitConfig) {
-      return () => {
-        cancelled = true
-      }
-    }
-    const readInKindEnabled = async () => {
-      try {
-        const viemClient = await getViem(tokenChain, null)
-        const enabled = await viemClient.readContract({
-          address: token.vaultAddress,
-          abi: REDEEM_IN_KIND_ABI,
-          functionName: 'redeemInKindEnabled',
-        })
-        if (!cancelled && enabled === false) {
-          setInKindDisabled(true)
-        }
-      } catch (err) {
-        console.error('Failed to read in-kind redemption status: ', err)
-      }
-    }
-    readInKindEnabled()
-    return () => {
-      cancelled = true
-    }
-  }, [nativeExitConfig, token.vaultAddress, tokenChain])
-
-  useEffect(() => {
-    if (inKindDisabled) {
+    if (!inKindEnabled) {
       setPickedTokenWith(prev => (prev && prev.nativeExit ? { symbol: 'Select' } : prev))
     }
-  }, [inKindDisabled])
+  }, [inKindEnabled])
 
   // "Revert in kind" — the native strategy token users can exit into from the Revert
   // panel (see NATIVE_EXIT_VAULTS). Null for vaults that don't support an in-kind exit.
   const nativeExitToken = useMemo(() => {
-    if (!nativeExitConfig || inKindDisabled) {
+    if (!nativeExitConfig || !inKindEnabled) {
       return null
     }
     return {
@@ -789,7 +762,7 @@ const AdvancedFarm = () => {
       assetSymbol: underlyingSymbol,
       assetDecimals: tokenDecimals,
     }
-  }, [nativeExitConfig, inKindDisabled, token, underlyingPrice, underlyingSymbol, tokenDecimals])
+  }, [nativeExitConfig, inKindEnabled, token, underlyingPrice, underlyingSymbol, tokenDecimals])
 
   const showMarketHoursNotice = isStockVault(token)
 
@@ -2991,7 +2964,9 @@ const AdvancedFarm = () => {
                     <SourceOfYield
                       token={token}
                       vaultPool={vaultPool}
-                      showMarketHoursNotice={showMarketHoursNotice && !nativeExitToken}
+                      showMarketHoursNotice={
+                        showMarketHoursNotice && !nativeExitToken && !inKindPending
+                      }
                     />
                   )}
                 </>
@@ -3761,7 +3736,9 @@ const AdvancedFarm = () => {
                     <SourceOfYield
                       token={token}
                       vaultPool={vaultPool}
-                      showMarketHoursNotice={showMarketHoursNotice && !nativeExitToken}
+                      showMarketHoursNotice={
+                        showMarketHoursNotice && !nativeExitToken && !inKindPending
+                      }
                     />
                   )}
                 </RestInternal>
