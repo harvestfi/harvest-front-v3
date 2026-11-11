@@ -5,19 +5,18 @@ import AavePoolContract from '../../services/viem/contracts/aave-pool/contract.j
 import AaveViewerContract from '../../services/viem/contracts/aave-viewer/contract.json'
 import LoopStrategyContract from '../../services/viem/contracts/loop-strategy/contract.json'
 import { CHAIN_IDS } from '../../data/constants'
-import { DEFILLAMA_YIELDS_URL } from '../../constants'
-import { stakingPoolIdForSymbol } from './loopHelpers'
+import { COINBASE_EXCHANGE_API_URL } from '../../constants'
+import { wrappedAssetIdForSymbol } from './loopHelpers'
 
 export const fetchLoopStakingYield = async symbol => {
-  const poolId = stakingPoolIdForSymbol(symbol)
-  if (!poolId) return null
+  const assetId = wrappedAssetIdForSymbol(symbol)
+  if (!assetId) return null
   try {
-    const res = await fetch(`${DEFILLAMA_YIELDS_URL}/chart/${poolId}`)
+    const res = await fetch(`${COINBASE_EXCHANGE_API_URL}/wrapped-assets/${assetId}`)
     if (!res.ok) return null
     const json = await res.json()
-    const rows = Array.isArray(json?.data) ? json.data : []
-    if (!rows.length) return null
-    const apy = Number(rows[rows.length - 1]?.apy)
+    // Coinbase quotes apy as a fraction ("0.0236"); the loop breakdown works in percent.
+    const apy = parseFloat(json?.apy) * 100
     return Number.isFinite(apy) ? apy : null
   } catch (e) {
     return null
