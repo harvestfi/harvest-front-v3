@@ -1,10 +1,9 @@
-const STAKING_POOL_IDS = {
-  cbeth: '0f45d730-b279-4629-8e11-ccb5cc3038b4',
-  steth: '747c1d2a-c668-4682-b9f9-296708a3dd90',
+const WRAPPED_ASSET_IDS = {
+  cbeth: 'CBETH',
 }
 
-export const stakingPoolIdForSymbol = symbol =>
-  symbol ? STAKING_POOL_IDS[String(symbol).toLowerCase()] || null : null
+export const wrappedAssetIdForSymbol = symbol =>
+  symbol ? WRAPPED_ASSET_IDS[String(symbol).toLowerCase()] || null : null
 
 export const median = values => {
   const nums = values.filter(v => Number.isFinite(v) && v >= 0)
