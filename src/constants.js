@@ -308,7 +308,7 @@ export const PORTALS_FI_API_URL = 'https://api.portals.fi'
 
 export const IPOR_API_URL = 'https://api.ipor.io'
 
-export const DEFILLAMA_YIELDS_URL = 'https://yields.llama.fi'
+export const COINBASE_EXCHANGE_API_URL = 'https://api.exchange.coinbase.com'
 
 export const DECIMAL_PRECISION = 2
 
