@@ -3,6 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
 import { PiQuestion, PiCaretDown } from 'react-icons/pi'
+import useRequiredChain from '../../providers/useRequiredChain'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage, toWei } from '../../services/viem'
@@ -81,6 +82,7 @@ const HelpTip = ({ id, tip, darkMode, children }) => (
 
 const LoopDeposit = ({ data, connected, onRefresh }) => {
   const { account, viem, getWalletBalances } = useWallet()
+  const { wrongNetwork, switchLabel, switchNetwork } = useRequiredChain()
   const {
     darkMode,
     fontColor,
@@ -205,6 +207,8 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   const exceedsCap = Boolean(cap && hasInput && num(amount) > cap.remaining)
   const supplyDisabled =
     !connected || !hasInput || !checked || pending || exceedsBalance || capFull || exceedsCap
+  const switchNeeded = wrongNetwork && !pending
+  const ctaDisabled = switchNeeded ? false : supplyDisabled
   const yearlyYieldToken =
     preview && preview.valueToken != null ? preview.valueToken * (apy.total / 100) : null
   const yearlyYieldUsd =
@@ -217,6 +221,10 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   }
 
   const handleSupply = async () => {
+    if (switchNeeded) {
+      await switchNetwork()
+      return
+    }
     if (supplyDisabled) return
     setPending(true)
     try {
@@ -235,6 +243,7 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
   const ctaLabel = () => {
     if (!connected) return 'Connect Wallet to Get Started'
     if (pending) return 'Confirming...'
+    if (switchNeeded) return switchLabel
     if (!hasInput) return 'Enter an amount'
     if (exceedsBalance) return `Insufficient ${underlying.symbol} balance`
     if (capFull) return 'Vault cap reached'
@@ -477,15 +486,15 @@ const LoopDeposit = ({ data, connected, onRefresh }) => {
         </CheckboxLabel>
       </CheckboxContainer>
 
-      <CTAWrap $disabled={supplyDisabled}>
+      <CTAWrap $disabled={ctaDisabled}>
         <Button
           $fontcolor="wido-deposit"
           $width="100%"
           $btncolor={btnColor}
           $btnhovercolor={btnHoverColor}
           $btnactivecolor={btnActiveColor}
-          $disabled={supplyDisabled}
-          disabled={supplyDisabled}
+          $disabled={ctaDisabled}
+          disabled={ctaDisabled}
           onClick={handleSupply}
         >
           {ctaLabel()}

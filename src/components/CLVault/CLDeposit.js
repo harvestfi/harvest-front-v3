@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
+import useRequiredChain from '../../providers/useRequiredChain'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
@@ -80,6 +81,7 @@ const HelpTip = ({ id, tip, darkMode, children }) => (
 
 const DepositModule = ({ data, connected, onRefresh }) => {
   const { account, viem, getWalletBalances } = useWallet()
+  const { wrongNetwork, switchLabel, switchNetwork } = useRequiredChain()
   const {
     darkMode,
     fontColor,
@@ -209,7 +211,14 @@ const DepositModule = ({ data, connected, onRefresh }) => {
   const yearlyYield =
     preview && preview.valueUsd != null ? preview.valueUsd * (apy.total / 100) : null
 
+  const switchNeeded = wrongNetwork && !pending
+  const ctaDisabled = switchNeeded ? false : !connected || !hasInput || !checked || pending
+
   const handleSupply = async () => {
+    if (switchNeeded) {
+      await switchNetwork()
+      return
+    }
     if (!connected || !hasInput || !checked || pending) return
 
     setPending(true)
@@ -420,24 +429,26 @@ const DepositModule = ({ data, connected, onRefresh }) => {
         </CheckboxLabel>
       </CheckboxContainer>
 
-      <CTAWrap $disabled={!connected || !hasInput || !checked || pending}>
+      <CTAWrap $disabled={ctaDisabled}>
         <Button
           $fontcolor="wido-deposit"
           $width="100%"
           $btncolor={btnColor}
           $btnhovercolor={btnHoverColor}
           $btnactivecolor={btnActiveColor}
-          $disabled={!connected || !hasInput || !checked || pending}
-          disabled={!connected || !hasInput || !checked || pending}
+          $disabled={ctaDisabled}
+          disabled={ctaDisabled}
           onClick={handleSupply}
         >
           {!connected
             ? 'Connect Wallet to Get Started'
             : pending
               ? 'Confirming...'
-              : !hasInput
-                ? 'Enter an amount'
-                : 'Supply'}
+              : switchNeeded
+                ? switchLabel
+                : !hasInput
+                  ? 'Enter an amount'
+                  : 'Supply'}
         </Button>
       </CTAWrap>
     </div>

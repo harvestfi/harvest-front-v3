@@ -1,5 +1,11 @@
 import BigNumber from 'bignumber.js'
-import { toWei, getViem, newContractInstance, baseViem } from '../../services/viem'
+import {
+  toWei,
+  getViem,
+  newContractInstance,
+  baseViem,
+  assertSignerChain,
+} from '../../services/viem'
 import { CHAIN_IDS } from '../../data/constants'
 import ClVaultContract from '../../services/viem/contracts/cl-vault/contract.json'
 import ClVaultMethods from '../../services/viem/contracts/cl-vault/methods'
@@ -28,7 +34,9 @@ const readInstance = (address, abi) => newContractInstance(null, address, abi, b
 
 const writeInstance = async (address, abi, account, viem) => {
   const client = await getViem(CHAIN_IDS.BASE, account, viem)
-  return newContractInstance(null, address, abi, client)
+  const instance = await newContractInstance(null, address, abi, client)
+  assertSignerChain(instance?.walletClient, CHAIN_IDS.BASE)
+  return instance
 }
 
 const applySlippageDown = (weiStr, slippagePct) =>
@@ -42,6 +50,7 @@ const wrapNativeIfNeeded = async ({ token, amountWei, account, viem }) => {
   const client = await getViem(CHAIN_IDS.BASE, account, viem)
   const instance = await newContractInstance(null, token.address, WETH_ABI, client)
   const { walletClient } = instance
+  assertSignerChain(walletClient, CHAIN_IDS.BASE)
   const hash = await walletClient.writeContract({
     address: token.address,
     abi: WETH_ABI,
