@@ -136,6 +136,10 @@ export const maxUint256 = () => {
 export const formatViemPluginErrorMessage = (error, customMessage) => {
   console.error(error)
 
+  if (isWrongChainError(error)) {
+    return error.message
+  }
+
   return (
     customMessage || 'Error submitting transaction, please make sure it was approved in your wallet'
   )
@@ -271,6 +275,37 @@ const createWalletClientFromProvider = async provider => {
   })
 }
 
+let connectedWalletClient = null
+
+export const setConnectedWalletClient = client => {
+  connectedWalletClient = typeof client?.writeContract === 'function' ? client : null
+}
+
+const getSigningWalletClient = async () => {
+  if (connectedWalletClient) {
+    return connectedWalletClient
+  }
+  if (window.ethereum) {
+    return createWalletClientFromProvider(window.ethereum)
+  }
+  return null
+}
+
+export const assertSignerChain = (walletClient, chainId) => {
+  if (Number(walletClient?.chain?.id) !== Number(chainId)) {
+    if (!walletClient?.chain) {
+      throw new Error('No connected wallet to sign with')
+    }
+    const chain = getChainObject(getChainHexadecimal(chainId))
+    const chainName = chain.id === Number(chainId) ? chain.name : `chain ${chainId}`
+    const error = new Error(`Please switch your wallet to ${chainName} and try again.`)
+    error.name = 'WrongChainError'
+    throw error
+  }
+}
+
+export const isWrongChainError = error => error?.name === 'WrongChainError'
+
 export const getViem = async (chainId, account, viem = null) => {
   if (account) {
     if (viem?.walletClient || viem?.writeContract) {
@@ -285,11 +320,9 @@ export const getViem = async (chainId, account, viem = null) => {
     //   return ledgerWeb3
     // }
 
-    if (window.ethereum) {
-      const walletClient = await createWalletClientFromProvider(window.ethereum)
-      if (walletClient) {
-        return walletClient
-      }
+    const walletClient = await getSigningWalletClient()
+    if (walletClient) {
+      return walletClient
     }
 
     return viem || mainViem
@@ -332,9 +365,7 @@ export const newContractInstance = async (contractName, address, customAbi, publ
   if (contractAddress) {
     const client = publicClient || mainViem
 
-    if (window.ethereum) {
-      walletClient = await createWalletClientFromProvider(window.ethereum)
-    }
+    walletClient = await getSigningWalletClient()
 
     const contract = createViemContract({
       address: contractAddress,
@@ -349,10 +380,7 @@ export const newContractInstance = async (contractName, address, customAbi, publ
 }
 
 export const newIPORContractInstance = async (address, abi, publicClient) => {
-  let walletClient = null
-  if (window.ethereum) {
-    walletClient = await createWalletClientFromProvider(window.ethereum)
-  }
+  const walletClient = await getSigningWalletClient()
   return createViemContract({
     address,
     abi,
@@ -443,11 +471,17 @@ export const createViemContract = ({ address, abi, publicClient, walletClient })
   }
 
   try {
+    let fallbackWalletClient = walletClient
     const contract = {
       address,
       abi,
       publicClient,
-      walletClient,
+      get walletClient() {
+        return connectedWalletClient || fallbackWalletClient
+      },
+      set walletClient(client) {
+        fallbackWalletClient = client
+      },
 
       read: {},
 

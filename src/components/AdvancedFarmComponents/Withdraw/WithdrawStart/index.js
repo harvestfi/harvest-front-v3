@@ -28,7 +28,7 @@ import { usePools } from '../../../../providers/Pools'
 import { usePortals } from '../../../../providers/Portals'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { getViem, fromWei } from '../../../../services/viem'
+import { assertSignerChain, getViem, fromWei, isWrongChainError } from '../../../../services/viem'
 import { formatNumberWido, showTokenBalance } from '../../../../utilities/formats'
 import { ERC4626_CONVERT_ABI, REDEEM_IN_KIND_ABI } from '../../../../constants'
 import AnimatedDots from '../../../AnimatedDots'
@@ -109,6 +109,13 @@ const WithdrawStart = ({
   const [buttonName, setButtonName] = useState('Approve Token')
   const [withdrawFailed, setWithdrawFailed] = useState(false)
   const [slippageFailed, setSlippageFailed] = useState(false)
+  // Set when a write was stopped because the wallet is on another network; the failure banner
+  // then says so instead of the generic text.
+  const [wrongNetworkMessage, setWrongNetworkMessage] = useState('')
+  const showWithdrawFailed = err => {
+    setWrongNetworkMessage(isWrongChainError(err) ? err.message : '')
+    setWithdrawFailed(true)
+  }
   const [startSpinner, setStartSpinner] = useState(false) // State of Spinner for 'Finalize Deposit' button
   const [revertedAmount, setRevertedAmount] = useState('')
   const [revertedAmountUsd, setRevertedAmountUsd] = useState('')
@@ -127,6 +134,7 @@ const WithdrawStart = ({
   const [matchVaultList, setMatchVaultList] = useState([])
 
   const isFetchingRef = useRef(false)
+  const withdrawAttemptRef = useRef(0)
 
   const curChain = token.poolVault ? token.data.chain : token.chain
   const tokenName = token.isIPORVault ? tokenSymbol : `f${tokenSymbol}`
@@ -174,6 +182,7 @@ const WithdrawStart = ({
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, fromToken, amnt.toString())
     const mainViem = await getViem(chainId, account, viem)
+    assertSignerChain(mainViem, chainId)
 
     await mainViem.sendTransaction({
       account,
@@ -211,7 +220,7 @@ const WithdrawStart = ({
           setStartSpinner(false)
         } catch (err) {
           setStartSpinner(false)
-          setWithdrawFailed(true)
+          showWithdrawFailed(err)
           setProgressStep(0)
           setButtonName('Approve Token')
         }
@@ -222,8 +231,23 @@ const WithdrawStart = ({
         setProgressStep(3)
         setButtonName('Pending Confirmation in Wallet')
         setStartSpinner(true)
+        withdrawAttemptRef.current += 1
+        const attempt = withdrawAttemptRef.current
+        const onWithdrawFailure = async err => {
+          if (attempt !== withdrawAttemptRef.current) return
+          showWithdrawFailed(err)
+          setStartSpinner(false)
+          setProgressStep(0)
+          setButtonName('Approve Token')
+        }
         isSuccess = token.isIPORVault
-          ? await handleIPORWithdraw(account, token, unstakeBalance, async () => {})
+          ? await handleIPORWithdraw(
+              account,
+              token,
+              unstakeBalance,
+              async () => {},
+              onWithdrawFailure,
+            )
           : await handleWithdraw(
               account,
               tokenSym,
@@ -233,12 +257,7 @@ const WithdrawStart = ({
               false,
               null,
               async () => {},
-              async () => {
-                setWithdrawFailed(true)
-                setStartSpinner(false)
-                setProgressStep(0)
-                setButtonName('Approve Token')
-              },
+              onWithdrawFailure,
             )
       } else if (pickedToken.nativeExit) {
         try {
@@ -253,6 +272,7 @@ const WithdrawStart = ({
             new BigNumber(unstakeBalance.toString()).integerValue(BigNumber.ROUND_DOWN).toFixed(),
           )
           const walletClient = await getViem(chainId, account, viem)
+          assertSignerChain(walletClient, chainId)
           const publicClient = await getViem(chainId, false, viem)
 
           const readBalance = async tokenAddress =>
@@ -381,8 +401,10 @@ const WithdrawStart = ({
           isSuccess = true
         } catch (err) {
           console.error('Native in-kind revert failed: ', err)
-          toast.error(`Reverting into ${pickedToken.symbol} failed. Please try again.`)
-          setWithdrawFailed(true)
+          if (!isWrongChainError(err)) {
+            toast.error(`Reverting into ${pickedToken.symbol} failed. Please try again.`)
+          }
+          showWithdrawFailed(err)
           setStartSpinner(false)
           setProgressStep(0)
           setButtonName('Approve Token')
@@ -397,6 +419,7 @@ const WithdrawStart = ({
           const amount = unstakeBalance
           const toToken = pickedToken.address
           const mainViem = await getViem(chainId, account, viem)
+          assertSignerChain(mainViem, chainId)
           const portalData = await getPortals({
             chainId,
             sender: account,
@@ -429,7 +452,7 @@ const WithdrawStart = ({
           setRevertedAmountUsd(formatNumberWido(receiveUsdString))
           isSuccess = true
         } catch (err) {
-          setWithdrawFailed(true)
+          showWithdrawFailed(err)
           setStartSpinner(false)
           setProgressStep(0)
           setButtonName('Approve Token')
@@ -451,6 +474,7 @@ const WithdrawStart = ({
         await getWalletBalances([token.id], false, true)
       }
     } else if (progressStep === 4) {
+      withdrawAttemptRef.current += 1
       setRevertSuccess(true)
       setUnstakeInputValue('0')
       setRevertFromInfoAmount('0')
@@ -463,6 +487,7 @@ const WithdrawStart = ({
   }
 
   const closeWithdraw = async () => {
+    withdrawAttemptRef.current += 1
     setProgressStep(0)
     setWithdrawStart(false)
     setWithdrawFailed(false)
@@ -790,7 +815,7 @@ const WithdrawStart = ({
                   $weight="600"
                   $marginbottom="4px"
                 >
-                  Whoops, something went wrong.
+                  {wrongNetworkMessage ? 'Whoops, wrong network.' : 'Whoops, something went wrong.'}
                 </NewLabel>
                 <NewLabel
                   $fontcolor="#B54708"
@@ -799,7 +824,7 @@ const WithdrawStart = ({
                   $weight="400"
                   $marginbottom="5px"
                 >
-                  Please try to repeat the transaction in your wallet.
+                  {wrongNetworkMessage || 'Please try to repeat the transaction in your wallet.'}
                 </NewLabel>
               </NewLabel>
             </NewLabel>

@@ -8,7 +8,14 @@ import { CiSettings } from 'react-icons/ci'
 import { useNavigate } from 'react-router-dom'
 import { Spinner } from 'react-bootstrap'
 import { useWallet } from '../../../providers/Wallet'
-import { toWei, fromWei, getViem, checkNativeToken } from '../../../services/viem'
+import {
+  assertSignerChain,
+  toWei,
+  fromWei,
+  getViem,
+  checkNativeToken,
+  isWrongChainError,
+} from '../../../services/viem'
 import { isSpecialApp, showTokenBalance } from '../../../utilities/formats'
 import { FTokenInfo, IconCard, ImgBtn } from '../PositionModal/style'
 import { usePortals } from '../../../providers/Portals'
@@ -75,6 +82,13 @@ const MigrateStart = ({
   const [progressStep, setProgressStep] = useState(0)
   const [depositFailed, setDepositFailed] = useState(false)
   const [slippageFailed, setSlippageFailed] = useState(false)
+  // Set when a write was stopped because the wallet is on another network; the failure banner
+  // then says so instead of the generic text.
+  const [wrongNetworkMessage, setWrongNetworkMessage] = useState('')
+  const showDepositFailed = err => {
+    setWrongNetworkMessage(isWrongChainError(err) ? err.message : '')
+    setDepositFailed(true)
+  }
   const [slippageSetting, setSlippageSetting] = useState(false)
   const [buttonName, setButtonName] = useState('Approve Token')
   const [startSpinner, setStartSpinner] = useState(false)
@@ -334,6 +348,7 @@ const MigrateStart = ({
 
   const onDeposit = async () => {
     const mainViem = await getViem(chainId, account, viem)
+    assertSignerChain(mainViem, tokenChain)
 
     const portalData = await getPortals({
       chainId,
@@ -376,6 +391,7 @@ const MigrateStart = ({
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, pickedToken.address, amnt.toString())
     const mainViem = await getViem(chainId, account, viem)
+    assertSignerChain(mainViem, tokenChain)
     await mainViem.sendTransaction({
       account,
       to: approve.to,
@@ -408,7 +424,7 @@ const MigrateStart = ({
         setStartSpinner(false)
       } catch (err) {
         setStartSpinner(false)
-        setDepositFailed(true)
+        showDepositFailed(err)
         setProgressStep(0)
         setButtonName('Approve Token')
       }
@@ -420,7 +436,7 @@ const MigrateStart = ({
         setStartSpinner(true)
         await onDeposit()
       } catch (err) {
-        setDepositFailed(true)
+        showDepositFailed(err)
         setStartSpinner(false)
         setProgressStep(0)
         setButtonName('Approve Token')
@@ -679,7 +695,7 @@ const MigrateStart = ({
                   $weight="600"
                   $marginbottom="4px"
                 >
-                  Whoops, something went wrong.
+                  {wrongNetworkMessage ? 'Whoops, wrong network.' : 'Whoops, something went wrong.'}
                 </NewLabel>
                 <NewLabel
                   $fontcolor="#B54708"
@@ -688,7 +704,7 @@ const MigrateStart = ({
                   $weight="400"
                   $marginbottom="5px"
                 >
-                  Please try to repeat the transaction in your wallet.
+                  {wrongNetworkMessage || 'Please try to repeat the transaction in your wallet.'}
                 </NewLabel>
               </NewLabel>
             </NewLabel>

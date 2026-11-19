@@ -229,6 +229,9 @@ const PortalsProvider = _ref => {
       const inputToken = `${getChainNamePortals(chainId)}:${tokenAddress}`
       const response = await axios.get(`${PORTALS_FI_API_URL}/v2/approval`, {
         params: { sender: fromAddress, inputToken, inputAmount: 0 },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
       })
       return response.data.context
     } catch (error) {
@@ -242,6 +245,9 @@ const PortalsProvider = _ref => {
       const inputToken = `${getChainNamePortals(chainId)}:${tokenAddress}`
       const response = await axios.get(`${PORTALS_FI_API_URL}/v2/approval`, {
         params: { sender: fromAddress, inputToken, inputAmount },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
+        },
       })
       return response.data
     } catch (error) {
@@ -265,6 +271,9 @@ const PortalsProvider = _ref => {
           feePercentage: 0,
           partner: '0xF066789028fE31D4f53B69B81b328B8218Cc0641',
           validate,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
         },
       })
       return response.data
@@ -293,6 +302,9 @@ const PortalsProvider = _ref => {
           outputToken,
           slippageTolerancePercentage: slippage,
           sender,
+        },
+        headers: {
+          Authorization: `Bearer ${authToken}`,
         },
       })
       return { res: response.data, succeed: true }

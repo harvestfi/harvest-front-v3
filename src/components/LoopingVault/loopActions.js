@@ -1,6 +1,12 @@
 import BigNumber from 'bignumber.js'
 import { keccak256, encodeAbiParameters, pad, numberToHex } from 'viem'
-import { toWei, getViem, newContractInstance, baseViem } from '../../services/viem'
+import {
+  toWei,
+  getViem,
+  newContractInstance,
+  baseViem,
+  assertSignerChain,
+} from '../../services/viem'
 import { CHAIN_IDS } from '../../data/constants'
 import LoopVaultContract from '../../services/viem/contracts/loop-vault/contract.json'
 import LoopVaultMethods from '../../services/viem/contracts/loop-vault/methods'
@@ -18,7 +24,9 @@ const awaitReceipt = async hash => {
 
 const writeInstance = async (address, account, viem) => {
   const client = await getViem(CHAIN_IDS.BASE, account, viem)
-  return newContractInstance(null, address, LoopVaultContract.abi, client)
+  const instance = await newContractInstance(null, address, LoopVaultContract.abi, client)
+  assertSignerChain(instance?.walletClient, CHAIN_IDS.BASE)
+  return instance
 }
 
 const readInstance = async address => {
@@ -36,6 +44,7 @@ const ensureApproval = async ({ tokenAddress, spender, amountWei, account, viem 
     TokenContract.abi,
     await getViem(CHAIN_IDS.BASE, account, viem),
   )
+  assertSignerChain(writeTok?.walletClient, CHAIN_IDS.BASE)
   const hash = await TokenMethods.approve(spender, account, amountWei, writeTok)
   if (hash) await baseViem.waitForTransactionReceipt({ hash })
 }

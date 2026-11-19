@@ -10,7 +10,12 @@ import {
   UNIV3_SLIPPAGE_TOLERANCE,
   UNIV3_TOLERANCE,
 } from '../constants'
-import { formatViemPluginErrorMessage, newContractInstance, getViem } from '../services/viem'
+import {
+  assertSignerChain,
+  formatViemPluginErrorMessage,
+  newContractInstance,
+  getViem,
+} from '../services/viem'
 import poolMethods from '../services/viem/contracts/pool/methods'
 import iporVaultData from '../services/viem/contracts/ipor-vault/contract.json'
 import iporVaultMethods from '../services/viem/contracts/ipor-vault/methods'
@@ -25,8 +30,14 @@ const { tokens } = require('../data')
 const ActionsContext = createContext()
 const useActions = () => useContext(ActionsContext)
 
+const assertWriteChain = (instance, chain) => {
+  if (chain) {
+    assertSignerChain(instance?.walletClient, chain)
+  }
+}
+
 const ActionsProvider = ({ children }) => {
-  const { viem } = useWallet
+  const { viem } = useWallet()
   const handleApproval = useCallback(
     async (
       account,
@@ -42,6 +53,7 @@ const ActionsProvider = ({ children }) => {
       try {
         if (poolData) {
           const poolAddress = poolData.autoStakePoolAddress || poolData.contractAddress
+          assertWriteChain(poolData.lpTokenData.localInstance, poolData.chain)
           await tokenMethods.approve(
             poolAddress,
             account,
@@ -55,6 +67,7 @@ const ActionsProvider = ({ children }) => {
           if (contract.instance && typeof contract.instance.setProvider === 'function') {
             contract.instance.setProvider(viemClient)
           }
+          assertWriteChain(contract.instance, tokens[tokenSymbol]?.chain)
           await tokenMethods.approve(address, account, amountToApprove, contract.instance)
         }
 
@@ -64,7 +77,7 @@ const ActionsProvider = ({ children }) => {
       } catch (err) {
         const errorMessage = formatViemPluginErrorMessage(err)
         toast.error(errorMessage)
-        onFailureApproval()
+        onFailureApproval(err)
         return true
       }
     },
@@ -86,6 +99,7 @@ const ActionsProvider = ({ children }) => {
       let updatedLpTokenBalance, updatedLpTokenApprovedBalance
       if (!hasDeniedRequest) {
         try {
+          assertWriteChain(vaultData?.instance, token?.chain)
           if (multipleAssets) {
             const firstAmount =
               amountsToExecute[0] === null || amountsToExecute[0] === undefined
@@ -175,7 +189,7 @@ const ActionsProvider = ({ children }) => {
 
           const errorMessage = formatViemPluginErrorMessage(err, get(err, 'message'))
           toast.error(errorMessage)
-          await onFailureDeposit()
+          await onFailureDeposit(err)
           return false
         }
       }
@@ -257,6 +271,7 @@ const ActionsProvider = ({ children }) => {
         try {
           if (!hasDeniedRequest) {
             setPendingAction(action)
+            assertWriteChain(poolInstance, poolData.chain)
             await poolMethods.stake(lpTokenBalance, account, poolInstance)
             setPendingAction(null)
             toast.success(`${tokenDisplayName} stake completed`)
@@ -291,6 +306,7 @@ const ActionsProvider = ({ children }) => {
         viemClient,
       )
       try {
+        assertWriteChain(iporVaultInstance, token.chain)
         await iporVaultMethods.deposit(amount, account, iporVaultInstance)
         toast.success(`${tokenDisplayName} deposit completed`)
         await onSuccessDeposit()
@@ -298,7 +314,7 @@ const ActionsProvider = ({ children }) => {
       } catch (err) {
         const errorMessage = formatViemPluginErrorMessage(err)
         toast.error(errorMessage)
-        onFailureDeposit()
+        onFailureDeposit(err)
         return false
       }
     },
@@ -306,7 +322,7 @@ const ActionsProvider = ({ children }) => {
   )
 
   const handleIPORWithdraw = useCallback(
-    async (account, token, amount, onSuccess = () => {}) => {
+    async (account, token, amount, onSuccess = () => {}, onFailure = () => {}) => {
       const tokenDisplayName = token.tokenNames[0]
       const viemClient = await getViem(false, account, viem)
 
@@ -318,6 +334,7 @@ const ActionsProvider = ({ children }) => {
       )
 
       try {
+        assertWriteChain(iporVaultInstance, token.chain)
         await iporVaultMethods.redeem(amount, account, iporVaultInstance)
         toast.success(`${tokenDisplayName} withdraw completed`)
         await onSuccess()
@@ -325,6 +342,7 @@ const ActionsProvider = ({ children }) => {
       } catch (err) {
         const errorMessage = formatViemPluginErrorMessage(err)
         toast.error(errorMessage)
+        await onFailure(err)
         return false
       }
     },
@@ -338,6 +356,7 @@ const ActionsProvider = ({ children }) => {
       if (poolData) {
         setPendingAction(action)
         try {
+          assertWriteChain(poolInstance, poolData.chain)
           if (poolData.rewardTokenSymbols.length > 1) {
             await poolMethods.claimAll(account, poolInstance)
           } else {
@@ -372,6 +391,7 @@ const ActionsProvider = ({ children }) => {
       if (poolData) {
         setPendingAction(action)
         try {
+          assertWriteChain(poolInstance, poolData.chain)
           if (partialExit) {
             await poolMethods.withdraw(account, amountsToExecute, poolInstance)
             toast.success('Unstake completed')
@@ -408,6 +428,10 @@ const ActionsProvider = ({ children }) => {
       // setPendingAction(action)
 
       try {
+        assertWriteChain(
+          vaultsData[tokenSymbol]?.instance,
+          vaultsData[tokenSymbol]?.chain || tokens[tokenSymbol]?.chain,
+        )
         if (multipleAssets) {
           const withdrawFirstAsset = selectedAsset === 0 || selectedAsset === -1
           const withdrawSecondAsset = selectedAsset === 1 || selectedAsset === -1
@@ -477,7 +501,7 @@ const ActionsProvider = ({ children }) => {
         // setPendingAction(null)
         const errorMessage = formatViemPluginErrorMessage(err)
         toast.error(errorMessage)
-        await onFailure()
+        await onFailure(err)
         return false
       }
     },

@@ -2,6 +2,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
 import { PiQuestion } from 'react-icons/pi'
+import useRequiredChain from '../../providers/useRequiredChain'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
@@ -61,6 +62,7 @@ const HelpTip = ({ id, tip, darkMode, children }) => (
 
 const WithdrawModule = ({ data, connected, onRefresh }) => {
   const { account, viem, getWalletBalances } = useWallet()
+  const { wrongNetwork, switchLabel, switchNetwork } = useRequiredChain()
   const {
     darkMode,
     bgColorNew,
@@ -181,7 +183,14 @@ const WithdrawModule = ({ data, connected, onRefresh }) => {
 
   const hasInput = num(shares) > 0
 
+  const switchNeeded = wrongNetwork && !pending
+  const ctaDisabled = switchNeeded ? false : !connected || !hasInput || pending
+
   const handleRevert = async () => {
+    if (switchNeeded) {
+      await switchNetwork()
+      return
+    }
     if (!connected || !hasInput || pending) return
     setPending(true)
     try {
@@ -360,24 +369,26 @@ const WithdrawModule = ({ data, connected, onRefresh }) => {
         </SlipPills>
       </SettingRow>
 
-      <CTAWrap $disabled={!connected || !hasInput || pending}>
+      <CTAWrap $disabled={ctaDisabled}>
         <Button
           $fontcolor="wido-deposit"
           $width="100%"
           $btncolor={btnColor}
           $btnhovercolor={btnHoverColor}
           $btnactivecolor={btnActiveColor}
-          $disabled={!connected || !hasInput || pending}
-          disabled={!connected || !hasInput || pending}
+          $disabled={ctaDisabled}
+          disabled={ctaDisabled}
           onClick={handleRevert}
         >
           {!connected
             ? 'Connect Wallet to Get Started'
             : pending
               ? 'Confirming...'
-              : !hasInput
-                ? 'Enter shares'
-                : 'Revert'}
+              : switchNeeded
+                ? switchLabel
+                : !hasInput
+                  ? 'Enter shares'
+                  : 'Revert'}
         </Button>
       </CTAWrap>
     </div>

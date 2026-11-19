@@ -3,6 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react'
 import { toast } from 'react-toastify'
 import { Tooltip } from 'react-tooltip'
 import { PiQuestion, PiCaretDown } from 'react-icons/pi'
+import useRequiredChain from '../../providers/useRequiredChain'
 import { useThemeContext } from '../../providers/useThemeContext'
 import { useWallet } from '../../providers/Wallet'
 import { formatViemPluginErrorMessage } from '../../services/viem'
@@ -71,6 +72,7 @@ const HelpTip = ({ id, tip, darkMode, children }) => (
 
 const LoopWithdraw = ({ data, connected, onRefresh }) => {
   const { account, viem, getWalletBalances } = useWallet()
+  const { wrongNetwork, switchLabel, switchNetwork } = useRequiredChain()
   const {
     darkMode,
     bgColorNew,
@@ -202,7 +204,14 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
     setSharesDisplay(truncate ? truncateForDisplay(full) : full)
   }
 
+  const switchNeeded = wrongNetwork && !pending
+  const ctaDisabled = switchNeeded ? false : !connected || !hasInput || pending
+
   const handleWithdraw = async () => {
+    if (switchNeeded) {
+      await switchNetwork()
+      return
+    }
     if (!connected || !hasInput || pending) return
     setPending(true)
     try {
@@ -221,6 +230,7 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
   const ctaLabel = () => {
     if (!connected) return 'Connect Wallet to Withdraw'
     if (pending) return 'Confirming...'
+    if (switchNeeded) return switchLabel
     if (!hasInput) {
       return new BigNumber(shares).gt(availableSharesExact)
         ? 'Insufficient shares'
@@ -373,15 +383,15 @@ const LoopWithdraw = ({ data, connected, onRefresh }) => {
         </SlipPills>
       </SettingRow>
 
-      <CTAWrap $disabled={!connected || !hasInput || pending}>
+      <CTAWrap $disabled={ctaDisabled}>
         <Button
           $fontcolor="wido-deposit"
           $width="100%"
           $btncolor={btnColor}
           $btnhovercolor={btnHoverColor}
           $btnactivecolor={btnActiveColor}
-          $disabled={!connected || !hasInput || pending}
-          disabled={!connected || !hasInput || pending}
+          $disabled={ctaDisabled}
+          disabled={ctaDisabled}
           onClick={handleWithdraw}
         >
           {ctaLabel()}
