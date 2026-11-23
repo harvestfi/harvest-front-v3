@@ -18,7 +18,7 @@ import { useActions } from '../../../providers/Actions'
 import { isSpecialApp } from '../../../utilities/formats'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { useContracts } from '../../../providers/Contracts'
-import { toWei } from '../../../services/viem'
+import { isWrongChainError, toWei } from '../../../services/viem'
 import Button from '../../Button'
 import {
   FTokenInfo,
@@ -52,6 +52,10 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
       : ''
   const [btnName, setBtnName] = useState('Confirm Transaction')
   const [unsubscribeFailed, setUnsubscribeFailed] = useState(false)
+  // Set when a write was stopped because the wallet is on another network; the failure banner
+  // then says so instead of the generic text.
+  const [wrongNetworkMessage, setWrongNetworkMessage] = useState('')
+  const noteFailure = err => setWrongNetworkMessage(isWrongChainError(err) ? err.message : '')
   const [progressStep, setProgressStep] = useState(0)
 
   const { handleIPORWithdraw } = useActions()
@@ -65,6 +69,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
       setProgressStep(1)
       setStartSpinner(true)
       setBtnName('Pending Confirmation in Wallet')
+      setWrongNetworkMessage('')
       let bSuccessUnsubscribe = false
       try {
         const vaultContract = contracts.iporVaults[token.id]
@@ -75,11 +80,18 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
         if (shareAmt.gt(vaultBalanceWei)) {
           shareAmt = vaultBalanceWei
         }
-        await handleIPORWithdraw(account, token, shareAmt.toFixed(), async () => {
-          await getWalletBalances([token.id], false, true)
-          bSuccessUnsubscribe = true
-        })
+        await handleIPORWithdraw(
+          account,
+          token,
+          shareAmt.toFixed(),
+          async () => {
+            await getWalletBalances([token.id], false, true)
+            bSuccessUnsubscribe = true
+          },
+          async err => noteFailure(err),
+        )
       } catch (err) {
+        noteFailure(err)
         setUnsubscribeFailed(true)
         setStartSpinner(false)
         setBtnName('Confirm Transaction')
@@ -207,7 +219,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                   $weight="600"
                   $marginbottom="4px"
                 >
-                  Whoops, something went wrong.
+                  {wrongNetworkMessage ? 'Whoops, wrong network.' : 'Whoops, something went wrong.'}
                 </NewLabel>
                 <NewLabel
                   $fontcolor="#B54708"
@@ -216,7 +228,7 @@ const UnsubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setMo
                   $weight="400"
                   $marginbottom="5px"
                 >
-                  Please try to repeat the transaction in your wallet.
+                  {wrongNetworkMessage || 'Please try to repeat the transaction in your wallet.'}
                 </NewLabel>
               </NewLabel>
             </NewLabel>

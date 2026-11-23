@@ -26,7 +26,13 @@ import { useWallet } from '../../../../providers/Wallet'
 import { usePools } from '../../../../providers/Pools'
 import { useRate } from '../../../../providers/Rate'
 import { useThemeContext } from '../../../../providers/useThemeContext'
-import { fromWei, toWei, getViem } from '../../../../services/viem'
+import {
+  assertSignerChain,
+  fromWei,
+  isWrongChainError,
+  toWei,
+  getViem,
+} from '../../../../services/viem'
 import AnimatedDots from '../../../AnimatedDots'
 import {
   Buttons,
@@ -103,6 +109,13 @@ const DepositStart = ({
 
   const [depositFailed, setDepositFailed] = useState(false)
   const [slippageFailed, setSlippageFailed] = useState(false)
+  // Set when a write was stopped because the wallet is on another network; the failure banner
+  // then says so instead of the generic text.
+  const [wrongNetworkMessage, setWrongNetworkMessage] = useState('')
+  const showDepositFailed = err => {
+    setWrongNetworkMessage(isWrongChainError(err) ? err.message : '')
+    setDepositFailed(true)
+  }
 
   const [buttonName, setButtonName] = useState('Approve Token')
   const [receiveAmount, setReceiveAmount] = useState('')
@@ -153,6 +166,7 @@ const DepositStart = ({
 
   const onDeposit = async () => {
     const mainViem = await getViem(chainId, account, viem)
+    assertSignerChain(mainViem, chainId)
 
     const portalData = await getPortals({
       chainId,
@@ -201,6 +215,7 @@ const DepositStart = ({
   const approveZap = async amnt => {
     const { approve } = await portalsApprove(chainId, account, pickedToken.address, amnt.toString())
     const mainViem = await getViem(chainId, account, viem)
+    assertSignerChain(mainViem, chainId)
     await mainViem.sendTransaction({
       account,
       to: approve.to,
@@ -232,9 +247,9 @@ const DepositStart = ({
               setReceiveAmount(minReceiveAmountString)
               setReceiveUsd(minReceiveUsdAmount)
             },
-            async () => {
+            async err => {
               setStartSpinner(false)
-              setDepositFailed(true)
+              showDepositFailed(err)
               setProgressStep(0)
               setButtonName('Approve Token')
             },
@@ -264,7 +279,7 @@ const DepositStart = ({
           setStartSpinner(false)
         } catch (err) {
           setStartSpinner(false)
-          setDepositFailed(true)
+          showDepositFailed(err)
           setProgressStep(0)
           setButtonName('Approve Token')
         }
@@ -281,8 +296,8 @@ const DepositStart = ({
               token,
               amount,
               async () => {},
-              () => {
-                setDepositFailed(true)
+              err => {
+                showDepositFailed(err)
                 setStartSpinner(false)
                 setProgressStep(0)
                 setButtonName('Approve Token')
@@ -296,8 +311,8 @@ const DepositStart = ({
               false,
               false,
               async () => {},
-              async () => {
-                setDepositFailed(true)
+              async err => {
+                showDepositFailed(err)
                 setStartSpinner(false)
                 setProgressStep(0)
                 setButtonName('Approve Token')
@@ -310,7 +325,7 @@ const DepositStart = ({
           setStartSpinner(true)
           await onDeposit()
         } catch (err) {
-          setDepositFailed(true)
+          showDepositFailed(err)
           setStartSpinner(false)
           setProgressStep(0)
           setButtonName('Approve Token')
@@ -544,7 +559,7 @@ const DepositStart = ({
                   $weight="600"
                   $marginbottom="4px"
                 >
-                  Whoops, something went wrong.
+                  {wrongNetworkMessage ? 'Whoops, wrong network.' : 'Whoops, something went wrong.'}
                 </NewLabel>
                 <NewLabel
                   $fontcolor="#B54708"
@@ -553,7 +568,7 @@ const DepositStart = ({
                   $weight="400"
                   $marginbottom="5px"
                 >
-                  Please try to repeat the transaction in your wallet.
+                  {wrongNetworkMessage || 'Please try to repeat the transaction in your wallet.'}
                 </NewLabel>
               </NewLabel>
             </NewLabel>

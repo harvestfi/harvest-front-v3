@@ -6,6 +6,7 @@ import {
   useActiveWalletConnectionStatus,
   useAutoConnect,
   useConnectModal,
+  useConnectionManager,
   useDisconnect,
 } from 'thirdweb/react' // eslint-disable-line import/no-unresolved
 // eslint-disable-next-line import/no-unresolved
@@ -32,6 +33,7 @@ import {
   getChainObject,
   safeProvider,
   getViem,
+  setConnectedWalletClient,
 } from '../../services/viem'
 import tokenMethods from '../../services/viem/contracts/token/methods'
 import { isLedgerLive, isSafeApp } from '../../utilities/formats'
@@ -148,6 +150,15 @@ const WalletProvider = _ref => {
   const [connected, setConnected] = useState(false)
   const [chainId, setChainId] = useState(CHAIN_IDS.ETH_MAINNET)
   const [viem, setViem] = useState(mainViem)
+  const signerRef = useRef({ provider: null, chainId: null })
+  const updateViem = useCallback((client, provider = null) => {
+    setConnectedWalletClient(client)
+    signerRef.current =
+      typeof client?.writeContract === 'function'
+        ? { provider, chainId: Number(client.chain?.id) }
+        : { provider: null, chainId: null }
+    setViem(client)
+  }, [])
   const [selChain, setSelChain] = useState([
     CHAIN_IDS.ETH_MAINNET,
     CHAIN_IDS.POLYGON_MAINNET,
@@ -161,11 +172,13 @@ const WalletProvider = _ref => {
   const [balancesToLoad, setBalancesToLoad] = useState([])
   const [approvedBalances, setApprovedBalances] = useState({})
   const [walletLocked, setWalletLocked] = useState(false)
+  const [injectedChainVersion, setInjectedChainVersion] = useState(0)
   const { contracts } = useContracts()
 
   const activeAccount = useActiveAccount()
   const activeWallet = useActiveWallet()
   const activeWalletChain = useActiveWalletChain()
+  const connectionManager = useConnectionManager()
   const connectionStatus = useActiveWalletConnectionStatus()
   const { connect } = useConnectModal()
   const { disconnect } = useDisconnect()
@@ -187,16 +200,27 @@ const WalletProvider = _ref => {
   const activeProvider = useMemo(() => {
     if (!activeWallet || !activeWalletChain?.id) return null
     try {
-      return EIP1193.toProvider({
+      const provider = EIP1193.toProvider({
         wallet: activeWallet,
         chain: defineChain(Number(activeWalletChain.id)),
         client: thirdwebClient,
       })
+      return {
+        ...provider,
+        request: args =>
+          args?.method === 'eth_chainId'
+            ? Promise.resolve(
+                normalizeChainToHex(
+                  connectionManager.activeWalletChainStore.getValue()?.id ?? activeWalletChain.id,
+                ),
+              )
+            : provider.request(args),
+      }
     } catch (error) {
       console.error('Error creating thirdweb EIP-1193 provider:', error)
       return null
     }
-  }, [activeWallet, activeWalletChain])
+  }, [activeWallet, activeWalletChain, connectionManager])
 
   const getInjectedProviderForWalletAccount = useCallback(
     async walletAccount => {
@@ -390,9 +414,9 @@ const WalletProvider = _ref => {
       setBalances({})
       setLogout(true)
       lastSentWalletAddressRef.current = null
-      setViem(mainViem)
+      updateViem(mainViem)
     }
-  }, [thirdwebAccount, connectionStatus, sendWalletConnectionOnce])
+  }, [thirdwebAccount, connectionStatus, sendWalletConnectionOnce, updateViem])
 
   useEffect(() => {
     if (isSafeApp()) return
@@ -413,24 +437,33 @@ const WalletProvider = _ref => {
 
       if (!providerToUse || !chainHex) {
         if (!isCancelled) {
-          setViem(mainViem)
+          updateViem(mainViem)
         }
         return
       }
 
       try {
         const chain = getChainObject(chainHex)
+        // Same provider and chain as the current signer (a network switch in a wallet that does
+        // not sign, or a second run for the same switch): keep it. Every new client reloads the
+        // vaults.
+        if (
+          providerToUse === signerRef.current.provider &&
+          chain.id === signerRef.current.chainId
+        ) {
+          return
+        }
         const walletClient = createWalletClient({
           transport: custom(providerToUse),
           chain,
         })
         if (!isCancelled) {
-          setViem(walletClient)
+          updateViem(walletClient, providerToUse)
         }
       } catch (error) {
         console.error('Error creating viem wallet client from provider:', error)
         if (!isCancelled) {
-          setViem(mainViem)
+          updateViem(mainViem)
         }
       }
     }
@@ -440,7 +473,14 @@ const WalletProvider = _ref => {
     return () => {
       isCancelled = true
     }
-  }, [activeProvider, thirdwebChainId, thirdwebAccount, getInjectedChainForAccount])
+  }, [
+    activeProvider,
+    thirdwebChainId,
+    thirdwebAccount,
+    getInjectedChainForAccount,
+    updateViem,
+    injectedChainVersion,
+  ])
 
   const onNetworkChange = useCallback(newChain => {
     const normalizedNewChain = normalizeChainToHex(newChain)
@@ -469,7 +509,11 @@ const WalletProvider = _ref => {
       }
     }
 
-    const onInjectedChainChanged = async () => {
+    const onInjectedChainChanged = async newChain => {
+      const newChainHex = normalizeChainToHex(newChain)
+      if (!newChainHex || parseInt(newChainHex, 16) !== signerRef.current.chainId) {
+        setInjectedChainVersion(version => version + 1)
+      }
       await syncInjectedChain()
     }
 

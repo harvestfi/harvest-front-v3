@@ -20,7 +20,7 @@ import { useActions } from '../../../providers/Actions'
 import { useContracts } from '../../../providers/Contracts'
 import { useThemeContext } from '../../../providers/useThemeContext'
 import { isSpecialApp } from '../../../utilities/formats'
-import { toWei } from '../../../services/viem'
+import { isWrongChainError, toWei } from '../../../services/viem'
 import Button from '../../Button'
 import {
   FTokenInfo,
@@ -55,6 +55,10 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
   const [btnName, setBtnName] = useState('Approve Token')
   const [startSpinner, setStartSpinner] = useState(false)
   const [subscribeFailed, setSubscribeFailed] = useState(false)
+  // Set when a write was stopped because the wallet is on another network; the failure banner
+  // then says so instead of the generic text.
+  const [wrongNetworkMessage, setWrongNetworkMessage] = useState('')
+  const noteFailure = err => setWrongNetworkMessage(isWrongChainError(err) ? err.message : '')
   const [progressStep, setProgressStep] = useState(0)
 
   const { handleApproval, handleIPORDeposit } = useActions()
@@ -72,6 +76,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
     if (progressStep === 0) {
       setStartSpinner(true)
       setSubscribeFailed(false)
+      setWrongNetworkMessage('')
       setProgressStep(1)
       setBtnName('Pending Approval in Wallet')
       const subscribeAmount = toWei(inputAmount, token.decimals)
@@ -93,8 +98,9 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
               setStartSpinner(false)
               await getWalletBalances([token.id], false, true)
             },
-            async () => {
+            async err => {
               setStartSpinner(false)
+              noteFailure(err)
               setSubscribeFailed(true)
               setProgressStep(0)
               setBtnName('Approve Token')
@@ -109,11 +115,13 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
       } catch (err) {
         setStartSpinner(false)
         setBtnName('Approve Token')
+        noteFailure(err)
         setSubscribeFailed(true)
         setProgressStep(0)
       }
     } else if (progressStep === 2) {
       setStartSpinner(true)
+      setWrongNetworkMessage('')
       setProgressStep(3)
       setBtnName('Pending Confirmation in Wallet')
       let subscribeSuccess = false
@@ -127,9 +135,10 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
             await getWalletBalances([token.id], false, true)
             subscribeSuccess = true
           },
-          () => {
+          err => {
             setStartSpinner(false)
             setBtnName('Approve Token')
+            noteFailure(err)
             setSubscribeFailed(true)
             setProgressStep(0)
           },
@@ -137,6 +146,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
       } catch (err) {
         setStartSpinner(false)
         setBtnName('Approve Token')
+        noteFailure(err)
         setSubscribeFailed(true)
         setProgressStep(0)
       }
@@ -263,7 +273,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                   $weight="600"
                   $marginbottom="4px"
                 >
-                  Whoops, something went wrong.
+                  {wrongNetworkMessage ? 'Whoops, wrong network.' : 'Whoops, something went wrong.'}
                 </NewLabel>
                 <NewLabel
                   $fontcolor="#B54708"
@@ -272,7 +282,7 @@ const SubscribeModal = ({ inputAmount, setInputAmount, token, modalShow, setModa
                   $weight="400"
                   $marginbottom="5px"
                 >
-                  Please try to repeat the transaction in your wallet.
+                  {wrongNetworkMessage || 'Please try to repeat the transaction in your wallet.'}
                 </NewLabel>
               </NewLabel>
             </NewLabel>
